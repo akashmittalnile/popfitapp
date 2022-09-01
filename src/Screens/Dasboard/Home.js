@@ -287,9 +287,7 @@ const Home = (props) => {
                 </View>
 
               </View>
-              {/* <View>
-                <Text>Webview........................................</Text>
-                <WebView source={{ uri: 'https://www.youtube.com/embed/ml6cT4AZdqI' }} /></View> */}
+
               <FlatList
                 horizontal
                 showsHorizontalScrollIndicator={false}
