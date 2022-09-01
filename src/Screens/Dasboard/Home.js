@@ -289,6 +289,7 @@ const Home = (props) => {
               </View>
 
               <FlatList
+
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 style={{ margin: 10 }}
