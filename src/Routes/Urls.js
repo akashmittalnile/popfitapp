@@ -39,5 +39,6 @@ export const API = {
     SEARCH_ORDER_FILTER: BaseUrl + '/api/order_filter',
     SHIPPING_ADDRESS_ADD: BaseUrl + '/api/add_shipping_address',
     SEND_COMMENTS: BaseUrl + '/api/send_comment',
-    
+    DELETE_ITEM: BaseUrl + '/api/delete_shipping_address',
+    UPDATE_ITEM: BaseUrl + '/api/update_shipping_address'
 }

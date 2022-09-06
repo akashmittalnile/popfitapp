@@ -87,9 +87,9 @@ const ApplyCoupon = (props) => {
             //  alert("CouponApplyed Sussesfully....")
             console.log("status _CouponRemove:", response.data.status);
 
-            // props.navigation.navigate("ShippingDetail", {
-            //     Selectcoupon: item
-            // });
+            props.navigation.navigate("ShippingDetail", {
+                Selectcoupon: item
+            });
             setProductitems(response.data.data)
             setIsLoading(false);
         }
@@ -176,7 +176,7 @@ const ApplyCoupon = (props) => {
                                 </View>
                                 <View style={{ marginRight: 50, marginTop: 28, width: 25, height: 35, justifyContent: "center", alignItems: 'center', borderRadius: 20 / 2 }}>
                                     <TouchableOpacity onPress={() => {
-                                    CouponApplyed(item)
+                                        CouponApplyed(item)
                                     }}>
                                         <View style={{ width: 80, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35, justifyContent: "center" }}>
                                             <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Apply</Text>
