@@ -1,0 +1,94 @@
+#  <TouchableOpacity onPress={() => { CardsToggle?setToggle:setToggle2}} style={{
+#                     marginHorizontal: 15,
+#                     marginTop: 20,
+#                     // backgroundColor: "pink"
+
+#                 }}>
+
+#                     {/* VISA card  */}
+#                     <TouchableOpacity onPress={() => { setToggle(!isToggle) }}
+#                         style={{
+#                             borderRadius: 15,
+#                             backgroundColor: 'white',
+#                             borderColor: isToggle == false ? "#DADADA" : "#ffcc00",
+#                             borderWidth: 1,
+#                             height: 90,
+
+#                         }}>
+#                         <View style={{ flexDirection: "row", flex: 1 }}>
+#                             {/* CheckBOx */}
+#                             <View style={{ flex: 0.1, flexDirection: "row", width: 50, justifyContent: "center", alignItems: "center", paddingLeft: 15 }}>
+#                                 {isToggle == false ?
+#                                     <TouchableOpacity onPress={() => showPass()}>
+#                                         <View style={{ height: 25, width: 25, borderRadius: 25 / 2, borderColor: "#DADADA", justifyContent: "center", borderWidth: 1 }}>
+#                                         </View>
+#                                     </TouchableOpacity>
+#                                     :
+#                                     <TouchableOpacity onPress={() => hidePass()}>
+#                                         <View style={{ height: 25, width: 25, borderRadius: 25 / 2, borderColor: "#DADADA", backgroundColor: "#ffcc00", justifyContent: "center", borderWidth: 1 }}>
+#                                         </View>
+#                                     </TouchableOpacity>
+#                                 }
+#                             </View>
+#                             {/* card Name */}
+#                             <View style={{ flex: 0.6, marginTop: 20, justifyContent: "flex-start" }}>
+#                                 <Text style={{ marginLeft: 10, textAlign: 'left', fontSize: 18, color: '#000000',   justifyContent: "flex-start" }}>VISA</Text>
+
+#                                 <Text style={{ marginTop: 5, textAlign: 'center', fontSize: 11, color: '#c9bca0',    marginLeft: 10, textAlign: 'left', }}>Expires on 16/24 </Text>
+#                             </View>
+#                             {/* Image */}
+#                             <View style={{ flex: 0.4, justifyContent: 'center', alignItems: 'center' }}>
+#                                 <Image source={require('../assets/visaCard.png')}
+#                                     style={{
+#                                         width: 90,
+#                                         height: 90, alignSelf: 'center', marginRight: 10
+#                                     }} />
+#                             </View>
+
+#                         </View>
+#                     </TouchableOpacity>
+
+#                     {/* MASTER card  */}
+#                     <TouchableOpacity onPress={() => { setToggle2(!isToggle2) }}
+#                         style={{
+#                             marginTop: 20,
+#                             borderRadius: 15,
+#                             backgroundColor: 'white',
+#                             borderColor: isToggle2 == false ? "#DADADA" : "#ffcc00",
+#                             borderWidth: 1,
+#                             height: 90,
+
+#                         }}>
+#                         <View style={{ flexDirection: "row", flex: 1 }}>
+#                             {/* CheckBOx */}
+#                             <View style={{ flex: 0.1, flexDirection: "row", justifyContent: "center", alignItems: "center", paddingLeft: 15 }}>
+#                                 {isToggle2 == false ?
+#                                     <TouchableOpacity onPress={() => showPass2()}>
+#                                         <View style={{ height: 25, width: 25, borderRadius: 25 / 2, borderColor: "#DADADA", justifyContent: "center", borderWidth: 1 }}>
+#                                         </View>
+#                                     </TouchableOpacity>
+#                                     :
+#                                     <TouchableOpacity onPress={() => hidePass2()}>
+#                                         <View style={{ height: 25, width: 25, borderRadius: 25 / 2, borderColor: "#DADADA", backgroundColor: "#ffcc00", justifyContent: "center", borderWidth: 1 }}>
+#                                         </View>
+#                                     </TouchableOpacity>
+#                                 }
+#                             </View>
+#                             {/* card Name */}
+#                             <View style={{ flex: 0.6, marginTop: 20, }}>
+#                                 <Text style={{ marginLeft: 10, textAlign: 'left', fontSize: 18, color: '#000000',   }}>MASTER CARD</Text>
+
+#                                 <Text style={{ marginTop: 5, textAlign: 'center', fontSize: 11, color: '#c9bca0',    marginLeft: 10, textAlign: 'left', }}>Expires on 21/26 </Text>
+#                             </View>
+#                             {/* Image */}
+#                             <View style={{ flex: 0.4, justifyContent: 'center', alignItems: 'center' }}>
+#                                 <Image source={require('../assets/mastCard.png')}
+#                                     style={{
+#                                         width: 80,
+#                                         height: 80, alignSelf: 'center', marginRight: 10
+#                                     }} />
+#                             </View>
+
+#                         </View>
+#                     </TouchableOpacity>
+#                 </TouchableOpacity>
