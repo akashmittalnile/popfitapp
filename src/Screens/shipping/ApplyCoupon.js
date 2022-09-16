@@ -6,43 +6,15 @@ import styles from '../../Routes/style';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
 const ApplyCoupon = (props) => {
     const [coupondata, setCoupondata] = useState([]);
-
-    const newData = [{
-        key: '1',
-        text: 'Item text 1',
-        uri: 'https://picsum.photos/id/1/200',
-    },
-    {
-        key: '2',
-        text: 'Item text 2',
-        uri: 'https://picsum.photos/id/10/200',
-    },
-
-    {
-        key: '3',
-        text: 'Item text 3',
-        uri: 'https://picsum.photos/id/1002/200',
-    },
-    {
-        key: '4',
-        text: 'Item text 4',
-        uri: 'https://picsum.photos/id/1006/200',
-    },
-    {
-        key: '5',
-        text: 'Item text 5',
-        uri: 'https://picsum.photos/id/1008/200',
-    },
-
-
-
-    ];
+    const [response, setRespone] = useState([]);
+    const [visible, setVisible] = useState(true);
+    const [Id, setId] = useState()
     const setSelectedcoupon = (item) => {
         props.navigation.navigate("ShippingDetail", {
             Selectcoupon: item
@@ -56,45 +28,77 @@ const ApplyCoupon = (props) => {
     }
     useEffect(() => {
         CouponListApi();
+        setVisible(true);
     }, [])
-
-
+    const resetStacks = (page, item) => {
+        props.navigation.reset({
+            index: 0,
+            routes: [{ name: page }],
+            params: { Selectcoupon: item },
+        });
+    }
+    // const resetStacks = (page) => {
+    //     props.navigation.reset({
+    //         index: 0,
+    //         routes: [{ name: page }],
+    //     });
+    // }
     const CouponListApi = async () => {
-
+        const usertkn = await AsyncStorage.getItem("authToken");
 
         try {
-            const response = await axios.get(`${API.COUPON_LIST}`);
+            const response = await axios.get(`${API.COUPON_LIST}`, {
+                'headers': { "Authorization": ` ${usertkn}` }
+            });
             // console.log("", response);
-            console.log("Response_CouponListApi ::::", response.data.data);
+            // console.log("Response_CouponListApi ::::", response.data.data);
             setCoupondata(response.data.data);
-            console.log("");
+            let result = coupondata.map(a => a.id)
+            setId(result);
+            // console.log("");
 
             // setIsLoading(false)
         }
         catch (error) {
-            console.log("ShippingProductserror:::", error.response.data.message);
+            // console.log("ShippingProductserror:::", error.response.data.message);
             // setIsLoading(false)
         }
 
     };
 
     const CouponApplyed = async (item) => {
-        console.log("CouponApplyed innn....", coupondata);
+        console.log("CouponApplyed innn....%%%%%%%%%%%%", item.id);
         // setIsLoading(true);
         try {
-            const response = await axios.post(`${API.COUPON_APPLYED}`, { "cart_id": 1, "coupon_id": 1, "order_amount": 1200 });
-            console.log(":::::::::CouponApplyed_Response>>>", response.data);
+            const usertkn = await AsyncStorage.getItem("authToken");
+            const response = await axios.post(`${API.COUPON_APPLYED}`, { "coupon_id": item.id, },
+                {
+                    'headers': { "Authorization": ` ${usertkn}` }
+                }
+            );
+            // console.log(":::::::::CouponApplyed_Response-----------$$$$$$$$$$$$$$>>>", response.data.message);
+            setRespone(response.data.message);
             //  alert("CouponApplyed Sussesfully....")
-            console.log("status _CouponRemove:", response.data.status);
+            // console.log("status _CouponRemove:", response.data.status);
+            if (response.data.message == "Coupon Added Successfully") {
+                AsyncStorage.setItem("cupon", JSON.stringify(item));
+                //  resetStacks('ShippingDetail', item)
+                props.navigation.navigate("ShippingDetail", {
+                    Selectcoupon: item
 
-            props.navigation.navigate("ShippingDetail", {
-                Selectcoupon: item
-            });
+                });
+            }
+            else {
+                setVisible(false);
+                alert("your order is below 2000")
+            }
+
+
             setProductitems(response.data.data)
             setIsLoading(false);
         }
         catch (error) {
-            console.log("......error.........", error.response.data.message);
+            // console.log("......error.........", error.response.data.message);
             // setIsLoading(false);
 
         }

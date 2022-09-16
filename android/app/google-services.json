@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "544462601135",
+    "project_id": "nile-254c8",
+    "storage_bucket": "nile-254c8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:544462601135:android:28407689725da611360d5a",
+        "android_client_info": {
+          "package_name": "com.popfit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "544462601135-bfn34htkd1gi245at5bijmsjjdnt61t9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1Urv5hPeRdlqgxjSqCOFZujjKp3tChDg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "544462601135-bfn34htkd1gi245at5bijmsjjdnt61t9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

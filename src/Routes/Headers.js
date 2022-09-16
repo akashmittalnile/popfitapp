@@ -19,7 +19,7 @@ const Headers = ({
             {
                 Drawericon?.visible ?
                     (<View style={style.navigationBarLeftContainer}>
-                        <TouchableOpacity onPress={() => DrawericononClick() }>
+                        <TouchableOpacity onPress={() => DrawericononClick()}>
                             <Image source={require('../Screens/assets/hamburgerLeft.png')}
                                 style={{
                                     width: 25,
@@ -30,13 +30,13 @@ const Headers = ({
                     </View>)
                     : null
             }
-             {
+            {
                 Backicon?.visible ?
                     (<View style={style.navigationBarLeftContainer}>
-                        <TouchableOpacity onPress={() =>BackicononClick() }>
+                        <TouchableOpacity onPress={() => BackicononClick()}>
                             <Image source={require('../Screens/assets/leftArrowWhite.png')}
                                 style={{
-                                    width:30,
+                                    width: 30,
                                     height: 25, alignSelf: 'center'
                                 }} />
 
@@ -44,23 +44,23 @@ const Headers = ({
                     </View>)
                     : null
             }
-            
 
-                <View style={style.navigationBarCenterContainer}>
-                    <TouchableOpacity>
-                        <Image resizeMode="contain"
-                            source={require('../Screens/assets/layerCenter.png')}
-                            style={{
-                                width: 80,
-                                height: 50, alignSelf: 'center'
-                            }} />
 
-                    </TouchableOpacity>
-                </View>
-                <View style={{
+            <View style={style.navigationBarCenterContainer}>
+                <TouchableOpacity>
+                    <Image resizeMode="contain"
+                        source={require('../Screens/assets/layerCenter.png')}
+                        style={{
+                            width: 80,
+                            height: 50, alignSelf: 'center'
+                        }} />
+
+                </TouchableOpacity>
+            </View>
+            <View style={{
                 width: "20%",
                 flexDirection: 'row',
-                 justifyContent: 'flex-end',
+                justifyContent: 'flex-end',
                 alignItems: 'center',
                 // backgroundColor:"pink"
             }}>
@@ -104,6 +104,18 @@ const Headers = ({
                                     }} />
 
                             </TouchableOpacity>
+                            <View
+                                style={{
+                                    // backgroundColor: '#ec1f1f',
+                                    width: 20,
+                                    height: 20,
+                                    // borderRadius: 10 / 2,
+                                    // marginLeft: 30,
+                                    marginTop: -15,
+                                    right: 15
+                                }}>
+                                <Text style={{ color: 'yellow', fontWeight: '500', fontSize: 16 }}>0</Text>
+                            </View>
                         </View>)
                         : null
                 }
@@ -111,7 +123,7 @@ const Headers = ({
             </View>
 
         </View>
-        
+
     );
 };
 const style = StyleSheet.create({
@@ -121,7 +133,7 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-          backgroundColor: '#262626',
+        backgroundColor: '#262626',
         // backgroundColor: 'blue',
         // borderBottomLeftRadius: 20,
         // borderBottomRightRadius: 20,
@@ -143,12 +155,12 @@ const style = StyleSheet.create({
 
 
     navigationBarCenterContainer: {
-         left: 20,
+        left: 20,
         // backgroundColor: "yellow",
         // flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        right:0
+        right: 0
     },
     navigationBarRightContainer: {
 
