@@ -1,4 +1,7 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
+import { useState } from "react";
+import { useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, Image, SafeAreaView, } from 'react-native';
 
 
@@ -12,7 +15,30 @@ const Headers = ({
     CartIconononClick,
     BackicononClick
 }) => {
+    const [counter, setCounter] = useState('');
+    useEffect(() => {
+        Notifi()
+        b()
+    }, [])
+    const a = () => {
+        setTimeout(() => {
+            Notifi()
+            b();
+        }, 2000)
 
+    }
+    const b = () => {
+        a();
+    }
+    const clearNoti = async () => {
+        AsyncStorage.setItem("notification", JSON.stringify(""));
+    }
+    const Notifi = async () => {
+        let noti = AsyncStorage.getItem('notification');
+        var notify = JSON.parse(noti);
+        setCounter(notify);
+        //console.log('notifica--------->', notify)
+    }
     return (
         <View style={style.navigationBarBlack}>
 
@@ -96,7 +122,10 @@ const Headers = ({
                 {
                     Bellicon?.visible ?
                         (<View style={style.navigationBarRightContainer}>
-                            <TouchableOpacity onPress={() => BelliconononClick()}>
+                            <TouchableOpacity onPress={() => {
+                                BelliconononClick()
+                                clearNoti()
+                            }}>
                                 <Image source={require('../Screens/assets/bellRight.png')}
                                     style={{
                                         width: 20,
@@ -114,7 +143,7 @@ const Headers = ({
                                     marginTop: -15,
                                     right: 15
                                 }}>
-                                <Text style={{ color: 'yellow', fontWeight: '500', fontSize: 16 }}>0</Text>
+                                <Text style={{ color: 'yellow', fontWeight: '500', fontSize: 16 }}>{counter}</Text>
                             </View>
                         </View>)
                         : null

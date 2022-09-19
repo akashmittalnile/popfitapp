@@ -8,7 +8,7 @@ import 'react-native-reanimated'
 import Home from './src/Screens/Dasboard/Home';
 import LoginSignUp from './src/Screens/loginSignup/LoginSignUp';
 //import { requestUserPermission, notificationListner, createChannel, notificationListne } from './src/Screens/notificationServices';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NotificationManagerAndroid } from './NotificationManagerAndroid';
 import { NotificationManagerIOS } from './NotificationManagerIOS';
 import { Alert } from 'react-native';
@@ -59,6 +59,15 @@ const App = (props) => {
         const { messageId } = remoteMessage;
         const data = remoteMessage.notification
         if (Platform.OS === 'android') {
+          //  var notificationCount = AsyncStorage.getItem('notification');
+          // let a = JSON.parse(notificationCount);
+          console.log('aaaaaaa->>>>>>>>>>', notificationCount)
+          if (notificationCount) {
+            notificationCount = +1;
+          } else {
+            notificationCount = 1;
+          }
+          AsyncStorage.setItem("notification", JSON.stringify(notificationCount));
           NotificationManagerAndroid.showNotification(data.title, data.body, data.subText, messageId, data);
         }
         else {
