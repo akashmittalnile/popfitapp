@@ -23,7 +23,7 @@ import OrderDetail from '../Screens/myorder/OrderDetail';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { BottomTabBar, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
- 
+
 import TrainingPersonaDetail from '../Screens/training/TrainingPersonDetail';
 import OutDoorCycleDetails from '../Screens/training/OutDoorCycleDetail';
 import SubCategoryBlog from '../Screens/category/CategoryListBlog';
@@ -45,6 +45,7 @@ import Recipecategory from '../Screens/Recipe/Recipecategory';
 import RecipeDetails from '../Screens/Recipe/RecipeDetails';
 import CartAdded from '../Screens/cart/CartAddedPopUp';
 import Recipesubcategory from '../Screens/Recipe/Recipesubcategory';
+import Address from '../Screens/shipping/Address';
 
 
 const Tab = createBottomTabNavigator();
@@ -90,7 +91,7 @@ const HomeBottomTab = (props) => {
 
             <Stack.Screen options={{ headerShown: false }} name="MyOrder" component={MyOrder} />
             <Stack.Screen options={{ headerShown: false }} name="OrderDetail" component={OrderDetail} />
-            
+
             <Stack.Screen options={{ headerShown: false }} name="BlogDetail" component={BlogDetail} />
             <Stack.Screen options={{ headerShown: false }} name="SubscriptionPlan" component={SubscriptionPlan} />
             <Stack.Screen options={{ headerShown: false }} name="MyProfile" component={MyProfile} />
@@ -103,6 +104,7 @@ const HomeBottomTab = (props) => {
             <Stack.Screen options={{ headerShown: false }} name="ClothesType" component={ClothesType} />
             <Stack.Screen options={{ headerShown: false }} name="MenTshirts" component={MenTshirts} />
             <Stack.Screen options={{ headerShown: false }} name="Notifications" component={Notifications} />
+            <Stack.Screen options={{ headerShown: false }} name="Address" component={Address} />
         </Stack.Navigator>
     )
 }
@@ -118,6 +120,7 @@ const TrainingBottomTab = (props) => {
             <Stack.Screen options={{ headerShown: false }} name="OutDoorCycleDetails" component={OutDoorCycleDetails} />
             <Stack.Screen options={{ headerShown: false }} name="TrainingPersonaDetail" component={TrainingPersonaDetail} />
             <Stack.Screen options={{ headerShown: false }} name="Notifications" component={Notifications} />
+            <Stack.Screen options={{ headerShown: false }} name="Address" component={Address} />
         </Stack.Navigator>
     )
 }
@@ -133,9 +136,10 @@ const ShopBottomTab = (props) => {
             <Stack.Screen options={{ headerShown: false }} name="CartAdded" component={CartAdded} />
             {/* <Stack.Screen options={{ headerShown: false }} name="OrderDetail" component={OrderDetail} /> */}
             <Stack.Screen options={{ headerShown: false }} name="ShippingDetail" component={ShippingDetail} />
- 
+
             <Stack.Screen options={{ headerShown: false }} name="CardPayment" component={CardPayment} />
             <Stack.Screen options={{ headerShown: false }} name="Notifications" component={Notifications} />
+            <Stack.Screen options={{ headerShown: false }} name="Address" component={Address} />
         </Stack.Navigator>
     )
 }
