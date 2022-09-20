@@ -18,7 +18,6 @@ const OutdoorTrainning = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [TrainingSUBCatgry, setTrainingSUBCatgry] = useState([]);
 
-
   useEffect(() => {
     workoutSubCategoryAPI();
 

@@ -21,7 +21,6 @@ var HEIGHT = Dimensions.get('window').height;
 
 const DATA = ['first row', 'second row', 'third row', 'fourth row'];
 
-
 const TrainingDetail = (props) => {
 
     // const gotoCartAdded = () => {

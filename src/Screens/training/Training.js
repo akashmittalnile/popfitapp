@@ -16,7 +16,6 @@ const Training = (props) => {
   const [trainingBlog_list, setTrainingBlog_list] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-
   const gotoOutDoorCycleDetail = (item) => {
     props.navigation.navigate("OutDoorCycleDetails", {
       TrainingDATA: item

@@ -54,7 +54,6 @@ const ProductDetail = (props) => {
       setCountnum(countnums - 1);
 
     }
-   
   };
 
 
@@ -123,7 +122,11 @@ const ProductDetail = (props) => {
     console.log("ADD_productin_QNTY cart.....", countnums);
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.PRODUCT_DETAILS_ADD_ITEM}`, { "qty": countnums, "product_id": productids });
+      const response = await axios.post(`${API.PRODUCT_DETAILS_ADD_ITEM}`, { "qty": countnums, "product_id": productids }, {
+        'headers': {
+          'Authorization': '228e273912a6b5718c5f2b1cbd857aba26c9cbf818436e51d8fea1b24eb71ec3c8e25cd398b45ccf8079aeb0825747d697d702536b212fd3cdcdeb656988f2d7aa6e1bb2cd4f6441ceb625eaa5aeac0ec88608afab00f850ed376837e6f7dd343972874e1cd245bdd2394229c895e082a9d1dc508d906868accd5ccae9345c0f503f3aea080fe21c68c82c4f0c48d025620821af98c9a0f838077a5eedf8842bd872030bf32fa4280f25f9c027d32fcce85d54a66a48ddfd3f714b47681419786db9a4841bf97b1586edbd3e8c9b50c94bc6f8283ee3613d2c777c1e12c6e1ab23cbd2b9e30aa77770309450db41a506dcb0999706f604de41676d6eeeaef15a0c8ad858a4549d50de0addd3e589337f5c8f7e1138434c6ec0bb757e82e3d8ddf40214d1d8bab63bd7e4f04d'
+        },
+      });
       console.log(":::::::::ProductADD_Response>>>", response.data.message);
       console.log("status _ProductADD:", response.data.status);
       if (response.data.status == 1) {
@@ -272,7 +275,7 @@ const ProductDetail = (props) => {
 
                     <View style={{
                       width: 109,
-                      height: 99, justifyContent: "center",  alignItems: 'center',
+                      height: 99, justifyContent: "center", alignItems: 'center',
                     }}>
                       <Image
                         source={{ uri: ImageBaseUrl + item }}

@@ -32,7 +32,6 @@ const Category = (props) => {
     });
   }
 
-
   console.log("item.category_id..............:", props.route.params.ITEMS.id);
   const ITEMS = props.route.params.ITEMS.id
 

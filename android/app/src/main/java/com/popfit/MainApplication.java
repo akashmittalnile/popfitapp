@@ -6,6 +6,7 @@ import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
+import com.oblador.vectoricons.VectorIconsPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.facebook.react.ReactInstanceManager;
@@ -16,6 +17,12 @@ import com.facebook.soloader.SoLoader;
 import com.popfit.newarchitecture.MainApplicationReactNativeHost;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+//firebae pacakges
+// import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
+// import io.invertase.firebase.links.RNFirebaseLinksPackage;
+// import io.invertase.firebase.config.RNFirebaseRemoteConfigPackagePackage;
+// import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
+
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -30,6 +37,12 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
+
+          //firbae package 
+          // packages.add(new RNFirebaseMessagingPackage());
+          // package.add(new RNFirebaseLinksPackage());
+          // packages.add(new RNFirebaseRemoteConfigPackagePackage());
+          // pacakges.add(new RNFirebaseNotificationsPackage());
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
          

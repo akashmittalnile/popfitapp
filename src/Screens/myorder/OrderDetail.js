@@ -563,7 +563,8 @@ const OrderDetail = (props) => {
 
                                             </View>
 
-                                        </View>)
+                                        </View>
+                                        )
                                 })
                                 :
                                 <Text>ajgruwvgvuy</Text>

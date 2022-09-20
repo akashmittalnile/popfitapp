@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, Image, Alert, Pressable, SafeAreaView, ActivityIndicator, Dimensions } from 'react-native'
+// import { View, FlatList, Text, TouchableOpacity, Image, Alert, Pressable, SafeAreaView, ActivityIndicator, Dimensions } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, ActivityIndicator } from 'react-native'
+import LinearGradient from 'react-native-linear-gradient';
+import { ScrollView } from 'react-native-gesture-handler';
+import { BackgroundImage } from 'react-native-elements/dist/config';
+import { RadioButton } from 'react-native-paper';
+import DropDownPicker from 'react-native-dropdown-picker';
+import { Pages } from 'react-native-pages';
+import styles from '../../Routes/style'
+import { DrawerActions } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
