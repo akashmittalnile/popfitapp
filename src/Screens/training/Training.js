@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ActivityIndicator } from 'react-native'
-import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
-import { BackgroundImage } from 'react-native-elements/dist/config';
-import { RadioButton } from 'react-native-paper';
-import DropDownPicker from 'react-native-dropdown-picker';
-import { Pages } from 'react-native-pages';
-import styles from '../../Routes/style'
-import { DrawerActions } from '@react-navigation/native';
 import Headers from '../../Routes/Headers';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import { WebView } from 'react-native-webview';
 import Share from 'react-native-share';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -21,22 +15,15 @@ const Training = (props) => {
 
   const [trainingBlog_list, setTrainingBlog_list] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const openDrawer = () => props.navigation.dispatch(DrawerActions.openDrawer());
 
   const gotoOutDoorCycleDetail = (item) => {
     props.navigation.navigate("OutDoorCycleDetails", {
       TrainingDATA: item
     })
   }
-  // const buttonClickedHandler = () => {
-  //   props.navigation.goBack()
-  //   console.log('You have been clicked a button!');
-  //   // do something
-  // };
+
   const MycustomonShare = async () => {
-    console.log('====================================');
-    console.log(`${trainingBlog_list.youtube_link}`);
-    console.log('====================================');
+
     const shareOptions = {
       title: 'Popfiit Blog Contents',
       icon: 'data:<data_type>/<file_extension>;base64,<base64_data>',
@@ -56,34 +43,33 @@ const Training = (props) => {
   };
   useEffect(() => {
     WorkoutSubCategorytraininglist();
-  }, [props]);
+  }, []);
 
   console.log("Tainingcat_id_item...............:", props?.route?.params?.Tainingcat_id);
   const Tainingcat_id = props?.route?.params?.Tainingcat_id
-  // console.log('====================================');
-  // console.log( props?.route?.params?.Trainingsubcat_data?.id);
-  // console.log('====================================');
+
   console.log("Trainingsubcat_Data...............:", props?.route?.params?.Trainingsubcat_data?.id);
   const Trainingsubcat_data = props?.route?.params?.Trainingsubcat_data?.id
 
   const WorkoutSubCategorytraininglist = async () => {
-    // setIsLoading(true);
+    const usertkn = await AsyncStorage.getItem("authToken");
+    setIsLoading(true);
     try {
-      const response = await axios.post(`${API.TRAINING_LIST}`, { "category_id": Tainingcat_id, "subcategory_id": Trainingsubcat_data });
+      const response = await axios.post(`${API.TRAINING_LIST}`, { "category_id": Tainingcat_id, "subcategory_id": Trainingsubcat_data }, { headers: { "Authorization": ` ${usertkn}` } });
       console.log(":::::::::TrainingCategoryListAPI_Response>>>", response.data.message);
-     
+
       console.log("TrainingCategoryListAPI_data::::::", response.data.blog_list);
       ;
       setTrainingBlog_list(response.data.blog_list)
       // setyoutubelink(response.data.blog_list.youtube_link)
 
-      // setIsLoading(false);
+      setIsLoading(false);
 
     }
     catch (error) {
       console.log("......error.........", error.response.data.message);
       Alert.alert("Something went wrong!", error.response.data.message);
-      // setIsLoading(false);
+      setIsLoading(false);
 
     }
   };
@@ -112,10 +98,12 @@ const Training = (props) => {
       />
       {!isLoading ?
         (<>
-          <ScrollView>
+        {
+            trainingBlog_list.length != 0 ?
+          (<ScrollView>
             <View style={{
-                width: WIDTH,
-              height: HEIGHT, justifyContent: "center", alignItems: "center"
+              width: WIDTH,
+              height: HEIGHT, justifyContent: "center", alignItems: "center",flex:1
             }}>
               <FlatList
                 vertical
@@ -136,7 +124,7 @@ const Training = (props) => {
                       <Text style={{ textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "bold" }}>{item.training_title}</Text>
                     </View>
                     <View style={{
-                      height: 200, borderRadius: 20, marginVertical: 1, width: WIDTH * 0.93, 
+                      height: 200, borderRadius: 20, marginVertical: 1, width: WIDTH * 0.93,
                     }}>
                       <View style={{
                         height: '100%',
@@ -164,17 +152,36 @@ const Training = (props) => {
                     </View>
 
                     <View style={{ height: 35, marginTop: 5 }}>
-                      <Text style={{ textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "bold" }}>{item.image_title}</Text>
+                      <Text style={{ textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "bold" }}>{item?.image_title}</Text>
                     </View>
-                    <View style={{  padding: 15, width: WIDTH * 0.93 }}>
-                      <Text style={{ textAlign: 'justify', fontSize: 14, color: '#000', }}>{item.training_description}</Text>
+                    {/* <View style={{ backgroundColor: "white", borderRadius: 20, marginTop: 20, height: HEIGHT * 0.2, width: WIDTH * 0.9, marginHorizontal: 18, }}>
+                      <Image resizeMode='contain'
+                        source={{ uri: item?.image }} style={{ width: '100%', height: '100%', justifyContent: "center", alignItems: 'center', borderRadius: 20, }}
+                      />
+                    </View> */}
+                    <View style={{ padding: 15, width: WIDTH * 0.93 }}>
+                      <Text style={{ textAlign: 'justify', fontSize: 14, color: '#000', }}>{item?.image_description}</Text>
                     </View>
                   </View>
                 )}
               />
             </View>
-          </ScrollView>
-          <View
+          </ScrollView>)
+             :
+             (<View style={{
+               justifyContent: "center", alignItems: "center", width: WIDTH,
+               height: 200,backgroundColor:"white",flex: 1,
+             }}>
+               <Image resizeMode='contain'
+                 source={require('../assets/Nodatafound.png')}
+                 style={{
+                   width: 200,
+                   height: 120, alignSelf: 'center'
+                 }} />
+               <Text style={{ fontSize: 14, fontWeight: "bold" }}>No data found</Text>
+             </View>)
+         }
+          {/* <View
             style={{
               position: "absolute",
               bottom: 40,
@@ -229,7 +236,7 @@ const Training = (props) => {
             </TouchableOpacity>
 
 
-          </View>
+          </View> */}
         </>)
         :
         (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>

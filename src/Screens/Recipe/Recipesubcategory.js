@@ -8,7 +8,7 @@ import {
   TextInput,
   Image,
   Alert,
-  Pressable, Modal, SafeAreaView, Dimensions,ActivityIndicator
+  Pressable, Modal, SafeAreaView, Dimensions, ActivityIndicator
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -88,33 +88,78 @@ const Recipesubcategory = props => {
         BelliconononClick={() => { props.navigation.navigate("Notifications") }}
       />
       {!isLoading ?
-        (<View style={{ marginBottom: 60 }}>
-          <ScrollView >
+        (<>
+          {
+            recipedata.length != 0 ?
+              (<View style={{ marginBottom: 60,flex: 1, }}>
+              <ScrollView>
 
 
-            <View style={{ marginTop: 20, height: 45, flexDirection: 'row' }}>
-              <View style={{ flex: 1 }}>
-                <Text
-                  style={{
-                    marginLeft: 20,
-                    fontSize: 18,
-                    color: 'white'
-                  }}>
-                  Recipes Category
-                </Text>
-              </View>
-            </View>
-            <FlatList
-              vertical
-              numColumns={2}
-              style={{ margin: 6 }}
-              data={recipedata}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    gotoRecipeDetails(item);
-                  }}>
-                  <BackgroundImage
+                <View style={{ marginTop: 20, height: 45, flexDirection: 'row' }}>
+                  <View style={{ flex: 1 }}>
+                    <Text
+                      style={{
+                        marginLeft: 20,
+                        fontSize: 18,
+                        color: 'white'
+                      }}>
+                      Recipes Sub-Category
+                    </Text>
+                  </View>
+                </View>
+                <FlatList
+                  vertical
+                  numColumns={2}
+                  style={{ margin: 6 }}
+                  data={recipedata}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      onPress={() => {
+                        gotoRecipeDetails(item);
+                      }}>
+                      <View
+                        style={{
+                          marginBottom: 6,
+                          marginTop: 6,
+                          marginHorizontal: 6,
+                          height: 180,
+                          width: WIDTH * 0.45,
+                          overflow: 'hidden',
+                          borderRadius: 25,
+                          backgroundColor: '#f7f7f7',
+                          backgroundColor: "lightgray",
+                          shadowColor: '#000000',
+                          shadowRadius: 5,
+                          shadowOpacity: 1.0,
+                          elevation: 6,
+                        }}>
+
+                        <View
+                          style={{
+                            width: WIDTH * 0.45, height: 180, borderTopRightRadius: 20,
+                            borderTopLeftRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
+                          }}>
+                          <Image
+                            source={{ uri: `${item?.recipe_image}` }}
+                            resizeMode="contain"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              borderTopLeftRadius: 20,
+                              borderTopRightRadius: 20,
+                              alignSelf: 'center',
+                            }}
+                          />
+                          <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
+                            <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.recipe_title?.slice(0, 13) + '...'}</Text>
+
+                          </View>
+
+                        </View>
+
+
+                      </View>
+                      {/* <BackgroundImage
                     resizeMode='stretch'
                     source={{ uri: `${item.recipe_image}` }}
                     style={{
@@ -167,13 +212,28 @@ const Recipesubcategory = props => {
                         />
                       </View>
                     </View>
-                  </BackgroundImage>
-                </TouchableOpacity>
-              )}
-            />
+                  </BackgroundImage> */}
+                    </TouchableOpacity>
+                  )}
+                />
 
-          </ScrollView>
-        </View>)
+              </ScrollView>
+              </View>)
+              :
+              (<View style={{
+                justifyContent: "center", alignItems: "center", width: WIDTH,
+                height: 200,backgroundColor:"white",flex: 1,
+              }}>
+                <Image resizeMode='contain'
+                  source={require('../assets/Nodatafound.png')}
+                  style={{
+                    width: 200,
+                    height: 120, alignSelf: 'center'
+                  }} />
+                <Text style={{ fontSize: 14, fontWeight: "bold" }}>No data found</Text>
+              </View>)
+          }
+        </>)
         :
         (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
           <ActivityIndicator size="large" color="#ffcc00" />

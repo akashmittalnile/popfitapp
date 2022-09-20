@@ -7,8 +7,8 @@ import { RadioButton } from 'react-native-paper';
 import DropDownPicker from 'react-native-dropdown-picker';
 import style from '../../Routes/style';
 import SuccessfullyRegistered from '../PopUpScreens/SuccessfullyRegistered';
-import * as yup from 'yup'
-import { Formik } from 'formik'
+import * as yup from 'yup';
+import { Formik } from 'formik';
 import MenuFieldState from '../../Screens/Menuinput/State/index';
 import axios from 'axios';
 import { API } from '../../Routes/Urls';
@@ -198,7 +198,7 @@ const Signup = (props, navigation) => {
         setIsLoading(false);
       })
     setIsLoading(false);
-    // AsyncStorage.removeItem('EnterEmailstore');
+     
 
   };
 

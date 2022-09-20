@@ -27,29 +27,24 @@ import { DrawerActions } from '@react-navigation/native';
 import { Divider } from 'react-native-elements';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
-import { createThumbnail } from "react-native-create-thumbnail";
+import * as yup from 'yup';
+import { Formik } from 'formik';
 import Headers from '../../Routes/Headers';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
 const Blog = (props) => {
 
-  const [UserEmail, setUserEmail] = useState("");
+  // const [UserEmail, setUserEmail] = useState("");
   const [Blogvideolist, setBlogvideolist] = useState([]);
   const [Blogcategorylist, setBlogcategorylist] = useState([]);
-  // const[bearertoken,setBearertoken]=useState('');
+
   const [isLoading, setIsLoading] = useState(false);
   const [NewsletterPopup, setNewsletterPopup] = useState(false);
 
-  // const openDrawer = () =>
-  //   props.navigation.dispatch(DrawerActions.openDrawer());
 
-  // const buttonClickedHandler = () => {
-  //   props.navigation.goBack();
-
-  // };
   const gotoBlogDetail = (item) => {
     props.navigation.navigate('BlogDetail', {
       blogdetail_id: item
@@ -60,72 +55,58 @@ const Blog = (props) => {
       ITEMS: item
     });
   };
-  // const gotoCartAdded = () => {
-  //   props.navigation.navigate("CartAdded")
-  // }
-  // const gotoNotification = () => {
-  //   props.navigation.navigate('Notifications');
-  // };
+
 
   useEffect(() => {
     GetCategoryBlogApi();
-    // getusertoken();
+
   }, [props]);
 
-  // const getusertoken = async () => {
-  //   const usertoken = await AsyncStorage.getItem("authToken");
-  //   console.log("check_roken in comment button:::>>>>>..", usertoken);
-  //   setBearertoken(usertoken);
-  // }
-  // const Checkedtoken = () => {
-
-  //   bearertoken == "" ?
-  //     props.navigation.navigate('LoginMain', {
-  //       screen: 'LoginSignUp',
-  //     })
-  //     :
-  // null
 
 
-  // };
-
-  const GetNewsletterApi = async () => {
-
-    const EnterEmail = UserEmail;
-    console.log("......userenteremail::", EnterEmail);
+  const GetNewsletterApi = async (values) => {
+    const usertkn = await AsyncStorage.getItem("authToken");
+    // const EnterEmail = UserEmail;
+    const data = {
+      email: values.Checkemail,
+    }
+    // console.log("......userenteremail::", EnterEmail);
     setIsLoading(true);
     try {
 
-      const response = await axios.post(`${API.NEWS_LETTER_SUBSCRIPTION}`, { "email": EnterEmail });
-      console.log(":::::::::Traing_Workout_Response>>>", response.data);
-      console.log("Traing_Workout_data::::::", response.data.status);
+      const response = await axios.post(`${API.NEWS_LETTER_SUBSCRIPTION}`, data, { headers: { "Authorization": ` ${usertkn}` } });
+      // console.log(":::::::::Traing_Workout_Response>>>", response.data);
+      // console.log("Traing_Workout_data::::::", response.data.status);
       if (response.data.status == 1) {
         props.navigation.goBack()
         setIsLoading(false);
+      } else if (response.data.status == 0) {
+        Alert.alert("Not access before Login this, first go and login your id")
       }
 
     }
     catch (error) {
-      console.log("......error.........", error.response.data.message);
+      // console.log("......error.........", error.response.data.message);
       setIsLoading(false);
 
     }
   };
 
   const GetCategoryBlogApi = async () => {
+    const usertkn = await AsyncStorage.getItem("authToken");
     setIsLoading(true);
     try {
 
-      const response = await axios.get(`${API.BLOG_MAIN_SCREEN}`);
-      console.log(":::::::::Traing_Workout_Response>>>", response.data);
-      console.log("Traing_Workout_data::::::", response.data.status);
+      const response = await axios.get(`${API.BLOG_MAIN_SCREEN}`, { headers: { "Authorization": ` ${usertkn}` } });
+      // console.log(":::::::::Traing_Workout_Response>>>", response.data);
+      // console.log("Traing_Workout_data::::::", response.data.status);
       setBlogvideolist(response.data.blog)
       setBlogcategorylist(response.data.blogcategory)
       setIsLoading(false);
 
     }
     catch (error) {
-      console.log("......error.........", error.response.data.message);
+      // console.log("......error.........", error.response.data.message);
       setIsLoading(false);
 
     }
@@ -173,7 +154,7 @@ const Blog = (props) => {
               }}>
               <TouchableOpacity
                 onPress={() => {
-                  setNewsletterPopup(!NewsletterPopup);
+                  setNewsletterPopup(true);
                 }}>
                 <View
                   style={{
@@ -278,35 +259,35 @@ const Blog = (props) => {
               showsHorizontalScrollIndicator={false}
               style={{ margin: 10 }}
               data={Blogvideolist}
-              renderItem={({ item }) => (          
-                <TouchableOpacity onPress={() => { gotoBlogDetail(item) }} 
-                style={{
-                  backgroundColor: 'white',
-                  height: 200,
-                  width: WIDTH * 0.45,
-                  marginTop: 10,
-                  marginHorizontal: 6,
-                  borderRadius: 20,
-                  justifyContent: "center",
-                }}>
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={() => { gotoBlogDetail(item) }}
+                  style={{
+                    backgroundColor: 'white',
+                    height: 200,
+                    width: WIDTH * 0.45,
+                    marginTop: 10,
+                    marginHorizontal: 6,
+                    borderRadius: 20,
+                    justifyContent: "center",
+                  }}>
                   <View style={{
-                      height: 100,
-                      borderRadius: 20,
-                      width: WIDTH * 0.45,
-                      alignItems: "center",
-                      justifyContent: 'space-around',
-                    }}>
-                      <Image
-                        resizeMode='contain'
-                        source={{ uri: item.blog_image }}
-                        style={{ justifyContent: 'center', borderTopLeftRadius: 20, borderTopRightRadius: 20, alignItems: 'center', backgroundColor: 'white', width: '100%', height: '100%', }} />
-                    </View>
-                  <View 
+                    height: 100,
+                    borderRadius: 20,
+                    width: WIDTH * 0.45,
+                    alignItems: "center",
+                    justifyContent: 'space-around',
+                  }}>
+                    <Image
+                      resizeMode='contain'
+                      source={{ uri: item.blog_image }}
+                      style={{ justifyContent: 'center', borderTopLeftRadius: 20, borderTopRightRadius: 20, alignItems: 'center', backgroundColor: 'white', width: '100%', height: '100%', }} />
+                  </View>
+                  <View
                     style={{ height: 100, backgroundColor: '#fceeb5', borderBottomLeftRadius: 16, borderBottomRightRadius: 16, width: WIDTH * 0.45, justifyContent: "flex-start", alignItems: "flex-start", }}>
 
                     <Text style={{ marginLeft: 10, marginTop: 5, textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "bold" }}>{item.youtube_title.slice(0, 20) + '...'}</Text>
 
-                    <View style={{ height: 65, alignItems: "center", marginTop: 2, justifyContent: "center", width: WIDTH * 0.45, marginTop: 2 }}>
+                    <View style={{ height: 65, alignItems: "flex-start", marginTop: 2, justifyContent: "flex-start", width: WIDTH * 0.45, marginTop: 2 }}>
                       <Text
                         style={{ marginHorizontal: 10, textAlign: 'left', fontSize: 7, color: '#000000', justifyContent: "center", alignItems: "center" }}>{item.youtube_description.slice(0, 308) + '...'}</Text>
                     </View>
@@ -339,8 +320,59 @@ const Blog = (props) => {
                   onPress={() => {
                     gotoCategory(item);
                   }}>
-                  <BackgroundImage
-                    resizeMode='stretch'
+                  <View
+                    style={{
+                      marginTop: 10,
+                      backgroundColor: 'white',
+                      height: 180,
+                      width: WIDTH * 0.45,
+                      borderRadius: 15,
+                      marginBottom: 20,
+                      marginHorizontal: 6,
+                      justifyContent: "center",
+                      alignItems: 'center',
+                    }}>
+
+                    <View
+                      style={{
+                        width: WIDTH * 0.45, height: 180, borderRadius: 15,
+                        justifyContent: "flex-start", alignItems: "flex-start"
+                      }}>
+                      <Image
+                        source={{ uri: `${item?.image}` }}
+                        resizeMode="stretch"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          borderRadius: 15,
+                          alignSelf: 'center',
+                        }}
+                      />
+                      <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 15 }}>
+                        <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name}</Text>
+
+                      </View>
+
+                    </View>
+                    <View style={{
+                      justifyContent: "center",
+                      alignItems: 'center', position: "absolute", width: 40, height: 30, bottom: 0, right: 0
+                    }}>
+                      <Image resizeMode='contain'
+                        source={require('../assets/arrowWhiteBack.png')}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          alignSelf: 'center',
+                          borderBottomRightRadius: 15,
+
+                        }}
+                      />
+                    </View>
+
+                  </View>
+                  {/* <BackgroundImage
+                    resizeMode=''
                     source={{ uri: `${item.image}` }}
                     style={{
                       marginBottom: 6,
@@ -391,7 +423,7 @@ const Blog = (props) => {
                         />
                       </View>
                     </View>
-                  </BackgroundImage>
+                  </BackgroundImage> */}
                 </TouchableOpacity>
               )}
             />
@@ -429,70 +461,111 @@ const Blog = (props) => {
                       shadowRadius: 4,
                       elevation: 6,
                     }}>
+                    <Formik
+                      initialValues={{
+                        Checkemail: '',
+                      }}
+                      onSubmit={values => GetNewsletterApi(values)}
 
-                    <View style={{
-                      backgroundColor: 'white',
-                      // height: 350,
-                      //marginHorizontal: 10,
-                      // marginTop: 20,
-                      width: "100%",
-                      alignItems: 'center',
-                      flexDirection: 'column',
-                      // padding: 15,
-                      marginHorizontal: 15,
-                      borderRadius: 20,
-                      marginBottom: 20,
-                      alignItems: 'center',
-                      flexDirection: 'column'
-                    }}>
+                      validationSchema={yup.object().shape({
+                        Checkemail: yup
+                          .string()
+                          .required('The email field is required.*'),
+                      })}
+                    >
+                      {({ values, handleChange, errors, setFieldTouched, touched, isValid, handleSubmit }) => (
+                        <View style={{
+                          backgroundColor: 'white',
+                          height: 340,
+                          //marginHorizontal: 10,
+                          // marginTop: 20,
+                          width: "100%",
+                          alignItems: 'center',
+                          flexDirection: 'column',
+                          // padding: 15,
+                          marginHorizontal: 15,
+                          borderRadius: 20,
+                          marginBottom: 20,
+                          alignItems: 'center',
+                          flexDirection: 'column'
+                        }}>
 
 
-                      <View style={{
-                        height: 150,
-                        width: "100%",
-                      }}>
-                        <Image
-                          source={require('../assets/newslogo.png')}
-                          style={{ width: "100%", height: 190, borderTopLeftRadius: 20, borderTopRightRadius: 20, justifyContent: "center", alignSelf: "center" }} />
+                          <View style={{
+                            height: 150,
+                            width: "100%",
+                          }}>
+                            <Image
+                              source={require('../assets/newslogo.png')}
+                              style={{ width: "100%", height: 190, borderTopLeftRadius: 20, borderTopRightRadius: 20, justifyContent: "center", alignSelf: "center" }} />
 
-                        <View style={{ position: "absolute", marginLeft: 110, justifyContent: "center", alignItems: "center" }}>
-                          <Text style={{ marginTop: 15, textAlign: 'center', fontSize: 15, color: 'white', fontWeight: "bold" }}>Subscribe News Letter</Text>
-                        </View>
-
-                      </View>
-
-                      <View style={{
-                        backgroundColor: "#F3FFFF",
-                        // marginHorizontal: 20,
-                        shadowColor: '#11032586',
-                        borderRadius: 30,
-                        marginTop: 65,
-                        borderColor: "#41BDB9",
-                        borderWidth: 0.5,
-                        height: 45,
-                        width: "85%",
-                        alignItems: 'flex-start', justifyContent: 'flex-start',
-                      }}>
-                        <TextInput
-                          placeholder="Please enter your email ID"
-                          value={UserEmail}
-                          onChangeText={(text) => setUserEmail(text)}
-                          fontWeight='normal'
-                          placeholderTextColor='#41BDB9'
-                          style={{ width: '80%', paddingLeft: 14, color: '#41BDB9' }} />
-                      </View>
-
-                      <View style={{ marginLeft: 30, marginBottom: 15, flexDirection: 'row', height: 48, marginHorizontal: 20, marginTop: 30, justifyContent: "center", alignItems: 'center', }}>
-                        <TouchableOpacity onPress={() => { GetNewsletterApi() }}>
-                          <View style={{ alignItems: 'center', justifyContent: 'center', width: 150, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
-
-                            <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Subscribe</Text>
+                            <View style={{ position: "absolute", marginLeft: 110, justifyContent: "center", alignItems: "center" }}>
+                              <Text style={{ marginTop: 15, textAlign: 'center', fontSize: 15, color: 'white', fontWeight: "bold" }}>Subscribe News Letter</Text>
+                            </View>
 
                           </View>
-                        </TouchableOpacity>
-                      </View>
 
-                    </View>
+
+                          <View style={{
+                            // backgroundColor: "#F3FFFF",
+
+                            // shadowColor: '#11032586',
+                            // borderRadius: 30,
+                            marginTop: 65,
+                            height: 55,
+                            width: "99%",
+
+                          }}>
+                            <TextInput
+                              placeholder="Please enter your email ID"
+                              value={values.Checkemail}
+                              // onChangeText={(text) => setUserEmail(text)}
+                              onChangeText={handleChange('Checkemail')}
+                              onBlur={() => setFieldTouched('Checkemail')}
+                              fontWeight='normal'
+                              placeholderTextColor='#41BDB9'
+                              style={{
+                                backgroundColor: "#F3FFFF",
+                                marginHorizontal: 20,
+                                shadowColor: '#11032586',
+                                borderRadius: 30,
+                                // marginTop: 10,
+                                borderColor: "#41BDB9",
+                                borderWidth: 0.5,
+                                height: 45,
+                                width: "90%",
+                                justifyContent: 'center', alignItems: 'center',
+                                paddingLeft: 14, color: '#41BDB9'
+                              }} />
+
+                            {
+                              touched.Checkemail && errors.Checkemail &&
+                              <Text style={{ fontSize: 12, color: '#FF0D10', paddingLeft: 35, marginTop: 6 }}>{errors.Checkemail}</Text>
+                            }
+                          </View>
+
+
+                          <View style={{ marginLeft: 30, marginBottom: 15, flexDirection: 'row', height: 48, marginHorizontal: 20, marginTop: 30, justifyContent: "center", alignItems: 'center', }}>
+                            <TouchableOpacity disabled={!isValid}
+                              onPress={() => { handleSubmit(values) }}>
+                              <View style={{ alignItems: 'center', justifyContent: 'center', width: 150, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
+
+                                <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Subscribe</Text>
+
+                              </View>
+                            </TouchableOpacity>
+                          </View>
+
+                        </View>
+                      )}
+                    </Formik>
+
+
+
+
+
+
+
 
                   </View>
                 </View>

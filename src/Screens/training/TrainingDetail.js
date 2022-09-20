@@ -21,7 +21,6 @@ var HEIGHT = Dimensions.get('window').height;
 
 const DATA = ['first row', 'second row', 'third row', 'fourth row'];
 
- 
 const TrainingDetail = (props) => {
 
     // const gotoCartAdded = () => {
@@ -35,28 +34,29 @@ const TrainingDetail = (props) => {
     const gotoTrainingpersondetails = () => {
         props.navigation.navigate("TrainingPersonaDetail")
     };
+
     const MycustomonShare = async () => {
         const shareOptions = {
-          title: 'App link',
-          icon: 'data:<data_type>/<file_extension>;base64,<base64_data>',
-          // type: 'data:image/png;base64,<imageInBase64>',
-          message: "'Please install this app and stay safe!",
-          url:'https://play.google.com/store/apps/details?id=nic.goi.aarogyasetu&hl=en',
+            title: 'App link',
+            icon: 'data:<data_type>/<file_extension>;base64,<base64_data>',
+            // type: 'data:image/png;base64,<imageInBase64>',
+            message: "'Please install this app and stay safe!",
+            url: 'https://play.google.com/store/apps/details?id=nic.goi.aarogyasetu&hl=en',
         }
         try {
-          const shareResponse = await Share.open(shareOptions);
-          console.log('====================================');
-          console.log(JSON.stringify(shareResponse));
-          console.log('====================================');
+            const shareResponse = await Share.open(shareOptions);
+            console.log('====================================');
+            console.log(JSON.stringify(shareResponse));
+            console.log('====================================');
         }
         catch (error) {
-          console.log('ERROR=>', error);
+            console.log('ERROR=>', error);
         }
-      };
+    };
     useEffect(() => {
         getusertoken();
         workoutCategoryAPI();
-    }, [props]);
+    }, []);
 
     const getusertoken = async () => {
         const usertoken = await AsyncStorage.getItem("authToken");
@@ -74,10 +74,11 @@ const TrainingDetail = (props) => {
 
     };
     const workoutCategoryAPI = async () => {
+        const usertkn = await AsyncStorage.getItem("authToken");
         setIsLoading(true);
         try {
 
-            const response = await axios.get(`${API.TRAINING_WORKOUT_CATEGORY}`);
+            const response = await axios.get(`${API.TRAINING_WORKOUT_CATEGORY}`, { headers: { "Authorization": ` ${usertkn}` } });
             console.log(":::::::::Traing_Workout_Response>>>::", response.data);
             console.log("Traing_Workout_data:::>:::", response.data.data);
             setTrainingWorkCatgry(response.data.data)
@@ -195,7 +196,7 @@ const TrainingDetail = (props) => {
                                         <View style={{ marginHorizontal: 20, flexDirection: 'row', height: 30, justifyContent: 'center' }}>
                                             <TouchableOpacity onPress={() => { gotoTrainingpersondetails() }}>
                                                 <View style={{ borderWidth: 1, borderColor: '#ffcc00', justifyContent: 'center', width: 120, flex: 1, backgroundColor: 'white', borderRadius: 35 }}>
-                                                    <Text style={{ textAlign: 'center', fontSize: 9, color: '#ffcc00', }}>View & Edit Details</Text>
+                                                    <Text style={{ textAlign: 'center', fontSize: 9, color: '#ffcc00', }}>Save & Edit Details</Text>
                                                 </View>
                                             </TouchableOpacity>
 
@@ -220,7 +221,7 @@ const TrainingDetail = (props) => {
                                                     <Text style={{ textAlign: 'center', fontSize: 8, color: '#ffcc00', }}>Save Detail</Text>
                                                 </View>
                                             </TouchableOpacity>
-                                            <TouchableOpacity onPress={()=>{MycustomonShare()}}>
+                                            <TouchableOpacity onPress={() => { MycustomonShare() }}>
                                                 <View style={{ marginLeft: 10, borderWidth: 1, borderColor: '#ffcc00', justifyContent: 'center', width: 90, flex: 1, backgroundColor: 'white', borderRadius: 35 }}>
                                                     <Text style={{ textAlign: 'center', fontSize: 8, color: '#ffcc00', }}>Invite Friends</Text>
                                                 </View>
@@ -264,8 +265,8 @@ const TrainingDetail = (props) => {
                                                 borderTopLeftRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
                                             }}>
                                             <Image
-                                                source={{ uri: item.image }}
-                                                resizeMode="contain"
+                                                source={{ uri: `${item.image}` }}
+                                                resizeMode="stretch"
                                                 style={{
                                                     width: "100%",
                                                     height: "100%",
@@ -281,7 +282,7 @@ const TrainingDetail = (props) => {
 
                                         </View>
                                         <View style={{ width: WIDTH * 0.45, height: 30, borderBottomRightRadius: 20, justifyContent: 'center', borderBottomLeftRadius: 20, backgroundColor: '#262626' }}>
-                                            <Text style={{ textAlign: 'center', fontSize: 9, color: '#c9bca0' }}>Subscription Plan1 @ 90 month </Text>
+                                            <Text style={{ textAlign: 'center', fontSize: 9, color: '#c9bca0' }}>Subscription {item?.plan_name} @ {item?.plan_price} {item.plan_type} </Text>
                                         </View>
 
                                     </View>

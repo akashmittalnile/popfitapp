@@ -2,17 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, Linking, ActivityIndicator } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
-import { BackgroundImage } from 'react-native-elements/dist/config';
-import { RadioButton } from 'react-native-paper';
-import DropDownPicker from 'react-native-dropdown-picker';
-import { Pages } from 'react-native-pages';
-import styles from '../../Routes/style'
-import { DrawerActions } from '@react-navigation/native';
-import Category from './Category';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -52,7 +45,7 @@ const SubCategoryBlog = (props) => {
   }, []);
 
   const getCategoryblog_listApi = async () => {
-
+    const Token = await AsyncStorage.getItem("authToken");
 
 
     console.log("subcategory listBLog.....infunction;;;;;", subcategoryITEM);
@@ -61,7 +54,7 @@ const SubCategoryBlog = (props) => {
     const subcategoryid = subcategoryITEM;
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.BLOG_LISTBLOG}`, { "category_id": categoryitem, "subcategory_id": subcategoryid });
+      const response = await axios.post(`${API.BLOG_LISTBLOG}`, { "category_id": categoryitem, "subcategory_id": subcategoryid },{ headers: { "Authorization": ` ${Token}` } });
       console.log(":::::::::listBLog_Response>>>", response.data.blog_list);
       console.log("status _listBLog:", response.data.status);
       if (response.data.status == 1) {

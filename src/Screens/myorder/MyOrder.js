@@ -19,8 +19,8 @@ const MyOrder = (props) => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [open, setOpen] = useState(false);
+    const [refresh, setrefresh] = useState(false);
     const [value, setValue] = useState('');
-
     const [Myorderslist, setMyorderslist] = useState("");
     const [ordereditem, setordereditem] = useState([]);
     const [ordermsg, setordermsg] = useState("");
@@ -34,39 +34,50 @@ const MyOrder = (props) => {
 
 
     useEffect(() => {
-        MyorderApi();
-        // getusertoken();
-    }, []);
+        MyorderApi(null);
+        // const unsubscribe = props.navigation.addListener('focus', () => {
+        //     MyorderApi(value);
+        //     return unsubscribe;
+    }, [props]);
 
 
     // console.log("select filter", value);
 
-    const MyorderApi = async () => {
+    const MyorderApi = async (values) => {
+        // console.log("select filter", values);
 
         const ordertoken = await AsyncStorage.getItem("authToken");
         console.log(".....MY_order token get_in MYORDER::", ordertoken);
         console.log('====================================');
-        console.log("Search VAlue in api", value);
+        console.log("Search VAlue in api", values);
         console.log('====================================');
 
         setIsLoading(true);
         try {
-            const response = await axios.post(`${API.MY_ORDER}`, { "search": value }, { headers: { "Authorization": ` ${ordertoken}` } });
+            const response = await axios.post(`${API.MY_ORDER}`, { "search": values }, { headers: { "Authorization": ` ${ordertoken}` } });
             // console.log("", response);
             // console.log("Response_MYorders  ::::", response.data.success);
             // console.log('====================================');
             // console.log("Response MY_Orders  ::::", response.data.order);
             // console.log('====================================');
             // if (response.data.status == 1) {
-            setordereditem(response.data.order);
-            setIsLoading(false);
+            console.log("................", response.data.order.length);
+            if (response.data.order.length == 0) {
+
+                setordereditem(null)
+                setIsLoading(false);
+            } else {
+                setordereditem(response.data.order);
+                setIsLoading(false);
+                // setrefresh(!refresh)
+            }
             //   console.log("User_token_not_received+yet!!!>>>", response.data.success.first_name);
 
 
         }
         catch (error) {
             // console.log("Countryerror:", error.response.data.message);
-            Alert.alert("something went wrong in sever", error.response.data.message);
+            Alert.alert("something went wrong !", error.response.data.message);
             setordermsg(response.data.message)
             setMsgAlert(true);
             setIsLoading(false);
@@ -96,29 +107,25 @@ const MyOrder = (props) => {
             width: WIDTH,
             height: HEIGHT, backgroundColor: 'white', flexGrow: 1
         }} >
+            <Headers
+                Backicon={{
+                    visible: true,
+                }}
+                BackicononClick={() => { props.navigation.goBack() }}
+
+                CartIcon={{
+                    visible: true,
+                }}
+                CartIconononClick={() => { props.navigation.navigate("CartAdded") }}
+
+                Bellicon={{
+                    visible: true,
+
+                }}
+                BelliconononClick={() => { props.navigation.navigate("Notifications") }}
+            />
             {!isLoading ?
-                (<View style={{
-                    marginBottom: 60, width: WIDTH,
-                    height: HEIGHT,
-                }}>
-                    <Headers
-                        Backicon={{
-                            visible: true,
-                        }}
-                        BackicononClick={() => { props.navigation.goBack() }}
-
-                        CartIcon={{
-                            visible: true,
-                        }}
-                        CartIconononClick={() => { props.navigation.navigate("CartAdded") }}
-
-                        Bellicon={{
-                            visible: true,
-
-                        }}
-                        BelliconononClick={() => { props.navigation.navigate("Notifications") }}
-                    />
-
+                (<>
                     {
                         msg ?
                             (<View style={{ justifyContent: "center", alignItems: "center" }}><Text style={{ color: "#ffcc00", fontSize: 17, }}>{ordermsg}</Text></View>)
@@ -129,10 +136,10 @@ const MyOrder = (props) => {
                         <DropDownPicker
                             items={[
                                 { label: 'Today', value: 'today' },
-                                { label: '30 Days', value: ' 30_days' },
-                                { label: '60 Days', value: ' 60_days' },
-                                { label: '90 Days', value: ' 90_days' },
-                                { label: '120 Days', value: ' 120_days' },
+                                { label: '30 Days', value: '30_days' },
+                                { label: '60 Days', value: '60_days' },
+                                { label: '90 Days', value: '90_days' },
+                                { label: '120 Days', value: '120_days' },
                                 { label: 'Last Year', value: 'last_year' },
                                 { label: 'Last 3 Year', value: 'last_3_year' },
                             ]}
@@ -159,10 +166,21 @@ const MyOrder = (props) => {
                             setOpen={setOpen}
                             value={value}
                             setValue={setValue}
+                            // setValue={(v) => {
+                            //     setValue(v)
+                            //     MyorderApi(v)
+                            // }
+                            // }
                             scrollViewProps={{
                                 decelerationRate: "medium", ScrollView: "#ffcc00"
                             }}
                             onChangeText={(item) => setValue(item)}
+
+                            onChangeValue={(value) => {
+                                MyorderApi(value)
+
+                            }}
+
                             defaultValue={null}
                             dropDownContainerStyle={{
                                 // backgroundColor:"red",
@@ -196,16 +214,15 @@ const MyOrder = (props) => {
 
                     </View>
                     <ScrollView>
-                        <View style={{ backgroundColor: "yellow" }}>
+                        <>
                             <FlatList
                                 vertical
                                 data={ordereditem}
-                                style={{ margin: 6 }}
+                                style={{ margin: 10 }}
                                 scrollEnabled={false}
                                 renderItem={({ item }) => {
                                     return <View style={{
                                         marginHorizontal: 6,
-                                        // marginTop: 10,
                                         height: 240,
                                         width: WIDTH * 0.97,
                                         borderRadius: 10,
@@ -214,21 +231,20 @@ const MyOrder = (props) => {
                                         justifyContent: "center",
                                         alignItems: "center",
                                         shadowColor: '#000000',
-
                                         shadowRadius: 6,
                                         shadowOpacity: 1.0,
                                         elevation: 6,
-
-                                        // paddingBottom: 20,
                                         flexDirection: "column",
+                                        marginBottom: 10
 
                                     }}>
 
-                                        <View style={{ height: 50, width: WIDTH * 0.9, flexDirection: 'row', padding: 10, justifyContent: "space-between", }}>
+                                        <View style={{ height: 50, width: WIDTH * 0.92, flexDirection: 'row', padding: 10, justifyContent: "space-between", }}>
 
                                             <View style={{ height: 30, marginTop: 1, justifyContent: 'flex-start', alignItems: "flex-start", marginLeft: 1, }}>
 
-                                                <Text style={{ fontSize: 14, color: 'black', }}>Order No. :{item.order_no}</Text>
+                                                <Text style={{ fontSize: 14, color: 'black', fontWeight: "bold" }}>Order No. : <Text style={{ fontSize: 14, color: '#FFCC00', }}> {item.order_number}</Text></Text>
+
 
                                             </View>
 
@@ -253,10 +269,10 @@ const MyOrder = (props) => {
                                         <View style={{
                                             height: 120,
                                             flexDirection: 'row',
-                                            width: WIDTH * 0.97,
+                                            width: WIDTH * 0.92,
                                             justifyContent: "flex-start",
                                             alignItems: "center",
-
+                                            // backgroundColor: 'red',
                                         }}>
 
                                             <View style={{
@@ -279,14 +295,14 @@ const MyOrder = (props) => {
                                             <View style={{
                                                 justifyContent: "flex-start", alignItems: "flex-start", width: WIDTH * 0.97, marginLeft: 15,
                                             }}>
-                                                <Text style={{ textAlign: 'left', fontSize: 15, color: '#000000', fontWeight: "bold" }}>{item.product_name.slice(0, 20) + '...'}</Text>
+                                                <Text style={{ textAlign: 'left', fontSize: 15, color: '#000000', fontWeight: "600" }}>{item.product_name.slice(0, 25) + '...'}</Text>
 
-                                                <View style={{ marginTop: 10, flexDirection: 'row', justifyContent: "flex-start", alignItems: "flex-start", height: 60, width: WIDTH * 0.97 }}>
+                                                <View style={{ marginTop: 6, flexDirection: 'row', justifyContent: "flex-start", alignItems: "flex-start", height: 60, width: WIDTH * 0.97 }}>
 
 
-                                                    <View style={{ marginTop: 1, flexDirection: 'row', marginLeft: 15 }}>
+                                                    <View style={{ flexDirection: 'row' }}>
                                                         <View style={{}}>
-                                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "bold" }}>Price : <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 12, color: '#000000', }}>$ {item.product_price}</Text></Text>
+                                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000' }}>Price : <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#000000' }}>$ {item.product_price}</Text></Text>
                                                         </View>
 
                                                     </View>
@@ -340,21 +356,28 @@ const MyOrder = (props) => {
                                         </View> */}
 
                                         <View style={{
-                                            marginTop: 25, flexDirection: 'row', justifyContent: "flex-start", flex: 1, margin: 10, backgroundColor: "yellow", height: 70
+                                            marginTop: 10, flexDirection: 'row', justifyContent: "flex-start", flex: 1, margin: 10, height: 70, width: WIDTH * 0.92
                                         }}>
                                             <View style={{ marginTop: 8, height: 20, justifyContent: "center", alignItems: "center", flex: 0.3, }}>
-                                                <Text style={{ textAlign: 'left', fontSize: 13, color: 'black', fontWeight: "bold" }}>Order Status :</Text>
+                                                <Text style={{ textAlign: 'left', fontSize: 14, color: 'black', fontWeight: "bold" }}>Order Status :</Text>
                                             </View>
-                                            <View style={{ marginLeft: 10, marginTop: 10, flexDirection: 'column', height: 55, flex: 0.6, }}>
-                                                <View style={{}}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 12, color: 'black', fontWeight: "bold" }}>Order Placed</Text>
-                                                </View>
-                                                <View style={{ marginTop: 10, }}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 9, color: 'black' }}>on Sat 23 Jan 2022, 09:23 AM</Text>
-                                                </View>
-                                            </View>
+
+                                            {item.order_status == "1" ?
+                                                (<View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}>
+                                                    <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>Order placed</Text>
+                                                    <View style={{ marginTop: 6, }}>
+                                                        <Text style={{ textAlign: 'left', fontSize: 9, color: 'black' }}>on {item.created_at}</Text>
+                                                    </View>
+                                                </View>)
+                                                :
+                                                (
+                                                    <View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}><Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>data not available</Text>
+                                                    </View>)
+
+                                            }
                                             <View style={{ marginTop: 10, justifyContent: 'center', alignItems: 'flex-end', marginRight: 10, flex: 0.1 }}>
-                                                <TouchableOpacity onPress={() => { gotoOrderDetail(item) }}>
+                                                <TouchableOpacity
+                                                    onPress={() => gotoOrderDetail(item)}>
                                                     <View style={{ backgroundColor: '#ffcc00', width: 35, height: 35, justifyContent: "center", alignItems: 'center', borderRadius: 35 / 2 }}>
                                                         <Image source={require('../assets/rightArrow.png')}
                                                         />
@@ -367,9 +390,9 @@ const MyOrder = (props) => {
                                 }
                                 }
                             />
-                        </View>
+                        </>
                     </ScrollView>
-                </View>)
+                </>)
                 :
                 (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                     <ActivityIndicator size="large" color="#ffcc00" />

@@ -72,23 +72,19 @@ return (
             <Text style={{ marginLeft: 25, marginTop: 20, textAlign: 'left', fontSize: 17, color: 'black', fontWeight: "bold" }}>{recipedetails?.title}</Text>
           </View>
           <View style={{
-            marginHorizontal: 20, height: 200, borderRadius: 20, marginVertical: 1, width: WIDTH * 0.9,
-          }}>
+            marginHorizontal: 20, height: 200, borderRadius: 20, marginVertical: 1, width: WIDTH * 0.9}}>
             <View style={{
               height: '100%',
               overflow: "hidden",
               width: WIDTH * 0.9,
               borderRadius: 20,
               justifyContent: 'center',
-              alignSelf: "auto"
-
-            }}>
+              alignSelf: "auto",
+              }}>
               <WebView
                 source={{ uri: recipedetails?.youtube_link }}
               />
-
-
-            </View>
+</View>
 
           </View>
 
@@ -99,11 +95,11 @@ return (
 
           <View style={{ backgroundColor: "white", borderRadius: 20, marginTop: 20, height: HEIGHT * 0.2, width: WIDTH * 0.9, marginHorizontal: 18, }}>
             <Image resizeMode='contain'
-              source={{ uri: recipedetails?.image }} style={{ width: '100%', height: '100%', justifyContent: "center", alignItems: 'center', borderRadius: 20, }}
+              source={{ uri: recipedetails?.image }} style={{ width: '100%', height: '100%', justifyContent: "center", alignItems: 'center', borderRadius: 20,backgroundColor: "lightgray" }}
             />
           </View>
 
-          <Text style={{ marginHorizontal: 20, marginTop: 20, textAlign: 'left', fontSize: 12, color: '#000', }}>{recipedetails?.image_description}</Text>
+          <Text style={{ marginHorizontal: 20, marginTop: 20, textAlign: 'left', fontSize: 12, color: '#000', }}>{recipedetails?.recipe_description}</Text>
         </View>
       </ScrollView>
       </View>)

@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ActivityIndicator } from 'react-native'
-import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
-import { BackgroundImage } from 'react-native-elements/dist/config';
-import { RadioButton } from 'react-native-paper';
-import DropDownPicker from 'react-native-dropdown-picker';
-import { Pages } from 'react-native-pages';
-import styles from '../../Routes/style'
-import { DrawerActions } from '@react-navigation/native';
 import Headers from '../../Routes/Headers';
 import Share from 'react-native-share';
 import { WebView } from 'react-native-webview';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -44,13 +38,15 @@ const OutDoorCycleDetails = (props) => {
       console.log('ERROR=>', error);
     }
   };
+
   console.log("TainingDATA_...............:", props?.route?.params?.TrainingDATA?.id);
   const TrainingDATA = props?.route?.params?.TrainingDATA?.id
 
   const TrainingDetailsAPI = async () => {
+    const usertkn = await AsyncStorage.getItem("authToken");
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.TRAINING_LIST_DETAILS}`, { "training_id": TrainingDATA });
+      const response = await axios.post(`${API.TRAINING_LIST_DETAILS}`, { "training_id": TrainingDATA }, { headers: { "Authorization": ` ${usertkn}` } });
       console.log(":::::::::TrainingDetails_ResponseMessage>>>", response.data.message);
       console.log("TrainingDetails__data::::::", response.data.training_detail);
       ;
@@ -127,7 +123,7 @@ const OutDoorCycleDetails = (props) => {
         </View>
       </View> */}
           <ScrollView>
-            <View style={{ paddingBottom: 65}}>
+            <View style={{ paddingBottom: 65 }}>
               <View style={{ height: 60 }}>
                 <Text style={{ marginLeft: 25, marginTop: 20, textAlign: 'left', fontSize: 17, color: 'black', fontWeight: "bold" }}>{trainingdetails?.youtube_title}</Text>
               </View>
@@ -149,7 +145,7 @@ const OutDoorCycleDetails = (props) => {
 
 
                 </View>
-               
+
               </View>
 
               <Text style={{ marginHorizontal: 20, marginTop: 10, textAlign: 'left', fontSize: 12, color: '#000', }}>{trainingdetails?.youtube_description}</Text>
@@ -207,7 +203,7 @@ const OutDoorCycleDetails = (props) => {
 
 
           </ScrollView>
-          <View
+          {/* <View
             style={{
               position: "absolute",
               bottom: 20,
@@ -262,7 +258,7 @@ const OutDoorCycleDetails = (props) => {
             </TouchableOpacity>
 
 
-          </View>
+          </View> */}
         </>)
         :
         (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>

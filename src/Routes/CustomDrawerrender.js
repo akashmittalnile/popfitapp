@@ -63,21 +63,22 @@ const CustomDrawerrender = (props) => {
 
   const GetProfile = async () => {
 
-    console.log(".....usertoken.....ProfileIN...", userprofile);
+    // console.log(".....usertoken.....ProfileIN...", userprofile);
     // setIsLoading(true)
     if (userprofile != null) {
       setIsLoading(true)
       try {
         const response = await axios.get(`${API.GET_PROFILE}`, { headers: { "Authorization": ` ${userprofile}` } });
         // console.log("", response);
-        console.log("ResponseProfile ::::", response.data.success);
-        if (response.data.success != null) {
-          setprofiledata(response.data.success)
-          console.log("User_token_not_received+yet!!!>>>", response.data.success.first_name);
-
-          
+        console.log("ResponseProfile ::::", response.data.status);
+        if (response.data.status == 1) {
+          setprofiledata(response.data.data)
+          // console.log("User_token_not_received+yet!!!>>>", response.data.data.first_name);
+          setIsLoading(false);
+        }else{
+          setIsLoading(false);
         }
-        setIsLoading(false)
+     
       }
       catch (error) {
         console.log("Countryerror:", error.response.data.message);
@@ -175,9 +176,10 @@ const CustomDrawerrender = (props) => {
                 </View>)
                 :
                 (<TouchableOpacity onPress={() => {
-                  props.navigation.navigate("MyProfile", {
-                    UserProfile: profiledata
-                  })
+                  props.navigation.navigate("MyProfile") ;
+                  // {
+                  //   UserProfile: profiledata
+                  // })
                 }}>
                   <View style={{ borderRadius: 20, backgroundColor: 'white', marginHorizontal: 20, height: 100, flexDirection: 'row', marginTop: 30 }}>
                     <View style={{ justifyContent: 'center', width: 100, height: 100 }} >

@@ -38,7 +38,9 @@ const Home = (props) => {
     })
   };
   const gotoShop = () => {
-    props.navigation.navigate("FitnessEquipment")
+    props.navigation.navigate("FitnessEquipment", {
+      FitnessstoreId: "1"
+    })
   };
   const gotoproductshop = (item) => {
     props.navigation.navigate('ProductDetail', {
@@ -52,8 +54,9 @@ const Home = (props) => {
     })
   };
   const gotoClothesType = () => {
-    console.log("clothes.....!!!!")
-    props.navigation.navigate("ClothesType")
+    props.navigation.navigate("ClothesType", {
+      Clothexploreid: "2"
+    })
   };
   const gotoRecipecategory = () => {
     props.navigation.navigate("Recipecategory")
@@ -91,10 +94,10 @@ const Home = (props) => {
     setIsLoading(true);
     try {
       const response = await axios.get(`${API.HOME_PRODUCT_list}`);
-      console.log(":::::::::Home_Store_Response>>>", response.data.fitnes_product);
+      // console.log(":::::::::Home_Store_Response>>>", response.data.fitnes_product);
 
       setbanneritem(response.data.banner)
-      console.log(".....banner....", response.data.banner)
+      // console.log(".....banner....", response.data.banner)
       setTrainingdata(response.data.trainingCategory_list)
       setImageBaseUrl(response.data.product_url)
       setStoreitem(response.data.fitnes_product)
@@ -108,7 +111,7 @@ const Home = (props) => {
       setIsLoading(false);
     }
     catch (error) {
-      console.log("......error.........", error.response.data.message);
+      // console.log("......error.........", error.response.data.message);
       setIsLoading(false);
 
     }
@@ -157,75 +160,10 @@ const Home = (props) => {
         BelliconononClick={() => { props.navigation.navigate('Notifications') }}
       />
       {!isLoading ?
-        (<View style={{ marginBottom: 60 }}>
-
-
-
-          {/* <View style={styles.navigationBar}>
-
-            <View style={styles.navigationBarLeftContainer}>
-              <TouchableOpacity onPress={() => { openDrawer() }}>
-                <Image source={require('../assets/hamburgerLeft.png')}
-                  style={{
-                    width: 25,
-                    height: 25, alignSelf: 'center'
-                  }} />
-
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.navigationBarCenterContainer}>
-              <TouchableOpacity>
-                <Image resizeMode="contain"
-                  source={require('../assets/layerCenter.png')}
-                  style={{
-                    width: 80,
-                    height: 50, alignSelf: 'center'
-                  }} />
-
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.navigationBarRight2Container}>
-              <TouchableOpacity onPress={() => { gotoCartAdded() }}>
-                <Image resizeMode="contain"
-                  source={require('../assets/cart.png')}
-                  style={{
-                    width: 25,
-                    height: 30, alignSelf: 'center', 
-                    marginRight: 10
-                  }} />
-
-              </TouchableOpacity>
-
-              <View
-                style={{
-                  backgroundColor: '#ec1f1f',
-                  width: 10,
-                  height: 10,
-                  borderRadius: 10 / 2,
-                  // marginLeft: 30,
-                  marginTop: -15,
-                  right: 15
-                }}>
-
-              </View>
-            </View>
-
-            <View style={styles.navigationBarRightContainer}>
-              <TouchableOpacity onPress={() => { gotoNotification() }}>
-                <Image source={require('../assets/bellRight.png')}
-                  style={{
-                    width: 20,
-                    height: 25, alignSelf: 'center', marginRight: 19
-                  }} />
-
-              </TouchableOpacity>
-            </View>
-
-            
-
-          </View> */}
+        (<View style={{
+          width: WIDTH,
+          height: HEIGHT, flex: 1
+        }}>
           <Divider color='#393939' width={1.2} />
           <ScrollView>
 
@@ -346,7 +284,7 @@ const Home = (props) => {
                         }}>
 
                         <Image
-                          source={{ uri: item.image }}
+                          source={{ uri: item?.image }}
                           resizeMode="contain"
                           style={{
                             width: "100%",
@@ -358,13 +296,13 @@ const Home = (props) => {
                         />
 
                         <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
-                          <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item.cat_name.slice(0, 13) + '...'}</Text>
+                          <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name?.slice(0, 13) + '...'}</Text>
 
                         </View>
                       </View>
 
                       <View style={{ width: WIDTH * 0.45, height: 30, borderBottomRightRadius: 20, justifyContent: 'center', borderBottomLeftRadius: 20, backgroundColor: '#262626' }}>
-                        <Text style={{ textAlign: 'center', fontSize: 9, color: '#c9bca0' }}>Subscription Plan1 @ 90 month </Text>
+                        <Text style={{ textAlign: 'center', fontSize: 9, color: '#c9bca0' }}>Subscription {item?.plan_name} @ {item?.plan_price} {item.plan_type}</Text>
                       </View>
 
 
@@ -443,7 +381,7 @@ const Home = (props) => {
                     }}>
                       <Image
                         resizeMode='contain'
-                        source={{ uri: item.image }}
+                        source={{ uri: item?.image }}
                         style={{ justifyContent: 'center', borderTopLeftRadius: 20, borderTopRightRadius: 20, alignItems: 'center', backgroundColor: 'white', width: '100%', height: '100%', }} />
                     </View>
                     {/* <View style={{
@@ -471,11 +409,11 @@ const Home = (props) => {
                         borderBottomLeftRadius: 16,
                         borderBottomRightRadius: 16, justifyContent: "flex-start", alignItems: "flex-start",
                       }}>
-                      <Text style={{ marginLeft: 10, marginTop: 5, textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "bold" }}>{item.image_title.slice(0, 20) + '...'}</Text>
+                      <Text style={{ marginLeft: 10, marginTop: 5, textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "bold" }}>{item?.image_title?.slice(0, 20) + '...'}</Text>
 
-                      <View style={{ height: 65, alignItems: "center", justifyContent: "center", width: WIDTH * 0.45, marginTop: 2 }}>
+                      <View style={{ height: 65, alignItems: "flex-start", justifyContent: "flex-start", width: WIDTH * 0.45, marginTop: 2 }}>
                         <Text
-                          style={{ marginHorizontal: 10, textAlign: 'left', fontSize: 7, color: '#000000', justifyContent: "center", alignItems: "center" }}>{item.image_description.slice(0, 308) + '...'}</Text>
+                          style={{ marginHorizontal: 10, textAlign: 'left', fontSize: 7, color: '#000000', justifyContent: "center", alignItems: "center" }}>{item?.image_description?.slice(0, 308) + '...'}</Text>
                       </View>
                     </View>
                   </TouchableOpacity>
@@ -507,8 +445,50 @@ const Home = (props) => {
                   <TouchableOpacity onPress={() => {
                     gotoRecipeDetails(item)
                   }}>
-                    <BackgroundImage
-                      source={{ uri: item.image }}
+                    <View
+                      style={{
+                        marginBottom: 6,
+                        marginTop: 6,
+                        marginHorizontal: 6,
+                        height: 180,
+                        width: WIDTH * 0.45,
+                        overflow: 'hidden',
+                        borderRadius: 25,
+                        backgroundColor: '#f7f7f7',
+                        backgroundColor: "lightgray",
+                        shadowColor: '#000000',
+                        shadowRadius: 5,
+                        shadowOpacity: 1.0,
+                        elevation: 6,
+                      }}>
+
+                      <View
+                        style={{
+                          width: WIDTH * 0.45, height: 180, borderTopRightRadius: 20,
+                          borderTopLeftRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
+                        }}>
+                        <Image
+                          source={{ uri: `${item?.image}` }}
+                          resizeMode="contain"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            borderTopLeftRadius: 20,
+                            borderTopRightRadius: 20,
+                            alignSelf: 'center',
+                          }}
+                        />
+                        <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
+                          <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name?.slice(0, 15) + '...'}</Text>
+
+                        </View>
+
+                      </View>
+
+
+                    </View>
+                    {/* <BackgroundImage
+                      source={{ uri:  `${item.image}` }}
                       style={{
                         // marginBottom: 10,
                         marginTop: 6,
@@ -526,7 +506,7 @@ const Home = (props) => {
 
                       </View>
 
-                    </BackgroundImage>
+                    </BackgroundImage> */}
                   </TouchableOpacity>
                 )}
               />
@@ -573,7 +553,7 @@ const Home = (props) => {
                       }}>
 
                         <Image
-                          source={{ uri: ImageBaseUrl + item.image[0] }}
+                          source={{ uri: ImageBaseUrl + item?.image[0] }}
                           resizeMode="contain"
                           style={{
                             width: "100%",
@@ -663,7 +643,7 @@ const Home = (props) => {
                         backgroundColor: 'white'
                       }}>
                         <Image
-                          source={{ uri: ImageBaseUrl + item.image[0] }}
+                          source={{ uri: ImageBaseUrl + item?.image[0] }}
                           resizeMode="contain"
                           style={{
                             width: "100%",

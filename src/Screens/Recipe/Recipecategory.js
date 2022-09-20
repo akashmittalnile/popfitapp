@@ -112,7 +112,49 @@ const Recipecategory = props => {
                   onPress={() => {
                     gotoRecipeDetails(item);
                   }}>
-                  <BackgroundImage
+                    <View
+                      style={{
+                        marginBottom: 6,
+                        marginTop: 6,
+                        marginHorizontal: 6,
+                        height: 180,
+                        width: WIDTH * 0.45,
+                        overflow: 'hidden',
+                        borderRadius: 25,
+                        backgroundColor: '#f7f7f7',
+                        backgroundColor: "lightgray",
+                        shadowColor: '#000000',
+                        shadowRadius: 5,
+                        shadowOpacity: 1.0,
+                        elevation: 6,
+                      }}>
+
+                      <View
+                        style={{
+                          width: WIDTH * 0.45, height: 180, borderTopRightRadius: 20,
+                          borderTopLeftRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
+                        }}>
+                        <Image
+                          source={{ uri: `${item?.recipe_image}` }}
+                          resizeMode="contain"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            borderTopLeftRadius: 20,
+                            borderTopRightRadius: 20,
+                            alignSelf: 'center',
+                          }}
+                        />
+                        <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
+                          <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name?.slice(0, 13) + '...'}</Text>
+
+                        </View>
+
+                      </View>
+
+
+                    </View>
+                  {/* <BackgroundImage
                     resizeMode='stretch'
                     source={{ uri: `${item.recipe_image}` }}
                     style={{
@@ -165,7 +207,7 @@ const Recipecategory = props => {
                         />
                       </View>
                     </View>
-                  </BackgroundImage>
+                  </BackgroundImage> */}
                 </TouchableOpacity>
               )}
             />
