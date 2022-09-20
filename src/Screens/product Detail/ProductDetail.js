@@ -54,7 +54,6 @@ const ProductDetail = (props) => {
       setCountnum(countnums - 1);
 
     }
-
   };
 
 

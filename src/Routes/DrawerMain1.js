@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Image, Text, StyleSheet, SafeAreaView } from 'react-native';
+import {View,Image,Text,StyleSheet,SafeAreaView} from 'react-native';
 import MyTabBar from './MyTabBar';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import CustomDrawerrender from './CustomDrawerrender';

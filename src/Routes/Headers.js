@@ -152,7 +152,6 @@ const Headers = ({
             </View>
 
         </View>
-
     );
 };
 const style = StyleSheet.create({

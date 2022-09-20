@@ -107,7 +107,7 @@ const SubCategoryBlog = (props) => {
             // numColumns={2}
             data={subcategorylistBlogitems}
             renderItem={({ item }) => (
-              <ScrollView  >
+              <ScrollView >
                 <View style={{ paddingBottom: 130 }}>
                   <View 
                   style={{ height: 60 }}>

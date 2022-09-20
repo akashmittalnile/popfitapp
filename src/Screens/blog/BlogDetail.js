@@ -25,6 +25,7 @@ import axios from 'axios';
 import Headers from '../../Routes/Headers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Share from 'react-native-share';
+import { WebView } from 'react-native-webview';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -109,7 +110,7 @@ const BlogDetail = (props) => {
   const MycustomonShare = async () => {
     const shareOptions = {
       title: 'Popfiit Blog Contents',
-      icon : 'data:<data_type>/<file_extension>;base64,<base64_data>',
+      icon: 'data:<data_type>/<file_extension>;base64,<base64_data>',
       // type: 'data:image/png;base64,<imageInBase64>',
       message: "Popfiit Blog Post !!!",
       url: 'https://www.youtube.com/embed/ml6cT4AZdqI',
@@ -184,10 +185,27 @@ const BlogDetail = (props) => {
       width: WIDTH,
       height: HEIGHT, flexGrow: 1,
     }} >
+      <Headers
+        Backicon={{
+          visible: true,
+        }}
+        BackicononClick={() => { props.navigation.goBack() }}
+
+        CartIcon={{
+          visible: true,
+        }}
+        CartIconononClick={() => { props.navigation.navigate("CartAdded") }}
+
+        Bellicon={{
+          visible: true,
+
+        }}
+        BelliconononClick={() => { props.navigation.navigate("Notifications") }}
+      />
       {!isLoading ?
         (<View style={{
           height: HEIGHT,
-          width: WIDTH * 0.99
+          width: WIDTH 
         }}>
           {/* <View style={styles.navigationBarColor}>
             <View style={styles.navigationBarLeftContainer}>
@@ -237,23 +255,6 @@ const BlogDetail = (props) => {
               </TouchableOpacity>
             </View>
           </View> */}
-          <Headers
-            Backicon={{
-              visible: true,
-            }}
-            BackicononClick={() => { props.navigation.goBack() }}
-
-            CartIcon={{
-              visible: true,
-            }}
-            CartIconononClick={() => { props.navigation.navigate("CartAdded") }}
-
-            Bellicon={{
-              visible: true,
-
-            }}
-            BelliconononClick={() => { props.navigation.navigate("Notifications") }}
-          />
           <ScrollView
           // style={{ marginTop: 10, marginBottom: 20 }}
           >
@@ -265,9 +266,24 @@ const BlogDetail = (props) => {
                   <Text style={{ marginLeft: 25, marginTop: 20, textAlign: 'left', fontSize: 14, color: 'black', fontWeight: "bold" }}>{subcategoryBlogdetailsitems?.youtube_title}</Text>
                 </View>
                 <View style={{
-                  marginHorizontal: 20, height: 170, borderRadius: 20, marginVertical: 10
+                  marginHorizontal: 20, height: 200, borderRadius: 20, marginVertical: 1, width: WIDTH * 0.9,
                 }}>
-                  <TouchableOpacity onPress={() => { Linking.openURL(subcategoryBlogdetailsitems?.youtube_link) }}
+                  <View style={{
+                    height: '100%',
+                    overflow: "hidden",
+                    width: WIDTH * 0.9,
+                    borderRadius: 20,
+                    justifyContent: 'center',
+                    alignSelf: "auto"
+
+                  }}>
+                    <WebView
+                      source={{ uri: subcategoryBlogdetailsitems?.youtube_link }}
+                    />
+
+
+                  </View>
+                  {/* <TouchableOpacity onPress={() => { Linking.openURL(subcategoryBlogdetailsitems?.youtube_link) }}
                     style={{ justifyContent: 'space-around', height: '100%', resizeMode: "center", alignItems: "center", width: WIDTH * 0.9 }}>
 
                     <Image
@@ -295,8 +311,9 @@ const BlogDetail = (props) => {
                       />
                     </View>
 
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
                 </View>
+
                 <Text style={{ marginHorizontal: 20, marginTop: 10, textAlign: 'left', fontSize: 11, color: '#000', }}>{subcategoryBlogdetailsitems?.youtube_description}</Text>
 
                 <Text style={{ marginLeft: 20, textAlign: 'left', marginTop: 20, fontSize: 14, color: '#000', fontWeight: "bold" }} >{subcategoryBlogdetailsitems?.image_title}</Text>

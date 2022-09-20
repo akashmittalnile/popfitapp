@@ -266,7 +266,6 @@ const ShippingDetail = (props) => {
             // setIsLoading(false)
         }
         catch (error) {
-
             // setIsLoading(false)
         }
 

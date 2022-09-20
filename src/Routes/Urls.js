@@ -42,5 +42,12 @@ export const API = {
     DELETE_ITEM: BaseUrl + '/api/delete_shipping_address',
     UPDATE_ITEM: BaseUrl + '/api/update_shipping_address',
     NOTIFICATION: BaseUrl + '/api/notifications',
-    NOTIFICATION_DELETE: BaseUrl + '/api/delete_notification'
+    NOTIFICATION_DELETE: BaseUrl + '/api/delete_notification',
+    // SEARCH_ORDER_FILTER: BaseUrl + '/api/order_filter',
+    TRAINING_LIST:BaseUrl + '/api/training_list',
+    TRAINING_LIST_DETAILS:BaseUrl + '/api/training_detail',
+    RECIPE_CATEGORY:BaseUrl +'/api/recipe_category',
+    RECIPE_LIST:BaseUrl + '/api/recipe_list',
+    RECIPE_DETAILS: BaseUrl + '/api/recipe_details',
+
 }

@@ -357,6 +357,7 @@ const Signup = (props, navigation) => {
               validationSchema={yup.object().shape({
                 first_Name: yup
                   .string()
+                  
                   .required('Enter First Name *'),
                 last_Name: yup
                   .string()
@@ -366,6 +367,7 @@ const Signup = (props, navigation) => {
 
                 type_your_username: yup
                   .string()
+                  .min(4,"Username  must be at least 4 characters")
                   .required('Set any UserName *'),
                 email: yup
                   .string()

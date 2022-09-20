@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions ,ActivityIndicator} from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';
@@ -15,6 +15,7 @@ var HEIGHT = Dimensions.get('window').height;
 
 const OutdoorTrainning = (props) => {
 
+  const [isLoading, setIsLoading] = useState(false);
   const [TrainingSUBCatgry, setTrainingSUBCatgry] = useState([]);
   const [subscriptiontoken, setsubscription] = useState("");
 
@@ -86,38 +87,46 @@ const OutdoorTrainning = (props) => {
   },
 
   ];
-  const buttonClickedHandler = () => {
-    props.navigation.goBack()
-  }
-  const gotoOutdoorCycle = () => {
-    props.navigation.navigate("Training")
+  // const buttonClickedHandler = () => {
+  //   props.navigation.goBack()
+  // }
+  const gotoOutdoorCycle = (item) => {
+    
+    props.navigation.navigate("Training", {
+      Tainingcat_id: categoryId ? categoryId : TrainingID,
+      Trainingsubcat_data: item
+    })
   }
   const gotoSubsciption = () => {
     props.navigation.navigate("SubscriptionPlan")
   }
-  const gotoNotification = () => {
-    props.navigation.navigate("Notifications")
-  }
+  // const gotoNotification = () => {
+  //   props.navigation.navigate("Notifications")
+  // }
 
   console.log("categoryId_item...............:", props?.route?.params?.categoryId?.id);
   const categoryId = props?.route?.params?.categoryId?.id
+  console.log("TrainingID_item...............:", props?.route?.params?.TrainingID?.id);
+  const TrainingID = props?.route?.params?.TrainingID?.id
+  // console.log('TrainingID====================================');
+  // console.log(TrainingID);
+  // console.log('TrainingID:::====================================');
+  // let Categoryandsubcatid=categoryId ? categoryId : TrainingID;
 
   const workoutSubCategoryAPI = async () => {
-
+  setIsLoading(true);
     try {
-
-      // setIsLoading(true);
-      const response = await axios.post(`${API.TRAINING_SUB_CATERORY}`, { "category_id": categoryId });
+       const response = await axios.post(`${API.TRAINING_SUB_CATERORY}`, { "category_id": categoryId ? categoryId : TrainingID });
       console.log(":::::::::workoutSubCategoryAPI_Response>>>", response.data.message);
       console.log("workoutSubCategoryAPI_data::::::", response.data.data);
       // alert("Get Sub-category data successfully");
       setTrainingSUBCatgry(response.data.data)
-      // setIsLoading(false);
+      setIsLoading(false);
 
     }
     catch (error) {
       console.log("......error.........", error.response.data.message);
-      // setIsLoading(false);
+      setIsLoading(false);
 
     }
   };
@@ -131,19 +140,21 @@ const OutdoorTrainning = (props) => {
         Backicon={{
           visible: true,
         }}
-        BackicononClick={() => {props.navigation.goBack()}}
+        BackicononClick={() => { props.navigation.goBack() }}
 
         CartIcon={{
           visible: true,
         }}
-        CartIconononClick={() => {props.navigation.navigate("CartAdded")}}
+        CartIconononClick={() => { props.navigation.navigate("CartAdded") }}
 
         Bellicon={{
           visible: true,
 
         }}
-        BelliconononClick={() => {props.navigation.navigate("Notifications")}}
+        BelliconononClick={() => { props.navigation.navigate("Notifications") }}
       />
+       {!isLoading ?
+    (  <>
       {/* <View style={styles.navigationBarColor}>
         <View style={styles.navigationBarLeftContainer}>
           <TouchableOpacity onPress={() => { buttonClickedHandler() }}>
@@ -198,36 +209,48 @@ const OutdoorTrainning = (props) => {
         }}>
           <FlatList
             numColumns={2}
+            style={{ margin: 6 }}
+            columnWrapperStyle={{
+              flex: 1,
+              // justifyContent: "center"
+            }}
             data={TrainingSUBCatgry}
             renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => { gotoOutdoorCycle() }}>
+              <TouchableOpacity onPress={() => { gotoOutdoorCycle(item) }}>
                 <View
                   style={{
-                    marginTop: 20,
+                    marginTop: 10,
                     backgroundColor: 'gray',
                     height: 160,
-                    width: 180,
-                    borderRadius: 20,
+                    width: WIDTH * 0.45,
+                    borderRadius: 25,
                     marginBottom: 20,
-                    marginLeft: 15,
+                    marginHorizontal: 6,
                     justifyContent: "flex-start",
-                    alignItems: "flex-start"
+                    alignItems: 'center',
                   }}>
-                  <BackgroundImage
-                    source={{}}
+                  <View
                     style={{
-                      marginLeft: 1,
-                      justifyContent: 'space-between',
-                      width: 170,
-                      height: 120,
-                      overflow: 'hidden',
-                      borderRadius: 15
-                    }} >
-                    <View style={{ width: 100, backgroundColor: '#c9bca0', height: 20, borderBottomRightRadius: 10, justifyContent: 'center' }}>
-                      <Text style={{ textAlign: 'center', fontSize: 9, color: 'black', }}>{item.cat_name}</Text>
+                      width: WIDTH * 0.45, height: 160, borderTopRightRadius: 20,
+                      borderTopLeftRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
+                    }}>
+                    <Image
+                      source={{ uri: item.image }}
+                      resizeMode="contain"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        borderTopLeftRadius: 20,
+                        borderTopRightRadius: 20,
+                        alignSelf: 'center',
+                      }}
+                    />
+                    <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
+                      <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.subcat_name.slice(0, 13) + '...'}</Text>
+
                     </View>
 
-                  </BackgroundImage>
+                  </View>
                 </View>
               </TouchableOpacity>
             )}
@@ -260,6 +283,11 @@ const OutdoorTrainning = (props) => {
 
         </View>
       </ScrollView>
+      </>)
+       :
+       (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+         <ActivityIndicator size="large" color="#ffcc00" />
+       </View>)}
     </SafeAreaView>
   );
 }

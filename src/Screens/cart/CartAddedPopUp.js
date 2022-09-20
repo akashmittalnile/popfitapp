@@ -1180,7 +1180,6 @@ const CartAdded = (props) => {
                                     </View>
 
                                 </View>
-
                                 <View style={{
                                     backgroundColor: '#fffcee',
                                     height: 40,

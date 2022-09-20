@@ -73,16 +73,22 @@ const Login = (props) => {
         password,
       });
       console.log("afryrtunu6:::", email, password);
-      console.log("..........................", response.data.success.token);
-      const userToken = response.data.success.token;
-      AsyncStorage.setItem('authToken', userToken);
-      const userProfiles = response.data.success.token;
-      await AsyncStorage.setItem("userView", userProfiles);
-      // console.log(authToken);
-      props.navigation.navigate("DrawerMain1");
+
+      if(response.data.status==1){
+        console.log("..........................", response.data.success.token);
+        const userToken = response.data.success.token;
+        AsyncStorage.setItem('authToken', userToken);
+        const userProfiles = response.data.success.token;
+        await AsyncStorage.setItem("userView", userProfiles);
+        props.navigation.navigate("DrawerMain1");
+      }
+      else{
+        Alert.alert("User email and password is not matched, Please Check Again! ",response.data.message);
+      }
     }
     catch (error) {
       console.log("error??????", error);
+      Alert.alert(error);
     }
   };
 
@@ -320,7 +326,7 @@ const Login = (props) => {
                   value={email}
                   //editable={!isLoading}
                   onChangeText={(text) => setEmail(text)}
-
+                  autoCorrect={false}
                   autoCapitalize='none'
                   fontWeight='normal'
                   placeholderTextColor='#D7D7D7'
@@ -343,7 +349,7 @@ const Login = (props) => {
                   value={password}
                   onChangeText={(text) => setpasssword(text)}
                   autoCapitalize='none'
-
+                  autoCorrect={false}
                   fontWeight='normal'
                   placeholderTextColor='#D7D7D7'
                   secureTextEntry={true}

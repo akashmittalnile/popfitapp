@@ -23,7 +23,6 @@ import OrderDetail from '../Screens/myorder/OrderDetail';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { BottomTabBar, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-
 import TrainingPersonaDetail from '../Screens/training/TrainingPersonDetail';
 import OutDoorCycleDetails from '../Screens/training/OutDoorCycleDetail';
 import SubCategoryBlog from '../Screens/category/CategoryListBlog';
@@ -92,6 +91,7 @@ const HomeBottomTab = (props) => {
             <Stack.Screen options={{ headerShown: false }} name="MyOrder" component={MyOrder} />
             <Stack.Screen options={{ headerShown: false }} name="OrderDetail" component={OrderDetail} />
 
+            
             <Stack.Screen options={{ headerShown: false }} name="BlogDetail" component={BlogDetail} />
             <Stack.Screen options={{ headerShown: false }} name="SubscriptionPlan" component={SubscriptionPlan} />
             <Stack.Screen options={{ headerShown: false }} name="MyProfile" component={MyProfile} />
@@ -140,6 +140,9 @@ const ShopBottomTab = (props) => {
             <Stack.Screen options={{ headerShown: false }} name="CardPayment" component={CardPayment} />
             <Stack.Screen options={{ headerShown: false }} name="Notifications" component={Notifications} />
             <Stack.Screen options={{ headerShown: false }} name="Address" component={Address} />
+ 
+            <Stack.Screen options={{ headerShown: false }} name="CardPayment" component={CardPayment} />
+            <Stack.Screen options={{ headerShown: false }} name="Notifications" component={Notifications} />
         </Stack.Navigator>
     )
 }

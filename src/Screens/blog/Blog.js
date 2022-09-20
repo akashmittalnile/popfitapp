@@ -278,8 +278,9 @@ const Blog = (props) => {
               showsHorizontalScrollIndicator={false}
               style={{ margin: 10 }}
               data={Blogvideolist}
-              renderItem={({ item }) => (
-                <View style={{
+              renderItem={({ item }) => (          
+                <TouchableOpacity onPress={() => { gotoBlogDetail(item) }} 
+                style={{
                   backgroundColor: 'white',
                   height: 200,
                   width: WIDTH * 0.45,
@@ -289,39 +290,18 @@ const Blog = (props) => {
                   justifyContent: "center",
                 }}>
                   <View style={{
-                    height: 100, borderRadius: 20,
-                    width: WIDTH * 0.45,
-                  }}>
-                    <TouchableOpacity onPress={() => {
-                      Linking.openURL(item.youtube_link);
+                      height: 100,
+                      borderRadius: 20,
+                      width: WIDTH * 0.45,
+                      alignItems: "center",
+                      justifyContent: 'space-around',
                     }}>
-
-                      <View style={{ justifyContent: 'space-around', height: 110, resizeMode: "center", alignItems: "center", width: WIDTH * 0.45 }}>
-                        <Image resizeMode='contain'
-                          source={{ uri: item.blog_image }}
-                          style={{ justifyContent: 'center', borderTopLeftRadius: 20, borderTopRightRadius: 20, alignItems: 'center', backgroundColor: 'white', width: '100%', height: '100%', }} />
-
-                        <View style={{ height: 40, backgroundColor: 'red', width: 30, height: 30, justifyContent: "center", alignItems: 'center', borderRadius: 30 / 2, position: 'relative', zIndex: 2, top: -50 }}>
-                          <Image
-                            source={require('../assets/play.png')}
-                          />
-                        </View>
-                      </View>
-
-                      {/* <ImageBackground  resizeMode='stretch'
-                    source={{ uri: item.blog_image }}
-                    style={{ borderTopRightRadius: 20, width: '100%', height: '100%', justifyContent: "center", alignItems: 'center', alignSelf: 'center', position: 'relative', resizeMode: "cover", zIndex: 2,  borderTopLeftRadius: 20,backgroundColor: 'blue' }}>
-                    <View style={{ height: 40, backgroundColor: 'red', width: 30, height: 30, justifyContent: "center", alignItems: 'center', borderRadius: 30 / 2, marginBottom: 1 }}>
-                      <Image  
-                      source={require('../assets/play.png')}
-                      />
+                      <Image
+                        resizeMode='contain'
+                        source={{ uri: item.blog_image }}
+                        style={{ justifyContent: 'center', borderTopLeftRadius: 20, borderTopRightRadius: 20, alignItems: 'center', backgroundColor: 'white', width: '100%', height: '100%', }} />
                     </View>
-                  </ImageBackground> */}
-
-                    </TouchableOpacity >
-
-                  </View>
-                  <TouchableOpacity onPress={() => { gotoBlogDetail(item) }}
+                  <View 
                     style={{ height: 100, backgroundColor: '#fceeb5', borderBottomLeftRadius: 16, borderBottomRightRadius: 16, width: WIDTH * 0.45, justifyContent: "flex-start", alignItems: "flex-start", }}>
 
                     <Text style={{ marginLeft: 10, marginTop: 5, textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "bold" }}>{item.youtube_title.slice(0, 20) + '...'}</Text>
@@ -330,8 +310,8 @@ const Blog = (props) => {
                       <Text
                         style={{ marginHorizontal: 10, textAlign: 'left', fontSize: 7, color: '#000000', justifyContent: "center", alignItems: "center" }}>{item.youtube_description.slice(0, 308) + '...'}</Text>
                     </View>
-                  </TouchableOpacity>
-                </View>
+                  </View>
+                </TouchableOpacity>
 
               )}
             />

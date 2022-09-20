@@ -17,22 +17,20 @@ const DATA = ['first row', 'second row', 'third row', 'first row', 'second row',
 const OrderDetail = (props) => {
 
     const [orderitemdata, setOrderitemdata] = useState([]);
-    const buttonClickedHandler = () => {
-        props.navigation.goBack()
-    };
-    const gotoNotification = () => {
-        props.navigation.navigate("Notifications")
-    }
+   
     useEffect(() => {
         MyOrderDetails();
 
-    }, [props]);
+    }, []);
+
+    console.log("MY order list...............:", props?.route?.params?.Gotoorderdetails?.id);
+    const Gotoorderdetails = props?.route?.params?.Gotoorderdetails?.id
 
     const MyOrderDetails = async () => {
         // console.log("MyOrderDetails id.....;;;;;", ITEM);
 
         try {
-            const response = await axios.post(`${API.ORDER_DETAIL}`, { "order_id": 1 });
+            const response = await axios.post(`${API.ORDER_DETAIL}`, { "order_id": Gotoorderdetails });
             console.log(":::::::::MyOrderDetailst_Response>>>", response.data.order);
             console.log("status _OrderDetails:", response.data.status);
 
@@ -72,65 +70,62 @@ const OrderDetail = (props) => {
             />
             <ScrollView>
                 <View style={{
-                    width: '92%',
-                    height: 290,
-                    marginLeft: 15,
-                    borderRadius: 15,
-                    backgroundColor: 'white',
-                    marginTop: 20,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    shadowColor: '#000000',
-                    shadowOffset: {
-                        width: 0,
-                        height: 3
-                    },
-                    shadowRadius: 5,
-                    shadowOpacity: 1.0,
-                    elevation: 6,
-                    zIndex: 999,
-                    labelStyle: {
-                        color: "#fff",
-                        lineHeight: 0
-                    }, flex: 1
+                  width: "95%",
+                  height: 200,
+                  marginTop: 10,
+                  // marginLeft: 15,
+                  marginHorizontal: 10,
+                  shadowColor: '#000',
+                  // shadowOffset: { width: 0, height: 4 },
+                  shadowRadius: 6,
+                  shadowOpacity: 0.2,
+                  elevation: 3,
+                  borderRadius: 15,
+                  backgroundColor: '#F7F7F7',
+                  marginTop: 20,
+                  borderRadius: 20,
+                  justifyContent: "center", alignItems: 'center',
                 }}>
 
                     <View style={{
                         height: 130, marginTop: 2, justifyContent: "center", alignItems: 'center', backgroundColor: 'white', width: '50%', marginTop: 10,
                     }}>
                         <View style={{
-                            marginTop: -30, width: 80, height: 80, borderRadius: 80 / 2, backgroundColor: '#fceeb5'
+                   width: "100%",
+                   height: 200, justifyContent: "center", alignItems: 'center',
+                   //  backgroundColor: '#F7F7F7',
+                   // backgroundColor: 'pink'
                         }}>
                             <Image
                                 resizeMode="contain"
                                 style={{
                                     width: 110, marginTop: 20, borderRadius: 100 / 2,
-                                    height: 100, alignSelf: 'center', backgroundColor: "black"
+                                    height: 100, alignSelf: 'center',  
                                 }}
-                                source={{ uri: orderitemdata.product_image }} />
+                                source={{ uri: orderitemdata?.product_image  }} />
 
                         </View>
                     </View>
 
-                    <Text style={{ marginTop: 20, textAlign: 'left', fontSize: 16, color: '#000000', justifyContent: "center", alignItems: 'center' }}>{orderitemdata.product_name}</Text>
+                    <Text style={{ marginTop: 20, textAlign: 'left', fontSize: 16, color: '#000000', justifyContent: "center", alignItems: 'center' }}>{orderitemdata?.product_name}</Text>
 
                     <View
                         style={{ marginTop: 10, textAlign: 'left', fontSize: 15, color: '#000000', justifyContent: "flex-start", flex: 1, width: 350, margin: 10, padding: 5 }}>
 
                         <View style={{ flexDirection: 'row', backgroundColor: "white", flex: 0.3 }}>
                             <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "bold" }}>Price  :</Text>
-                            <Text style={{ textAlign: 'center', fontSize: 14, color: '#000000', marginLeft: 20, }}>$  {orderitemdata.price}</Text>
+                            <Text style={{ textAlign: 'center', fontSize: 14, color: '#000000', marginLeft: 20, }}>$  {orderitemdata?.price}</Text>
 
                         </View>
                         <View style={{ flexDirection: 'row', backgroundColor: "white", flex: 0.3 }}>
                             <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "bold" }}>Tax     :</Text>
-                            <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#000000', }}>$  {orderitemdata.tax}</Text>
+                            <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#000000', }}>$  {orderitemdata?.tax}</Text>
 
                         </View>
                         <View style={{ flexDirection: 'row', backgroundColor: "white", flex: 0.3 }}>
 
                             <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "bold" }}>Total  :</Text>
-                            <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#000000', }}>$  {orderitemdata.total_price}</Text>
+                            <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#000000', }}>$  {orderitemdata?.total_price}</Text>
 
                         </View>
                     </View>
@@ -176,7 +171,7 @@ const OrderDetail = (props) => {
 
                     <View style={{ flex: 0.5, width: "95%", paddingLeft: 15, paddingRight: 50 }}>
 
-                        <Text style={{ textAlign: 'left', fontSize: 12, color: '#000000', }}>{orderitemdata.shipping_address}</Text>
+                        <Text style={{ textAlign: 'left', fontSize: 12, color: '#000000', }}>{orderitemdata?.shipping_address}</Text>
                     </View>
 
                 </View>
@@ -211,7 +206,7 @@ const OrderDetail = (props) => {
 
                             <Text style={{ fontSize: 14, color: 'black', fontWeight: "bold" }}>Order No. :</Text
                             >
-                            <Text style={{ fontSize: 14, color: 'black', }}> {orderitemdata.order_no}</Text>
+                            <Text style={{ fontSize: 14, color: 'black', }}> {orderitemdata?.order_no}</Text>
 
                         </View>
 

@@ -189,7 +189,7 @@ const MyProfile = (props, navigation) => {
         }} >
             {!isLoading ?
                 (
-                    <View>
+                    <View style={{paddingBottom:50}}>
                         <Headers
                             Backicon={{
                                 visible: true,
@@ -287,6 +287,7 @@ const MyProfile = (props, navigation) => {
 
                             </View>
                         </View>
+                        
                         <View style={{ marginTop: 30, height: 45, flexDirection: 'row' }}>
                             <View style={{ flex: 1 }}>
                                 <Text style={{ marginLeft: 20, fontSize: 14, color: 'white', }}>Recent Orders</Text>
