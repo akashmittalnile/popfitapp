@@ -11,12 +11,16 @@ import Headers from '../../Routes/Headers';
 import axios from 'axios';
 import { API } from '../../Routes/Urls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector, useDispatch } from 'react-redux';
+
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
-const DATA = ['first row', 'second row', 'third row', 'first row', 'second row', 'third row'];
-
 
 const Notifications = (props) => {
+
+    // const myNoticount = useSelector((state) => state.changeTheNumber);
+    const dispatch = useDispatch();
+
     const [isLoading, setIsLoading] = useState(false);
     const [noti, setNoti] = useState([]);
 
@@ -32,7 +36,8 @@ const Notifications = (props) => {
         try {
             const response = await axios.get(`${API.NOTIFICATION}`, { headers: { "Authorization": ` ${usertkn}` } });
             let data = response.data.data.length;
-            AsyncStorage.setItem("notification", JSON.stringify(data));
+            dispatch(data);
+            // AsyncStorage.setItem("notification", JSON.stringify(data));
             if (response?.data?.status == '1') {
                 setIsLoading(false)
                 setNoti(response.data.data);
@@ -103,8 +108,8 @@ const Notifications = (props) => {
     return (
         <SafeAreaView style={{
             flex: 1,
-            width: '100%',
-            height: '100%', flexGrow: 1, backgroundColor: "white"
+            width: WIDTH,
+            height: HEIGHT, flexGrow: 1, backgroundColor: "white"
         }} >
 
             <Headers

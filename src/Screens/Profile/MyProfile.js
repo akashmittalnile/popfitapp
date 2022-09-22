@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-// import { View, FlatList, Text, TouchableOpacity, Image, Alert, Pressable, SafeAreaView, ActivityIndicator, Dimensions } from 'react-native'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, ActivityIndicator } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity,StyleSheet, TextInput,Image, Alert, Pressable, SafeAreaView, ActivityIndicator, Dimensions } from 'react-native'
+// import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, ActivityIndicator } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';

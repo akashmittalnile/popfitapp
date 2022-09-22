@@ -3,7 +3,7 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, Image, SafeAreaView, } from 'react-native';
-
+import { useSelector, useDispatch } from 'react-redux';
 
 const Headers = ({
     Drawericon,
@@ -15,7 +15,10 @@ const Headers = ({
     CartIconononClick,
     BackicononClick
 }) => {
+
+    const myNoticount= useSelector((state)=>state.changeTheNumber) ;
     const [counter, setCounter] = useState('');
+
     useEffect(() => {
         Notifi()
         b()
@@ -135,15 +138,30 @@ const Headers = ({
                             </TouchableOpacity>
                             <View
                                 style={{
-                                    // backgroundColor: '#ec1f1f',
-                                    width: 20,
-                                    height: 20,
-                                    // borderRadius: 10 / 2,
-                                    // marginLeft: 30,
-                                    marginTop: -15,
-                                    right: 15
+                                    position:"absolute",
+                                    backgroundColor: '#ffcc00',
+                                    width: 15,
+                                    height: 15, 
+                                    borderRadius: 15 / 2,
+                                    marginLeft: 30,
+                                    top: -1,
+                                    right: 12, 
+                                    shadowColor: '#000000',
+                                    // shadowOffset: {
+                                    //   width: 0,
+                                    //   height: 3
+                                    // },
+                                    shadowRadius: 5,
+                                    shadowOpacity: 1.0,
+                                    elevation: 6,
+                                    zIndex: 999,
+                                    justifyContent:"center",
+                                    alignItems:"center"
                                 }}>
-                                <Text style={{ color: 'yellow', fontWeight: '500', fontSize: 16 }}>{counter}</Text>
+                                <Text style={{ color: 'white', fontWeight: '500', fontSize: 10,textAlign:"center",justifyContent:"center",
+                                    alignItems:"center" }}>2
+                                {/* {myNoticount} */}
+                                </Text>
                             </View>
                         </View>)
                         : null

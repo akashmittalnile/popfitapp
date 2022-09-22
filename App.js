@@ -14,6 +14,18 @@ import { NotificationManagerIOS } from './NotificationManagerIOS';
 import { Alert } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 //import ForegroundHandler from './src/Screens/ForegroundHandler';
+import { createStores, combineReducers } from "redux";
+import { Provider } from 'react-redux';
+import modifyCounterReducer from './src/Redux/reducers/modifyCounter';
+import store from "./src/store";
+
+
+// const rootReducer = combineReducers({
+//   modifyCount: modifyCounterReducer
+// });
+
+// const store = createStores(rootReducer);
+
 const App = (props) => {
   LogBox.ignoreAllLogs()
   // useEffect(() => {
@@ -99,8 +111,12 @@ const App = (props) => {
   }, [])
   return (
     <>
-      {/* <ForegroundHandler /> */}
-      <AppNavigation />
+      <Provider store={store}>
+        {/* <ForegroundHandler /> */}
+        <AppNavigation />
+
+      </Provider>
+
     </>
   )
 }
