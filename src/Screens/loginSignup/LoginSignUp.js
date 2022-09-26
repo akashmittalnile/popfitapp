@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, TouchableHighlight, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, ActivityIndicator } from 'react-native'
+import { View, TouchableHighlight, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, ActivityIndicator,SafeAreaView } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';
 import LinearGradient from 'react-native-linear-gradient';
@@ -28,6 +28,12 @@ const LoginSignUp = (props) => {
     props.navigation.navigate("MobileNo")
   }
   return (
+    <SafeAreaView style={{
+      flex: 1,
+      width: '100%',
+      height: '100%',
+      backgroundColor: 'black'
+    }} >
     <ScrollView style={{ backgroundColor: '#272727' }} >
       {!isLoading ?
         (
@@ -46,7 +52,7 @@ const LoginSignUp = (props) => {
               />
             </View>
 
-            <BackgroundImage source={require('../assets/roundedRectangle1.png')} style={{ marginTop: 150, marginHorizontal: 30, height: 190, overflow: 'hidden', borderRadius: 25 }}>
+            <BackgroundImage source={require('../assets/roundedRectangle1.png')} style={{ marginTop: 150, marginHorizontal: 30, height: 170, overflow: 'hidden', borderRadius: 20 }}>
 
               <View style={{
                 height: 200
@@ -55,14 +61,14 @@ const LoginSignUp = (props) => {
 
                   <TouchableOpacity onPress={() => { gotoLogin() }}>
 
-                    <View style={{ marginTop: 35, borderRadius: 25, width: 200, height: 50, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
-                      <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'white', }}>Login</Text>
+                    <View style={{ marginTop: 35, borderRadius: 25, width: 170, height: 40, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
+                      <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 16, color: 'white', }}>Login</Text>
                     </View>
                   </TouchableOpacity>
 
                   <TouchableOpacity onPress={() => { gotoSignup() }}>
-                    <View style={{ marginTop: 20, borderRadius: 25, width: 200, height: 50, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
-                      <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'white', }}>Signup</Text>
+                    <View style={{ marginTop: 20, borderRadius: 25, width: 170, height: 40, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
+                      <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 16, color: 'white', }}>Signup</Text>
                     </View>
                   </TouchableOpacity>
 
@@ -77,6 +83,7 @@ const LoginSignUp = (props) => {
           <ActivityIndicator size="large" color="#ffcc00" />
         </View>)}
     </ScrollView>
+    </SafeAreaView>
   )
 }
 

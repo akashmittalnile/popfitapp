@@ -339,9 +339,9 @@ const CardPayment = (props) => {
                 </View>
 
                 {/* bottom button */}
-                <View style={{ marginBottom: 20, flexDirection: 'row', height: 48, marginHorizontal: 20, marginTop: 30, justifyContent: "center", }}>
+                <View style={{ marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 30, justifyContent: "center", }}>
                     <TouchableOpacity onPress={() => { }}>
-                        <View style={{ justifyContent: 'center', width: 130, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
+                        <View style={{ justifyContent: 'center', width: 120, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
 
 
 
@@ -351,7 +351,7 @@ const CardPayment = (props) => {
                     </TouchableOpacity>
 
                     <TouchableOpacity onPress={() => { setOrderPlacedPopUp(!OrderPlacedPopUp) }}>
-                        <View style={{ justifyContent: 'center', width: 130, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35, marginLeft: 10 }}>
+                        <View style={{ justifyContent: 'center', width: 120, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50, marginLeft: 10 }}>
 
 
 

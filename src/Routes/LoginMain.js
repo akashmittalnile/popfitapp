@@ -14,6 +14,7 @@ import EmailVerification from '../Screens/loginSignup/Verifications/EmailVerific
 
 
 const LoginMain = (props) => {
+    console.log('Signed In');
 
     useEffect(() => {
     }, []);

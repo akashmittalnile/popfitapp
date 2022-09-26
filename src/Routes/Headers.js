@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, Image, SafeAreaView, } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
+import { incrementCounter } from '../Redux/actions/UpdateCounter';
 
 const Headers = ({
     Drawericon,
@@ -15,14 +16,41 @@ const Headers = ({
     CartIconononClick,
     BackicononClick
 }) => {
-
-    const myNoticount= useSelector((state)=>state.changeTheNumber) ;
+    // const dispatch = useDispatch();
+    const myNoticount = useSelector((state) => state.modifyCounterReducer);
     const [counter, setCounter] = useState('');
 
     useEffect(() => {
+
+        // GetShippingProducts()
         Notifi()
         b()
+
     }, [])
+    const GetShippingProducts = async () => {
+        const usertkn = await AsyncStorage.getItem("authToken");
+
+        // console.log('heloooooo')
+        setIsLoading(true)
+        try {
+            const response = await axios.get(`${API.NOTIFICATION}`, { headers: { "Authorization": ` ${usertkn}` } });
+            let data = response.data.data.length;
+            console.log('incrementCounter', data
+            );
+            dispatch(incrementCounter(parseInt(data)));
+            // AsyncStorage.setItem("notification", JSON.stringify(data));
+            if (response?.data?.status == '1') {
+                setIsLoading(false)
+                setNoti(response.data.data);
+            }
+        }
+        catch (error) {
+            setIsLoading(false)
+            //  console.log("ShippingProductserror:::", error);
+
+        }
+
+    };
     const a = () => {
         setTimeout(() => {
             Notifi()
@@ -38,8 +66,8 @@ const Headers = ({
     }
     const Notifi = async () => {
         let noti = AsyncStorage.getItem('notification');
-        var notify = JSON.parse(noti);
-        setCounter(notify);
+        // var notify = JSON.parse(noti);
+        // setCounter(notify);
         //console.log('notifica--------->', notify)
     }
     return (
@@ -66,7 +94,7 @@ const Headers = ({
                             <Image source={require('../Screens/assets/leftArrowWhite.png')}
                                 style={{
                                     width: 30,
-                                    height: 25, alignSelf: 'center'
+                                    height: 20, alignSelf: 'center'
                                 }} />
 
                         </TouchableOpacity>
@@ -103,21 +131,29 @@ const Headers = ({
                                         width: 25,
                                         height: 30, alignSelf: 'center', marginRight: 10
                                     }} />
+                                {/* <View
+                                    style={{
+                                        position: "absolute",
+                                        backgroundColor: '#ec1f1f',
+                                        width: 12,
+                                        height: 12,
+                                        borderRadius: 12,
+                                        // marginLeft: 30,
+                                        top: 2,
+                                        right: 6,
+                                        shadowColor: '#000000',
+                                        shadowRadius: 5,
+                                        shadowOpacity: 1.0,
+                                        elevation: 6,
+                                        zIndex: 2000,
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                    }}>
 
+                                </View> */}
                             </TouchableOpacity>
 
-                            <View
-                                style={{
-                                    backgroundColor: '#ec1f1f',
-                                    width: 10,
-                                    height: 10,
-                                    borderRadius: 10 / 2,
-                                    // marginLeft: 30,
-                                    marginTop: -15,
-                                    right: 15
-                                }}>
 
-                            </View>
                         </View>)
                         : null
                 }
@@ -135,34 +171,40 @@ const Headers = ({
                                         height: 25, alignSelf: 'center', marginRight: 19
                                     }} />
 
+                                {myNoticount >= '0' ?
+                                    <View
+                                        style={{
+                                            position: "absolute",
+                                            backgroundColor: '#ffcc00',
+                                            width: 15,
+                                            height: 15,
+                                            borderRadius: 15,
+                                            marginLeft: 30,
+                                            top: -1,
+                                            right: 12,
+                                            shadowColor: '#000000',
+
+                                            shadowRadius: 5,
+                                            shadowOpacity: 1.0,
+                                            elevation: 6,
+                                            zIndex: 2000,
+                                            justifyContent: "center",
+                                            alignItems: "center"
+                                        }}>
+                                        <Text style={{
+                                            color: 'white', fontSize: 10, fontWeight: 'bold', textAlign: "center", justifyContent: "center",
+                                            alignItems: "center"
+                                        }}>
+                                            {myNoticount}
+                                        </Text>
+                                    </View>
+                                    : null
+                                }
                             </TouchableOpacity>
-                            <View
-                                style={{
-                                    position:"absolute",
-                                    backgroundColor: '#ffcc00',
-                                    width: 15,
-                                    height: 15, 
-                                    borderRadius: 15 / 2,
-                                    marginLeft: 30,
-                                    top: -1,
-                                    right: 12, 
-                                    shadowColor: '#000000',
-                                    // shadowOffset: {
-                                    //   width: 0,
-                                    //   height: 3
-                                    // },
-                                    shadowRadius: 5,
-                                    shadowOpacity: 1.0,
-                                    elevation: 6,
-                                    zIndex: 999,
-                                    justifyContent:"center",
-                                    alignItems:"center"
-                                }}>
-                                <Text style={{ color: 'white', fontWeight: '500', fontSize: 10,textAlign:"center",justifyContent:"center",
-                                    alignItems:"center" }}>2
-                                {/* {myNoticount} */}
-                                </Text>
-                            </View>
+
+
+
+
                         </View>)
                         : null
                 }
@@ -194,6 +236,7 @@ const style = StyleSheet.create({
         // width: "10%",
         flexDirection: 'row',
         justifyContent: 'flex-start',
+        alignItems: 'center',
         marginLeft: 10,
         // backgroundColor: "yellow"
     },

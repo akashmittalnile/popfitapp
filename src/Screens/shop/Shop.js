@@ -188,16 +188,16 @@ const Shop = (props) => {
       {!isLoading ?
         (<ScrollView >
 
-          <View style={{ height: 60, flexDirection: 'row', flex: 1, justifyContent: "flex-start", alignItems: "flex-start", width: "100%" }}>
+          <View style={{ height: 50, flexDirection: 'row', flex: 1, justifyContent: "flex-start", alignItems: "flex-start", width: "100%" }}>
             <View style={{ justifyContent: "center", alignItems: "center", flex: 0.3, }}>
               <Text
                 style={{
-                  // marginLeft: 1,
+                  marginLeft: 10,
                   marginTop: 20,
                   textAlign: 'left',
                   fontSize: 18,
                   color: 'black',
-                  fontWeight: "bold"
+                  fontWeight: "500"
                 }}>
                 Best Seller
               </Text>
@@ -277,7 +277,7 @@ const Shop = (props) => {
 
           <FlatList
             vertical
-            style={{ margin: 10 }}
+            style={{ margin: 0,paddingBottom:10 }}
             numColumns={2}
             // columnWrapperStyle={{
             //   flex: 1,
@@ -290,15 +290,15 @@ const Shop = (props) => {
               <TouchableOpacity
                 onPress={() => { gotoShippingDetail(item) }}
                 style={{
-                  marginBottom: 6,
+                  marginBottom: 5,
                   backgroundColor: '#f7f7f7',
                   height: 200,
                   width: WIDTH * 0.45,
-                  marginTop: 10,
-                  borderRadius: 25,
+                  marginTop: 15,
+                  borderRadius: 20,
                   alignItems: 'center',
                   justifyContent: "center",
-                  marginHorizontal: 6,
+                  marginHorizontal: 10,
                   shadowColor: '#000000',
                   shadowOffset: {
                     width: 0,

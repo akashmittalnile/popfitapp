@@ -8,6 +8,7 @@ import LoginSignUp from '../Screens/loginSignup/LoginSignUp';
  
 const DrawerMain1 = (props) => {
   const Drawer = createDrawerNavigator();
+  console.log('Signed In Drawer');
      return(
       <Drawer.Navigator 
       initialRouteName="MyTabBar"

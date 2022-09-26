@@ -241,14 +241,14 @@ const Blog = (props) => {
             </View>
 
             {/* Trending New Blogs */}
-            <View style={{ marginTop: 30, height: 35, flexDirection: 'row', flex: 1 }}>
+            <View style={{ marginTop: 15, height: 30, flexDirection: 'row', flex: 1 }}>
               <View style={{ flex: 1 }}>
                 <Text
                   style={{
                     marginLeft: 20,
                     fontSize: 15,
                     color: 'white',
-                    fontWeight: "bold"
+                    fontWeight: "500"
                   }}>
                   Trending New Blogs
                 </Text>
@@ -257,7 +257,7 @@ const Blog = (props) => {
             <FlatList
               horizontal
               showsHorizontalScrollIndicator={false}
-              style={{ margin: 10 }}
+              // style={{ margin: 10 }}
               data={Blogvideolist}
               renderItem={({ item }) => (
                 <TouchableOpacity onPress={() => { gotoBlogDetail(item) }}
@@ -266,7 +266,7 @@ const Blog = (props) => {
                     height: 200,
                     width: WIDTH * 0.45,
                     marginTop: 10,
-                    marginHorizontal: 6,
+                    marginHorizontal: 10,
                     borderRadius: 20,
                     justifyContent: "center",
                   }}>
@@ -297,14 +297,14 @@ const Blog = (props) => {
               )}
             />
             {/* ///Category Blogs/ */}
-            <View style={{ marginTop: 15, height: 35, flexDirection: 'row' }}>
+            <View style={{ marginTop: 15, height: 30, flexDirection: 'row' }}>
               <View style={{ flex: 1 }}>
                 <Text
                   style={{
                     marginLeft: 20,
                     fontSize: 15,
                     color: 'white',
-                    fontWeight: "bold"
+                    fontWeight: "500"
                   }}>
                   Category Blogs
                 </Text>
@@ -314,7 +314,7 @@ const Blog = (props) => {
               numColumns={2}
               showsHorizontalScrollIndicator={true}
               data={Blogcategorylist}
-              style={{ margin: 10 }}
+              style={{ margin: 0 ,paddingBottom:20}}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() => {
@@ -327,8 +327,8 @@ const Blog = (props) => {
                       height: 180,
                       width: WIDTH * 0.45,
                       borderRadius: 15,
-                      marginBottom: 20,
-                      marginHorizontal: 6,
+                      marginBottom: 10,
+                      marginHorizontal: 10,
                       justifyContent: "center",
                       alignItems: 'center',
                     }}>

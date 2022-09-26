@@ -349,15 +349,113 @@ const ShippingDetail = (props) => {
                 BelliconononClick={() => { props.navigation.navigate("Notifications") }}
             />
             {!isLoading ?
-                (<ScrollView>
+                (<ScrollView style={{ paddingTop: 10 }}>
 
                     {/* product flatlist   */}
                     {productdata.length > 0 ?
                         productdata.map((item, index) => {
                             return (
                                 <View onPress={() => { gotoOrderDetail() }}>
-
                                     <View style={{
+                                        marginHorizontal: 10,
+                                        marginTop: 6,
+                                        height: 140,
+                                        width: WIDTH * 0.94,
+                                        borderRadius: 20,
+                                        marginBottom: 10,
+                                        backgroundColor: 'white',
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        shadowColor: '#000000',
+                                        // shadowOffset: {
+                                        //     width: 0,
+                                        //     height: 3
+                                        // },
+                                        shadowRadius: 6,
+                                        shadowOpacity: 1.0,
+                                        elevation: 6,
+                                        // zIndex: 999,
+
+                                        // flex: 1
+                                    }}>
+                                        <TouchableOpacity onPress={() => ProductRemovecart(item)}
+                                            style={{
+                                                position: "absolute",
+                                                backgroundColor: 'red',
+                                                width: 30, height: 30,
+                                                justifyContent: "center",
+                                                alignItems: 'center',
+                                                borderRadius: 20 / 2,
+                                                top: 10,
+                                                right: 10
+                                            }}>
+
+                                            <Image resizeMode='contain'
+                                                source={require('../assets/delete.png')}
+
+                                            />
+
+                                        </TouchableOpacity>
+
+                                        <View style={{
+                                            height: 140,
+                                            borderRadius: 20,
+                                            flexDirection: 'row',
+                                            width: WIDTH * 0.94,
+                                            justifyContent: "flex-start",
+                                            // backgroundColor: 'pink',
+                                            alignItems: "center",
+                                            paddingLeft: 20
+                                        }}>
+
+                                            <View style={{
+                                                width: 100, height: 100,
+                                                // backgroundColor: '#fceeb5', 
+                                                justifyContent: "center",
+                                                alignItems: "center",
+
+                                            }}>
+                                                <Image
+                                                    resizeMode="contain"
+                                                    style={{
+                                                        width: "100%",
+                                                        borderRadius: 20,
+                                                        height: "100%",
+                                                        alignSelf: 'center',
+
+                                                    }}
+                                                    source={{ uri: item?.product_image }}
+                                                />
+
+                                            </View>
+
+                                            <View style={{
+                                                justifyContent: "flex-start",
+                                                alignItems: "flex-start",
+                                                width: WIDTH * 0.4,
+                                                height: 100,
+                                                marginLeft: 13,
+                                                // backgroundColor: 'pink'
+                                            }}>
+                                                <Text style={{ textAlign: 'left', fontSize: 16, color: '#455A64', fontWeight: "500", }}>
+                                                    {item.product_name.slice(0, 20)}
+                                                </Text>
+                                                <View style={{ width: WIDTH * 0.4, alignItems: "flex-start", justifyContent: "flex-start", marginTop: 6 }}>
+                                                    <View>
+                                                        <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Price: <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', }}>$
+                                                            {item.product_price}
+                                                        </Text></Text>
+                                                        <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Quantity: <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', }}>
+                                                            {item.qty}
+                                                        </Text></Text>
+                                                    </View>
+                                                </View>
+                                            </View>
+
+
+                                        </View>
+                                    </View>
+                                    {/* <View style={{
                                         marginHorizontal: 6,
                                         marginTop: 20,
                                         height: 120,
@@ -439,79 +537,64 @@ const ShippingDetail = (props) => {
 
 
                                         </View>
-                                    </View>
+                                    </View> */}
                                 </View>
                             )
                         })
 
-                        : <Text>hiii</Text>}
+                        : null}
+
+                    {/* Choose Shipping Address */}
 
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 10, marginRight: 15 }}>
-                        <Text style={{ marginTop: 20, textAlign: 'left', fontSize: 16, color: '#000000', fontFamily: 'Roboto', fontWeight: 'bold' }}>Choose Shipping Address </Text>
+                        <Text style={{ marginTop: 20, textAlign: 'left', fontSize: 18, color: '#000000', fontFamily: 'Roboto', fontWeight: 'bold' }}>Choose Shipping Address </Text>
                         <TouchableOpacity onPress={() => { setShippingAddressPopUp(true) }}><View>
                             <Text style={{
-                                marginTop: 23, fontFamily: 'Roboto', fontWeight: '400', fontSize: 14, color: '#FFCC00'
+                                marginTop: 23, fontFamily: 'Roboto', fontWeight: '400', fontSize: 15, color: '#FFCC00'
                             }} >Create Address</Text>
                         </View></TouchableOpacity>
                     </View>
-                    <View
-                        style={{
-                            justifyContent: "center", alignItems: "center", flexDirection: "row",
-                            height: 150, marginHorizontal: 6,
-                        }
-                        }>
-                        <View style={{
-                            marginHorizontal: 6,
-                            height: 100,
-                            width: WIDTH * 0.97,
-                            backgroundColor: 'white',
-                            marginTop: 10,
-                            shadowColor: '#000',
-                            shadowOffset: { width: 0, height: 4 },
-                            shadowRadius: 6,
-                            shadowOpacity: 0.2,
-                            elevation: 3,
-                            borderRadius: 25,
-                            marginBottom: 10,
-                            flexDirection: 'row',
-                            justifyContent: 'flex-start',
-                            alignItems: "center"
-                        }}>
-                            < >
-                                <>
-                                    <View style={{ marginHorizontal: 6, flexDirection: 'column', height: 80, width: WIDTH * 0.92, }}>
-                                        <View style={{ height: 65, flexDirection: 'row', marginLeft: 15 }}>
-                                            <View style={{ width: 25, height: 50, justifyContent: "center" }} >
-                                                <TouchableOpacity>
-                                                    <Image source={
-                                                        require('../assets/checked.png')}
-                                                    />
-                                                </TouchableOpacity>
-                                            </View>
-                                            <View style={{ width: WIDTH * 0.34, marginLeft: 23, justifyContent: 'center', alignItems: 'flex-start' }}>
-                                                <Text style={{ fontSize: 12, color: '#000000', fontFamily: 'Inter', fontWeight: "500", marginTop: 10, fontSize: 16 }}>{address.address_type}</Text>
-                                                <View style={{ width: WIDTH * 0.67, height: 40 }}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#676767', fontFamily: 'Inter', marginTop: 5, fontWeight: '400' }}>{address.house_no} {address.landmark} {address.area_village},  {address.city} {address.pincode}
-                                                    </Text>
-                                                    {/* <View style={{ borderColor: "gray", borderWidth: 0.5, height: 60, backgroundColor: "gray", right: -100, flexDirection: 'row' }} /> */}
-                                                    {/* <TouchableOpacity onPress={() => { props.navigation.navigate('Address', { address, setAddress }) }}
-                                                        disabled={Selectcoupons == null ? false : true}
-                                                        style={{ height: 60, justifyContent: "flex-start", width: 40, marginTop: 14 }}>
 
-                                                        <View style={{ marginRight: 30, width: 25, height: 25, justifyContent: "flex-end", alignItems: 'center', right: 12, borderRadius: 25 / 2, backgroundColor: 'red' }}>
-                                                            <Image
-                                                                style={{
-                                                                    width: 10,
-                                                                    height: 18, alignSelf: 'center',
-                                                                }}
-                                                                source={require('../assets/arrowPointToRight.png')}
-                                                            />
-                                                        </View>
-                                                    </TouchableOpacity> */}
-                                                </View>
-                                            </View>
+                    {/* address Box */}
+
+                    <View style={{
+                        marginHorizontal: 10,
+                        height: 100,
+                        width: WIDTH * 0.95,
+                        backgroundColor: 'white',
+                        // backgroundColor: "pink",
+                        marginTop: 10,
+                        shadowColor: '#000000',
+                        // shadowOffset: { width: 0, height: 4 },
+                        shadowRadius: 6,
+                        shadowOpacity: 0.2,
+                        elevation: 3,
+                        borderRadius: 20,
+                        marginBottom: 10,
+                        flexDirection: 'row',
+                        justifyContent: 'flex-start',
+                        alignItems: "center",
+                        borderWidth: 1,
+                        borderColor: "#FFFFFF"
+                    }}>
+                        <>
+                            <View style={{ height: 90, width: WIDTH * 0.95, borderRadius: 20, }}>
+                                <View style={{ height: 90, flexDirection: 'row', marginLeft: 15 }}>
+                                    {/* <View style={{ width: 25, height: 80, justifyContent: "center",alignItems: "center",backgroundColor: 'white' }} >
+                                             <Image 
+                                             source={require('../assets/checked.png')}
+                                             />
+                                            
+                                        </View> */}
+                                    <View style={{ width: WIDTH * 0.67, marginLeft: 20, justifyContent: 'center', alignItems: 'flex-start' }}>
+                                        <Text style={{ color: '#000000', fontWeight: "500", fontSize: 16, textAlign: 'left' }}>{address.address_type}</Text>
+                                        <View style={{ width: WIDTH * 0.67, height: 40, marginTop: 5 }}>
+                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#676767', fontWeight: '400' }}>{address.house_no} {address.landmark} {address.area_village},  {address.city} {address.pincode}
+                                            </Text>
                                         </View>
-                                        {/* <TouchableOpacity onPress={() => { props.navigation.navigate('Address', { address, setAddress }) }}
+                                    </View>
+                                </View>
+                                {/* <TouchableOpacity onPress={() => { props.navigation.navigate('Address', { address, setAddress }) }}
                                             disabled={Selectcoupons == null ? false : true}
                                             style={{ height: 60, justifyContent: "flex-start", width: 40, marginTop: 14 }}>
 
@@ -525,103 +608,125 @@ const ShippingDetail = (props) => {
                                                 />
                                             </View>
                                         </TouchableOpacity> */}
-                                    </View>
-                                    <TouchableOpacity onPress={() => { props.navigation.navigate('Address', { address, setAddress }) }}
-                                        disabled={Selectcoupons == null ? false : true}
-                                        style={{ height: 60, width: 40, marginTop: 14 }}>
+                            </View>
 
-                                        <View style={{ width: 25, height: 25, justifyContent: "flex-end", alignItems: 'flex-end', right: 60, borderRadius: 25 / 2, position: 'absolute' }}>
-                                            <Image
-                                                style={{
-                                                    width: 10,
-                                                    height: 18,
-                                                }}
-                                                source={require('../assets/arrowPointToRight.png')}
-                                            />
-                                        </View>
-                                    </TouchableOpacity>
-                                </>
+                            <TouchableOpacity onPress={() => { props.navigation.navigate('Address', { address, setAddress }) }}
+                                disabled={Selectcoupons == null ? false : true}
+                                style={{ height: 100, width: 60, justifyContent: "center", alignItems: 'center', right: 0, borderRadius: 25 / 2, position: 'absolute' }}>
 
-                            </>
+                                <View style={{ width: 25, height: 25, justifyContent: "center", alignItems: 'center' }}>
+                                    <Image
+                                        style={{
+                                            width: 12,
+                                            height: 18,
+                                            alignSelf: 'center',
+                                        }}
+                                        source={require('../assets/arrowPointToRight.png')}
+                                    />
+                                </View>
+                            </TouchableOpacity>
+                        </>
 
-                        </View>
 
 
                     </View>
 
+
+                    {/* Coupon Box */}
                     <View
                         style={{
-                            marginHorizontal: 6,
+                            marginHorizontal: 10,
                             height: 80,
-                            width: WIDTH * 0.97,
+                            width: WIDTH * 0.95,
                             backgroundColor: 'white',
                             marginTop: 10,
                             shadowColor: '#000',
-                            shadowOffset: { width: 0, height: 4 },
+                            // shadowOffset: { width: 0, height: 4 },
                             shadowRadius: 6,
                             shadowOpacity: 0.2,
                             elevation: 3,
-                            borderRadius: 25,
+                            borderRadius: 20,
                             marginBottom: 10,
                             flexDirection: 'row',
                             justifyContent: 'flex-start',
-                            alignItems: "center"
+                            alignItems: "center",
+                            padding: 10,
+                            // borderWidth:1,
+                            // borderColor:"red"
                         }}>
 
 
-                        <View style={{ flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', width: WIDTH * 0.85, marginLeft: 10, height: 60 }}>
+                        <View style={{ flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', width: WIDTH * 0.9, height: 80, borderRadius: 20, }}>
                             {
                                 Selectcoupons == null ?
                                     <>
-                                        <View style={{ width: 25, height: 25, justifyContent: "center", alignItems: 'center', borderRadius: 25 / 2, marginTop: 20 }}>
+                                        <View style={{ width: 25, height: 80, justifyContent: "center", alignItems: 'center' }}>
                                             <Image
                                                 style={{
-                                                    width: 25,
-                                                    height: 25, alignSelf: 'center'
+                                                    width: 30,
+                                                    height: 30, alignSelf: 'center'
                                                 }}
 
 
                                                 source={require('../assets/discount.png')}
                                             />
                                         </View>
-                                        <View style={{
-                                            flexDirection: 'column', justifyContent: 'center',
-                                            alignItems: "center", marginTop: 10
-                                        }}>
-                                            < View style={{ justifyContent: "flex-start", alignItems: 'flex-start', }}>
-                                                <Text style={{ textAlign: 'left', fontSize: 13, color: 'black', marginTop: 14, right: 35 }}>Apply Coupon</Text>
-                                            </View>
-                                        </View>
-                                        <View style={{
 
-                                            height: 40,
-                                            justifyContent: 'center',
-                                            alignItems: "center",
-                                            width: 40,
-
-                                        }}>
+                                        < View style={{ justifyContent: "center", alignItems: 'flex-start', width: WIDTH * 0.8, height: 80 }}>
+                                            <Text style={{ textAlign: 'left', fontSize: 16, color: 'black', fontWeight: "500" }}>Apply Coupon</Text>
                                         </View>
-                                        <TouchableOpacity onPress={() => { gotoApplyCoupon() }}
+
+
+                                        <TouchableOpacity
+                                            onPress={() => { gotoApplyCoupon() }}
                                             disabled={Selectcoupons == null ? false : true}
-                                            style={{ height: 60, justifyContent: "flex-start", width: 40, marginTop: 14 }}>
 
-                                            <View style={{ marginRight: 30, width: 25, height: 25, justifyContent: "flex-end", alignItems: 'center', borderRadius: 25 / 2, marginTop: 5, position: 'absolute', left: 30 }}>
-                                                <Image
-                                                    style={{
-                                                        width: 10,
-                                                        height: 18, alignSelf: 'center',
-                                                    }}
-                                                    source={require('../assets/arrowPointToRight.png')}
-                                                />
-                                            </View>
+                                            style={{
+                                                width: 50, height: 75, justifyContent: "center", alignItems: 'center', borderRadius: 25, position: 'absolute', right: 0
+                                            }} >
+
+                                            <Image
+                                                style={{
+                                                    width: 12,
+                                                    height: 18, alignSelf: 'center',
+                                                }}
+                                                source={require('../assets/arrowPointToRight.png')}
+                                            />
+
                                         </TouchableOpacity>
                                     </>
                                     :
-                                    <><TouchableOpacity onPress={() => { }}
-                                        style={{ position: "absolute", width: 31, height: 30, right: 20, top: 7 }}
+                                    <>
+                                        {/* <TouchableOpacity onPress={() => { }}
+                                        style={{ position: "absolute", width: 31, height: 30, right: 20, top: 7, }}
                                     >
-                                    </TouchableOpacity>
-                                        <View style={{ right: -12, }}>
+                                    </TouchableOpacity> */}
+                                        <View style={{ width: 25, height: 80, justifyContent: "center", alignItems: 'center' }}>
+                                            <Image
+                                                style={{
+                                                    width: 30,
+                                                    height: 30, alignSelf: 'center'
+                                                }}
+
+
+                                                source={require('../assets/yellowcheck.png')}
+                                            />
+                                        </View>
+
+                                        < View style={{ justifyContent: "center", alignItems: 'flex-start', width: WIDTH * 0.6, height: 80, marginLeft: 15 }}>
+                                            <Text style={{ textAlign: 'left', fontSize: 16, color: 'black', fontWeight: "500" }}>{Selectcoupons?.name}</Text>
+                                            <Text style={{ textAlign: 'left', fontSize: 13, color: '#676767', fontWeight: "500" }}>- ${Selectcoupons?.discount}</Text>
+                                        </View>
+                                        <View style={{ paddingVertical: 20, justifyContent: "center", alignItems: 'center', height: 80, width: WIDTH * 0.2, }}>
+                                            <TouchableOpacity
+                                                onPress={() => { props.navigation.navigate('ApplyCoupon') }}
+                                                style={{ justifyContent: "center", alignItems: 'center', width: WIDTH * 0.15, height: 25, borderRadius: 50 }}>
+
+                                                <Text style={{ textAlign: 'left', fontSize: 13, color: '#FFCC00' }}>Change</Text>
+
+                                            </TouchableOpacity>
+                                        </View>
+                                        {/* <View style={{ right: -12, }}>
                                             <View style={{ flexDirection: 'row' }}>
                                                 <Text style={{ textAlign: 'left', fontSize: 19, color: 'black', fontWeight: 'bold' }}>Used Cupon</Text>
                                                 <View style={{ right: 12 }}>
@@ -636,15 +741,12 @@ const ShippingDetail = (props) => {
                                             </View>
 
 
-                                        </View></>
+                                        </View> */}
+                                    </>
                             }
 
                         </View>
                     </View>
-
-
-
-
 
                     {/* Add Delivery Instruction */}
                     <View style={{
@@ -673,110 +775,121 @@ const ShippingDetail = (props) => {
                             placeholder="Add Delivery Instruction ( Optional )"
                             placeholderTextColor={'#C0C0C0'}
                             value={optComment}
-                            onChangeText={(text) => (setoptComment(text), console.log('selected_Coupon::::', Selectcoupons))}
-
+                            onChangeText={(text) => (setoptComment(text)
+                                //  console.log('selected_Coupon::::', Selectcoupons)
+                            )}
 
                         />
                     </View>
+
+                    {/* order details and discout  */}
                     <View style={{
                         backgroundColor: '#fffcee',
-                        height: 100,
+                        height: 160,
+                        width: WIDTH * 0.99,
                         marginTop: 20,
                         shadowColor: '#efe8c7',
-                        shadowOffset: { width: 0, height: 2 },
+                        // shadowOffset: { width: 0, height: 2 },
                         shadowOpacity: 0.2,
-                        elevation: 2,
-                        marginBottom: 20, justifyContent: "center", alignItems: 'center'
+                        elevation: 6,
+                        marginBottom: 20, justifyContent: "flex-start", alignItems: 'flex-start'
                     }}>
-                        <View style={{
-                            marginTop: 70, height: 30, flexDirection: 'row', marginLeft: 75, marginRight: 70, shadowColor: '#efe8c7', backgroundColor: '#fffcee',
-                            shadowOffset: { width: 0, height: 2 },
-                            shadowOpacity: 0.2, width: WIDTH * 0.86
-                        }}>
-                            <View style={{ flex: 1 }}>
-                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000', }}>Subtotal  </Text>
+                        <View style={{ marginTop: 10, height: 30, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.9 }}>
+                            <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
+                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Subtotal:</Text>
                             </View>
-                            <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#000000', left: -29 }}>${subtotal}</Text>
-                        </View>
-                        <View style={{ marginTop: 6, height: 30, flexDirection: 'row', marginLeft: 25 }}>
-                            <View style={{ flex: 1 }}>
-                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000', }}>Tax  :</Text>
-                            </View>
-                            <View style={{ flex: 1 }}>
-
-
-                                <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#000000', }}>${tax}</Text>
+                            <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
+                                <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>${subtotal}</Text>
                             </View>
                         </View>
 
-                        <View style={{ marginTop: 6, height: 30, flexDirection: 'row', marginLeft: 25 }}>
-                            <View style={{ flex: 1 }}>
-                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000', }}>Shipping  :</Text>
+                        <View style={{ marginTop: 10, height: 30, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.9 }}>
+                            <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
+                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Tax:</Text>
                             </View>
-                            <View style={{ flex: 1 }}>
-                                <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#000000', }}>${shippingcost}</Text>
+                            <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
+                                <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>{tax}</Text>
+                            </View>
+                        </View>
+
+                        <View style={{ marginTop: 10, height: 30, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.9 }}>
+                            <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
+                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Shipping charges:</Text>
+                            </View>
+                            <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
+                                <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>${shippingcost}</Text>
                             </View>
                         </View>
                         {
                             Selectcoupons == null ?
                                 <>
-                                    <View style={{ marginTop: 6, height: 30, flexDirection: 'row', marginLeft: 25 }}>
-                                        <View style={{ flex: 1 }}>
-                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000', }}>Coupon  :</Text>
+                                    <View style={{ marginTop: 10, height: 30, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.9 }}>
+                                        <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
+                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Coupon:</Text>
                                         </View>
-                                        <View style={{ flex: 1 }}>
-                                            <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#000000', }}>0</Text>
+                                        <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
+                                            <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 40, fontWeight: "500" }}>-</Text>
                                         </View>
                                     </View>
-                                </> : <>
-                                    <View style={{ marginTop: 6, height: 30, flexDirection: 'row', marginLeft: 25 }}>
+                                </> :
+                                <>
+                                    <View style={{ marginTop: 10, height: 30, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.9 }}>
+                                        <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
+                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#FFCC00', fontWeight: "500" }}>{Selectcoupons?.name}</Text>
+                                        </View>
+                                        <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
+                                            <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>- ${Selectcoupons?.discount}</Text>
+                                        </View>
+                                    </View>
+                                    {/* <View style={{ marginTop: 6, height: 30, flexDirection: 'row', marginLeft: 25 }}>
                                         <View style={{ flex: 1 }}>
                                             <Text style={{ textAlign: 'left', fontSize: 14, color: '#FFCC00' }}>{Selectcoupons?.name}</Text>
                                         </View>
                                         <View style={{ flex: 1 }}>
-                                            <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#000000', }}>- $ {Selectcoupons?.discount}</Text>
+                                            <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#000000', }}>- ${Selectcoupons?.discount}</Text>
                                         </View>
-                                    </View>
+                                    </View> */}
                                 </>}
+                    </View>
 
-
-                        <View style={{
-                            backgroundColor: '#fffcee',
-                            height: 40,
-                            // marginTop: 20,
-                            shadowColor: '#efe8c7',
-                            shadowOffset: { width: 0, height: 2 },
-                            shadowOpacity: 0.2,
-                            elevation: 2,
-                            marginBottom: 20, justifyContent: "center", alignItems: 'center'
-                        }}>
-                            <View style={{ marginTop: 10, height: 30, flexDirection: 'row', marginLeft: 25 }}>
-                                <View style={{ flex: 1 }}>
-                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000', }}>Total Price  :</Text>
-                                </View>
-                                <View style={{ flex: 1 }}>
-                                    {
-                                        Selectcoupons == null ? <>
-                                            <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#000000', }}>${ammont}</Text></> : <><Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#000000', }}>{`${parseInt(total) - parseInt(Selectcoupons?.discount)}`}</Text></>
-                                    }
-                                </View>
+                    <View style={{
+                        backgroundColor: '#fffcee',
+                        height: 40,
+                        width: WIDTH * 0.99,
+                        // marginTop: 20,
+                        shadowColor: '#efe8c7',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.2,
+                        elevation: 2,
+                        marginBottom: 20, justifyContent: "center", alignItems: 'center',
+                        flex: 1
+                    }}>
+                        <View style={{ marginTop: 10, height: 40, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.94 }}>
+                            <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
+                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Total Amout:</Text>
+                            </View>
+                            <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
+                                {
+                                    Selectcoupons == null ? <>
+                                        <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>${ammont}</Text></>
+                                        :
+                                        <><Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>{`${parseInt(total) - parseInt(Selectcoupons?.discount)}`}</Text></>
+                                }
                             </View>
                         </View>
                     </View>
-                    <View style={{ justifyContent: "center", marginBottom: 20, flexDirection: 'row', height: 50, marginHorizontal: 20, marginTop: 40 }}>
+
+                    {/* footer button   */}
+                    <View style={{ justifyContent: "center", marginBottom: 30, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 20 }}>
                         <TouchableOpacity onPress={() => { gotoCardPayment() }}>
-                            <View style={{ justifyContent: 'center', width: 200, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
-
-
-
+                            <View style={{ justifyContent: 'center', width: 200, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
                                 <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Total Payable Amount</Text>
-
-
                             </View>
                         </TouchableOpacity>
 
 
                     </View>
+
                     {ShippingAddressPopUp ? (
                         <Modal
                             animationType="fade"
@@ -890,10 +1003,10 @@ const ShippingDetail = (props) => {
                                                 value={state}
                                                 onChangeText={e => onChangeStateHandler(e)}
                                             />
-                                            <View style={{ justifyContent: "center", alignItems: "center", marginBottom: 20, flexDirection: 'row', height: 45, marginHorizontal: 20, marginTop: 30 }}>
+                                            <View style={{ justifyContent: "center", alignItems: "center", marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 30 }}>
                                                 <TouchableOpacity
                                                     onPress={() => { gotocurrentpage() }} >
-                                                    <View style={{ justifyContent: 'center', width: 200, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
+                                                    <View style={{ justifyContent: 'center', width: 120, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
                                                         <Text style={styles.text}>Save </Text>
                                                     </View>
                                                 </TouchableOpacity>
@@ -917,9 +1030,9 @@ export default ShippingDetail;
 
 const styles = StyleSheet.create({
     textInput: {
-        width: '98%', marginTop: 30, borderRadius: 10, marginHorizontal: 20,
+        width: '98%', marginTop: 14, borderRadius: 10, marginHorizontal: 20,
         flexDirection: 'row',
-        height: 50,
+        height: 45,
         shadowColor: '#11032586',
         backgroundColor: 'white',
         alignItems: 'center',

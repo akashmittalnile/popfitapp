@@ -69,8 +69,8 @@ const ChangePassword = (props) => {
     return (
         <SafeAreaView style={{
             height: "100%"
-        }} > 
-        <Headers
+        }} >
+            <Headers
                 Backicon={{
                     visible: true,
                 }}
@@ -95,7 +95,7 @@ const ChangePassword = (props) => {
                         old_pswd: '',
                         password: '',
                         cfm_password: '',
-}}
+                    }}
                     onSubmit={values => ChangeAPI(values)}
 
                     validationSchema={yup.object().shape({
@@ -229,11 +229,9 @@ const ChangePassword = (props) => {
                                     handleSubmit(values);
                                     // ChangeAPI(values)
                                 }}>
-                                    <View style={{ justifyContent: 'center', width: 150, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35, marginLeft: 10 }}>
+                                    <View style={{ justifyContent: 'center', width: 150,height:34,backgroundColor: '#ffcc00', borderRadius: 50, marginLeft: 10 }}>
 
-
-
-                                        <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Save</Text>
+                                        <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', }}>Save</Text>
 
                                     </View>
                                 </TouchableOpacity>

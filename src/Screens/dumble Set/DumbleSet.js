@@ -11,6 +11,7 @@ import Headers from '../../Routes/Headers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { API } from '../../Routes/Urls';
+import { log } from 'react-native-reanimated';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -23,15 +24,16 @@ const DumbleSet = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [shopitems, setshopitems] = useState([]);
 
-  const gotoShippingDetail = (item) => {
+  const gotoproductDetail = (item) => {
+    // console.log("............fitness id ITEM get in dumble screen:",item);
     props.navigation.navigate('ProductDetail', {
-      ITEM: item
+      FitnessItem: item
     });
   };
 
-  console.log("FITNESS_storeId......:", props?.route?.params?.SHOPID);
+  // console.log("FITNESS_storeId......:", props?.route?.params?.SHOPID);
   const FitnessID = props?.route?.params?.SHOPID;
-  console.log("FITNESS_categoryID......:", props?.route?.params?.categoryID);
+  // console.log("FITNESS_categoryID......:", props?.route?.params?.categoryID);
   const categoryID = props?.route?.params?.categoryID;
 
   useEffect(() => {
@@ -54,15 +56,15 @@ const DumbleSet = (props) => {
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.SHOP_PRODUCTLIST}`, { 'shop_id': FitnessID, "category_id": categoryID }, { headers: { "Authorization": ` ${Token}` } });
-      console.log(":::::::::SHOP_PRODUCTLISTStore_Response>>>", response.data.products);
-      console.log("status _SHOP_PRODUCTLIST", response.data.status);
+      // console.log(":::::::::SHOP_PRODUCTLISTStore_Response>>>", response.data.products);
+      // console.log("status _SHOP_PRODUCTLIST", response.data.status);
 
       setshopitems(response.data.products)
       setIsLoading(false);
 
     }
     catch (error) {
-      console.log("......error.........", error.response.data.message);
+      // console.log("......error.........", error.response.data.message);
       Alert.alert("Catch error msg FitnessEquipment !!!!")
       setIsLoading(false);
     }
@@ -70,12 +72,12 @@ const DumbleSet = (props) => {
   };
   const ShopFilter = async () => {
     const Token = await AsyncStorage.getItem("authToken");
-    console.log("SHOP filter...........>>>", ischecked);
+    // console.log("SHOP filter...........>>>", ischecked);
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.SHOP_FILTER}`, { "search": ischecked ,"shop_id": FitnessID }, { headers: { "Authorization": ` ${Token}` } });
-      console.log(":::::::::Shop_FIlter>>>", response.data.data);
-      console.log("SHOP_Status", response.data.status);
+      // console.log(":::::::::Shop_FIlter>>>", response.data.data);
+      // console.log("SHOP_Status", response.data.status);
       if (response.data.status == 1) {
         setshopitems(response.data.data)
         setIsLoading(false);
@@ -122,16 +124,16 @@ const DumbleSet = (props) => {
           {
             shopitems.length != 0 ?
               (<ScrollView>
-               <View style={{ height: 60, flexDirection: 'row', flex: 1, justifyContent: "flex-start", alignItems: "flex-start", width: "95%",marginHorizontal:18}}>
+               <View style={{ height: 50, flexDirection: 'row', flex: 1, justifyContent: "flex-start", alignItems: "flex-start", width: "95%",marginHorizontal:18}}>
                   <View style={{ justifyContent: "flex-start", alignItems: "flex-start", flex: 0.45, }}>
                     <Text
                       style={{
-                        // marginLeft: 1,
+                        // marginLeft: 10,
                         marginTop: 20,
                         textAlign: 'left',
                         fontSize: 18,
                         color: 'black',
-                        fontWeight: "bold"
+                        fontWeight: "500"
                       }}>
                       Fitness Equipment
                     </Text>
@@ -165,25 +167,23 @@ const DumbleSet = (props) => {
 
                 <FlatList
                   vertical
-                  style={{ margin: 10 }}
+                  // style={{ margin: 10 }}
                   numColumns={2}
                   data={shopitems}
-                  renderItem={({ item }) => (
+                  renderItem={({ item,index}) => (
 
                     <TouchableOpacity
-                      onPress={() => { 
-                        // gotoShippingDetail(item) 
-                      }}
+                      onPress={() => {gotoproductDetail(item)}}
                       style={{
                         marginBottom: 6,
                         backgroundColor: '#f7f7f7',
                         height: 200,
                         width: WIDTH * 0.45,
-                        marginTop: 10,
-                        borderRadius: 25,
+                        marginTop: 15,
+                        borderRadius: 20,
                         alignItems: 'center',
                         justifyContent: "center",
-                        marginHorizontal: 6,
+                        marginHorizontal: 10,
                         shadowColor: '#000000',
                         shadowOffset: {
                           width: 0,
@@ -191,7 +191,7 @@ const DumbleSet = (props) => {
                         },
                         shadowRadius: 5,
                         shadowOpacity: 1.0,
-                        elevation: 5,
+                        elevation: 6,
                         zIndex: 999,
 
 

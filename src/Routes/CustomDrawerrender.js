@@ -81,7 +81,7 @@ const CustomDrawerrender = (props) => {
      
       }
       catch (error) {
-        console.log("Countryerror:", error.response.data.message);
+        // console.log("GET User Profile in drawer error:", error.response.data.message);
         setIsLoading(false)
       }
 
@@ -166,11 +166,11 @@ const CustomDrawerrender = (props) => {
                     <Text style={{ fontSize: 14, color: 'black', textAlign: 'left' }}>User's Login</Text>
                   </TouchableOpacity>
 
-                  <View style={{ justifyContent: 'flex-end', flex: 1 / 2, width: 50, }}>
+                  <View style={{ justifyContent: 'flex-end', flex: 1 / 2, width: 50,borderBottomRightRadius: 20}}>
                     <Image source={require('../Screens/assets/arrowWhiteBack.png')}
                       style={{
                         width: 40,
-                        height: 30, borderBottomRightRadius: 10, alignSelf: 'flex-end'
+                        height: 30, borderBottomRightRadius: 20, alignSelf: 'flex-end'
                       }} />
                   </View>
                 </View>)
@@ -195,11 +195,11 @@ const CustomDrawerrender = (props) => {
                     <View style={{ justifyContent: 'center', flex: 1.1, height: 100, }} >
                       <Text style={{ fontSize: 15, color: 'black', textAlign: 'left' }}>{profiledata.first_name + " " + profiledata.last_name}</Text>
                     </View>
-                    <View style={{ justifyContent: 'flex-end', flex: 1 / 2, width: 50, }}>
+                    <View style={{ justifyContent: 'flex-end', flex: 1 / 2, width: 50,borderBottomRightRadius: 20, }}>
                       <Image source={require('../Screens/assets/arrowWhiteBack.png')}
                         style={{
                           width: 40,
-                          height: 30, borderBottomRightRadius: 10, alignSelf: 'flex-end'
+                          height: 30, borderBottomRightRadius: 20, alignSelf: 'flex-end'
                         }} />
                     </View>
                   </View>

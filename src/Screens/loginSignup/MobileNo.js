@@ -207,7 +207,7 @@ const MobileNo = (props) => {
                             handleSubmit()
                           }}
                             disabled={!isValid}>
-                            <View style={{ marginTop: 30, borderRadius: 25, width: 200, height: 50, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
+                            <View style={{ marginTop: 30, borderRadius: 50, width: 150, height: 40, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
                               <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'white', }}>Next</Text>
                             </View>
                           </TouchableOpacity>

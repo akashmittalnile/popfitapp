@@ -12,6 +12,7 @@ import axios from 'axios';
 import { API } from '../../Routes/Urls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
+import { incrementCounter} from '../../Redux/actions/UpdateCounter';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -26,7 +27,8 @@ const Notifications = (props) => {
 
     useEffect(() => {
         GetShippingProducts();
-
+        // AsyncStorage.clear();
+        // AsyncStorage.removeItem('notification')
     }, []);
     const GetShippingProducts = async () => {
         const usertkn = await AsyncStorage.getItem("authToken");
@@ -36,7 +38,9 @@ const Notifications = (props) => {
         try {
             const response = await axios.get(`${API.NOTIFICATION}`, { headers: { "Authorization": ` ${usertkn}` } });
             let data = response.data.data.length;
-            dispatch(data);
+            console.log('incrementCounter', data
+            );
+            dispatch(incrementCounter(parseInt(data)));
             // AsyncStorage.setItem("notification", JSON.stringify(data));
             if (response?.data?.status == '1') {
                 setIsLoading(false)
@@ -130,83 +134,55 @@ const Notifications = (props) => {
                 BelliconononClick={() => { props.navigation.navigate("Notifications") }}
             />
             {!isLoading ?
-                (<ScrollView>
-                    {/* <View style={{ marginHorizontal: 10, marginTop: 10, height: 120, borderRadius: 10, backgroundColor: 'white' }}>
-                        <View style={{ marginLeft: 20, height: 50, flexDirection: 'row' }}>
-                            <View style={{ height: 50, flex: 1 / 2, marginTop: 20 }}>
-
-                                <Text style={{ fontSize: 14, color: 'black', }}>Order No. : U3423568 </Text>
-
-                            </View>
-
-                            <View style={{ marginTop: 15, marginLeft: 5, backgroundColor: '#ffcc00', flex: 1 / 3, borderRadius: 20, height: 30, flexDirection: 'row', alignItems: 'center' }}>
-                                <View style={{ width: 30, marginLeft: 20 }}>
-                                    <Image source={require('../assets/download1.png')}
-                                        style={{
-                                            width: 10,
-                                            height: 13,
-                                        }} />
-                                </View>
-                                <View style={{ flex: 1, marginLeft: -10 }}>
-                                    <TouchableOpacity>
-                                        <Text style={{ textAlign: 'left', fontSize: 8, color: 'white', }}>Download Invoice</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-
-
-                        </View>
-
-                        <View style={{
-                            height: 70, marginLeft: 20, flexDirection: 'row'
-                        }}>
-                            <Text style={{ marginTop: 20, textAlign: 'left', fontSize: 12, color: 'black', }}>Order Status :</Text>
-                            <View style={{ marginTop: 20, marginLeft: 20, flex: 1, flexDirection: 'column' }}>
-                                <View style={{ flex: 1 / 2, }}>
-                                    <Text style={{ textAlign: 'left', fontSize: 12, color: 'black', }}>Order Placed</Text>
-                                </View>
-                                <View style={{ marginTop: 10, flex: 1 }}>
-                                    <Text style={{ textAlign: 'left', fontSize: 8, color: 'black' }}>on Sat 23 Jan 2022, 09:23 AM</Text>
-                                </View>
-                            </View>
-                            <View style={{ marginTop: 10, justifyContent: 'center', alignItems: 'flex-end', marginRight: 10 }}>
-                                <TouchableOpacity>
-                                    <View style={{ backgroundColor: '#ffcc00', width: 35, height: 35, justifyContent: "center", alignItems: 'center', borderRadius: 35 / 2 }}>
-                                        <Image source={require('../assets/rightArrow.png')}
-                                        />
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View> */}
-
-
-
+                (<ScrollView style={{ paddingTop: 6 }}>
                     {noti.length > 0 ?
                         noti.map((item, index) => {
-
                             return (
 
                                 <View onPress={() => { gotoOrderDetail() }}>
-                                    {item.is_read == "1" ?
+                                    {item.is_read != "1" ?
                                         <>
                                             <View style={{
-                                                marginHorizontal: 6,
-                                                marginTop: 15,
-                                                height: 70,
+                                                marginHorizontal: 10,
+                                                marginTop: 6,
+                                                height: 75,
                                                 borderRadius: 10,
                                                 marginBottom: 10,
-                                                backgroundColor: 'white',
-                                                width: WIDTH * 0.97,
+                                                backgroundColor: '#FFFFFF',
+                                                width: WIDTH * 0.95,
                                                 justifyContent: "center",
                                                 // alignItems: "center",
-                                                shadowColor: '#000000',
+                                                // shadowColor: '#000000',
+                                                shadowColor: '#cdcbcb',
                                                 shadowRadius: 6,
-                                                shadowOpacity: 1.0,
+                                                shadowOpacity: 0.1,
                                                 elevation: 6,
+                                                borderWidth: 1,
+                                                borderColor: '#F4F4F4'
+
                                             }}>
-                                                <View style={{ flexDirection: "row", marginLeft: 20, marginRight: 50, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-                                                    <View style={{ marginRight: 23, }}>
+                                                <TouchableOpacity onPress={() => ItemRemove(item)}
+                                                    style={{
+                                                        position: "absolute",
+                                                        backgroundColor: 'red',
+                                                        width: 30, height: 30,
+                                                        justifyContent: "center",
+                                                        alignItems: 'center',
+                                                        borderRadius: 20 / 2,
+                                                        top: 20,
+                                                        right: 10
+                                                    }}>
+
+                                                    <Image resizeMode='contain'
+                                                        source={require('../assets/delete.png')}
+
+                                                    />
+
+                                                </TouchableOpacity>
+                                                
+
+                                                <View style={{ marginHorizontal: 10, width: WIDTH * 0.8, height: 75, flexDirection: "row", justifyContent: 'flex-start', alignItems: 'flex-start', }}>
+                                                    <View style={{ marginRight: 20, justifyContent: "center", alignItems: "center", top: 20, }}>
                                                         <Image
                                                             style={{
                                                                 width: 30,
@@ -217,39 +193,65 @@ const Notifications = (props) => {
                                                             source={require('../assets/notification.png')}
                                                         />
                                                     </View>
-                                                    <Text style={{ marginTop: -2, textAlign: 'left', fontSize: 14, color: 'black', fontFamily: 'Inter', fontWeight: '600' }}>{item.title}</Text>
+                                                    <View style={{ height: 70, width: WIDTH * 0.7, marginTop: 3, justifyContent: 'flex-start', alignItems: 'flex-start', }}>
+                                                        <Text style={{ marginTop: 2, textAlign: 'left', fontSize: 15, color: 'black', fontFamily: 'Inter', fontWeight: 'bold' }}>{item.title}</Text>
+                                                        <Text style={{ marginTop: 4, textAlign: 'center', fontSize: 12, color: '#455A64', fontFamily: 'Inter', fontWeight: '400' }}>{item.message}</Text>
+                                                        <Text style={{ marginTop: 4, textAlign: 'center', fontSize: 12, color: '#455A64', fontWeight: '400' }}>{item.created_at}</Text>
 
-
-
-                                                    <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', width: 20, height: 20, position: 'absolute', right: 0 }} onPress={() => { ItemRemove(item) }}>
-                                                        <Image style={{ width: 19, height: 20, justifyContent: "center", alignItems: 'center', marginTop: 7 }} source={require('../assets/dustbin.png')}
-                                                        />
-                                                    </TouchableOpacity>
-
-
+                                                    </View>
                                                 </View>
-                                                <View style={{ marginHorizontal: 10, justifyContent: 'flex-start', alignItems: 'flex-start', left: 63 }}>
-                                                    <Text style={{ marginTop: 1, textAlign: 'center', fontSize: 13, color: '#455A64', fontFamily: 'Inter', fontWeight: '400' }}>{item.message}</Text></View>
-                                            </View></>
+
+
+
+
+
+
+
+                                            </View>
+
+                                        </>
                                         :
                                         <>
                                             <View style={{
-                                                marginHorizontal: 6,
-                                                marginTop: 15,
-                                                height: 70,
+                                                marginHorizontal: 10,
+                                                marginTop: 6,
+                                                height: 75,
                                                 borderRadius: 10,
                                                 marginBottom: 10,
                                                 backgroundColor: '#F4F4F4',
-                                                width: WIDTH * 0.97,
+                                                width: WIDTH * 0.95,
                                                 justifyContent: "center",
                                                 // alignItems: "center",
-                                                shadowColor: '#000000',
+                                                // shadowColor: '#000000',
+                                                shadowColor: '#cdcbcb',
                                                 shadowRadius: 6,
-                                                shadowOpacity: 1.0,
+                                                shadowOpacity: 0.1,
                                                 elevation: 6,
+                                                borderWidth: 1,
+                                                borderColor: '#F4F4F4'
+
                                             }}>
-                                                <View style={{ flexDirection: "row", marginLeft: 20, marginRight: 50, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-                                                    <View style={{ marginRight: 23, }}>
+                                                 <TouchableOpacity onPress={() => ItemRemove(item)}
+                                                    style={{
+                                                        position: "absolute",
+                                                        backgroundColor: 'red',
+                                                        width: 30, height: 30,
+                                                        justifyContent: "center",
+                                                        alignItems: 'center',
+                                                        borderRadius: 20 / 2,
+                                                        top: 20,
+                                                        right: 10
+                                                    }}>
+
+                                                    <Image resizeMode='contain'
+                                                        source={require('../assets/delete.png')}
+
+                                                    />
+
+                                                </TouchableOpacity>
+
+                                                <View style={{ marginHorizontal: 10, width: WIDTH * 0.8, height: 75, flexDirection: "row", justifyContent: 'flex-start', alignItems: 'flex-start', }}>
+                                                    <View style={{ marginRight: 20, justifyContent: "center", alignItems: "center", top: 20, }}>
                                                         <Image
                                                             style={{
                                                                 width: 30,
@@ -260,19 +262,20 @@ const Notifications = (props) => {
                                                             source={require('../assets/notification.png')}
                                                         />
                                                     </View>
-                                                    <Text style={{ marginTop: -2, textAlign: 'left', fontSize: 14, color: 'black', fontFamily: 'Inter', fontWeight: '600' }}>{item.title}</Text>
+                                                    <View style={{ height: 70, width: WIDTH * 0.7, marginTop: 3, justifyContent: 'flex-start', alignItems: 'flex-start', }}>
+                                                        <Text style={{ marginTop: 2, textAlign: 'left', fontSize: 15, color: 'black', fontFamily: 'Inter', fontWeight: 'bold' }}>{item.title}</Text>
+                                                        <Text style={{ marginTop: 4, textAlign: 'center', fontSize: 12, color: '#455A64', fontFamily: 'Inter', fontWeight: '400' }}>{item.message}</Text>
+                                                        <Text style={{ marginTop: 4, textAlign: 'center', fontSize: 12, color: '#455A64', fontWeight: '400' }}>{item.created_at}</Text>
 
-
-
-                                                    <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', width: 20, height: 20, position: 'absolute', right: 0 }} onPress={() => { ItemRemove(item) }}>
-                                                        <Image style={{ width: 19, height: 20, justifyContent: "center", alignItems: 'center', marginTop: 7 }} source={require('../assets/dustbin.png')}
-                                                        />
-                                                    </TouchableOpacity>
-
-
+                                                    </View>
                                                 </View>
-                                                <View style={{ marginHorizontal: 10, justifyContent: 'flex-start', alignItems: 'flex-start', left: 63 }}>
-                                                    <Text style={{ marginTop: 1, textAlign: 'center', fontSize: 13, color: '#455A64', fontFamily: 'Inter', fontWeight: '400' }}>{item.message}</Text></View>
+
+
+
+
+
+
+
                                             </View>
                                         </>}
                                 </View>

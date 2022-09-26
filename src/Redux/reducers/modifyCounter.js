@@ -1,21 +1,18 @@
-import { DECREASE_COUNTER, INCREASE_COUNTER } from "../actions/UpdateCounter";
-// Previously created actions are imported here
-const initialState = {
-count: 10
-}
-//reducer named modifyCounterReducer is created below.
+import {incrementCounter } from "../actions/UpdateCounter";
+ 
+const initialState = 0
+ 
+// reducer named modifyCounterReducer is created below.
 const modifyCounterReducer = (state = initialState, action) => {
          switch (action.type) {
-             case DECREASE_COUNTER:
-                 let previousCount = state.count;
-                 previousCount--;
-                 return {...state, count: previousCount}
-             case INCREASE_COUNTER:
-                let nextCount = state.count;
-                nextCount++;
-                return {...state, count: nextCount}
+             case 'notificatoncount':
+                console.log('');
+                 state = action.payload
+                return state
            default:
               return state
         }
 }
-export default modifyCounterReducer;
+
+export default modifyCounterReducer
+

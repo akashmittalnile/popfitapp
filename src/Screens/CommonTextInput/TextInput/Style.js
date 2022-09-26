@@ -39,7 +39,7 @@ const styles = StyleSheet.create(
             marginLeft: 1, color: "black",   justifyContent: 'center', alignItems: 'center' 
         },
         textstyles2: {
-            width: '80%', justifyContent: 'center', alignItems: 'center' , color: "black"},
+            width: '88%', justifyContent: 'center', alignItems: 'center' , color: "black"},
         signup_fieldview: {
             width: '100%',
             height: 40,

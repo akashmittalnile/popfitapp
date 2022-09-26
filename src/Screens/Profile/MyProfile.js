@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity,StyleSheet, TextInput,Image, Alert, Pressable, SafeAreaView, ActivityIndicator, Dimensions } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, ActivityIndicator, Dimensions } from 'react-native'
 // import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, ActivityIndicator } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -79,10 +79,12 @@ const MyProfile = (props) => {
                 Backicon={{
                     visible: true,
                 }}
-                BackicononClick={() => {  props.navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'Home' }]
-                  }) }}
+                BackicononClick={() => {
+                    props.navigation.reset({
+                        index: 0,
+                        routes: [{ name: 'Home' }]
+                    })
+                }}
 
                 CartIcon={{
                     visible: true,
@@ -187,10 +189,10 @@ const MyProfile = (props) => {
                         <View style={{ flex: 1 }}>
                             <Text style={{ marginLeft: 20, fontSize: 14, color: 'white', }}>Recent Orders</Text>
                         </View>
-                        <View style={{ flex: 1 / 3, right: 10 }}>
+                        <View style={{ flex: 1.3 / 3, right: 10 }}>
                             <TouchableOpacity onPress={() => { gotoMyOrder() }}>
-                                <View style={{ borderRadius: 24, height: 40, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
-                                    <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 9, color: 'white', }}>View All Orders</Text>
+                                <View style={{ borderRadius: 50, height: 34, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
+                                    <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 12, color: 'white', }}>View All Orders</Text>
                                 </View>
                             </TouchableOpacity>
                         </View>
@@ -332,8 +334,37 @@ const MyProfile = (props) => {
                                                 </View>
                                             </View>
                                         </View> */}
-
                                     <View style={{
+                                        marginTop: 10, flexDirection: 'row', justifyContent: "flex-start", flex: 1, margin: 10, height: 70, width: WIDTH * 0.92
+                                    }}>
+                                        <View style={{ marginTop: 8, height: 20, justifyContent: "center", alignItems: "center", flex: 0.3, }}>
+                                            <Text style={{ textAlign: 'left', fontSize: 14, color: 'black', fontWeight: "bold" }}>Order Status :</Text>
+                                        </View>
+
+                                        {item.order_status == "1" ?
+                                            (<View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}>
+                                                <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>Order placed</Text>
+                                                <View style={{ marginTop: 6, }}>
+                                                    <Text style={{ textAlign: 'left', fontSize: 9, color: 'black' }}>on {item.created_at}</Text>
+                                                </View>
+                                            </View>)
+                                            :
+                                            (
+                                                <View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}><Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>data not available</Text>
+                                                </View>)
+
+                                        }
+                                        <View style={{ marginTop: 10, justifyContent: 'center', alignItems: 'flex-end', marginRight: 10, flex: 0.1 }}>
+                                            <TouchableOpacity
+                                                onPress={() => gotoOrderDetail(item)}>
+                                                <View style={{ backgroundColor: '#ffcc00', width: 35, height: 35, justifyContent: "center", alignItems: 'center', borderRadius: 35 / 2 }}>
+                                                    <Image source={require('../assets/rightArrow.png')}
+                                                    />
+                                                </View>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                    {/* <View style={{
                                         marginTop: 10, flexDirection: 'row', justifyContent: "flex-start", flex: 1, margin: 10, height: 70, width: WIDTH * 0.92
                                     }}>
                                         <View style={{ marginTop: 8, height: 20, justifyContent: "center", alignItems: "center", flex: 0.3, }}>
@@ -356,11 +387,34 @@ const MyProfile = (props) => {
                                                 </View>
                                             </TouchableOpacity>
                                         </View>
-                                    </View>
+                                    </View> */}
                                 </View>)
 
                         })
-                        : null}
+                        : (<View style={{
+                            marginHorizontal: 6,
+                            height: 240,
+                            width: WIDTH * 0.97,
+                            borderRadius: 10,
+                            backgroundColor: 'white',
+                            width: 380,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            shadowColor: '#000000',
+                            shadowRadius: 6,
+                            shadowOpacity: 1.0,
+                            elevation: 6,
+                            flexDirection: "column",
+                            marginBottom: 10
+                        }}>
+                            <Image resizeMode='contain'
+                                source={require('../assets/Nodatafound.png')}
+                                style={{
+                                    width: 200,
+                                    height: 120, alignSelf: 'center'
+                                }} />
+                            <Text style={{ fontSize: 14, fontWeight: "bold" }}>No data found</Text>
+                        </View>)}
 
                     {/* <View style={{ marginTop: 30, height: 45, flexDirection: 'row' }}>
                             <View style={{ flex: 1 }}>

@@ -322,7 +322,7 @@ const VerificationCode = (props) => {
                     }}>
                         <View style={{ flexDirection: 'column', alignItems: 'center' }}>
                             <TouchableOpacity onPress={() => { VerifyOtp() }}>
-                                <View style={{ marginTop: 40, borderRadius: 25, width: 200, height: 50, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
+                                <View style={{ marginTop: 40, borderRadius: 25, width: 150, height: 40, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
                                     <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'white', }}>Next</Text>
                                 </View>
                             </TouchableOpacity>
@@ -330,7 +330,7 @@ const VerificationCode = (props) => {
                         </View>
 
                         <TouchableOpacity onPress={() => { getMobileNumber() }} style={{ flexDirection: 'column', alignItems: 'center' }}>
-                            <View style={{ marginTop: 30, width: 200, height: 30, alignItems: 'center', justifyContent: 'center' }}>
+                            <View style={{ marginTop: 10, width: 200, height: 30, alignItems: 'center', justifyContent: 'center' }}>
                                 <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 16, color: '#ffcc00', textDecorationLine: 'underline' }}>Resend Otp</Text>
                             </View>
                         </TouchableOpacity>

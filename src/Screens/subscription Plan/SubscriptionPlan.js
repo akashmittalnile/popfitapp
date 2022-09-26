@@ -247,34 +247,33 @@ const SubscriptionPlan = (props, navigation) => {
                       justifyContent: "flex-start", flex: 2
                     }}>
                       <View style={{
-                        height: 40, flexDirection: 'row', flex: 1, alignItems: "center",
-                        justifyContent: "center"
+                        height: 30, flexDirection: 'row', flex: 1, alignItems: "center",
+                        justifyContent: "center",
                       }}>
                         <Text
                           style={{
                             marginLeft: 10,
                             // marginTop: 10,
                             textAlign: 'left',
-                            fontSize: 13,
+                            fontSize: 14,
                             color: 'white',
                             flex: 0.07
-                          }}>$</Text>
-                        <Text
+                          }}>$</Text><Text
                           style={{
-                            marginLeft: 6,
+                            // backgroundColor:"red",
+                            marginLeft: 2,
                             textAlign: 'left',
                             fontSize: 14,
                             color: 'white',
-                            flex: 0.33,
+                            flex: 0.3,
 
                             // marginTop: 10,
                           }}>{item.price}</Text>
                         <Text
                           style={{
-                            // marginLeft: 2,
-                            // marginTop: 10,
+                            // backgroundColor:"red",
                             textAlign: 'left',
-                            fontSize: 13,
+                            fontSize: 14,
                             color: 'white',
                             flex: 0.5
                           }}>
@@ -283,14 +282,16 @@ const SubscriptionPlan = (props, navigation) => {
                       </View>
 
                       <View style={{
-                        height: 50, width: "100%", flexDirection: 'column', alignItems: "flex-start",
-                        justifyContent: "flex-start", flex: 1
+                        width: "100%",alignItems: "flex-start",
+                        justifyContent: "flex-start", flex: 1, paddingVertical:6
                       }}>
                         <View
                           style={{
                             marginHorizontal: 10,
                             height: 15,
-                            flexDirection: 'row', flex: 0.3
+                            flexDirection: 'row', 
+                            flex: 0.3,
+                            marginBottom:6
                           }}>
                           <View
                             style={{
@@ -316,7 +317,7 @@ const SubscriptionPlan = (props, navigation) => {
                           style={{
                             marginHorizontal: 10,
                             height: 15,
-                            flexDirection: 'row', flex: 0.3
+                            flexDirection: 'row', flex: 0.3, marginBottom:6
                           }}>
                           <View
                             style={{
@@ -369,14 +370,14 @@ const SubscriptionPlan = (props, navigation) => {
                     </View>
 
                     <View style={{
-                      flex: 1, flexDirection: 'row', width: "100%", height: 40, alignItems: "flex-start",
-                      justifyContent: "flex-start"
+                      flex: 1, flexDirection: 'row', width: "100%",alignItems: "flex-start",
+                      justifyContent: "flex-start", paddingTop:4,paddingBottom:4
                     }}>
                       <View
                         style={{ flex: 0.4, height: 30, borderTopRightRadius: 20, }}>
                         <BackgroundImage
                           source={require('../assets/leftCurve.png')}
-                          style={{ height: 60 }}></BackgroundImage>
+                          style={{ height: 60,alignItems: "center",justifyContent: 'center', }}></BackgroundImage>
                       </View>
                       <View
                         style={{
@@ -384,7 +385,7 @@ const SubscriptionPlan = (props, navigation) => {
                           justifyContent: 'center',
                           // flexDirection: 'row',
                           alignItems: "center",
-                          height: 40,
+                          height: 30,
                           marginTop: 6,
                         }}>
                         <TouchableOpacity onPress={() => { checklogin(item) }}>
@@ -395,7 +396,7 @@ const SubscriptionPlan = (props, navigation) => {
                               backgroundColor: 'white',
                               width: 120,
                               height: 30,
-                              borderRadius: 30 / 2,
+                              borderRadius:50,
                             }}>
                             <Text
                               style={{

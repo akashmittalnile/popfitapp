@@ -44,7 +44,8 @@ const Address = (props) => {
     const [state, setstate] = useState('');
     const [justUpdate, setjustUpdate] = useState(false);
     const [type, setType] = useState('');
-    console.log('type&&&&&&&&', type)
+
+    console.log('type&&&&&&&&', type);
     const validate = () => {
         if (area_village == '') {
             alert('please enter email');
@@ -301,12 +302,12 @@ const Address = (props) => {
                     <>
 
 
-                        <Text style={{ marginLeft: 15, marginTop: 20, textAlign: 'left', fontSize: 24, color: '#000000', }}>{type}Select a Delivery Address</Text>
+                        <Text style={{ marginLeft: 15, marginTop: 10, textAlign: 'left', fontSize: 20, color: '#000000', fontWeight: "500" }}>{type}Select a Delivery Address</Text>
 
                         <View
                             style={{
                                 justifyContent: "center", alignItems: "center", flexDirection: "row",
-                                height: '70%', marginHorizontal: 6
+                                height: '74%', marginHorizontal: 10, marginTop: 10,
                             }
                             }
                         >
@@ -315,19 +316,21 @@ const Address = (props) => {
                                 <FlatList
                                     vertical
                                     data={useraddress}
+                                    keyExtractor={item => item.id}
                                     renderItem={({ item, index }) => {
                                         console.warn('checked ----------->', item, props?.route?.params?.address)
                                         return <View style={{
                                             width: '95%',
-                                            height: 140,
-                                            marginLeft: 10,
-                                            marginRight: 15,
+                                            height: 130,
+                                            marginHorizontal: 10,
+                                            // marginLeft: 10,
+                                            // marginRight: 15,
                                             shadowColor: '#000',
                                             shadowOffset: { width: 0, height: 4 },
                                             shadowRadius: 6,
                                             shadowOpacity: 0.2,
                                             //elevation: 3,
-                                            borderRadius: 15,
+                                            borderRadius: 20,
                                             borderColor: "#ffcc00",
                                             borderWidth: 1,
                                             // backgroundColor: 'red',
@@ -388,41 +391,30 @@ const Address = (props) => {
                                                     </View>
                                                 </TouchableOpacity>
                                             </View>
-
-
-
-
-
-
-
                                         </View>
-
-
-
-
-
-
-
                                     }
                                     }
                                 /></ScrollView>
                         </View>
-                        <TouchableOpacity onPress={() => { setShippingAddressPopUp(true) }}>
+
+                        <TouchableOpacity onPress={() => { setShippingAddressPopUp(true) }} style={{ height: 70, backgroundColor: 'white',position: "absolute",bottom:0}}>
                             <View
                                 style={{
-                                    marginHorizontal: 6,
+                                    // padding:10,
+                                    marginHorizontal: 18,
                                     height: 60,
-                                    width: "80%",
+                                    width: "89%",
+                                    // backgroundColor:"transparent",
+                                    // paddingVertical:6,
                                     backgroundColor: 'white',
-                                    marginTop: 10,
                                     borderWidth: 1,
-                                    borderColor: 'black',
-                                    borderRadius: 10,
-                                    marginBottom: 10,
+                                    borderColor: '#FFCC00',
+                                    borderRadius: 20,
                                     flexDirection: 'row',
-                                    left: 35,
                                     alignItems: "center",
-
+                                    justifyContent: "center",
+                                  
+                                    // marginTop:10
                                 }}>
                                 <View style={{
 
@@ -451,10 +443,10 @@ const Address = (props) => {
 
                                     <View style={{
                                         flexDirection: 'column', justifyContent: 'center',
-                                        alignItems: "center", marginTop: 10
+                                        alignItems: "center", marginTop: 12
                                     }}>
                                         < View style={{ justifyContent: "flex-start", alignItems: 'flex-start' }}>
-                                            <Text style={{ textAlign: 'left', fontSize: 16, color: 'black', fontWeight: '500', fontFamily: 'Inter', left: 34, marginTop: 5 }}>Add Address</Text>
+                                            <Text style={{ textAlign: 'left', fontSize: 17, color: 'black', fontWeight: '500', fontFamily: 'Inter', left: 34, marginTop: 5 }}>Add Address</Text>
                                         </View>
                                     </View>
                                 </View>
@@ -579,10 +571,10 @@ const Address = (props) => {
                                                     value={state}
                                                     onChangeText={e => onChangeStateHandler(e)}
                                                 />
-                                                <View style={{ justifyContent: "center", alignItems: "center", marginBottom: 20, flexDirection: 'row', height: 45, marginHorizontal: 20, marginTop: 30 }}>
+                                                <View style={{ justifyContent: "center", alignItems: "center", marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 30 }}>
                                                     <TouchableOpacity
                                                         onPress={() => { data == true ? ItemUpdate() : gotocurrentpage() }} >
-                                                        <View style={{ justifyContent: 'center', width: 200, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
+                                                        <View style={{ justifyContent: 'center', width: 120, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
                                                             <Text style={styl.text}>Save </Text>
                                                         </View>
                                                     </TouchableOpacity>
@@ -605,9 +597,9 @@ const Address = (props) => {
 export default Address;
 const styl = StyleSheet.create({
     textInput: {
-        width: '98%', marginTop: 30, borderRadius: 10, marginHorizontal: 20,
+        width: '98%', marginTop: 15, borderRadius: 10, marginHorizontal: 20,
         flexDirection: 'row',
-        height: 50,
+        height: 45,
         shadowColor: '#11032586',
         backgroundColor: 'white',
         alignItems: 'center',

@@ -44,9 +44,9 @@ const ProductDetail = (props) => {
     if (countnums < 10) {
       var Num = countnums + 1;
       setCountnum(+Num);
-      console.log(".numm.", Num);
+      // console.log(".numm.", Num);
 
-      console.log("..", countnums);
+      // console.log("..", countnums);
     }
   };
   const Productdecrease = () => {
@@ -57,11 +57,15 @@ const ProductDetail = (props) => {
   };
 
 
-  console.log("Store_item...............:", props?.route?.params?.ITEM?.id);
+  // console.log("Store_item...............:", props?.route?.params?.ITEM?.id);
   const ITEM = props?.route?.params?.ITEM?.id
-  console.log("ClothITEM_item...............:", props?.route?.params?.CLOTHITEM?.id);
+  // console.log("ClothITEM_item...............:", props?.route?.params?.CLOTHITEM?.id);
   const CLOTHITEM = props?.route?.params?.CLOTHITEM?.id
-  let productids = ITEM ? ITEM : CLOTHITEM ? CLOTHITEM : null
+  // console.log("FitnessItem.........:",props?.route?.params?.FitnessItem?.product_id);
+  const FitnessItem=props?.route?.params?.FitnessItem?.product_id
+  // console.log("MENSITEM.........:",props?.route?.params?.MENSITEM?.product_id);
+  const MENSITEM=props?.route?.params?.MENSITEM?.product_id
+  let productids = ITEM ? ITEM : CLOTHITEM ? CLOTHITEM : FitnessItem ? FitnessItem : MENSITEM;
 
   useEffect(() => {
     StoresProductDetails();
@@ -82,15 +86,15 @@ const ProductDetail = (props) => {
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.STORE_PRODUCT_DETAIL}`, { "product_id": productids });
-      console.log(":::::::::Shop_product_Response>>>", response.data.data);
-      console.log("status _SHOP:", response.data.status);
+      // console.log(":::::::::Shop_product_Response>>>", response.data.data);
+      // console.log("status _SHOP:", response.data.status);
 
       setProductitems(response.data.data);
       setImageBaseUrl(response.data.product_url);
       setIsLoading(false);
     }
     catch (error) {
-      console.log("......error.........", error.response.data.message);
+      console.log("......StoresProductDetails_error.........", error.response.data.message);
       setIsLoading(false);
 
     }
@@ -104,7 +108,7 @@ const ProductDetail = (props) => {
     try {
       const response = await axios.get(`${API.SHIPPING_DETAILS}`);
       // console.log("", response);
-      console.log("ResponseShippingProducts(product) ::::", response.data.data);
+      // console.log("ResponseShippingProducts(product) ::::", response.data.data);
       setproductdata(response.data.data);
       setuseraddress(response.data.address_lists);
       // console.log("User_token_not_received+yet!!!>>>", response.data.message);
@@ -119,7 +123,7 @@ const ProductDetail = (props) => {
   };
 
   const ProductADDcart = async () => {
-    console.log("ADD_productin_QNTY cart.....", countnums);
+    // console.log("ADD_productin_QNTY cart.....", countnums);
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.PRODUCT_DETAILS_ADD_ITEM}`, { "qty": countnums, "product_id": productids }, {
@@ -127,8 +131,8 @@ const ProductDetail = (props) => {
           'Authorization': '228e273912a6b5718c5f2b1cbd857aba26c9cbf818436e51d8fea1b24eb71ec3c8e25cd398b45ccf8079aeb0825747d697d702536b212fd3cdcdeb656988f2d7aa6e1bb2cd4f6441ceb625eaa5aeac0ec88608afab00f850ed376837e6f7dd343972874e1cd245bdd2394229c895e082a9d1dc508d906868accd5ccae9345c0f503f3aea080fe21c68c82c4f0c48d025620821af98c9a0f838077a5eedf8842bd872030bf32fa4280f25f9c027d32fcce85d54a66a48ddfd3f714b47681419786db9a4841bf97b1586edbd3e8c9b50c94bc6f8283ee3613d2c777c1e12c6e1ab23cbd2b9e30aa77770309450db41a506dcb0999706f604de41676d6eeeaef15a0c8ad858a4549d50de0addd3e589337f5c8f7e1138434c6ec0bb757e82e3d8ddf40214d1d8bab63bd7e4f04d'
         },
       });
-      console.log(":::::::::ProductADD_Response>>>", response.data.message);
-      console.log("status _ProductADD:", response.data.status);
+      // console.log(":::::::::ProductADD_Response>>>", response.data.message);
+      // console.log("status _ProductADD:", response.data.status);
       if (response.data.status == 1) {
         props.navigation.navigate("CartAdded")
         // GetShippingProducts();
@@ -149,19 +153,19 @@ const ProductDetail = (props) => {
   const ProductRemovecart = async (item) => {
 
     const cartaddid = item.cart_id;
-    console.log("Remove_productin cart.....", cartaddid);
+    // console.log("Remove_productin cart.....", cartaddid);
     // setIsLoading(true);
     try {
       const response = await axios.post(`${API.PRODUCT_DETAILS_REMOVE_ITEM}`, { "cart_id": cartaddid });
-      console.log(":::::::::ProductRemovecart_Response>>>", response.data.message);
-      console.log("status _ProductRemovecart:", response.data.status);
+      // console.log(":::::::::ProductRemovecart_Response>>>", response.data.message);
+      // console.log("status _ProductRemovecart:", response.data.status);
       GetShippingProducts();
       // props.navigation.goBack();
       // setProductitems(response.data.data)
       // setIsLoading(false);
     }
     catch (error) {
-      console.log("......error.........", error.response.data.message);
+      console.log("......ProductRemovecarterror.........", error.response.data.message);
       // setIsLoading(false);
 
     }

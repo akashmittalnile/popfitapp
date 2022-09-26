@@ -330,7 +330,7 @@ const Signup = (props, navigation) => {
                 </TouchableOpacity>
               </View>
               <View style={style.BasicDetailsheader}>
-                <Text style={{ marginTop: 0, textAlign: 'justify', fontSize: 21, color: 'white' }}>Please Enter Your Basic Details</Text>
+                <Text style={{   textAlign: 'justify', fontSize: 20, color: 'white' }}>Please Enter Your Basic Details</Text>
               </View>
             </View>
 
@@ -400,10 +400,9 @@ const Signup = (props, navigation) => {
             >
               {({ values, handleChange, errors, setFieldTouched, touched, isValid, handleSubmit }) => (
                 <View style={{
-                  height: 1500, marginTop: 1, justifyContent: "center",
-                  alignItems: "center"
+                  height: 1500, justifyContent: "flex-start",alignItems: "center",paddingTop:10
                 }}>
-                  <View style={{ flexDirection: 'row', borderRadius: 25, height: 50, marginHorizontal: 33, marginTop: 15, }}>
+                  <View style={{ flexDirection: 'row', borderRadius: 25, height: 50, marginHorizontal: 33, }}>
                     <View style={{ flexDirection: 'column' }}>
                       
                       <View style={{
@@ -634,7 +633,7 @@ const Signup = (props, navigation) => {
                       }
                     </View>
                     <View style={{ flexDirection: 'column', }}>
-                      <View style={{ height: 50, marginHorizontal: 32, marginTop: 18, zIndex: 3, width: "85%" }} >
+                      <View style={{  width: 350,height: 50, marginTop: 18, zIndex: 3}} >
                         <DropDownPicker
                           loading={loading}
                           onPress={() => SelectCountry()}
@@ -700,7 +699,8 @@ const Signup = (props, navigation) => {
                           </View>
                           : <></>}
                     </View>
-                    <View style={{ height: 50, marginHorizontal: 32, marginTop: 25, zIndex: 2 }}>
+                    <View style={{  width: 350,
+                            height: 50, marginTop: 25, zIndex: 2 }}>
                       <DropDownPicker
                         placeholder="State"
                         loading={loading}
@@ -756,7 +756,7 @@ const Signup = (props, navigation) => {
                     </View>
 
 
-                    <View style={{ height: 50, marginHorizontal: 32, marginTop: 28, zIndex: 1 }}>
+                    <View style={{ height: 50, width: 350, marginTop: 28, zIndex: 1 }}>
                       <DropDownPicker onPress={() => { SelectCity() }}
                         loading={loading}
                         items={Cityitems.map(item => ({ label: item.name, value: item.id }))}
@@ -934,8 +934,8 @@ const Signup = (props, navigation) => {
 
                     }}
                       disabled={!isValid}>
-                      <View style={{ marginTop: 30, borderRadius: 25, width: 180, height: 49, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
-                        <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 17, color: 'white', }}>Next</Text>
+                      <View style={{ marginTop: 30, borderRadius: 50, width: 150, height: 40, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
+                        <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 16, color: 'white', }}>Next</Text>
                       </View>
                     </TouchableOpacity>
 

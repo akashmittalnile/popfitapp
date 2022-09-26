@@ -112,16 +112,16 @@ const Category = (props) => {
           {
             subcategoryitems.length != 0 ?
               (<ScrollView >
-                <View style={{ height: 60, flexDirection: 'row' }}>
+                <View style={{ height: 50, flexDirection: 'row' }}>
                   <View style={{ flex: 1 }}>
-                    <Text style={{ marginLeft: 25, marginTop: 20, textAlign: 'left', fontSize: 14, color: 'white', fontWeight: "bold" }}>Sub-Category Blogs</Text>
+                    <Text style={{ marginLeft: 15, marginTop: 20, textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "500" }}>Sub-Category Blogs</Text>
                   </View>
 
                 </View>
 
                 <FlatList
                   numColumns={2}
-                  style={{ margin: 10 }}
+                  // style={{ margin: 10 }}
                   data={subcategoryitems}
                   renderItem={({ item }) => (
                     <TouchableOpacity onPress={() => { gotoCategoryListBlog(item) }}>
@@ -133,7 +133,7 @@ const Category = (props) => {
                           width: WIDTH * 0.45,
                           borderRadius: 15,
                           marginBottom: 20,
-                          marginHorizontal: 6,
+                          marginHorizontal: 10,
                           justifyContent: "center",
                           alignItems: 'center',
                         }}>

@@ -38,13 +38,13 @@ const MenTshirts = props => {
 
   const gotoShippingDetail = (item) => {
     props.navigation.navigate('ProductDetail', {
-      ITEM: item
+      MENSITEM: item
     });
   };
 
-  console.log("Cloth_storeId......:", props?.route?.params?.SHOPID);
+  // console.log("Cloth_storeId......:", props?.route?.params?.SHOPID);
   const FitnessID = props?.route?.params?.SHOPID;
-  console.log("CLoth_categoryID......:", props?.route?.params?.categoryID);
+  // console.log("CLoth_categoryID......:", props?.route?.params?.categoryID);
   const categoryID = props?.route?.params?.categoryID;
 
   useEffect(() => {
@@ -63,15 +63,15 @@ const MenTshirts = props => {
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.SHOP_PRODUCTLIST}`, { 'shop_id': FitnessID, "category_id": categoryID }, { headers: { "Authorization": ` ${Token}` } });
-      console.log(":::::::::SHOP_PRODUCTLISTStore_Response>>>", response.data.products);
-      console.log("status _SHOP_PRODUCTLIST", response.data.status);
+      // console.log(":::::::::SHOP_PRODUCTLISTStore_Response>>>", response.data.products);
+      // console.log("status _SHOP_PRODUCTLIST", response.data.status);
 
       setshopitems(response.data.products)
       setIsLoading(false);
 
     }
     catch (error) {
-      console.log("......error.........", error.response.data.message);
+      console.log("CLOTHStores_Producterror.........", error.response.data.message);
       Alert.alert("Catch error msg FitnessEquipment !!!!")
       setIsLoading(false);
     }
@@ -79,12 +79,12 @@ const MenTshirts = props => {
   };
   const ShopFilter = async () => {
     const Token = await AsyncStorage.getItem("authToken");
-    console.log("SHOP filter...........>>>", ischecked);
+    // console.log("SHOP filter...........>>>", ischecked);
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.SHOP_FILTER}`, { "search": ischecked, "shop_id": FitnessID }, { headers: { "Authorization": ` ${Token}` } });
-      console.log(":::::Shop_FIlter>>>", response.data.data);
-      console.log("SHOP_Status", response.data.status);
+      // console.log(":::::Shop_FIlter>>>", response.data.data);
+      // console.log("SHOP_Status", response.data.status);
       if (response.data.status == 1) {
         setFilterPopUp(false)
         setshopitems(response.data.data)
@@ -98,7 +98,7 @@ const MenTshirts = props => {
 
     }
     catch (error) {
-      // console.log("......error.........", error.response.data.message);
+      // console.log(".....ShopFilter.error.........", error.response.data.message);
       Alert.alert(" Error in filter api catch part!");
       setIsLoading(false);
     }
@@ -132,7 +132,7 @@ const MenTshirts = props => {
           {
             shopitems.length != 0 ?
               (<ScrollView>
-                <View style={{ height: 60, flexDirection: 'row', flex: 1, justifyContent: "flex-start", alignItems: "flex-start", width: "95%", marginHorizontal: 18 }}>
+                <View style={{ height: 50, flexDirection: 'row', flex: 1, justifyContent: "flex-start", alignItems: "flex-start", width: "95%", marginHorizontal: 18 }}>
                   <View style={{ justifyContent: "flex-start", alignItems: "flex-start", flex: 0.45, }}>
                     <Text
                       style={{
@@ -141,7 +141,7 @@ const MenTshirts = props => {
                         textAlign: 'left',
                         fontSize: 18,
                         color: 'black',
-                        fontWeight: "bold"
+                        fontWeight: "500"
                       }}>
                       Clothing Store
                     </Text>
@@ -175,25 +175,25 @@ const MenTshirts = props => {
 
                 <FlatList
                   vertical
-                  style={{ margin: 10 }}
+                  // style={{ margin: 10 }}
                   numColumns={2}
                   data={shopitems}
                   renderItem={({ item }) => (
 
                     <TouchableOpacity
                       onPress={() => {
-                        // gotoShippingDetail(item) 
+                        gotoShippingDetail(item) 
                       }}
                       style={{
                         marginBottom: 6,
                         backgroundColor: '#f7f7f7',
                         height: 200,
                         width: WIDTH * 0.45,
-                        marginTop: 10,
-                        borderRadius: 25,
+                        marginTop: 15,
+                        borderRadius: 20,
                         alignItems: 'center',
                         justifyContent: "center",
-                        marginHorizontal: 6,
+                        marginHorizontal: 10,
                         shadowColor: '#000000',
                         shadowOffset: {
                           width: 0,

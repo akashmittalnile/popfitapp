@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import 'react-native-gesture-handler';
 import * as React from "react";
-import { ScrollView, View, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, FlatList, Dimensions, Modal } from 'react-native'
+import { ScrollView, View, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, FlatList, Dimensions, Modal,SafeAreaView } from 'react-native'
 
 import Home from '../Screens/Dasboard/Home';
 import BlogDetail from '../Screens/blog/BlogDetail';
@@ -158,6 +158,12 @@ const BlogBottomTab = (props) => {
 
 const MyTabBar = (props) => {
     return (
+        <SafeAreaView style={{
+            flex: 1,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'black'
+          }} >
         <Tab.Navigator
             // initialRouteName='Home'
             screenOptions={{
@@ -300,6 +306,7 @@ const MyTabBar = (props) => {
                     ),
                 }} component={BlogBottomTab} />
         </Tab.Navigator>
+        </SafeAreaView>
     );
 }
 

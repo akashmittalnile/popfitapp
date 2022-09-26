@@ -86,15 +86,15 @@ const Recipecategory = props => {
       />
 
       {!isLoading ?
-        (<View style={{ marginBottom: 60 }}>
+        (<View style={{ paddingBottom: 60 }}>
           <ScrollView >
 
 
-            <View style={{ marginTop: 20, height: 45, flexDirection: 'row' }}>
+            <View style={{ marginTop: 20, height: 30, flexDirection: 'row' }}>
               <View style={{ flex: 1 }}>
                 <Text
                   style={{
-                    marginLeft: 20,
+                    marginLeft: 15,
                     fontSize: 18,
                     color: 'white'
                   }}>
@@ -105,7 +105,7 @@ const Recipecategory = props => {
             <FlatList
               vertical
               numColumns={2}
-              style={{ margin: 6 }}
+              // style={{ margin: 0 }}
               data={recipecategory}
               renderItem={({ item }) => (
                 <TouchableOpacity
@@ -114,13 +114,13 @@ const Recipecategory = props => {
                   }}>
                     <View
                       style={{
-                        marginBottom: 6,
-                        marginTop: 6,
-                        marginHorizontal: 6,
+                        marginBottom: 10,
+                        marginTop: 10,
+                        marginHorizontal: 10,
                         height: 180,
                         width: WIDTH * 0.45,
                         overflow: 'hidden',
-                        borderRadius: 25,
+                        borderRadius: 20,
                         backgroundColor: '#f7f7f7',
                         backgroundColor: "lightgray",
                         shadowColor: '#000000',

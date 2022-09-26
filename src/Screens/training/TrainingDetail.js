@@ -195,7 +195,7 @@ const TrainingDetail = (props) => {
 
                                         <View style={{ marginHorizontal: 20, flexDirection: 'row', height: 30, justifyContent: 'center' }}>
                                             <TouchableOpacity onPress={() => { gotoTrainingpersondetails() }}>
-                                                <View style={{ borderWidth: 1, borderColor: '#ffcc00', justifyContent: 'center', width: 120, flex: 1, backgroundColor: 'white', borderRadius: 35 }}>
+                                                <View style={{ borderWidth: 1, borderColor: '#ffcc00', justifyContent: 'center', width: 120, flex: 1, backgroundColor: 'white', borderRadius: 50 }}>
                                                     <Text style={{ textAlign: 'center', fontSize: 9, color: '#ffcc00', }}>Save & Edit Details</Text>
                                                 </View>
                                             </TouchableOpacity>
@@ -215,7 +215,7 @@ const TrainingDetail = (props) => {
                                             <Text style={{ textAlign: 'center', fontSize: 12, color: 'black', }}>Set Up Your Training Workout</Text>
                                         </View>
 
-                                        <View style={{ marginHorizontal: 20, flexDirection: 'row', height: 35, justifyContent: 'center' }}>
+                                        <View style={{ marginHorizontal: 20, flexDirection: 'row', height: 30, justifyContent: 'center' }}>
                                             <TouchableOpacity>
                                                 <View style={{ borderWidth: 1, borderColor: '#ffcc00', justifyContent: 'center', width: 90, flex: 1, backgroundColor: 'white', borderRadius: 35 }}>
                                                     <Text style={{ textAlign: 'center', fontSize: 8, color: '#ffcc00', }}>Save Detail</Text>
@@ -235,7 +235,7 @@ const TrainingDetail = (props) => {
                         </View>
 
                         {/* Workout Category */}
-                        <Text style={{ marginTop: 30, marginLeft: 20, textAlign: 'left', fontSize: 14, color: 'white', fontWeight: "bold" }}>Workout Category</Text>
+                        <Text style={{ marginTop: 20, marginLeft: 15, textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "bold" }}>Workout Category</Text>
                         <FlatList
                             columnWrapperStyle={{
                                 flex: 1,
@@ -243,18 +243,18 @@ const TrainingDetail = (props) => {
                             }}
                             numColumns={Math.ceil(DATA.length / 2)}
                             data={TrainingWorkCatgry}
-                            style={{ margin: 6 }}
+                            // style={{ margin: 6 }}
                             renderItem={({ item }) => (
                                 <TouchableOpacity onPress={() => { Checkedtoken(item) }}>
                                     <View
                                         style={{
-                                            marginTop: 10,
+                                            marginTop: 20,
                                             backgroundColor: 'white',
                                             height: 180,
                                             width: WIDTH * 0.45,
                                             borderRadius: 25,
-                                            marginBottom: 20,
-                                            marginHorizontal: 6,
+                                            // marginBottom: 10,
+                                            marginHorizontal: 10,
                                             justifyContent: "center",
                                             alignItems: 'center',
                                         }}>

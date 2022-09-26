@@ -34,7 +34,7 @@ const FitnessEquipment = (props) => {
     FitnessStoresProduct();
 
     // const unsubscribe = props.navigation.addListener('focus', () => {
-    //   FitnessStoresProduct();
+     
 
     // });
     // return unsubscribe;
@@ -98,16 +98,16 @@ const FitnessEquipment = (props) => {
 
           <ScrollView >
 
-            <View style={{ height: 60, flexDirection: 'row', justifyContent: "flex-start", alignItems: "flex-start", width: "95%", marginHorizontal: 16 }}>
+            <View style={{ height: 50, flexDirection: 'row', justifyContent: "flex-start", alignItems: "flex-start", width: "95%", marginHorizontal: 16 }}>
               <View style={{ justifyContent: "center", alignItems: "center", }}>
                 <Text
                   style={{
-                    // marginLeft: 1,
+                    // marginLeft: 10,
                     marginTop: 20,
                     textAlign: 'left',
                     fontSize: 18,
                     color: 'black',
-                    fontWeight: "bold"
+                    fontWeight: "500"
                   }}>
                   Fitness Equipment
                 </Text>
@@ -143,7 +143,7 @@ const FitnessEquipment = (props) => {
               horizontal
               showsHorizontalScrollIndicator={false}
               // numColumns={2}
-              style={{ margin: 10 }}
+              // style={{ margin: 10 }}
               data={shopitems}
               renderItem={({ item }) => (
                 <TouchableOpacity onPress={() => {
@@ -152,12 +152,12 @@ const FitnessEquipment = (props) => {
                   <View
                     style={{
                       marginBottom: 6,
-                      marginTop: 6,
-                      marginHorizontal: 6,
+                      marginTop:15,
+                      marginHorizontal: 10,
                       height: 180,
                       width: WIDTH * 0.45,
                       overflow: 'hidden',
-                      borderRadius: 25,
+                      borderRadius: 20,
                       backgroundColor: '#f7f7f7',
                       backgroundColor: "lightgray",
                       shadowColor: '#000000',

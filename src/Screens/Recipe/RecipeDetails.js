@@ -69,7 +69,7 @@ return (
       <ScrollView>
         <View style={{ paddingBottom: 65 }}>
           <View style={{ height: 60 }}>
-            <Text style={{ marginLeft: 25, marginTop: 20, textAlign: 'left', fontSize: 17, color: 'black', fontWeight: "bold" }}>{recipedetails?.title}</Text>
+            <Text style={{ marginLeft: 25, marginTop: 20, textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "500" }}>{recipedetails?.title}</Text>
           </View>
           <View style={{
             marginHorizontal: 20, height: 200, borderRadius: 20, marginVertical: 1, width: WIDTH * 0.9}}>
@@ -90,7 +90,7 @@ return (
 
           <Text style={{ marginHorizontal: 20, marginTop: 10, textAlign: 'left', fontSize: 12, color: '#000', }}>{recipedetails?.youtube_description}</Text>
 
-          <Text style={{ marginLeft: 20, textAlign: 'left', marginTop: 20, fontSize: 17, color: '#000', fontWeight: "bold" }} >{recipedetails?.recipe_title}</Text>
+          <Text style={{ marginLeft: 20, textAlign: 'left', marginTop: 20, fontSize: 18, color: '#000', fontWeight: "500" }} >{recipedetails?.recipe_title}</Text>
 
 
           <View style={{ backgroundColor: "white", borderRadius: 20, marginTop: 20, height: HEIGHT * 0.2, width: WIDTH * 0.9, marginHorizontal: 18, }}>

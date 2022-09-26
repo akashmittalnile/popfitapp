@@ -158,13 +158,13 @@ const OutdoorTrainning = (props) => {
             TrainingSUBCatgry.length != 0 ?
               (<ScrollView>
 
-                <Text style={{ marginLeft: 25, marginTop: 20, textAlign: 'left', fontSize: 14, color: '#ffffff', }}>Sub Category Name</Text>
+                <Text style={{ marginLeft: 15, marginTop: 15, textAlign: 'left', fontSize: 18, color: '#ffffff', }}>Sub Category Name</Text>
                 <View style={{
                   backgroundColor: 'black', width: "100%", marginBottom: 30, justifyContent: "center",
                 }}>
                   <FlatList
                     numColumns={2}
-                    style={{ margin: 6 }}
+                    // style={{ margin: 1 }}
                     columnWrapperStyle={{
                       flex: 1,
                       // justifyContent: "center"
@@ -178,9 +178,9 @@ const OutdoorTrainning = (props) => {
                             backgroundColor: 'gray',
                             height: 160,
                             width: WIDTH * 0.45,
-                            borderRadius: 25,
-                            marginBottom: 20,
-                            marginHorizontal: 6,
+                            borderRadius: 20,
+                            marginBottom: 6,
+                            marginHorizontal: 10,
                             justifyContent: "flex-start",
                             alignItems: 'center',
                           }}>
@@ -227,10 +227,10 @@ const OutdoorTrainning = (props) => {
                   </View> */}
 
 
-                  <View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row', height: 45, marginHorizontal: 20, marginTop: 20, flex: 1, }}>
+                  <View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row', height: 36, marginHorizontal: 20, marginTop: 20, flex: 1, }}>
                     <TouchableOpacity onPress={() => { gotoSubsciption() }}>
-                      <View style={{ alignItems: 'center', width: 300, justifyContent: 'center', backgroundColor: '#ffcc00', borderRadius: 35, flex: 1 }}>
-                        <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Upgrade to Plan 1 Subscription</Text>
+                      <View style={{ alignItems: 'center', width: 280, justifyContent: 'center', backgroundColor: '#ffcc00', borderRadius: 35, flex: 1 }}>
+                        <Text style={{ textAlign: 'center', fontSize: 16, color: 'white',fontWeight:"500" }}>Upgrade to Plan 1 Subscription</Text>
                       </View>
                     </TouchableOpacity>
                   </View>

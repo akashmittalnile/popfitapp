@@ -42,6 +42,7 @@ const Login = (props) => {
 
   const [password, setpasssword] = useState("");
   const [email, setEmail] = useState("");
+  const [firebase_token, setfirebase_token] = useState("");
 
   const [ForgotPassword, setForgotPassword] = useState(false);
   const [forgetOtp, setforgetOtp] = useState("");
@@ -51,7 +52,21 @@ const Login = (props) => {
   const gotoSignUp = () => {
     props.navigation.navigate("MobileNo")
   }
+  useEffect(() => {
+    const GetToken = async () => {
+      const FIRE_Token = await AsyncStorage.getItem("NotiManAndroid");
+      const FB_TOKEN = await AsyncStorage.getItem("NotiManIOS");
+      if (FIRE_Token.length != 0) {
+        setfirebase_token(FIRE_Token);
+        console.log("FIRE_Token_loginscreen-USEEFFECT-ANDRIOD>>>", FIRE_Token);
+      } else if (FB_TOKEN != 0) {
+        setfirebase_token(FB_TOKEN);
+        console.log("FIRE_Token_loginscreen-USEEFFECT::ISO>", FIRE_Token);
+      }
 
+    }
+    GetToken();
+  }, []);
   // const gotoHome = () => {
   //   AsyncStorage.setItem("Logedin", JSON.stringify("User login successfully!!!"));
   //   props.navigation.navigate("DrawerMain1")
@@ -67,14 +82,16 @@ const Login = (props) => {
     //   alert("Email or Password is invalid");
     //   return;
     // }
+    console.log("LOGIN DETAILS ENTER:::", email, password, firebase_token);
     try {
       const response = await axios.post(`${API.LOGIN}`, {
         email,
         password,
+        firebase_token
       });
-      console.log("afryrtunu6:::", email, password);
 
-      if(response.data.status==1){
+
+      if (response.data.status == 1) {
         console.log("..........................", response.data.success.token);
         const userToken = response.data.success.token;
         AsyncStorage.setItem('authToken', userToken);
@@ -82,8 +99,8 @@ const Login = (props) => {
         await AsyncStorage.setItem("userView", userProfiles);
         props.navigation.navigate("DrawerMain1");
       }
-      else{
-        Alert.alert("User email and password is not matched, Please Check Again! ",response.data.message);
+      else {
+        Alert.alert("User email and password is not matched, Please Check Again! ", response.data.message);
       }
     }
     catch (error) {
@@ -364,8 +381,8 @@ const Login = (props) => {
 
             <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center' }}>
               <TouchableOpacity onPress={() => { onSubmitLoginAPi() }}>
-                <View style={{ marginTop: 30, borderRadius: 25, width: 200, height: 50, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
-                  <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'white', }}>Login</Text>
+                <View style={{ marginTop: 30, borderRadius: 25, width: 150, height: 40, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
+                  <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 16, color: 'white', }}>Login</Text>
                 </View>
               </TouchableOpacity>
               {/* <TouchableOpacity onPress={() => { setLoginWithNumberPopup(true) }}>
@@ -374,7 +391,7 @@ const Login = (props) => {
                 </View>
               </TouchableOpacity> */}
             </View>
-            <View style={{ marginTop: 15, width: "100%", height: 40, alignItems: 'center', justifyContent: 'center', flexDirection: "row" ,}}>
+            <View style={{ marginTop: 15, width: "100%", height: 40, alignItems: 'center', justifyContent: 'center', flexDirection: "row", }}>
               <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'black', justifyContent: 'center', }}>Don't have an accout </Text>
 
               <TouchableOpacity
@@ -481,7 +498,7 @@ const Login = (props) => {
                             }
                           </View>
 
-                          <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 50, marginHorizontal: 20, marginTop: 50 }}>
+                          <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 50 }}>
                             <TouchableOpacity onPress={() => {
                               handleSubmit()
 
@@ -693,7 +710,7 @@ const Login = (props) => {
                             (null)
                         }
                       </View>
-                      <View style={{ marginLeft: 30, marginBottom: 1, flexDirection: 'row', height: 50, marginHorizontal: 20, marginTop: 20 }}>
+                      <View style={{ marginLeft: 30, marginBottom: 1, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 20 }}>
                         <TouchableOpacity onPress={() => { LoginVerifyOtp() }}>
                           <View style={{ alignItems: 'center', justifyContent: 'center', width: 200, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
 
@@ -801,7 +818,7 @@ const Login = (props) => {
                             }
                           </View>
 
-                          <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 50, marginHorizontal: 20, marginTop: 50 }}>
+                          <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 50 }}>
                             <TouchableOpacity onPress={() => {
                               handleSubmit()
                               // ForgetAPI(values);
