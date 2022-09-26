@@ -11,7 +11,7 @@
     "androidRelease": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
     "removeAndroidDrwable": "rm -rf ./android/app/src/main/res/drawable-*",
     "removeAndroidRaw": "rm -rf ./android/app/src/main/res/raw",
-    "AndroidBuild": "cd android && gradlew clean && gradlew assembleRelease",
+    "AndroidBuild": "cd android && ./gradlew clean && ./gradlew assembleRelease",
     "AndroidReleaseBuild": "cd android && ./gradlew clean && ./gradlew bundleRelease",
     "assembledebug": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res --verbose"
   },

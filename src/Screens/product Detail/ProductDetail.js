@@ -299,12 +299,12 @@ const ProductDetail = (props) => {
                 }
               />
 
-              <Text style={{ marginLeft: 25, marginTop: 30, textAlign: 'left', fontSize: 15, color: '#000000', fontWeight: "600" }}>{Productitems?.name?.slice(0, 25) + '...'}</Text>
+              <Text style={{ marginLeft: 25, marginTop: 20, textAlign: 'left', fontSize: 18, color: '#000000', fontWeight: "500" }}>{Productitems?.name?.slice(0, 35) + '...'}</Text>
 
-              <View style={{ marginTop: 20, flex: 1, flexDirection: 'row', width: "95%", backgroundColor: 'white', height: 50, justifyContent: "center", alignItems: "center" }}>
+              <View style={{ marginTop: 10, flex: 1, flexDirection: 'row', width: "95%", backgroundColor: 'white', height: 50, justifyContent: "center", alignItems: "center" }}>
 
-                <View style={{ flex: 1, marginLeft: 25, height: 50, width: 100, justifyContent: "center", alignItems: "flex-start" }}>
-                  <Text style={{ textAlign: 'left', fontSize: 14, color: '#ffcc00', fontWeight: "600" }}>$ <Text style={{ textAlign: 'left', fontSize: 14, color: '#ffcc00', fontWeight: "600" }}>{Productitems?.price}</Text></Text>
+                <View style={{ flex: 1, marginLeft: 25, height: 30, width: 100, justifyContent: "center", alignItems: "flex-start" }}>
+                  <Text style={{ textAlign: 'left', fontSize: 14, color: '#77869E', fontWeight: "500" }}>$ <Text style={{ textAlign: 'left', fontSize: 14, color: '#77869E', fontWeight: "500" }}>{Productitems?.price}</Text></Text>
                 </View>
 
                 {/* <View style={{ flex: 0.3, backgroundColor: '#f2f2f2', flexDirection: 'row', padding: 4, borderRadius: 10, justifyContent: "center", alignItems: "center", height: 50, }}>
@@ -342,17 +342,17 @@ const ProductDetail = (props) => {
               </View>
 
               <View style={{ justifyContent: "flex-start", alignItems: "flex-start", width: "90%", marginLeft: 20, height: 350 }}>
-                <Text style={{ marginTop: 20, textAlign: 'left', fontSize: 12, color: '#000000', }}>{Productitems?.description}</Text>
+                <Text style={{ marginTop: 20, textAlign: 'left', fontSize: 14, color: '#000000', }}>{Productitems?.description}</Text>
               </View>
 
               {/* bottom Buttons   */}
-              <View style={{ marginLeft: 1, marginBottom: 80, flexDirection: 'row', justifyContent: "center", alignItems: "center", backgroundColor: "white", height: 50, width: "100%" }}>
+              <View style={{ marginLeft: 1, marginBottom: 80, flexDirection: 'row', justifyContent: "center", alignItems: "center", backgroundColor: "white", height: 36, width: "100%" }}>
 
                 <TouchableOpacity onPress={() => { props.navigation.goBack() }}
-                  style={{ justifyContent: 'center', backgroundColor: '#ffcc00', borderRadius: 35, alignItems: "center", height: 45, width: 170 }}>
+                  style={{ justifyContent: 'center', backgroundColor: '#ffcc00', borderRadius: 50, alignItems: "center", height: 34, width: 170 }}>
 
 
-                  <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Continue Shopping</Text>
+                  <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', }}>Continue Shopping</Text>
 
                 </TouchableOpacity>
 
@@ -360,8 +360,8 @@ const ProductDetail = (props) => {
                   // setCartAddedPopUp(!CartAddedPopUp);
                   ProductADDcart()
                 }}
-                  style={{ justifyContent: 'center', height: 45, backgroundColor: '#ffcc00', borderRadius: 35, marginLeft: 10, width: 130 }}>
-                  <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Add To Cart</Text>
+                  style={{ justifyContent: 'center', height: 34, backgroundColor: '#ffcc00', borderRadius: 50, marginLeft: 10, width: 130 }}>
+                  <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', }}>Add To Cart</Text>
 
                 </TouchableOpacity>
               </View>

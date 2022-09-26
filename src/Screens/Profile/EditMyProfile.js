@@ -359,13 +359,13 @@ if (profileImage != '') {
 
           <View style={{ marginBottom: 20, flexDirection: 'row', height: 34, marginTop: 40, justifyContent: 'center' }}>
             <TouchableOpacity onPress={() => { buttonClickedHandler() }}>
-              <View style={{ justifyContent: 'center', width: 150, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
+              <View style={{ justifyContent: 'center', width: 120, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
                 <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', }}>Cancel</Text>
               </View>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => { GetProfile() }}>
-              <View style={{ justifyContent: 'center', width: 150, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50, marginLeft: 10 }}>
+              <View style={{ justifyContent: 'center', width: 120, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50, marginLeft: 10 }}>
                 <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', }}>Save</Text>
 
               </View>

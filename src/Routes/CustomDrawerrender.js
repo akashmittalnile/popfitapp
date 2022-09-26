@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React, { useState } from "react";
-import { ScrollView, View, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, FlatList, Dimensions, Modal, ActivityIndicator } from 'react-native'
+import { ScrollView, View, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, FlatList, Dimensions, Modal, ActivityIndicator, BackHandler } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useEffect } from 'react';
@@ -33,6 +33,17 @@ const CustomDrawerrender = (props) => {
       getusertoken();
 
     }
+    const backAction = () => {
+      BackHandler.exitApp()
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
 
     //  getusertoken();
     // GetProfile();
@@ -75,10 +86,10 @@ const CustomDrawerrender = (props) => {
           setprofiledata(response.data.data)
           // console.log("User_token_not_received+yet!!!>>>", response.data.data.first_name);
           setIsLoading(false);
-        }else{
+        } else {
           setIsLoading(false);
         }
-     
+
       }
       catch (error) {
         // console.log("GET User Profile in drawer error:", error.response.data.message);
@@ -166,7 +177,7 @@ const CustomDrawerrender = (props) => {
                     <Text style={{ fontSize: 14, color: 'black', textAlign: 'left' }}>User's Login</Text>
                   </TouchableOpacity>
 
-                  <View style={{ justifyContent: 'flex-end', flex: 1 / 2, width: 50,borderBottomRightRadius: 20}}>
+                  <View style={{ justifyContent: 'flex-end', flex: 1 / 2, width: 50, borderBottomRightRadius: 20 }}>
                     <Image source={require('../Screens/assets/arrowWhiteBack.png')}
                       style={{
                         width: 40,
@@ -176,7 +187,7 @@ const CustomDrawerrender = (props) => {
                 </View>)
                 :
                 (<TouchableOpacity onPress={() => {
-                  props.navigation.navigate("MyProfile") ;
+                  props.navigation.navigate("MyProfile");
                   // {
                   //   UserProfile: profiledata
                   // })
@@ -195,7 +206,7 @@ const CustomDrawerrender = (props) => {
                     <View style={{ justifyContent: 'center', flex: 1.1, height: 100, }} >
                       <Text style={{ fontSize: 15, color: 'black', textAlign: 'left' }}>{profiledata.first_name + " " + profiledata.last_name}</Text>
                     </View>
-                    <View style={{ justifyContent: 'flex-end', flex: 1 / 2, width: 50,borderBottomRightRadius: 20, }}>
+                    <View style={{ justifyContent: 'flex-end', flex: 1 / 2, width: 50, borderBottomRightRadius: 20, }}>
                       <Image source={require('../Screens/assets/arrowWhiteBack.png')}
                         style={{
                           width: 40,
@@ -383,10 +394,10 @@ const CustomDrawerrender = (props) => {
               {
                 loginbtn != null ?
                   (<TouchableOpacity onPress={() => {
-                    //  AsyncStorage.removeItem('authToken')
-                    AsyncStorage.clear();
-                    props.navigation.navigate("LoginMain")
-                  }}>
+                     AsyncStorage.removeItem('authToken');
+                    // AsyncStorage.clear();
+                    props.navigation.navigate("LoginMain");
+                    }}>
                     <View style={{ marginTop: 80, flexDirection: 'row', height: 30 }}>
                       <View style={{ width: 25, height: 23, }} >
                         <Image source={require('../Screens/assets/logouts.png')}

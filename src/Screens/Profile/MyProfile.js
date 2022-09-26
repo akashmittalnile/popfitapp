@@ -110,7 +110,7 @@ const MyProfile = (props) => {
                         <View style={{ margin: 5, flex: 1 / 1.2, flexDirection: 'column' }}>
                             <Text style={{ marginTop: 15, fontSize: 16, color: 'black' }}>{Userprofile?.first_name + "  " + Userprofile?.last_name}</Text>
                             <View style={{ flex: 1 / 3, flexDirection: 'row', marginTop: 10 }}>
-                                <View style={{ flex: 1.4, flexDirection: 'row' }}>
+                                <View style={{ flex: 1.5, flexDirection: 'row', }}>
                                     <View style={{ width: 30, height: 30, marginTop: 5 }} >
                                         <Image source={require('../assets/message.png')}
                                             resizeMode="contain"
@@ -119,13 +119,13 @@ const MyProfile = (props) => {
                                                 height: 16, alignSelf: 'center',
                                             }} />
                                     </View>
-                                    <View style={{ width: 100, height: 20, marginTop: 3, marginLeft: 4 }} >
-                                        <Text style={{ fontSize: 12, color: 'black', textAlign: 'left' }}>
+                                    <View style={{ width: 100, height: 20, marginTop: 3, marginLeft: 4}}  >
+                                        <Text numberOfLines={1} style={{ fontSize: 11, color: 'black', textAlign: 'left'}} >
                                             {Userprofile?.email}
                                         </Text>
                                     </View>
                                 </View>
-                                <View style={{ marginLeft: 15, flex: 1.5, flexDirection: 'row' }}>
+                                <View style={{ marginLeft: 22, flex: 1.5, flexDirection: 'row',  }}>
                                     <View style={{ width: 30, height: 30, marginTop: 2 }} >
                                         <Image source={require('../assets/telephone.png')}
                                             resizeMode="contain"
@@ -413,7 +413,7 @@ const MyProfile = (props) => {
                                     width: 200,
                                     height: 120, alignSelf: 'center'
                                 }} />
-                            <Text style={{ fontSize: 14, fontWeight: "bold" }}>No data found</Text>
+                            <Text style={{ fontSize: 14, fontWeight: "bold" }}>Oops,your order list is empty !</Text>
                         </View>)}
 
                     {/* <View style={{ marginTop: 30, height: 45, flexDirection: 'row' }}>

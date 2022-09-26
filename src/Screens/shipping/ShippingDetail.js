@@ -148,10 +148,14 @@ const ShippingDetail = (props) => {
     }
     console.log("...........", Selectcoupons);
     useEffect(() => {
-
-        checklogin();
-        gotoCoupon()
-        GetShippingProducts();
+        const unsubscribe = props.navigation.addListener('focus', () => {
+            checklogin();
+            gotoCoupon();
+            GetShippingProducts();
+    });
+    return unsubscribe;
+        
+        // GetShippingProducts();
     }, []);
     const checklogin = async () => {
         let Usertoken = await AsyncStorage.getItem("authToken");
@@ -235,41 +239,42 @@ const ShippingDetail = (props) => {
 
     // };
 
-    const ProductRemovecart = async (productdata) => {
-        console.warn('item---------->', productdata)
+    const ProductRemovecart = async (item) => {
+        const cartremoveid = item.cart_id;
+        console.warn('item---------->', item)
         setIsLoading(true);
         try {
             const usertkn = await AsyncStorage.getItem("authToken");
-            const response = await axios.post(`${API.PRODUCT_DETAILS_REMOVE_ITEM} `, { "cart_id": cartaddid }, {
+            const response = await axios.post(`${API.PRODUCT_DETAILS_REMOVE_ITEM} `, { "cart_id": cartremoveid }, {
                 'headers': { "Authorization": ` ${usertkn}` }
             });
-            GetShippingProducts()
+            GetShippingProducts();
             setIsLoading(false);
         }
         catch (error) {
-            //   console.log("......error.........", error.response.data.message);
+              console.log(".ProductRemovecart.....error.........", error.response.data.message);
             setIsLoading(false);
 
         }
 
     };
-    const CouponListApi = async () => {
+    // const CouponListApi = async () => {
 
 
-        try {
-            const response = await axios.get(`${API.COUPON_LIST} `);
-            // console.log("", response);
-            console.log("Response_CouponListApi ::::", response.data.data);
-            setCoupondata(response.data.data);
+    //     try {
+    //         const response = await axios.get(`${API.COUPON_LIST} `);
+    //         // console.log("", response);
+    //         console.log("Response_CouponListApi ::::", response.data.data);
+    //         setCoupondata(response.data.data);
 
 
-            // setIsLoading(false)
-        }
-        catch (error) {
-            // setIsLoading(false)
-        }
+    //         // setIsLoading(false)
+    //     }
+    //     catch (error) {
+    //         // setIsLoading(false)
+    //     }
 
-    };
+    // };
 
     // const CouponRemove = async () => {
 
@@ -335,7 +340,7 @@ const ShippingDetail = (props) => {
                 Backicon={{
                     visible: true,
                 }}
-                BackicononClick={() => { props.navigation.goBack() }}
+                BackicononClick={() => { props.navigation.navigate("CartAdded") }}
 
                 CartIcon={{
                     visible: true,

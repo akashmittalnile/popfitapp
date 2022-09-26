@@ -162,7 +162,7 @@ const Blog = (props) => {
                     width: "90%",
                     flexDirection: 'row',
                     backgroundColor: 'white',
-                    borderRadius: 15,
+                    borderRadius: 20,
                     // marginHorizontal: 25,
                     marginTop: 20,
                     flex: 1,
@@ -175,7 +175,7 @@ const Blog = (props) => {
                       height: 150,
                       // marginLeft: 20,
                       flex: 0.4,
-                      borderRadius: 15,
+                      borderRadius: 20,
                       marginRight: 10,
                       backgroundColor: 'white',
                     }}>
@@ -197,7 +197,7 @@ const Blog = (props) => {
                       height: 151,
                       // width:"100%",
                       // marginLeft: 20,
-                      borderRadius: 15,
+                      borderRadius: 20,
                       flex: 0.6,
                       justifyContent: 'center',
                       flexDirection: 'column',
@@ -220,8 +220,9 @@ const Blog = (props) => {
                         style={{
                           height: 48,
                           width: 70,
+                          right:-1,
                           //  backgroundColor: '#ffcc00', 
-                          borderRadius: 35,
+                          borderRadius: 20,
                         }}>
                         <Image
                           source={require('../assets/arrowWhiteBack.png')}
@@ -230,7 +231,7 @@ const Blog = (props) => {
                             height: "100%",
                             alignSelf: 'center',
                             justifyContent: 'center',
-                            borderBottomRightRadius: 17,
+                            borderBottomRightRadius: 20,
                           }}
                         />
                       </View>
@@ -470,7 +471,7 @@ const Blog = (props) => {
                       validationSchema={yup.object().shape({
                         Checkemail: yup
                           .string()
-                          .required('The email field is required.*'),
+                          .required('Please, enter a valid email address*'),
                       })}
                     >
                       {({ values, handleChange, errors, setFieldTouched, touched, isValid, handleSubmit }) => (
@@ -545,7 +546,7 @@ const Blog = (props) => {
                           </View>
 
 
-                          <View style={{ marginLeft: 30, marginBottom: 15, flexDirection: 'row', height: 48, marginHorizontal: 20, marginTop: 30, justifyContent: "center", alignItems: 'center', }}>
+                          <View style={{ marginLeft: 30, marginBottom: 15, flexDirection: 'row', height: 36, marginHorizontal: 20, marginTop: 30, justifyContent: "center", alignItems: 'center', }}>
                             <TouchableOpacity disabled={!isValid}
                               onPress={() => { handleSubmit(values) }}>
                               <View style={{ alignItems: 'center', justifyContent: 'center', width: 150, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
