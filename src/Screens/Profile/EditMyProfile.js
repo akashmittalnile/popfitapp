@@ -111,6 +111,7 @@ if (profileImage != '') {
         uri: profileImage.path,
       });
     }
+    console.log("upload image",formdata);
     try {
       const response = await axios.post(`${API.PROFILE_UPDATE}`, formdata, { headers: { "Authorization": ` ${usertkn}`, 'Content-Type': 'multipart/form-data'} });
       console.log("ResponseProfile_UpdateStatus ::::", response.data);
@@ -406,7 +407,7 @@ if (profileImage != '') {
                   }}>
 
                   <View style={{
-                    backgroundColor: 'white',
+                    // backgroundColor: 'white',
                     height: 320,
                     //marginHorizontal: 10,
 

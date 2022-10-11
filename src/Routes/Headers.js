@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, Image, SafeAreaView, } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { incrementCounter } from '../Redux/actions/UpdateCounter';
+import { CartCounter,incrementCounter } from '../Redux/actions/UpdateCounter';
 
 const Headers = ({
     Drawericon,
@@ -16,60 +16,61 @@ const Headers = ({
     CartIconononClick,
     BackicononClick
 }) => {
-    // const dispatch = useDispatch();
-    const myNoticount = useSelector((state) => state.modifyCounterReducer);
+    const dispatch = useDispatch();
+    const myNoticount = useSelector((state) => state.mofiynoti);
+    const Mycartcount = useSelector((state) => state.Cartreducer);
     const [counter, setCounter] = useState('');
 
     useEffect(() => {
 
         // GetShippingProducts()
-        Notifi()
-        b()
+        // Notifi()
+        // b()
 
     }, [])
-    const GetShippingProducts = async () => {
-        const usertkn = await AsyncStorage.getItem("authToken");
+    // const GetShippingProducts = async () => {
+    //     const usertkn = await AsyncStorage.getItem("authToken");
 
-        // console.log('heloooooo')
-        setIsLoading(true)
-        try {
-            const response = await axios.get(`${API.NOTIFICATION}`, { headers: { "Authorization": ` ${usertkn}` } });
-            let data = response.data.data.length;
-            console.log('incrementCounter', data
-            );
-            dispatch(incrementCounter(parseInt(data)));
-            // AsyncStorage.setItem("notification", JSON.stringify(data));
-            if (response?.data?.status == '1') {
-                setIsLoading(false)
-                setNoti(response.data.data);
-            }
-        }
-        catch (error) {
-            setIsLoading(false)
-            //  console.log("ShippingProductserror:::", error);
+    //     // console.log('heloooooo')
+    //     setIsLoading(true)
+    //     try {
+    //         const response = await axios.get(`${API.NOTIFICATION}`, { headers: { "Authorization": ` ${usertkn}` } });
+    //         let data = response.data.data.length;
+    //         console.log('incrementCounter', data
+    //         );
+    //         dispatch(incrementCounter(parseInt(data)));
+    //         // AsyncStorage.setItem("notification", JSON.stringify(data));
+    //         if (response?.data?.status == '1') {
+    //             setIsLoading(false)
+    //             setNoti(response.data.data);
+    //         }
+    //     }
+    //     catch (error) {
+    //         setIsLoading(false)
+    //         //  console.log("ShippingProductserror:::", error);
 
-        }
+    //     }
 
-    };
-    const a = () => {
-        setTimeout(() => {
-            Notifi()
-            b();
-        }, 2000)
+    // };
+    // const a = () => {
+    //     setTimeout(() => {
+    //         Notifi()
+    //         b();
+    //     }, 2000)
 
-    }
-    const b = () => {
-        a();
-    }
-    const clearNoti = async () => {
-        AsyncStorage.setItem("notification", JSON.stringify(""));
-    }
-    const Notifi = async () => {
-        let noti = AsyncStorage.getItem('notification');
-        // var notify = JSON.parse(noti);
-        // setCounter(notify);
-        //console.log('notifica--------->', notify)
-    }
+    // }
+    // const b = () => {
+    //     a();
+    // }
+    // const clearNoti = async () => {
+    //     AsyncStorage.setItem("notification", JSON.stringify(""));
+    // }
+    // const Notifi = async () => {
+    //     let noti = AsyncStorage.getItem('notification');
+    //     // var notify = JSON.parse(noti);
+    //     // setCounter(notify);
+    //     //console.log('notifica--------->', notify)
+    // }
     return (
         <View style={style.navigationBarBlack}>
 
@@ -131,6 +132,34 @@ const Headers = ({
                                         width: 25,
                                         height: 30, alignSelf: 'center', marginRight: 10
                                     }} />
+                                {Mycartcount >= '0'  ?
+                                    <View
+                                        style={{
+                                            position: "absolute",
+                                            backgroundColor: '#ffcc00',
+                                            width: 15,
+                                            height: 15,
+                                            borderRadius: 15,
+                                            marginLeft: 30,
+                                            top: 1,
+                                            right: 4,
+                                            shadowColor: '#000000',
+                                            shadowRadius: 5,
+                                            shadowOpacity: 1.0,
+                                            elevation: 6,
+                                            zIndex: 2000,
+                                            justifyContent: "center",
+                                            alignItems: "center"
+                                        }}>
+                                        <Text style={{
+                                            color: 'white', fontSize: 10, fontWeight: 'bold', textAlign: "center", justifyContent: "center",
+                                            alignItems: "center"
+                                        }}>
+                                            {Mycartcount}
+                                        </Text>
+                                    </View>
+                                    : null
+                                }
                                 {/* <View
                                     style={{
                                         position: "absolute",
@@ -163,7 +192,7 @@ const Headers = ({
                         (<View style={style.navigationBarRightContainer}>
                             <TouchableOpacity onPress={() => {
                                 BelliconononClick()
-                                clearNoti()
+                                // clearNoti()
                             }}>
                                 <Image source={require('../Screens/assets/bellRight.png')}
                                     style={{

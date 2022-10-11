@@ -17,10 +17,11 @@ const OutdoorTrainning = (props) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [TrainingSUBCatgry, setTrainingSUBCatgry] = useState([]);
+  const [checkplanid, setCheckPlanId] = useState(props?.route?.params?.TrainingData);
 
   useEffect(() => {
     workoutSubCategoryAPI();
-
+    console.log("Traingplanstatus...:",props?.route?.params?.TrainingData);
     //   const checklogin = async () => {
     //     let Usertoken = await AsyncStorage.getItem("authToken");
     //     console.log("token.......", Usertoken);
@@ -28,25 +29,50 @@ const OutdoorTrainning = (props) => {
     //         props.navigation.navigate('LoginMain', {
     //             screen: 'LoginSignUp',
     //           });
-    //         console.log("...............................");
+    //           Alert.alert("Login Fist!")
+    //         console.log(".........Not Login......................");
 
     //     }
     //     else {
 
-    //         console.log("??????????????error");
+    //         console.log(".......user login...................");
     //     }
     // };
     // checklogin();
 
     // getusertoken();
-  }, [props]);
+  }, []);
 
   const gotoOutdoorCycle = (item) => {
+   
+    // Alert.alert(" status 0")
+    if (checkplanid.plan_status == "Active") {
+      // switch (Inactive) {
+      //   case checkplanid.plan_id == "1":
+      //     console.log("plan 1 used");
+      //     break;
+      //   case checkplanid.plan_id == "2":
+      //     console.log("plan 2 used");
+      //     break;
+      //   case checkplanid.plan_id == "3":
+      //     console.log("plan 3 used");
+      //     break;
+      //     default:
+      //       console.log("plan 0 used ");
+      // }
+      // Alert.alert(" status Active")
+      props.navigation.navigate("Training", {
+        Tainingcat_id: categoryId ? categoryId : TrainingID,
+        Trainingsubcat_data: item
+      })
+    }
+    else if (checkplanid.plan_status == "Inactive") {
+      // Alert.alert("Please, Login First!")
+      props.navigation.navigate('LoginMain', {
+                    screen: 'LoginSignUp',
+                   });
+    }
 
-    props.navigation.navigate("Training", {
-      Tainingcat_id: categoryId ? categoryId : TrainingID,
-      Trainingsubcat_data: item
-    })
   }
 
   const gotoSubsciption = () => {
@@ -54,27 +80,31 @@ const OutdoorTrainning = (props) => {
   }
 
 
-  console.log("categoryId_item...............:", props?.route?.params?.categoryId?.id);
+  // console.log("categoryId_item...............:", props?.route?.params?.categoryId?.id);
   const categoryId = props?.route?.params?.categoryId?.id
-  console.log("TrainingID_item...............:", props?.route?.params?.TrainingID?.id);
+  // console.log("TrainingID_item...............:", props?.route?.params?.TrainingID?.id);
   const TrainingID = props?.route?.params?.TrainingID?.id
 
+  // setCheckPlanId(props?.route?.params?.TrainingData);
 
   const workoutSubCategoryAPI = async () => {
     const usertkn = await AsyncStorage.getItem("authToken");
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.TRAINING_SUB_CATERORY}`, { "category_id": categoryId ? categoryId : TrainingID }, { headers: { "Authorization": ` ${usertkn}` } });
-      console.log(":::::::::workoutSubCategoryAPI_Response>>>", response.data.message);
-      console.log("workoutSubCategoryAPI_data::::::", response.data.data);
+      const response = await axios.post(`${API.TRAINING_SUB_CATERORY}`, { "category_id": categoryId ? categoryId : TrainingID },
+        //  { headers: { "Authorization": ` ${usertkn}` } }
+      );
+      // console.log(":::::::::workoutSubCategoryAPI_Response>>>", response.data.message);
+      // console.log("workoutSubCategoryAPI_data::::::", response.data.data);
       // alert("Get Sub-category data successfully");
       if (response.data.status == '1') {
         setTrainingSUBCatgry(response.data.data)
         setIsLoading(false);
-      } else if (response.data.status == '0'){
-        Alert.alert("Workout sub categoru have no data at status 0")
+      } else if (response.data.status == '0') {
+
+        Alert.alert("Workout sub category have no data at status 0")
       }
-    
+
 
     }
     catch (error) {
@@ -157,8 +187,10 @@ const OutdoorTrainning = (props) => {
           {
             TrainingSUBCatgry.length != 0 ?
               (<ScrollView>
+                <View style={{ marginLeft: 10, marginTop: 15, justifyContent: "center", alignItems: "center", width: WIDTH * 0.3, height: 50 }}>
+                  <Text style={{ textAlign: 'left', fontSize: 18, color: '#ffffff', fontWeight: "500" }}>Sub Category</Text>
+                </View>
 
-                <Text style={{ marginLeft: 15, marginTop: 15, textAlign: 'left', fontSize: 18, color: '#ffffff', }}>Sub Category Name</Text>
                 <View style={{
                   backgroundColor: 'black', width: "100%", marginBottom: 30, justifyContent: "center",
                 }}>
@@ -169,13 +201,14 @@ const OutdoorTrainning = (props) => {
                       flex: 1,
                       // justifyContent: "center"
                     }}
+                    keyExtractor={(item, index) => String(index)}
                     data={TrainingSUBCatgry}
                     renderItem={({ item }) => (
                       <TouchableOpacity onPress={() => { gotoOutdoorCycle(item) }}>
                         <View
                           style={{
                             marginTop: 10,
-                            backgroundColor: 'gray',
+                            backgroundColor: 'lightgray',
                             height: 160,
                             width: WIDTH * 0.45,
                             borderRadius: 20,
@@ -211,7 +244,7 @@ const OutdoorTrainning = (props) => {
                   />
 
 
-{/* 
+                  {/* 
                   <View style={{ marginBottom: 20, marginTop: 30, marginHorizontal: 10, backgroundColor: 'white', height: 40, borderRadius: 10, justifyContent: 'center', flex: 1 }}>
 
 
@@ -229,8 +262,8 @@ const OutdoorTrainning = (props) => {
 
                   <View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row', height: 36, marginHorizontal: 20, marginTop: 20, flex: 1, }}>
                     <TouchableOpacity onPress={() => { gotoSubsciption() }}>
-                      <View style={{ alignItems: 'center', width: 280, justifyContent: 'center', backgroundColor: '#ffcc00', borderRadius: 35, flex: 1 }}>
-                        <Text style={{ textAlign: 'center', fontSize: 16, color: 'white',fontWeight:"500" }}>Upgrade to Plan 1 Subscription</Text>
+                      <View style={{ alignItems: 'center', width: 230, justifyContent: 'center', backgroundColor: '#ffcc00', borderRadius: 35, flex: 1 }}>
+                        <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', fontWeight: "500" }}>SubscriptionPlan Buy Now</Text>
                       </View>
                     </TouchableOpacity>
                   </View>

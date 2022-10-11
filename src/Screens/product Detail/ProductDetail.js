@@ -9,9 +9,10 @@ import Headers from '../../Routes/Headers';
 import styles from '../../Routes/style'
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// var WIDTH = Dimensions.get('window').width;
-// var HEIGHT = Dimensions.get('window').height;
+var WIDTH = Dimensions.get('window').width;
+var HEIGHT = Dimensions.get('window').height;
 
 const DATA = ['first row', 'second row', 'third row', 'fourth row'];
 
@@ -62,10 +63,14 @@ const ProductDetail = (props) => {
   // console.log("ClothITEM_item...............:", props?.route?.params?.CLOTHITEM?.id);
   const CLOTHITEM = props?.route?.params?.CLOTHITEM?.id
   // console.log("FitnessItem.........:",props?.route?.params?.FitnessItem?.product_id);
-  const FitnessItem=props?.route?.params?.FitnessItem?.product_id
+  const FitnessItem = props?.route?.params?.FitnessItem?.product_id
   // console.log("MENSITEM.........:",props?.route?.params?.MENSITEM?.product_id);
-  const MENSITEM=props?.route?.params?.MENSITEM?.product_id
-  let productids = ITEM ? ITEM : CLOTHITEM ? CLOTHITEM : FitnessItem ? FitnessItem : MENSITEM;
+  const MENSITEM = props?.route?.params?.MENSITEM?.product_id
+  // console.log("Cart item view.........:", props?.route?.params?.Cartaddedview?.product_id);
+  let Cartaddedview = props?.route?.params?.Cartaddedview?.product_id;
+  // console.log("Shipping item view.........:", props?.route?.params?.Isshippingview?.product_id);
+  let Isshippingview = props?.route?.params?.Isshippingview?.product_id;
+  let productids = ITEM ? ITEM : CLOTHITEM ? CLOTHITEM : FitnessItem ? FitnessItem : MENSITEM ? MENSITEM : Cartaddedview ? Cartaddedview : Isshippingview;
 
   useEffect(() => {
     StoresProductDetails();
@@ -123,13 +128,12 @@ const ProductDetail = (props) => {
   };
 
   const ProductADDcart = async () => {
+    const usertkn = await AsyncStorage.getItem("authToken");
     // console.log("ADD_productin_QNTY cart.....", countnums);
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.PRODUCT_DETAILS_ADD_ITEM}`, { "qty": countnums, "product_id": productids }, {
-        'headers': {
-          'Authorization': '228e273912a6b5718c5f2b1cbd857aba26c9cbf818436e51d8fea1b24eb71ec3c8e25cd398b45ccf8079aeb0825747d697d702536b212fd3cdcdeb656988f2d7aa6e1bb2cd4f6441ceb625eaa5aeac0ec88608afab00f850ed376837e6f7dd343972874e1cd245bdd2394229c895e082a9d1dc508d906868accd5ccae9345c0f503f3aea080fe21c68c82c4f0c48d025620821af98c9a0f838077a5eedf8842bd872030bf32fa4280f25f9c027d32fcce85d54a66a48ddfd3f714b47681419786db9a4841bf97b1586edbd3e8c9b50c94bc6f8283ee3613d2c777c1e12c6e1ab23cbd2b9e30aa77770309450db41a506dcb0999706f604de41676d6eeeaef15a0c8ad858a4549d50de0addd3e589337f5c8f7e1138434c6ec0bb757e82e3d8ddf40214d1d8bab63bd7e4f04d'
-        },
+        'headers': { "Authorization": ` ${usertkn}` }
       });
       // console.log(":::::::::ProductADD_Response>>>", response.data.message);
       // console.log("status _ProductADD:", response.data.status);
@@ -150,53 +154,60 @@ const ProductDetail = (props) => {
 
   };
 
-  const ProductRemovecart = async (item) => {
+  // const ProductRemovecart = async (item) => {
 
-    const cartaddid = item.cart_id;
-    // console.log("Remove_productin cart.....", cartaddid);
-    // setIsLoading(true);
-    try {
-      const response = await axios.post(`${API.PRODUCT_DETAILS_REMOVE_ITEM}`, { "cart_id": cartaddid });
-      // console.log(":::::::::ProductRemovecart_Response>>>", response.data.message);
-      // console.log("status _ProductRemovecart:", response.data.status);
-      GetShippingProducts();
-      // props.navigation.goBack();
-      // setProductitems(response.data.data)
-      // setIsLoading(false);
-    }
-    catch (error) {
-      console.log("......ProductRemovecarterror.........", error.response.data.message);
-      // setIsLoading(false);
+  //   const cartaddid = item.cart_id;
+  //   // console.log("Remove_productin cart.....", cartaddid);
+  //   // setIsLoading(true);
+  //   try {
+  //     const response = await axios.post(`${API.PRODUCT_DETAILS_REMOVE_ITEM}`, { "cart_id": cartaddid });
+  //     // console.log(":::::::::ProductRemovecart_Response>>>", response.data.message);
+  //     // console.log("status _ProductRemovecart:", response.data.status);
+  //     GetShippingProducts();
+  //     // props.navigation.goBack();
+  //     // setProductitems(response.data.data)
+  //     // setIsLoading(false);
+  //   }
+  //   catch (error) {
+  //     console.log("......ProductRemovecarterror.........", error.response.data.message);
+  //     // setIsLoading(false);
 
-    }
+  //   }
 
-  };
+  // };
   return (
     <SafeAreaView style={{
       flex: 1,
-      width: '100%',
-      height: '100%', flexGrow: 1, backgroundColor: '#ffffff',
+      width: WIDTH,
+      height: HEIGHT,flexGrow: 1,  backgroundColor: '#ffffff',
     }} >
+      <Headers
+        Backicon={{
+          visible: true,
+        }}
+        BackicononClick={() => { props.navigation.goBack() }}
+
+        CartIcon={{
+          visible: true,
+        }}
+        CartIconononClick={() => { props.navigation.navigate("CartAdded") }}
+
+        Bellicon={{
+          visible: true,
+
+        }}
+        BelliconononClick={() => { props.navigation.navigate("Notifications") }}
+      />
       {!isLoading ?
         (
-          <View>
-            <Headers
-              Backicon={{
-                visible: true,
-              }}
-              BackicononClick={() => { props.navigation.goBack() }}
+          <View style={{
+            flex: 1,
+            // width: WIDTH,
+            // height: HEIGHT, 
+            flexGrow: 1, 
+            backgroundColor: 'transparent',
+          }}>
 
-              CartIcon={{
-                visible: true,
-              }}
-              CartIconononClick={() => { props.navigation.navigate("CartAdded") }}
-
-              Bellicon={{
-                visible: true,
-
-              }}
-              BelliconononClick={() => { props.navigation.navigate("Notifications") }}
-            />
             <ScrollView>
               {/* productitem _image */}
               <View style={{
@@ -301,70 +312,19 @@ const ProductDetail = (props) => {
 
               <Text style={{ marginLeft: 25, marginTop: 20, textAlign: 'left', fontSize: 18, color: '#000000', fontWeight: "500" }}>{Productitems?.name?.slice(0, 35) + '...'}</Text>
 
-              <View style={{ marginTop: 10, flex: 1, flexDirection: 'row', width: "95%", backgroundColor: 'white', height: 50, justifyContent: "center", alignItems: "center" }}>
+              <View style={{ marginTop: 10, flex: 1, flexDirection: 'row', width: "95%", height: 50, justifyContent: "center", alignItems: "center" }}>
 
                 <View style={{ flex: 1, marginLeft: 25, height: 30, width: 100, justifyContent: "center", alignItems: "flex-start" }}>
                   <Text style={{ textAlign: 'left', fontSize: 14, color: '#77869E', fontWeight: "500" }}>$ <Text style={{ textAlign: 'left', fontSize: 14, color: '#77869E', fontWeight: "500" }}>{Productitems?.price}</Text></Text>
                 </View>
 
-                {/* <View style={{ flex: 0.3, backgroundColor: '#f2f2f2', flexDirection: 'row', padding: 4, borderRadius: 10, justifyContent: "center", alignItems: "center", height: 50, }}>
-                  <View style={{
-                    height: 45, marginRight: 5, justifyContent: "center", alignItems: "center",
-                  }}>
-                    <TouchableOpacity onPress={() => { Productdecrease() }}>
-                      <View style={{ backgroundColor: '#d6d6d6', width: 35, height: 40, padding: 1, justifyContent: "center", alignItems: 'center', borderRadius: 15 / 2 }}>
-                        <Text style={{ textAlign: 'center', fontSize: 37, color: 'black', marginBottom: 6, height: 50, justifyContent: "center", alignItems: "center", }}>-</Text>
-
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={{
-                    height: 40, marginRight: 5, justifyContent: "center", alignItems: 'center', flex: 1
-                  }}>
-                    <View style={{ justifyContent: "center", alignItems: 'center', borderRadius: 20 / 2, }}>
-                      <Text style={{ textAlign: 'center', fontSize: 15, color: 'black', }}>{countnums}</Text>
-
-                    </View>
-                  </View>
-
-                  <View style={{
-                    height: 45, justifyContent: "center", alignItems: "center",
-                  }}>
-                    <TouchableOpacity onPress={() => { Productincrease() }}>
-                      <View style={{ backgroundColor: '#dbdbdb', width: 35, height: 40, padding: 1, justifyContent: "center", alignItems: 'center', borderRadius: 15 / 2 }}>
-                        <Text style={{ textAlign: 'center', fontSize: 28, color: 'black', marginTop: 10, height: 50, justifyContent: "center", alignItems: "center", }}>+</Text>
-
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                </View> */}
-
               </View>
 
-              <View style={{ justifyContent: "flex-start", alignItems: "flex-start", width: "90%", marginLeft: 20, height: 350 }}>
+              <View style={{ justifyContent: "flex-start", alignItems: "flex-start", width: "90%", marginLeft: 20, height: "auto", marginBottom: 20 }}>
                 <Text style={{ marginTop: 20, textAlign: 'left', fontSize: 14, color: '#000000', }}>{Productitems?.description}</Text>
               </View>
 
-              {/* bottom Buttons   */}
-              <View style={{ marginLeft: 1, marginBottom: 80, flexDirection: 'row', justifyContent: "center", alignItems: "center", backgroundColor: "white", height: 36, width: "100%" }}>
 
-                <TouchableOpacity onPress={() => { props.navigation.goBack() }}
-                  style={{ justifyContent: 'center', backgroundColor: '#ffcc00', borderRadius: 50, alignItems: "center", height: 34, width: 170 }}>
-
-
-                  <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', }}>Continue Shopping</Text>
-
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => {
-                  // setCartAddedPopUp(!CartAddedPopUp);
-                  ProductADDcart()
-                }}
-                  style={{ justifyContent: 'center', height: 34, backgroundColor: '#ffcc00', borderRadius: 50, marginLeft: 10, width: 130 }}>
-                  <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', }}>Add To Cart</Text>
-
-                </TouchableOpacity>
-              </View>
 
               {/* product view in modal  */}
               {/* {CartAddedPopUp ? (
@@ -639,10 +599,38 @@ const ProductDetail = (props) => {
                   </View>
                 </Modal>
               ) : null} */}
+
             </ScrollView>
+            {/* bottom Buttons   */}
+            <View style={{ marginBottom: 10, flexDirection: 'row', justifyContent: "center", alignItems: "center", height: 36, width: "100%", position: "absolute", bottom: 0, }}>
+
+              <TouchableOpacity onPress={() => { props.navigation.goBack() }}
+                style={{ justifyContent: 'center', backgroundColor: '#ffcc00', borderRadius: 50, alignItems: "center", height: 34, width: 170 }}>
+
+
+                <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', }}>Continue Shopping</Text>
+
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={() => {
+                // setCartAddedPopUp(!CartAddedPopUp);
+                ProductADDcart()
+              }}
+                style={{ justifyContent: 'center', height: 34, backgroundColor: '#ffcc00', borderRadius: 50, marginLeft: 10, width: 130 }}>
+                <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', fontWeight: "500" }}>Add To Cart</Text>
+                {/* {
+Cartaddedview && Isshippingview == "" ?
+(<Text style={{ textAlign: 'center', fontSize: 16, color: 'white', fontWeight: "500" }}>Add To Cart</Text>)
+:
+(<Text style={{ textAlign: 'center', fontSize: 16, color: 'white', fontWeight: "500" }}>Go To Cart</Text>)
+} */}
+
+
+              </TouchableOpacity>
+            </View>
           </View>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        (<View style={{ flex: 1,flexGrow: 1,  justifyContent: "center", alignItems: "center"}}>
           <ActivityIndicator size="large" color="#ffcc00" />
         </View>)}
     </SafeAreaView>

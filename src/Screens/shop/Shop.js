@@ -58,7 +58,7 @@ const Shop = (props) => {
     console.log("SHOP filter...........>>>", ischecked);
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.SHOP_FILTER}`, { "search": ischecked ,"shop_id": '' }, { headers: { "Authorization": ` ${Token}` } });
+      const response = await axios.post(`${API.SHOP_FILTER}`, { "search": ischecked, "shop_id": '' }, { headers: { "Authorization": ` ${Token}` } });
       console.log(":::::::::Shop_FIlter>>>", response.data.data);
       console.log("SHOP_Status", response.data.status);
       if (response.data.status == 1) {
@@ -103,7 +103,7 @@ const Shop = (props) => {
       width: WIDTH,
       height: HEIGHT, flexGrow: 1
     }} >
-       <Headers
+      <Headers
         Drawericon={{
           visible: true,
         }}
@@ -183,7 +183,7 @@ const Shop = (props) => {
               </TouchableOpacity>
             </View>
       </View> */}
-     
+
       {/* <Divider color="#393939" width={1.2} /> */}
       {!isLoading ?
         (<ScrollView >
@@ -277,111 +277,113 @@ const Shop = (props) => {
 
           <FlatList
             vertical
-            style={{ margin: 0,paddingBottom:10 }}
+            showsHorizontalScrollIndicator={true}
+            style={{ margin: 0, paddingBottom: 10 }}
             numColumns={2}
-            // columnWrapperStyle={{
-            //   flex: 1,
-            //   justifyContent: "space-around"
-            // }}
+            keyExtractor={(item, index) =>  String(index)}
+            columnWrapperStyle={{
+              flex: 1,
+              // justifyContent: "space-around"
+            }}
 
             data={shopitems}
-            renderItem={({ item }) => (
-
-              <TouchableOpacity
-                onPress={() => { gotoShippingDetail(item) }}
-                style={{
-                  marginBottom: 5,
-                  backgroundColor: '#f7f7f7',
-                  height: 200,
-                  width: WIDTH * 0.45,
-                  marginTop: 15,
-                  borderRadius: 20,
-                  alignItems: 'center',
-                  justifyContent: "center",
-                  marginHorizontal: 10,
-                  shadowColor: '#000000',
-                  shadowOffset: {
-                    width: 0,
-                    height: 3
-                  },
-                  shadowRadius: 5,
-                  shadowOpacity: 1.0,
-                  elevation: 5,
-                  zIndex: 999,
-
-
-                }}>
-
-                <View
+            renderItem={({ item }) => {
+              return (
+                <TouchableOpacity onPress={() => { gotoShippingDetail(item) }}
                   style={{
+                    marginBottom: 5,
+                    backgroundColor: '#f7f7f7',
+                    height: 200,
                     width: WIDTH * 0.45,
-                    height: 155,
-                    borderTopLeftRadius: 20,
-                    borderTopRightRadius: 20,
-                    backgroundColor: 'white',
-                  }}>
-                  <Image
-                    source={{ uri: item?.image ? item?.image : item?.product_image}}
-                    resizeMode="contain"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      borderTopLeftRadius: 20,
-                      borderTopRightRadius: 20,
-                      alignSelf: 'center',
-                    }}
-                  />
-                </View>
-                <View
-                  style={{
-                    width: WIDTH * 0.45, flexDirection: 'column', justifyContent: "center", alignItems: 'stretch', height: 45, backgroundColor: '#fceeb5', borderBottomRightRadius: 20, borderBottomLeftRadius: 20
-                  }}>
-                  <Text
-                    style={{
-                      marginLeft: 16,
-                      fontSize: 12,
-                      color: 'black', fontWeight: "bold"
+                    marginTop: 15,
+                    borderRadius: 20,
+                    alignItems: 'center',
+                    justifyContent: "center",
+                    marginHorizontal: 10,
+                    shadowColor: '#000000',
+                    shadowOffset: {
+                      width: 0,
+                      height: 3
+                    },
+                    shadowRadius: 5,
+                    shadowOpacity: 1.0,
+                    elevation: 5,
+                    zIndex: 999,
 
-                    }}>
-                    {item?.name?.slice(0, 15) + '...' ? item?.name?.slice(0, 15) + '...' :item?.product_name?.slice(0, 15) + '...'}
-                  </Text>
+
+                  }}>
 
                   <View
                     style={{
-                      marginLeft: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: -3,
+                      width: WIDTH * 0.45,
+                      height: 155,
+                      borderTopLeftRadius: 20,
+                      borderTopRightRadius: 20,
+                      backgroundColor: 'white',
                     }}>
-
+                    <Image
+                      source={{ uri: item?.image ? item?.image : item?.product_image }}
+                      resizeMode="contain"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        borderTopLeftRadius: 20,
+                        borderTopRightRadius: 20,
+                        alignSelf: 'center',
+                      }}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      width: WIDTH * 0.45, flexDirection: 'column', justifyContent: "center", alignItems: 'stretch', height: 45, backgroundColor: '#fceeb5', borderBottomRightRadius: 20, borderBottomLeftRadius: 20
+                    }}>
                     <Text
                       style={{
+                        marginLeft: 16,
                         fontSize: 12,
                         color: 'black', fontWeight: "bold"
 
-                      }}>$ {item?.price ? item?.price :item?.product_price}
+                      }}>
+                      {item?.name?.slice(0, 15) + '...' ? item?.name?.slice(0, 15) + '...' : item?.product_name?.slice(0, 15) + '...'}
                     </Text>
-
-
 
                     <View
                       style={{
-                        alignItems: 'center', justifyContent: 'center', marginRight: 6, width: 30, height: 30, borderRadius: 20 / 2, backgroundColor: '#ffcc00', bottom: 6
+                        marginLeft: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: -3,
                       }}>
-                      <Image
-                        resizeMode="contain"
+
+                      <Text
                         style={{
-                          width: 15,
-                          height: 20,
-                          alignSelf: 'center',
-                        }}
-                        source={require('../assets/bag1.png')}
-                      />
+                          fontSize: 12,
+                          color: 'black', fontWeight: "bold"
+
+                        }}>$ {item?.price ? item?.price : item?.product_price}
+                      </Text>
+
+
+
+                      <View
+                        style={{
+                          alignItems: 'center', justifyContent: 'center', marginRight: 6, width: 30, height: 30, borderRadius: 20 / 2, backgroundColor: '#ffcc00', bottom: 6
+                        }}>
+                        <Image
+                          resizeMode="contain"
+                          style={{
+                            width: 15,
+                            height: 20,
+                            alignSelf: 'center',
+                          }}
+                          source={require('../assets/bag1.png')}
+                        />
+                      </View>
+
+
                     </View>
-
-
                   </View>
-                </View>
-              </TouchableOpacity>
-
-            )}
+                </TouchableOpacity>
+              )
+            }
+            }
           />
           {/* <Text
           style={{
@@ -1173,7 +1175,7 @@ const Shop = (props) => {
         (<View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
           <ActivityIndicator size="large" color="#ffcc00" />
         </View>)}
-    </SafeAreaView>
+    </SafeAreaView >
   );
 };
 

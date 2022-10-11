@@ -40,7 +40,7 @@ const MyStack = (props) => {
         else {
             setisSignedIn(false);
             // setShowSplash(false);
-            console.log("error");
+            console.log("error_Mystack");
         }
 
 

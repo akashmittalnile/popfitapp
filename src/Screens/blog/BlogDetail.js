@@ -272,11 +272,11 @@ const BlogDetail = (props) => {
 
 
                     <View>
-                      <View style={{ height: 60 }}>
-                        <Text style={{ marginLeft: 25, marginTop: 20, textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "500" }}>{subcategoryBlogdetailsitems?.blog_detail?.youtube_title}</Text>
+                      <View style={{ marginLeft: 20,marginTop: 15, height: 60, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
+                        <Text style={{ textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "500" }}>{subcategoryBlogdetailsitems?.blog_detail?.youtube_title}</Text>
                       </View>
                       <View style={{
-                        marginHorizontal: 20, height: 200, borderRadius: 20, marginVertical: 1, width: WIDTH * 0.9,
+                        marginHorizontal: 20,marginTop: 10, height: 200, borderRadius: 20, marginVertical: 1, width: WIDTH * 0.9,
                       }}>
                         <View style={{
                           height: '100%',
@@ -284,11 +284,11 @@ const BlogDetail = (props) => {
                           width: WIDTH * 0.9,
                           borderRadius: 20,
                           justifyContent: 'center',
-                          alignSelf: "auto"
+                          // alignSelf: "auto"
 
                         }}>
                           <WebView
-                            source={{ uri: subcategoryBlogdetailsitems?.youtube_link }}
+                            source={{ uri: subcategoryBlogdetailsitems?.blog_detail?.youtube_link }}
                           />
 
 
@@ -323,19 +323,24 @@ const BlogDetail = (props) => {
 
                   </TouchableOpacity> */}
                       </View>
+                      <View style={{marginHorizontal: 20,marginTop: 15, height: "auto", width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}>
+                        <Text style={{textAlign: 'left', fontSize: 12, color: '#000'}}>{subcategoryBlogdetailsitems?.blog_detail?.youtube_description}</Text>
+                      </View>
 
-                      <Text style={{ marginHorizontal: 20, marginTop: 10, textAlign: 'left', fontSize: 12, color: '#000', }}>{subcategoryBlogdetailsitems?.blog_detail?.youtube_description}</Text>
+                      <View style={{ marginLeft: 20,marginTop: 5, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
+                      <Text style={{ textAlign: 'left',fontSize: 18, color: '#000',fontWeight: "500" }} >{subcategoryBlogdetailsitems?.blog_detail?.image_title}</Text>
+                      </View>
 
-                      <Text style={{ marginLeft: 20, textAlign: 'left', marginTop: 20, fontSize: 18, color: '#000', fontWeight: "500" }} >{subcategoryBlogdetailsitems?.blog_detail?.image_title}</Text>
-
-
-                      <View style={{ backgroundColor: "white", borderRadius: 20, marginTop: 20, height: HEIGHT * 0.2, width: WIDTH * 0.9, marginHorizontal: 18, }}>
+                      <View style={{ backgroundColor: "white", borderRadius: 20, marginTop: 10, height: HEIGHT * 0.2, width: WIDTH * 0.9, marginHorizontal: 18, }}>
                         <Image resizeMode='contain'
-                          source={{ uri: subcategoryBlogdetailsitems?.image }} style={{ width: '100%', height: '100%', justifyContent: "center", alignItems: 'center', borderRadius: 20, }}
+                          source={{ uri: `${subcategoryBlogdetailsitems?.blog_detail?.image}` }} 
+                          style={{ width: '100%', height: '100%', justifyContent: "center", alignItems: 'center', borderRadius: 20}}
                         />
                       </View>
 
-                      <Text style={{ marginHorizontal: 20, marginTop: 20, textAlign: 'left', fontSize: 12, color: '#000', }}>{subcategoryBlogdetailsitems?.blog_detail?.image_description}</Text>
+                      <View style={{marginHorizontal: 20,marginTop: 15, height: "auto", width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}>
+                      <Text style={{textAlign: 'left', fontSize: 12, color: '#000'}}>{subcategoryBlogdetailsitems?.blog_detail?.image_description}</Text>
+                      </View>
                     </View>
 
                     {/* //Comment//  */}
@@ -406,7 +411,7 @@ const BlogDetail = (props) => {
                                   textAlign: 'left',
                                   fontSize: 12,
                                   color: '#000000',
-                                  fontWeight: "bold"
+                                  fontWeight: "500"
                                 }}>
                                 {item.user_name}
                               </Text>
@@ -424,11 +429,10 @@ const BlogDetail = (props) => {
                             </View>
                           </View>
 
-                          <View style={{ flex: 3.2, justifyContent: "center", marginTop: 10, marginVertical: -5, }}>
+                          <View style={{  marginLeft: 60,flex: 3.2, justifyContent: "center", alignItems:"flex-start",marginTop: 10, marginVertical: -5,height:"auto"}}>
                             <Text
                               style={{
-                                marginLeft: 60,
-                                textAlign: 'left',
+                               textAlign: 'left',
                                 fontSize: 10,
                                 color: '#000000',
                               }}>{item.comment}
@@ -560,13 +564,14 @@ const BlogDetail = (props) => {
                         backgroundColor: 'white',
                         borderRadius: 20,
                         //paddingTop:10,
-                        width: 390,
+                        width: "100%",
+                        height: 300,
                         alignItems: 'center',
                         shadowColor: '#000',
-                        shadowOffset: {
-                          width: 0,
-                          height: 2,
-                        },
+                        // shadowOffset: {
+                        //   width: 0,
+                        //   height: 2,
+                        // },
                         shadowOpacity: 0.25,
                         shadowRadius: 4,
                         elevation: 5,
@@ -575,7 +580,7 @@ const BlogDetail = (props) => {
                         style={{
                           backgroundColor: 'white',
                           height: 300,
-                          width: 390,
+                          width: "100%",
                           marginHorizontal: 85,
                           borderRadius: 20,
                           marginBottom: 20,

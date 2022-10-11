@@ -38,7 +38,7 @@ const MyOrder = (props) => {
         // const unsubscribe = props.navigation.addListener('focus', () => {
         //     MyorderApi(value);
         //     return unsubscribe;
-    }, [props]);
+    }, []);
 
 
     // console.log("select filter", value);
@@ -54,11 +54,11 @@ const MyOrder = (props) => {
 
         setIsLoading(true);
         try {
-            const response = await axios.post(`${API.MY_ORDER}`, { "search": values }, { headers: { "Authorization": ` ${ordertoken}` } });
+            const response = await axios.post(`${API.MY_ORDER}`, { "search": values == null? values:null }, { headers: { "Authorization": ` ${ordertoken}` } });
             // console.log("", response);
             // console.log("Response_MYorders  ::::", response.data.success);
             // console.log('====================================');
-            // console.log("Response MY_Orders  ::::", response.data.order);
+            console.log("Response MY_Orders  ::::", response.data.order);
             // console.log('====================================');
             // if (response.data.status == 1) {
             console.log("................", response.data.order.length);
@@ -214,183 +214,209 @@ const MyOrder = (props) => {
 
                     </View>
                     <ScrollView>
-                        <>
-                            <FlatList
-                                vertical
-                                data={ordereditem}
-                                style={{ margin: 10 }}
-                                scrollEnabled={false}
-                                renderItem={({ item }) => {
-                                    return <View style={{
-                                        marginHorizontal: 6,
-                                        height: 240,
-                                        width: WIDTH * 0.97,
-                                        borderRadius: 10,
-                                        backgroundColor: 'white',
-                                        width: 380,
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        shadowColor: '#000000',
-                                        shadowRadius: 6,
-                                        shadowOpacity: 1.0,
-                                        elevation: 6,
-                                        flexDirection: "column",
-                                        marginBottom: 10
-
-                                    }}>
-
-                                        <View style={{ height: 50, width: WIDTH * 0.92, flexDirection: 'row', padding: 10, justifyContent: "space-between", }}>
-
-                                            <View style={{ height: 30, marginTop: 1, justifyContent: 'flex-start', alignItems: "flex-start", marginLeft: 1, }}>
-
-                                                <Text style={{ fontSize: 14, color: 'black', fontWeight: "bold" }}>Order No. : <Text style={{ fontSize: 14, color: '#FFCC00', }}> {item.order_number}</Text></Text>
-
-
-                                            </View>
-
-                                            <View style={{ backgroundColor: '#ffcc00', borderRadius: 20, height: 30, width: 140, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
-                                                <View style={{ width: 30, marginLeft: 6 }}>
-                                                    <Image source={require('../assets/download1.png')}
-                                                        style={{
-                                                            width: 10,
-                                                            height: 13,
-                                                        }} />
+                        {
+                            ordereditem.length > 0 ?
+                            ( <>
+                                <FlatList
+                                    vertical
+                                    data={ordereditem}
+                                    keyExtractor={(_e, index) => index}
+                                    style={{ margin: 10 }}
+                                    scrollEnabled={false}
+                                    renderItem={({ item }) => {
+                                        return <View style={{
+                                            marginHorizontal: 6,
+                                            height: 240,
+                                            width: WIDTH * 0.97,
+                                            borderRadius: 10,
+                                            backgroundColor: 'white',
+                                            width: 380,
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            shadowColor: '#000000',
+                                            shadowRadius: 6,
+                                            shadowOpacity: 1.0,
+                                            elevation: 6,
+                                            flexDirection: "column",
+                                            marginBottom: 10
+    
+                                        }}>
+    
+                                            <View style={{ height: 50, width: WIDTH * 0.92, flexDirection: 'row', padding: 10, justifyContent: "space-between", }}>
+    
+                                                <View style={{ height: 30, marginTop: 1, justifyContent: 'flex-start', alignItems: "flex-start", marginLeft: 1, }}>
+    
+                                                    <Text style={{ fontSize: 14, color: 'black', fontWeight: "bold" }}>Order No. : <Text style={{ fontSize: 14, color: '#FFCC00', }}> {item.order_number}</Text></Text>
+    
+    
                                                 </View>
-                                                <View style={{ marginLeft: 0, }}>
-                                                    <TouchableOpacity>
-                                                        <Text style={{ textAlign: 'left', fontSize: 10, color: 'white', }}>Download Invoice</Text>
+    
+                                                <View style={{ backgroundColor: '#ffcc00', borderRadius: 20, height: 30, width: 140, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
+                                                    <View style={{ width: 30, marginLeft: 6 }}>
+                                                        <Image source={require('../assets/download1.png')}
+                                                            style={{
+                                                                width: 10,
+                                                                height: 13,
+                                                            }} />
+                                                    </View>
+                                                    <View style={{ marginLeft: 0, }}>
+                                                        <TouchableOpacity>
+                                                            <Text style={{ textAlign: 'left', fontSize: 10, color: 'white', }}>Download Invoice</Text>
+                                                        </TouchableOpacity>
+                                                    </View>
+                                                </View>
+    
+    
+                                            </View>
+    
+                                            <View style={{
+                                                height: 120,
+                                                flexDirection: 'row',
+                                                width: WIDTH * 0.92,
+                                                justifyContent: "flex-start",
+                                                alignItems: "center",
+                                                // backgroundColor: 'red',
+                                            }}>
+    
+                                                <View style={{
+                                                    width: 115, height: 120,
+                                                    justifyContent: "center",
+                                                    alignItems: "center"
+                                                }}>
+                                                    <Image
+                                                        resizeMode="contain"
+                                                        style={{
+                                                            width: "100%",
+                                                            borderRadius: 20,
+                                                            height: "100%", alignSelf: 'center',
+    
+                                                        }}
+                                                        source={{ uri: item.product_image }} />
+    
+                                                </View>
+    
+                                                <View style={{
+                                                    justifyContent: "flex-start", alignItems: "flex-start", width: WIDTH * 0.97, marginLeft: 15,
+                                                }}>
+                                                    <Text style={{ textAlign: 'left', fontSize: 15, color: '#000000', fontWeight: "600" }}>{item.product_name.slice(0, 25) + '...'}</Text>
+    
+                                                    <View style={{ marginTop: 6, flexDirection: 'row', justifyContent: "flex-start", alignItems: "flex-start", height: 60, width: WIDTH * 0.97 }}>
+    
+    
+                                                        <View style={{ flexDirection: 'row' }}>
+                                                            <View style={{}}>
+                                                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000' }}>Price : <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#000000' }}>$ {item.product_price}</Text></Text>
+                                                            </View>
+    
+                                                        </View>
+    
+                                                        {/* <View style={{ flexDirection: 'row', marginLeft: 17,marginTop: 3 }}>
+                                                    <View style={{}}>
+                                                        <Text style={{ textAlign: 'left', fontSize: 12, color: '#000000',fontWeight:"bold" }}>Tax : <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 10, color: '#000000', }}>$ {item?.tax}</Text></Text>
+                                                    </View>
+    
+                                                </View>
+    
+                                                <View style={{ flexDirection: 'row', marginLeft: 25 ,marginTop: 3,}}>
+                                                    <View style={{}}>
+                                                        <Text style={{ textAlign: 'left', fontSize: 12, color: '#000000',fontWeight:"bold" }}>Total : <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 10, color: '#000000' }}>$ {item.total_price}</Text></Text>
+                                                    </View>
+    
+                                                </View> */}
+                                                    </View>
+                                                </View>
+    
+    
+                                            </View>
+                                            {/* <View style={{
+                                                height: 120, marginLeft: 0, flexDirection: 'row', width: WIDTH * 0.9, justifyContent: "center", flex: 2, backgroundColor: "pink",marginTop:10
+                                            }}>
+                                                <View style={{
+                                                    width: 100, height: 100, borderRadius: 100 / 2, backgroundColor: '#fceeb5', flex: 0.3,
+                                                }}>
+                                                    <Image
+                                                        resizeMode="contain"
+                                                        style={{
+                                                            width: 110, marginTop: 20,
+                                                            height: 100, alignSelf: 'center'
+                                                        }}
+                                                        source={require('../assets/dumble.png')} />
+    
+                                                </View>
+                                                <View style={{
+                                                    flex: 0.7, height: 110, marginLeft: 10,
+                                                }}>
+                                                    <Text style={{ marginLeft: 15, marginTop: 10, textAlign: 'left', fontSize: 15, color: '#000000', }}>The Flexibell</Text>
+                                                    <View style={{ marginTop: 10, height: 30, flexDirection: 'row', marginLeft: 15 }}>
+                                                        <View style={{}}>
+                                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000', }}>Total Paid Price :</Text>
+                                                        </View>
+                                                        <View style={{}}>
+                                                            <Text style={{ marginLeft: 10, textAlign: 'center', fontSize: 14, color: '#000000', }}>$  {item.total_price}</Text>
+                                                        </View>
+                                                    </View>
+                                                </View>
+                                            </View> */}
+    
+                                            <View style={{
+                                                marginTop: 10, flexDirection: 'row', justifyContent: "flex-start", flex: 1, margin: 10, height: 70, width: WIDTH * 0.92
+                                            }}>
+                                                <View style={{ marginTop: 8, height: 20, justifyContent: "center", alignItems: "center", flex: 0.3, }}>
+                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: 'black', fontWeight: "bold" }}>Order Status :</Text>
+                                                </View>
+    
+                                                {item.order_status == "1" ?
+                                                    (<View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}>
+                                                        <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>Order placed</Text>
+                                                        <View style={{ marginTop: 6, }}>
+                                                            <Text style={{ textAlign: 'left', fontSize: 9, color: 'black' }}>on {item.created_at}</Text>
+                                                        </View>
+                                                    </View>)
+                                                    :
+                                                    (
+                                                        <View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}><Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>data not available</Text>
+                                                        </View>)
+    
+                                                }
+                                                <View style={{ marginTop: 10, justifyContent: 'center', alignItems: 'flex-end', marginRight: 10, flex: 0.1 }}>
+                                                    <TouchableOpacity
+                                                        onPress={() => gotoOrderDetail(item)}>
+                                                        <View style={{ backgroundColor: '#ffcc00', width: 35, height: 35, justifyContent: "center", alignItems: 'center', borderRadius: 35 / 2 }}>
+                                                            <Image source={require('../assets/rightArrow.png')}
+                                                            />
+                                                        </View>
                                                     </TouchableOpacity>
                                                 </View>
                                             </View>
-
-
                                         </View>
-
-                                        <View style={{
-                                            height: 120,
-                                            flexDirection: 'row',
-                                            width: WIDTH * 0.92,
-                                            justifyContent: "flex-start",
-                                            alignItems: "center",
-                                            // backgroundColor: 'red',
-                                        }}>
-
-                                            <View style={{
-                                                width: 115, height: 120,
-                                                justifyContent: "center",
-                                                alignItems: "center"
-                                            }}>
-                                                <Image
-                                                    resizeMode="contain"
-                                                    style={{
-                                                        width: "100%",
-                                                        borderRadius: 20,
-                                                        height: "100%", alignSelf: 'center',
-
-                                                    }}
-                                                    source={{ uri: item.product_image }} />
-
-                                            </View>
-
-                                            <View style={{
-                                                justifyContent: "flex-start", alignItems: "flex-start", width: WIDTH * 0.97, marginLeft: 15,
-                                            }}>
-                                                <Text style={{ textAlign: 'left', fontSize: 15, color: '#000000', fontWeight: "600" }}>{item.product_name.slice(0, 25) + '...'}</Text>
-
-                                                <View style={{ marginTop: 6, flexDirection: 'row', justifyContent: "flex-start", alignItems: "flex-start", height: 60, width: WIDTH * 0.97 }}>
-
-
-                                                    <View style={{ flexDirection: 'row' }}>
-                                                        <View style={{}}>
-                                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000' }}>Price : <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#000000' }}>$ {item.product_price}</Text></Text>
-                                                        </View>
-
-                                                    </View>
-
-                                                    {/* <View style={{ flexDirection: 'row', marginLeft: 17,marginTop: 3 }}>
-                                                <View style={{}}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 12, color: '#000000',fontWeight:"bold" }}>Tax : <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 10, color: '#000000', }}>$ {item?.tax}</Text></Text>
-                                                </View>
-
-                                            </View>
-
-                                            <View style={{ flexDirection: 'row', marginLeft: 25 ,marginTop: 3,}}>
-                                                <View style={{}}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 12, color: '#000000',fontWeight:"bold" }}>Total : <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 10, color: '#000000' }}>$ {item.total_price}</Text></Text>
-                                                </View>
-
-                                            </View> */}
-                                                </View>
-                                            </View>
-
-
-                                        </View>
-                                        {/* <View style={{
-                                            height: 120, marginLeft: 0, flexDirection: 'row', width: WIDTH * 0.9, justifyContent: "center", flex: 2, backgroundColor: "pink",marginTop:10
-                                        }}>
-                                            <View style={{
-                                                width: 100, height: 100, borderRadius: 100 / 2, backgroundColor: '#fceeb5', flex: 0.3,
-                                            }}>
-                                                <Image
-                                                    resizeMode="contain"
-                                                    style={{
-                                                        width: 110, marginTop: 20,
-                                                        height: 100, alignSelf: 'center'
-                                                    }}
-                                                    source={require('../assets/dumble.png')} />
-
-                                            </View>
-                                            <View style={{
-                                                flex: 0.7, height: 110, marginLeft: 10,
-                                            }}>
-                                                <Text style={{ marginLeft: 15, marginTop: 10, textAlign: 'left', fontSize: 15, color: '#000000', }}>The Flexibell</Text>
-                                                <View style={{ marginTop: 10, height: 30, flexDirection: 'row', marginLeft: 15 }}>
-                                                    <View style={{}}>
-                                                        <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000', }}>Total Paid Price :</Text>
-                                                    </View>
-                                                    <View style={{}}>
-                                                        <Text style={{ marginLeft: 10, textAlign: 'center', fontSize: 14, color: '#000000', }}>$  {item.total_price}</Text>
-                                                    </View>
-                                                </View>
-                                            </View>
-                                        </View> */}
-
-                                        <View style={{
-                                            marginTop: 10, flexDirection: 'row', justifyContent: "flex-start", flex: 1, margin: 10, height: 70, width: WIDTH * 0.92
-                                        }}>
-                                            <View style={{ marginTop: 8, height: 20, justifyContent: "center", alignItems: "center", flex: 0.3, }}>
-                                                <Text style={{ textAlign: 'left', fontSize: 14, color: 'black', fontWeight: "bold" }}>Order Status :</Text>
-                                            </View>
-
-                                            {item.order_status == "1" ?
-                                                (<View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}>
-                                                    <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>Order placed</Text>
-                                                    <View style={{ marginTop: 6, }}>
-                                                        <Text style={{ textAlign: 'left', fontSize: 9, color: 'black' }}>on {item.created_at}</Text>
-                                                    </View>
-                                                </View>)
-                                                :
-                                                (
-                                                    <View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}><Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>data not available</Text>
-                                                    </View>)
-
-                                            }
-                                            <View style={{ marginTop: 10, justifyContent: 'center', alignItems: 'flex-end', marginRight: 10, flex: 0.1 }}>
-                                                <TouchableOpacity
-                                                    onPress={() => gotoOrderDetail(item)}>
-                                                    <View style={{ backgroundColor: '#ffcc00', width: 35, height: 35, justifyContent: "center", alignItems: 'center', borderRadius: 35 / 2 }}>
-                                                        <Image source={require('../assets/rightArrow.png')}
-                                                        />
-                                                    </View>
-                                                </TouchableOpacity>
-                                            </View>
-                                        </View>
-                                    </View>
-
-                                }
-                                }
-                            />
-                        </>
+    
+                                    }
+                                    }
+                                />
+                            </>)
+                            :
+                            (<View style={{
+                                marginHorizontal: 6,
+                                height: HEIGHT,
+                                width: WIDTH * 0.97,
+                                borderRadius: 10,
+                                // backgroundColor: 'white',
+                                // width: 380,
+                                // justifyContent: "center",
+                                alignItems: "center",
+                                flexDirection: "column",
+                                marginTop:160
+                            }}>
+                                <Image resizeMode='contain'
+                                    source={require('../assets/Nodatafound.png')}
+                                    style={{
+                                        width: 200,
+                                        height: 120, alignSelf: 'center'
+                                    }} />
+                                <Text style={{ fontSize: 14, fontWeight: "bold" }}>Oops, order list is empty !</Text>
+                            </View>)
+                        }
+                       
                     </ScrollView>
                 </>)
                 :

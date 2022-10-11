@@ -11,6 +11,7 @@ import { Formik } from 'formik'
 import Headers from '../../Routes/Headers';
 import Address from './Address';
 import { useReducer } from 'react';
+import { parse } from '@babel/core';
 
 // let unsubscribe;
 var WIDTH = Dimensions.get('window').width;
@@ -46,21 +47,21 @@ const ShippingDetail = (props) => {
     const [total, setTotal] = useState('');
     const [coupon, setcoupon] = useState('');
     const [ammont, setammont] = useState('');
-    //const [Selectcoupons, setSelectcoupons] = useState('');
+
 
     const [shippingcost, setshipping_cost] = useState('');
     const validate = () => {
         if (pincode == '') {
-            alert('please enter password')
+            alert('please enter piccode')
         }
-        if (pincode.length < 0 || pincode.length > 10) {
-            alert("Password should be min 8 char and max 20 char");
+        // if (pincode.length < 0 || pincode.length > 10) {
+        //     alert("Pincode should be min 4 char");
 
-            return false;
-        } else {
-            //  setPassword(true)
+        //     return false;
+        // } else {
+        //     //  setPassword(true)
 
-        }
+        // }
     }
 
 
@@ -68,10 +69,10 @@ const ShippingDetail = (props) => {
 
         // input validation
         if (phone == '') {
-            alert('please enter password')
+            alert('please enter phone no.')
         }
         if (phone.length < 0 || phone.length > 10) {
-            alert("Password should be min 8 char and max 20 char");
+            alert("Phone no. should be min 10 char and max 16 char");
 
             return false;
         } else {
@@ -81,14 +82,13 @@ const ShippingDetail = (props) => {
     }
 
     const gotocurrentpage = async e => {
-
+        const usertkn = await AsyncStorage.getItem("authToken");
         if (landmark && area_village && address_type && city && full_name && house_no && phone && pincode && state) {
             validate();
             pass();
             setShippingAddressPopUp(false);
             setIsLoading(true)
             try {
-                const usertkn = await AsyncStorage.getItem("authToken");
                 axios.post(`${API.SHIPPING_ADDRESS_ADD}`,
                     {
                         area_village: area_village,
@@ -109,7 +109,7 @@ const ShippingDetail = (props) => {
                     })
                     .catch(function (error) {
                         setIsLoading(false)
-                        alert({ ...error })
+                        alert("gotocurrentpage...error", error)
                         //  console.log(error)
 
                     })
@@ -126,36 +126,62 @@ const ShippingDetail = (props) => {
         }
     }
 
+
+
+    // let selected_address = setselectaddress?.address_type + "," + setselectaddress?.house_no + "," + setselectaddress?.area_village + "," + setselectaddress?.city + "," + setselectaddress?.landmark + "," + setselectaddress?.pincode
+
+    // let Default_address =  address?.address_type + "," + address?.house_no + "," + address?.area_village + "," + address?.city + "," + address?.landmark + "," + address?.pincode
+
+
     const gotoCardPayment = () => {
-        props.navigation.navigate("CardPayment");
+
+        // console.log(",,as,f,asfa,f,a,fa,,fa,f,:", Default_address);
+        // console.log("Selected address:", selected_address);
+
+        props.navigation.navigate("PaymentScreen", {
+            Totalprice: Selectcoupons == null ? ammont : total,
+            SetAddrs: setselectaddress == null ?
+
+                (address?.address_type + "," + address?.house_no + "," + address?.area_village + "," + address?.city + "," + address?.landmark + "," + address?.pincode)
+                :
+                (setselectaddress?.address_type + "," + setselectaddress?.house_no + "," + setselectaddress?.area_village + "," + setselectaddress?.city + "," + setselectaddress?.landmark + "," + setselectaddress?.pincode)
+        });
     }
     const gotoApplyCoupon = () => {
         props.navigation.navigate("ApplyCoupon", {
         });
-
     }
+    const gotoProductDetailsview = (item) => {
+        props.navigation.navigate("ProductDetail", {
+            Isshippingview: item
+        });
+    }
+
+    // const gotoCoupon = async () => {
+    // const user = await AsyncStorage.getItem("item");
+    //  console.log('999999999999999999999999999------------');
+    // console.log('item-gotoCoupon-------&&&&&&&&&&>', user);
+    // setuser(setselectaddress);
+    // var a = JSON.parse(user)
+    //  setSelectcoupons(a);
+    // }
 
     //console.log("Selectcoupon_item...............:", props?.route?.params?.Selectcoupon);
     //console.warn("Selectcoupon_item...............:", address);
     let Selectcoupons = props?.route?.params?.Selectcoupon
-    const gotoCoupon = async () => {
-        const user = await AsyncStorage.getItem("item");
-        //  console.log('999999999999999999999999999------------');
-        //  console.log('item--------&&&&&&&&&&>', user);
-        setuser(user);
-        // var a = JSON.parse(user)
-        // setSelectcoupons(a);
-    }
-    console.log("...........", Selectcoupons);
+    // console.log("Selectaddress_item.FRom Address..:", props?.route?.params?.setselectaddress);
+    let setselectaddress = props?.route?.params?.setselectaddress
+
+    // console.log("...........", Selectcoupons);
     useEffect(() => {
         const unsubscribe = props.navigation.addListener('focus', () => {
             checklogin();
-            gotoCoupon();
+            // gotoCoupon();
             GetShippingProducts();
-    });
-    return unsubscribe;
-        
-        // GetShippingProducts();
+        });
+        return unsubscribe;
+
+
     }, []);
     const checklogin = async () => {
         let Usertoken = await AsyncStorage.getItem("authToken");
@@ -172,19 +198,20 @@ const ShippingDetail = (props) => {
         }
     };
     const GetShippingProducts = async () => {
-        setIsLoading(true)
+        const usertkn = await AsyncStorage.getItem("authToken");
+        setIsLoading(true);
         try {
-            const usertkn = await AsyncStorage.getItem("authToken");
+
             const response = await axios.get(`${API.SHIPPING_DETAILS}`, {
                 'headers': { "Authorization": ` ${usertkn}` }
-            },);
+            });
 
             if (response?.data?.status == '1') {
-                setIsLoading(false)
-                var address = response.data.address_lists[0];
-                console.log('adreeesss----------->', address)
+                setIsLoading(false);
+                var address0 = response.data.address_lists[0];
+                // console.log('adreeesss----------->', address)
                 setuseraddress(response.data.address_lists);
-                setAddress(address)
+                setAddress(address0);
                 setproductdata(response.data.data);
                 setSubtotal(response.data.sub_total);
                 setTax(response.data.tax);
@@ -197,54 +224,19 @@ const ShippingDetail = (props) => {
         }
         catch (error) {
 
-            setIsLoading(false)
-            Alert.alert("something went wrong")
+            setIsLoading(false);
+            Alert.alert("something went wrong");
         }
 
     };
 
-
-    //     // console.log(".....usertoken.....GetShippingProducts...", producttoken);
-
-    //     // setIsLoading(true)
-    //     try {
-    //         const response = await axios.get(`${API.SHIPPING_DETAILS}`, {
-    //             'headers': {
-    //                 'Authorization': '228e273912a6b5718c5f2b1cbd857aba26c9cbf818436e51d8fea1b24eb71ec3c8e25cd398b45ccf8079aeb0825747d697d702536b212fd3cdcdeb656988f2d7aa6e1bb2cd4f6441ceb625eaa5aeac0ec88608afab00f850ed376837e6f7dd343972874e1cd245bdd2394229c895e082a9d1dc508d906868accd5ccae9345c0f503f3aea080fe21c68c82c4f0c48d025620821af98c9a0f838077a5eedf8842bd872030bf32fa4280f25f9c027d32fcce85d54a66a48ddfd3f714b47681419786db9a4841bf97b1586edbd3e8c9b50c94bc6f8283ee3613d2c777c1e12c6e1ab23cbd2b9e30aa77770309450db41a506dcb0999706f604de41676d6eeeaef15a0c8ad858a4549d50de0addd3e589337f5c8f7e1138434c6ec0bb757e82e3d8ddf40214d1d8bab63bd7e4f04d'
-    //             }
-    //         },);
-    //         console.log("", response.data);
-    //         setSubtotal(response.data.sub_total);
-    //         setTax(response.data.tax);
-    //         setcoupon(response.data.coupon_price);
-    //         setshipping_cost(response.data.shipping_cost);
-    //         setTotal(response.data.total_price);
-    //         let result = response.map(a => a.sub_total)
-    //         console.log('----------updated------->>>>', result)
-
-    //         setproductdata(response.data.data);
-
-    //         setuseraddress(response.data.address_lists);
-    //         console.log("Response _Address-GET  my add-------------->>>>>>::::", response.data.address_lists);
-
-
-    //         // console.log("User_token_not_received+yet!!!>>>", response.data.message);
-
-    //         // setIsLoading(false)
-    //     }
-    //     catch (error) {
-    //         console.log("ShippingProductserror:::", error.response.data.message);
-    //         // setIsLoading(false)
-    //     }
-
-    // };
-
     const ProductRemovecart = async (item) => {
+        const usertkn = await AsyncStorage.getItem("authToken");
         const cartremoveid = item.cart_id;
-        console.warn('item---------->', item)
+        // console.warn('item---------->', item)
         setIsLoading(true);
         try {
-            const usertkn = await AsyncStorage.getItem("authToken");
+
             const response = await axios.post(`${API.PRODUCT_DETAILS_REMOVE_ITEM} `, { "cart_id": cartremoveid }, {
                 'headers': { "Authorization": ` ${usertkn}` }
             });
@@ -252,55 +244,13 @@ const ShippingDetail = (props) => {
             setIsLoading(false);
         }
         catch (error) {
-              console.log(".ProductRemovecart.....error.........", error.response.data.message);
+            console.log(".ProductRemovecart.....error.........", error.response.data.message);
             setIsLoading(false);
 
         }
 
     };
-    // const CouponListApi = async () => {
 
-
-    //     try {
-    //         const response = await axios.get(`${API.COUPON_LIST} `);
-    //         // console.log("", response);
-    //         console.log("Response_CouponListApi ::::", response.data.data);
-    //         setCoupondata(response.data.data);
-
-
-    //         // setIsLoading(false)
-    //     }
-    //     catch (error) {
-    //         // setIsLoading(false)
-    //     }
-
-    // };
-
-    // const CouponRemove = async () => {
-
-    //     setIsLoading(true);
-    //     try {
-    //         const response = await axios.post(`${API.COUPON_REMOVE} `, { "cart_id": 1, "coupon_id": Selectcoupons.id }, {
-    //             'headers': {
-    //                 'Authorization': '228e273912a6b5718c5f2b1cbd857aba26c9cbf818436e51d8fea1b24eb71ec3c8e25cd398b45ccf8079aeb0825747d697d702536b212fd3cdcdeb656988f2d7aa6e1bb2cd4f6441ceb625eaa5aeac0ec88608afab00f850ed376837e6f7dd343972874e1cd245bdd2394229c895e082a9d1dc508d906868accd5ccae9345c0f503f3aea080fe21c68c82c4f0c48d025620821af98c9a0f838077a5eedf8842bd872030bf32fa4280f25f9c027d32fcce85d54a66a48ddfd3f714b47681419786db9a4841bf97b1586edbd3e8c9b50c94bc6f8283ee3613d2c777c1e12c6e1ab23cbd2b9e30aa77770309450db41a506dcb0999706f604de41676d6eeeaef15a0c8ad858a4549d50de0addd3e589337f5c8f7e1138434c6ec0bb757e82e3d8ddf40214d1d8bab63bd7e4f04d'
-    //             }
-    //         });
-
-    //         alert("Coupon Removed Sussesfully....")
-    //         Selectcoupons = null;
-    //         setjustUpdate(!justUpdate)
-    //         // console.log("status _CouponRemove:", response.data.status);
-
-    //         // setProductitems(response.data.data)
-    //         setIsLoading(false);
-    //     }
-    //     catch (error) {
-
-    //         setIsLoading(false);
-    //         Alert.alert("something went wrong")
-    //     }
-
-    // };
     const onChangePasswordHandler = landmark => {
         setlandmark(landmark);
     };
@@ -329,13 +279,11 @@ const ShippingDetail = (props) => {
         setstate(state);
     }
     return (
-
         <SafeAreaView style={{
             flex: 1,
             width: WIDTH,
             height: HEIGHT, backgroundColor: '#ffffff', flexGrow: 1
         }} >
-
             <Headers
                 Backicon={{
                     visible: true,
@@ -360,7 +308,7 @@ const ShippingDetail = (props) => {
                     {productdata.length > 0 ?
                         productdata.map((item, index) => {
                             return (
-                                <View onPress={() => { gotoOrderDetail() }}>
+                                <TouchableOpacity onPress={() => { gotoProductDetailsview(item) }}>
                                     <View style={{
                                         marginHorizontal: 10,
                                         marginTop: 6,
@@ -371,6 +319,8 @@ const ShippingDetail = (props) => {
                                         backgroundColor: 'white',
                                         justifyContent: "center",
                                         alignItems: "center",
+                                        borderWidth: 1,
+                                        borderColor: "#FFFFFF",
                                         shadowColor: '#000000',
                                         // shadowOffset: {
                                         //     width: 0,
@@ -429,7 +379,7 @@ const ShippingDetail = (props) => {
                                                         alignSelf: 'center',
 
                                                     }}
-                                                    source={{ uri: item?.product_image }}
+                                                    source={{ uri: `${item?.product_image}` }}
                                                 />
 
                                             </View>
@@ -460,90 +410,8 @@ const ShippingDetail = (props) => {
 
                                         </View>
                                     </View>
-                                    {/* <View style={{
-                                        marginHorizontal: 6,
-                                        marginTop: 20,
-                                        height: 120,
-                                        borderRadius: 20,
-                                        marginBottom: 10,
-                                        backgroundColor: 'white',
-                                        width: WIDTH * 0.97,
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        shadowColor: '#000000',
-                                        shadowRadius: 6,
-                                        shadowOpacity: 1.0,
-                                        elevation: 6,
-                                    }}>
 
-                                        <TouchableOpacity onPress={() => ProductRemovecart(item)}
-                                            style={{
-                                                position: "absolute",
-                                                backgroundColor: 'red',
-                                                width: 30, height: 30,
-                                                justifyContent: "center",
-                                                alignItems: 'center',
-                                                borderRadius: 20 / 2,
-                                                top: 10,
-                                                right: 10
-                                            }}>
-
-                                            <Image resizeMode='contain'
-                                                source={require('../assets/delete.png')}
-
-                                            />
-
-                                        </TouchableOpacity>
-
-                                        <View style={{
-                                            height: 120,
-                                            flexDirection: 'row',
-                                            width: WIDTH * 0.97,
-                                            justifyContent: "flex-start",
-                                            alignItems: "center",
-
-                                        }}>
-
-                                            <View style={{
-                                                width: 115, height: 120,
-                                                justifyContent: "center",
-                                                alignItems: "center"
-                                            }}>
-                                                <Image
-                                                    resizeMode="contain"
-                                                    style={{
-                                                        width: "100%",
-                                                        borderRadius: 20,
-                                                        height: "100%", alignSelf: 'center',
-
-                                                    }}
-                                                    source={{ uri: item.product_image }} />
-
-                                            </View>
-
-                                            <View style={{
-                                                justifyContent: "flex-start", alignItems: "flex-start", width: WIDTH * 0.97, marginLeft: 15,
-                                            }}>
-                                                <Text style={{ textAlign: 'left', fontSize: 15, color: '#000000', fontWeight: "bold" }}>{item.product_name}</Text>
-
-                                                <View style={{ marginTop: 10, flexDirection: 'row', justifyContent: "flex-start", alignItems: "flex-start", height: 60, width: WIDTH * 0.97 }}>
-
-
-                                                    <View style={{ marginTop: 1, flexDirection: 'row', marginLeft: 15 }}>
-                                                        <View style={{}}>
-                                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "bold" }}>Price : <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 12, color: '#000000', }}>$ {item.product_price}</Text></Text>
-                                                        </View>
-
-                                                    </View>
-
-
-                                                </View>
-                                            </View>
-
-
-                                        </View>
-                                    </View> */}
-                                </View>
+                                </TouchableOpacity>
                             )
                         })
 
@@ -591,13 +459,25 @@ const ShippingDetail = (props) => {
                                              />
                                             
                                         </View> */}
-                                    <View style={{ width: WIDTH * 0.67, marginLeft: 20, justifyContent: 'center', alignItems: 'flex-start' }}>
-                                        <Text style={{ color: '#000000', fontWeight: "500", fontSize: 16, textAlign: 'left' }}>{address.address_type}</Text>
-                                        <View style={{ width: WIDTH * 0.67, height: 40, marginTop: 5 }}>
-                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#676767', fontWeight: '400' }}>{address.house_no} {address.landmark} {address.area_village},  {address.city} {address.pincode}
-                                            </Text>
-                                        </View>
-                                    </View>
+                                    {
+                                        setselectaddress == null ?
+                                            (<View style={{ width: WIDTH * 0.67, marginLeft: 20, justifyContent: 'center', alignItems: 'flex-start' }}>
+                                                <Text style={{ color: '#000000', fontWeight: "500", fontSize: 16, textAlign: 'left' }}>{address.address_type}</Text>
+                                                <View style={{ width: WIDTH * 0.67, height: 40, marginTop: 5 }}>
+                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#676767', fontWeight: '400' }}>{address.house_no} {address.landmark} {address.area_village},  {address.city} {address.pincode}
+                                                    </Text>
+                                                </View>
+                                            </View>)
+                                            :
+                                            (<View style={{ width: WIDTH * 0.67, marginLeft: 20, justifyContent: 'center', alignItems: 'flex-start' }}>
+                                                <Text style={{ color: '#000000', fontWeight: "500", fontSize: 16, textAlign: 'left' }}>{setselectaddress.address_type}</Text>
+                                                <View style={{ width: WIDTH * 0.67, height: 40, marginTop: 5 }}>
+                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#676767', fontWeight: '400' }}>{setselectaddress.house_no} {setselectaddress.landmark} {setselectaddress.area_village},  {setselectaddress.city} {setselectaddress.pincode}
+                                                    </Text>
+                                                </View>
+                                            </View>)
+                                    }
+
                                 </View>
                                 {/* <TouchableOpacity onPress={() => { props.navigation.navigate('Address', { address, setAddress }) }}
                                             disabled={Selectcoupons == null ? false : true}
@@ -813,7 +693,7 @@ const ShippingDetail = (props) => {
                                 <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Tax:</Text>
                             </View>
                             <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
-                                <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>{tax}</Text>
+                                <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>${tax}</Text>
                             </View>
                         </View>
 
@@ -876,9 +756,9 @@ const ShippingDetail = (props) => {
                             <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
                                 {
                                     Selectcoupons == null ? <>
-                                        <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>${ammont}</Text></>
+                                        <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 53, fontWeight: "500" }}>${ammont}</Text></>
                                         :
-                                        <><Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>{`${parseInt(total) - parseInt(Selectcoupons?.discount)}`}</Text></>
+                                        <><Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 53, fontWeight: "500" }}>${total}</Text></>
                                 }
                             </View>
                         </View>

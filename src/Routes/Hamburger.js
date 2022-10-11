@@ -1388,6 +1388,6 @@ orderitemdata.length > 0 ?
         </View>)
     })
     :
-    <Text>ajgruwvgvuy</Text>
+   null
 }
 </ScrollView>

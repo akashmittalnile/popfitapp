@@ -136,7 +136,7 @@ const Blog = (props) => {
             }}
             BelliconononClick={() => { props.navigation.navigate('Notifications') }}
           />
-          <ScrollView  >
+          <ScrollView nestedScrollEnabled={true} >
             <Divider color="#393939" width={1.2} />
 
             {/*// btn navigate Newsletterpopup/// */}
@@ -257,10 +257,12 @@ const Blog = (props) => {
             </View>
             <FlatList
               horizontal
+              // nestedScrollEnabled={true}
               showsHorizontalScrollIndicator={false}
               // style={{ margin: 10 }}
+              keyExtractor={(item, index) => String(index)}
               data={Blogvideolist}
-              renderItem={({ item }) => (
+              renderItem={({ item ,index}) => (
                 <TouchableOpacity onPress={() => { gotoBlogDetail(item) }}
                   style={{
                     backgroundColor: 'white',
@@ -272,7 +274,7 @@ const Blog = (props) => {
                     justifyContent: "center",
                   }}>
                   <View style={{
-                    height: 100,
+                    height: 150,
                     borderRadius: 20,
                     width: WIDTH * 0.45,
                     alignItems: "center",
@@ -284,13 +286,14 @@ const Blog = (props) => {
                       style={{ justifyContent: 'center', borderTopLeftRadius: 20, borderTopRightRadius: 20, alignItems: 'center', backgroundColor: 'white', width: '100%', height: '100%', }} />
                   </View>
                   <View
-                    style={{ height: 100, backgroundColor: '#fceeb5', borderBottomLeftRadius: 16, borderBottomRightRadius: 16, width: WIDTH * 0.45, justifyContent: "flex-start", alignItems: "flex-start", }}>
+                    style={{ height: 50, backgroundColor: '#fceeb5', borderBottomLeftRadius: 16, borderBottomRightRadius: 16, width: WIDTH * 0.45, justifyContent: "flex-start", alignItems: "flex-start",paddingTop: 5,paddingLeft: 10, }}>
 
-                    <Text style={{ marginLeft: 10, marginTop: 5, textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "bold" }}>{item.youtube_title.slice(0, 20) + '...'}</Text>
+                    <Text  numberOfLines={1}
+                    style={{textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "500" }}>{item.youtube_title.slice(0, 20) + '...'}</Text>
 
-                    <View style={{ height: 65, alignItems: "flex-start", marginTop: 2, justifyContent: "flex-start", width: WIDTH * 0.45, marginTop: 2 }}>
-                      <Text
-                        style={{ marginHorizontal: 10, textAlign: 'left', fontSize: 7, color: '#000000', justifyContent: "center", alignItems: "center" }}>{item.youtube_description.slice(0, 308) + '...'}</Text>
+                    <View style={{ height: 30, alignItems: "flex-start", paddingTop: 4, justifyContent: "flex-start", width: WIDTH * 0.42, marginBottom:4, }}>
+                      <Text  numberOfLines={1}
+                        style={{textAlign: 'left', fontSize: 8, color: '#000000',fontWeight: "300"  }}>{item.youtube_description.slice(0, 200) + '...'}</Text>
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -314,6 +317,7 @@ const Blog = (props) => {
             <FlatList
               numColumns={2}
               showsHorizontalScrollIndicator={true}
+              keyExtractor={(_, index) => index}
               data={Blogcategorylist}
               style={{ margin: 0 ,paddingBottom:20}}
               renderItem={({ item }) => (

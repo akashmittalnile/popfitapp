@@ -33,7 +33,7 @@ const SubscriptionPlan = (props, navigation) => {
 
   useEffect(() => {
     GetSubscriptionPlan();
-    checklogin();
+    // checklogin();
   }, [props, navigation]);
 
   const checklogin = async (item) => {
@@ -48,11 +48,14 @@ const SubscriptionPlan = (props, navigation) => {
       console.log("...............................");
     }
     else {
-      GetSubscriptionPlan(item.id);
-
+      // GetSubscriptionPlan(item.id);
+      props.navigation.navigate("PaymentScreen",{
+        SubscriptionPlan:item
+      });
       console.log("??????????????error", item.id);
     }
   };
+
   const GetSubscriptionPlan = async () => {
 
     let Usertoken1 = await AsyncStorage.getItem("authToken");
@@ -62,10 +65,10 @@ const SubscriptionPlan = (props, navigation) => {
     try {
       const response = await axios.get(`${API.SUBSCRIPTION_PLAN}`, { headers: { "Authorization": ` ${Usertoken1}` } });
       // console.log("", response);
-      console.log("ResponseSUBscribtion_plan ::::", response.data);
+      // console.log("ResponseSUBscribtion_plan ::::", response.data);
       if (response.data.status == 1) {
         setSubscriptionsId(response.data.data)
-        console.log("SUBSCRIPTION_plan_data!!!>>>", response.data.data);
+        // console.log("SUBSCRIPTION_plan_data!!!>>>", response.data.data);
         setIsLoading(false)
 
       }
@@ -77,21 +80,29 @@ const SubscriptionPlan = (props, navigation) => {
 
   };
 
-
-  const buttonClickedHandler = () => {
-    props.navigation.goBack();
-  };
-  const gotoNotification = () => {
-    props.navigation.navigate('Notifications');
-  };
-
-
   return (
     <SafeAreaView style={{
       flex: 1,
       width: WIDTH,
       height: HEIGHT, flexGrow: 1
     }} >
+      <Headers
+        Backicon={{
+          visible: true,
+        }}
+        BackicononClick={() => { props.navigation.goBack() }}
+
+        CartIcon={{
+          visible: true,
+        }}
+        CartIconononClick={() => { props.navigation.navigate("CartAdded") }}
+
+        Bellicon={{
+          visible: true,
+
+        }}
+        BelliconononClick={() => { props.navigation.navigate("Notifications") }}
+      />
       {!isLoading ?
         (<View >
           {/* <View style={styles.navigationBarColor}>
@@ -145,23 +156,7 @@ const SubscriptionPlan = (props, navigation) => {
               </TouchableOpacity>
             </View>
           </View> */}
-          <Headers
-            Backicon={{
-              visible: true,
-            }}
-            BackicononClick={() => { props.navigation.goBack() }}
 
-            CartIcon={{
-              visible: true,
-            }}
-            CartIconononClick={() => { props.navigation.navigate("CartAdded") }}
-
-            Bellicon={{
-              visible: true,
-
-            }}
-            BelliconononClick={() => { props.navigation.navigate("Notifications") }}
-          />
           <ScrollView style={{}}>
             <View style={{
               paddingBottom: 80, alignItems: "center",
@@ -173,11 +168,12 @@ const SubscriptionPlan = (props, navigation) => {
                 renderItem={({ item }) => (
                   <View
                     style={{
-                      backgroundColor: '#2147b3',
-                      marginTop: 20,
-                      marginHorizontal: 10,
+                      // backgroundColor: '#2147b3',
+                      backgroundColor: "#ffcc00",
+                      marginTop: 10,
+                      marginHorizontal: 5,
                       borderRadius: 20,
-                      width: "45%",
+                      width: "47%",
                       height: 200,
                       //  paddingBottom:100
                       // alignItems:"center",
@@ -203,8 +199,9 @@ const SubscriptionPlan = (props, navigation) => {
                             marginLeft: 10,
                             marginTop: 10,
                             textAlign: 'left',
-                            fontSize: 14,
+                            fontSize: 16,
                             color: 'white',
+                            fontWeight: "500"
 
                           }}>
                           {item.name}
@@ -257,41 +254,43 @@ const SubscriptionPlan = (props, navigation) => {
                             textAlign: 'left',
                             fontSize: 14,
                             color: 'white',
-                            flex: 0.07
+                            flex: 0.07,
+                            fontWeight: "500"
                           }}>$</Text><Text
-                          style={{
-                            // backgroundColor:"red",
-                            marginLeft: 2,
-                            textAlign: 'left',
-                            fontSize: 14,
-                            color: 'white',
-                            flex: 0.3,
-
-                            // marginTop: 10,
-                          }}>{item.price}</Text>
+                            style={{
+                              // backgroundColor:"red",
+                              marginLeft: 2,
+                              textAlign: 'left',
+                              fontSize: 14,
+                              color: 'white',
+                              flex: 0.3,
+                              fontWeight: "500"
+                              // marginTop: 10,
+                            }}>{item.price}</Text>
                         <Text
                           style={{
                             // backgroundColor:"red",
                             textAlign: 'left',
                             fontSize: 14,
                             color: 'white',
-                            flex: 0.5
+                            flex: 0.5,
+                            fontWeight: "500"
                           }}>
                           {item.type}
                         </Text>
                       </View>
 
                       <View style={{
-                        width: "100%",alignItems: "flex-start",
-                        justifyContent: "flex-start", flex: 1, paddingVertical:6
+                        width: "100%", alignItems: "flex-start",
+                        justifyContent: "flex-start", flex: 1, paddingVertical: 6
                       }}>
                         <View
                           style={{
                             marginHorizontal: 10,
                             height: 15,
-                            flexDirection: 'row', 
+                            flexDirection: 'row',
                             flex: 0.3,
-                            marginBottom:6
+                            marginBottom: 6
                           }}>
                           <View
                             style={{
@@ -307,6 +306,7 @@ const SubscriptionPlan = (props, navigation) => {
                                 textAlign: 'left',
                                 fontSize: 10,
                                 color: 'white',
+                                fontWeight: "500"
 
                               }}>Yearly price: {item.yearly_price}
                             </Text>
@@ -317,7 +317,7 @@ const SubscriptionPlan = (props, navigation) => {
                           style={{
                             marginHorizontal: 10,
                             height: 15,
-                            flexDirection: 'row', flex: 0.3, marginBottom:6
+                            flexDirection: 'row', flex: 0.3, marginBottom: 6
                           }}>
                           <View
                             style={{
@@ -333,6 +333,7 @@ const SubscriptionPlan = (props, navigation) => {
                                 textAlign: 'left',
                                 fontSize: 10,
                                 color: 'white',
+                                fontWeight: "500"
 
                               }}>
                               Half yearly price: {item.half_yearly_price}
@@ -360,7 +361,7 @@ const SubscriptionPlan = (props, navigation) => {
                                 textAlign: 'left',
                                 fontSize: 10,
                                 color: 'white',
-
+                                fontWeight: "500"
                               }}>
                               Quarterly price: {item.quarterly_price}
                             </Text>
@@ -370,14 +371,14 @@ const SubscriptionPlan = (props, navigation) => {
                     </View>
 
                     <View style={{
-                      flex: 1, flexDirection: 'row', width: "100%",alignItems: "flex-start",
-                      justifyContent: "flex-start", paddingTop:4,paddingBottom:4
+                      flex: 1, flexDirection: 'row', width: "100%", alignItems: "flex-start",
+                      justifyContent: "flex-start", paddingTop: 4,
                     }}>
                       <View
-                        style={{ flex: 0.4, height: 30, borderTopRightRadius: 20, }}>
+                        style={{ flex: 0.4, height: 50, borderBottomLeftRadius: 20, }}>
                         <BackgroundImage
                           source={require('../assets/leftCurve.png')}
-                          style={{ height: 60,alignItems: "center",justifyContent: 'center', }}></BackgroundImage>
+                          style={{ height: 70, alignItems: "center", justifyContent: 'center', }}></BackgroundImage>
                       </View>
                       <View
                         style={{
@@ -396,13 +397,14 @@ const SubscriptionPlan = (props, navigation) => {
                               backgroundColor: 'white',
                               width: 120,
                               height: 30,
-                              borderRadius:50,
+                              borderRadius: 50,
                             }}>
                             <Text
                               style={{
                                 textAlign: 'center',
                                 fontSize: 10,
                                 color: '#c79d3a',
+                                fontWeight: "500"
 
                               }}>
                               Subscribe Now

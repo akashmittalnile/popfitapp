@@ -12,7 +12,7 @@ import axios from 'axios';
 import { API } from '../../Routes/Urls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
-import { incrementCounter} from '../../Redux/actions/UpdateCounter';
+import { incrementCounter } from '../../Redux/actions/UpdateCounter';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -25,12 +25,26 @@ const Notifications = (props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [noti, setNoti] = useState([]);
 
+    const Clicknotication = (item) => {
+        if (item.type == "recipe") {
+            props.navigation.navigate("Home")
+        }
+        else if (item.type == "training") {
+            props.navigation.navigate("TrainingDetail")
+        }
+        else if (item.type == "blog") {
+            props.navigation.navigate("Blog")
+        }else{
+            Alert.alert("TYPE:COUPON")
+            console.log("Go to current page for coupon !!");
+        }
+    }
     useEffect(() => {
-        GetShippingProducts();
+        GetNotification();
         // AsyncStorage.clear();
         // AsyncStorage.removeItem('notification')
     }, []);
-    const GetShippingProducts = async () => {
+    const GetNotification = async () => {
         const usertkn = await AsyncStorage.getItem("authToken");
 
         // console.log('heloooooo')
@@ -38,7 +52,7 @@ const Notifications = (props) => {
         try {
             const response = await axios.get(`${API.NOTIFICATION}`, { headers: { "Authorization": ` ${usertkn}` } });
             let data = response.data.data.length;
-            console.log('incrementCounter', data
+            console.log('incrementCounter1', data
             );
             dispatch(incrementCounter(parseInt(data)));
             // AsyncStorage.setItem("notification", JSON.stringify(data));
@@ -73,7 +87,7 @@ const Notifications = (props) => {
             .then(function (response) {
 
                 if (response.data.status == "1") {
-                    GetShippingProducts();
+                    GetNotification();
                 }
                 else {
                     alert("something went wrong")
@@ -83,7 +97,7 @@ const Notifications = (props) => {
             })
             .catch(function (error) {
                 console.log("......error.........", error);
-                alert("something went wrong in catch")
+                Alert.alert("something went wrong in catch")
                 setIsLoading(false);
             })
 
@@ -109,6 +123,37 @@ const Notifications = (props) => {
         // }
     };
 
+    const NoticationDetails = async (item) => {
+        const usertkn = await AsyncStorage.getItem("authToken");
+        console.log("item in notification details API:", item.id);
+        if (item.id != null) {
+            let notifiID = item.id
+            setIsLoading(true);
+
+            try {
+                const response = await axios.post(`${API.NOTIFICATION_DETAILS}`, { "notification_id": notifiID }, { headers: { "Authorization": ` ${usertkn}` } });
+
+                if (response.data.status == 1) {
+                    GetNotification();
+                    setIsLoading(false);
+                }
+                else {
+                    alert("something went wrong");
+                    setIsLoading(false);
+                }
+                setIsLoading(false);
+
+            }
+
+            catch (error) {
+                setIsLoading(false);
+                console.log("NoticationDetails-error:::", error);
+                Alert.alert("something went wrong in catch")
+
+            }
+        }
+
+    };
     return (
         <SafeAreaView style={{
             flex: 1,
@@ -135,32 +180,34 @@ const Notifications = (props) => {
             />
             {!isLoading ?
                 (<ScrollView style={{ paddingTop: 6 }}>
-                    {noti.length > 0 ?
+                    {noti?.length > 0 ?
                         noti.map((item, index) => {
                             return (
 
-                                <View onPress={() => { gotoOrderDetail() }}>
-                                    {item.is_read != "1" ?
+                                <>
+                                    {item.is_read == "1" ?
                                         <>
-                                            <View style={{
-                                                marginHorizontal: 10,
-                                                marginTop: 6,
-                                                height: 75,
-                                                borderRadius: 10,
-                                                marginBottom: 10,
-                                                backgroundColor: '#FFFFFF',
-                                                width: WIDTH * 0.95,
-                                                justifyContent: "center",
-                                                // alignItems: "center",
-                                                // shadowColor: '#000000',
-                                                shadowColor: '#cdcbcb',
-                                                shadowRadius: 6,
-                                                shadowOpacity: 0.1,
-                                                elevation: 6,
-                                                borderWidth: 1,
-                                                borderColor: '#F4F4F4'
+                                            <TouchableOpacity onPress={() => {Clicknotication(item),
+                                            NoticationDetails(item) }}
+                                                style={{
+                                                    marginHorizontal: 10,
+                                                    marginTop: 6,
+                                                    height: 75,
+                                                    borderRadius: 10,
+                                                    marginBottom: 10,
+                                                    backgroundColor: '#FFFFFF',
+                                                    width: WIDTH * 0.95,
+                                                    justifyContent: "center",
 
-                                            }}>
+                                                    shadowColor: '#cdcbcb',
+                                                    shadowRadius: 6,
+                                                    shadowOpacity: 0.1,
+                                                    elevation: 6,
+                                                    borderWidth: 1,
+                                                    borderColor: '#F4F4F4'
+
+                                                }}>
+
                                                 <TouchableOpacity onPress={() => ItemRemove(item)}
                                                     style={{
                                                         position: "absolute",
@@ -179,7 +226,7 @@ const Notifications = (props) => {
                                                     />
 
                                                 </TouchableOpacity>
-                                                
+
 
                                                 <View style={{ marginHorizontal: 10, width: WIDTH * 0.8, height: 75, flexDirection: "row", justifyContent: 'flex-start', alignItems: 'flex-start', }}>
                                                     <View style={{ marginRight: 20, justifyContent: "center", alignItems: "center", top: 20, }}>
@@ -200,38 +247,32 @@ const Notifications = (props) => {
 
                                                     </View>
                                                 </View>
-
-
-
-
-
-
-
-                                            </View>
+                                            </TouchableOpacity>
 
                                         </>
                                         :
                                         <>
-                                            <View style={{
-                                                marginHorizontal: 10,
-                                                marginTop: 6,
-                                                height: 75,
-                                                borderRadius: 10,
-                                                marginBottom: 10,
-                                                backgroundColor: '#F4F4F4',
-                                                width: WIDTH * 0.95,
-                                                justifyContent: "center",
-                                                // alignItems: "center",
-                                                // shadowColor: '#000000',
-                                                shadowColor: '#cdcbcb',
-                                                shadowRadius: 6,
-                                                shadowOpacity: 0.1,
-                                                elevation: 6,
-                                                borderWidth: 1,
-                                                borderColor: '#F4F4F4'
+                                            <TouchableOpacity onPress={() => {Clicknotication(item),
+                                            NoticationDetails(item) }}
+                                                style={{
+                                                    marginHorizontal: 10,
+                                                    marginTop: 6,
+                                                    height: 75,
+                                                    borderRadius: 10,
+                                                    marginBottom: 10,
+                                                    backgroundColor: '#F4F4F4',
+                                                    width: WIDTH * 0.95,
+                                                    justifyContent: "center",
 
-                                            }}>
-                                                 <TouchableOpacity onPress={() => ItemRemove(item)}
+                                                    shadowColor: '#cdcbcb',
+                                                    shadowRadius: 6,
+                                                    shadowOpacity: 0.1,
+                                                    elevation: 6,
+                                                    borderWidth: 1,
+                                                    borderColor: '#F4F4F4'
+
+                                                }}>
+                                                <TouchableOpacity onPress={() => ItemRemove(item)}
                                                     style={{
                                                         position: "absolute",
                                                         backgroundColor: 'red',
@@ -276,13 +317,27 @@ const Notifications = (props) => {
 
 
 
-                                            </View>
-                                        </>}
-                                </View>
+                                            </TouchableOpacity>
+                                        </>
+                                    }
+
+                                </>
                             )
                         })
 
-                        : <Text style={{ color: 'white' }}>Loading</Text>}
+                        : 
+                        (<View style={{
+                            justifyContent: "center", alignItems: "center", backgroundColor: "white", flex: 1,
+                          }}>
+                            <Image resizeMode='contain'
+                              source={require('../assets/Nodatafound.png')}
+                              style={{
+                                width: 200,
+                                height: 120, alignSelf: 'center'
+                              }} />
+                            <Text style={{ fontSize: 14, fontWeight: "bold" }}>No data found</Text>
+                          </View>)
+                        }
                 </ScrollView>)
                 :
 

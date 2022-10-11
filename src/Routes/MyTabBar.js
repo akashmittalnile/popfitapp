@@ -1,13 +1,11 @@
 import 'react-native-gesture-handler';
 import 'react-native-gesture-handler';
 import * as React from "react";
-import { ScrollView, View, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, FlatList, Dimensions, Modal,SafeAreaView } from 'react-native'
-
+import { View, Text, Image, SafeAreaView } from 'react-native'
 import Home from '../Screens/Dasboard/Home';
 import BlogDetail from '../Screens/blog/BlogDetail';
 import ShippingDetail from '../Screens/shipping/ShippingDetail';
 import Blog from '../Screens/blog/Blog';
-
 import ProductDetail from '../Screens/product Detail/ProductDetail';
 import Training from '../Screens/training/Training';
 import DumbleSet from '../Screens/dumble Set/DumbleSet';
@@ -19,25 +17,20 @@ import TrainingDetail from '../Screens/training/TrainingDetail';
 import Notifications from '../Screens/notification/Notifications';
 import MyOrder from '../Screens/myorder/MyOrder';
 import OrderDetail from '../Screens/myorder/OrderDetail';
-
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { BottomTabBar, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
-
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import TrainingPersonaDetail from '../Screens/training/TrainingPersonDetail';
 import OutDoorCycleDetails from '../Screens/training/OutDoorCycleDetail';
 import SubCategoryBlog from '../Screens/category/CategoryListBlog';
 import MenTshirts from '../Screens/clothes Type/MensTshirts';
-
 import TermsAndCondition from '../Screens/Terms Condition ,Privay  and About/TermsAndCondition';
 import CancellationPolicy from '../Screens/Terms Condition ,Privay  and About/CancellationPolicy';
 import AboutsUs from '../Screens/Terms Condition ,Privay  and About/AboutsUs';
 import RefundPolicy from '../Screens/Terms Condition ,Privay  and About/RefundPolicy';
 import EditMyProfile from '../Screens/Profile/EditMyProfile';
 import MyProfile from '../Screens/Profile/MyProfile';
-
 import ChangePassword from '../Screens/Profile/ChangePassword';
-import CardPayment from '../Screens/PaymentGateway/CardPayment';
+// import CardPayment from '../Screens/PaymentGateway/CardPayment';
 import ClothesType from '../Screens/clothes Type/ClothesType';
 import SubscriptionPlan from '../Screens/subscription Plan/SubscriptionPlan';
 import ApplyCoupon from '../Screens/shipping/ApplyCoupon';
@@ -46,6 +39,7 @@ import RecipeDetails from '../Screens/Recipe/RecipeDetails';
 import CartAdded from '../Screens/cart/CartAddedPopUp';
 import Recipesubcategory from '../Screens/Recipe/Recipesubcategory';
 import Address from '../Screens/shipping/Address';
+import PaymentScreen from '../Screens/PaymentGateway/PaymentScreen';
 
 
 const Tab = createBottomTabNavigator();
@@ -81,7 +75,8 @@ const HomeBottomTab = (props) => {
 
             <Stack.Screen options={{ headerShown: false }} name="ApplyCoupon" component={ApplyCoupon} />
             <Stack.Screen options={{ headerShown: false }} name="ShippingDetail" component={ShippingDetail} />
-            <Stack.Screen options={{ headerShown: false }} name="CardPayment" component={CardPayment} />
+            {/* <Stack.Screen options={{ headerShown: false }} name="CardPayment" component={CardPayment} /> */}
+            <Stack.Screen options={{ headerShown: false }} name="PaymentScreen" component={PaymentScreen} />
 
             <Stack.Screen options={{ headerShown: false }} name="TrainingDetail" component={TrainingDetail} />
             <Stack.Screen options={{ headerShown: false }} name="OutdoorTrainning" component={OutdoorTrainning} />
@@ -120,6 +115,7 @@ const TrainingBottomTab = (props) => {
             <Stack.Screen options={{ headerShown: false }} name="TrainingPersonaDetail" component={TrainingPersonaDetail} />
             <Stack.Screen options={{ headerShown: false }} name="Notifications" component={Notifications} />
             <Stack.Screen options={{ headerShown: false }} name="Address" component={Address} />
+            <Stack.Screen options={{ headerShown: false }} name="PaymentScreen" component={PaymentScreen} />
         </Stack.Navigator>
     )
 }
@@ -136,7 +132,8 @@ const ShopBottomTab = (props) => {
             {/* <Stack.Screen options={{ headerShown: false }} name="OrderDetail" component={OrderDetail} /> */}
             <Stack.Screen options={{ headerShown: false }} name="ShippingDetail" component={ShippingDetail} />
             <Stack.Screen options={{ headerShown: false }} name="Address" component={Address} />
-            <Stack.Screen options={{ headerShown: false }} name="CardPayment" component={CardPayment} />
+            <Stack.Screen options={{ headerShown: false }} name="PaymentScreen" component={PaymentScreen} />
+            {/* <Stack.Screen options={{ headerShown: false }} name="CardPayment" component={CardPayment} /> */}
             <Stack.Screen options={{ headerShown: false }} name="Notifications" component={Notifications} />
         </Stack.Navigator>
     )
@@ -162,150 +159,150 @@ const MyTabBar = (props) => {
             flex: 1,
             width: '100%',
             height: '100%',
-            backgroundColor: 'black'
-          }} >
-        <Tab.Navigator
-            // initialRouteName='Home'
-            screenOptions={{
-                // tabBarInactiveTintColor: 'gray',
-                // tabBarActiveTintColor: 'tomato',
-                headerShown: false,
-                tabBarShowLabel: false,
-                tabBarStyle: {
-                    showIcon: true,
-                    backgroundColor: '#262626',
-                    tabBarLabel: ({ focused, color, size }) => (
-                        <Text style={{ color: focused ? 'red' : color }}>Updates</Text>
-                    ),
-                }
+            backgroundColor: 'black', flexGrow: 1
+        }} >
+            <Tab.Navigator
+                // initialRouteName='Home'
+                screenOptions={{
+                    // tabBarInactiveTintColor: 'gray',
+                    // tabBarActiveTintColor: 'tomato',
+                    headerShown: false,
+                    tabBarShowLabel: false,
+                    tabBarStyle: {
+                        showIcon: true,
+                        backgroundColor: '#262626',
+                        tabBarLabel: ({ focused, color, size }) => (
+                            <Text style={{ color: focused ? 'red' : color }}>Updates</Text>
+                        ),
+                    }
 
-            }}
-
-
-        >
-            <Tab.Screen name="HomeBottomTab"
-                options={{
-                    tabBarIcon: ({ focused }) => (
-                        <View>
-                            {
-                                focused ?
-                                    <Image source={require("../Screens/assets/tab1.png")}
-                                        style={{
-                                            width: 20,
-                                            height: 20,
-                                            tintColor: "#ffcc00"
-
-                                        }}
-                                    />
-                                    :
-                                    <Image source={require("../Screens/assets/tab1.png")}
-                                        style={{
-                                            width: 20,
-                                            height: 20,
-                                            tintColor: "white"
-                                        }}
-                                    />
-                            }
-                            <Text style={{ marginTop: 2, marginBottom: -4, marginLeft: -5, fontSize: 12, color: 'white', }}>Home</Text>
-
-
-                        </View>
-                    ),
                 }}
 
-                component={HomeBottomTab} />
 
-            <Tab.Screen name="TrainingBottomTab"
-                options={{
-                    tabBarIcon: ({ focused }) => (
-                        <View>
-                            {
-                                focused ?
-                                    <Image source={require("../Screens/assets/tab3.png")}
-                                        style={{
-                                            width: 20,
-                                            height: 20,
-                                            tintColor: "#ffcc00"
+            >
+                <Tab.Screen name="HomeBottomTab"
+                    options={{
+                        tabBarIcon: ({ focused }) => (
+                            <View>
+                                {
+                                    focused ?
+                                        <Image source={require("../Screens/assets/tab1.png")}
+                                            style={{
+                                                width: 20,
+                                                height: 20,
+                                                tintColor: "#ffcc00"
 
-                                        }}
-                                    />
-                                    :
-                                    <Image source={require("../Screens/assets/tab3.png")}
-                                        style={{
-                                            width: 20,
-                                            height: 20,
-                                            tintColor: "white"
-
-
-                                        }}
-                                    />
-                            }
-
-                            <Text style={{ marginTop: 2, marginBottom: -4, marginLeft: -10, fontSize: 12, color: 'white', }}>Training</Text>
-
-                        </View>
-                    ),
-                }} component={TrainingBottomTab} />
-
-            <Tab.Screen name="ShopBottomTab"
-                options={{
-                    tabBarIcon: ({ focused }) => (
-                        <View>
-                            {
-                                focused ?
-                                    <Image source={require("../Screens/assets/tab5.png")}
-                                        style={{
-                                            width: 20,
-                                            height: 20,
-                                            tintColor: "#ffcc00"
-                                        }}
-                                    />
-                                    :
-                                    <Image source={require("../Screens/assets/tab5.png")}
-                                        style={{
-                                            width: 20,
-                                            height: 20,
-                                            tintColor: "white"
-                                        }}
-                                    />
-                            }
-                            <Text style={{ marginTop: 2, marginBottom: -4, marginLeft: -5, fontSize: 12, color: 'white', }}>Shop</Text>
+                                            }}
+                                        />
+                                        :
+                                        <Image source={require("../Screens/assets/tab1.png")}
+                                            style={{
+                                                width: 20,
+                                                height: 20,
+                                                tintColor: "white"
+                                            }}
+                                        />
+                                }
+                                <Text style={{ marginTop: 2, marginBottom: -4, marginLeft: -5, fontSize: 12, color: 'white', }}>Home</Text>
 
 
-                        </View>
-                    ),
-                }} component={ShopBottomTab} />
+                            </View>
+                        ),
+                    }}
 
-            <Tab.Screen name="BlogBottomTab"
-                options={{
-                    tabBarIcon: ({ focused }) => (
-                        <View>
-                            {
-                                focused ?
-                                    <Image source={require("../Screens/assets/tab4.png")}
-                                        style={{
-                                            width: 22,
-                                            height: 20,
-                                            tintColor: "#ffcc00"
-                                        }}
-                                    />
-                                    :
-                                    <Image source={require("../Screens/assets/tab4.png")}
-                                        style={{
-                                            width: 22,
-                                            height: 20,
-                                            tintColor: "white"
-                                        }}
-                                    />
-                            }
+                    component={HomeBottomTab} />
 
-                            <Text style={{ marginTop: 2, marginBottom: -4, marginLeft: -2, fontSize: 12, color: 'white', }}>Blogs</Text>
+                <Tab.Screen name="TrainingBottomTab"
+                    options={{
+                        tabBarIcon: ({ focused }) => (
+                            <View>
+                                {
+                                    focused ?
+                                        <Image source={require("../Screens/assets/tab3.png")}
+                                            style={{
+                                                width: 20,
+                                                height: 20,
+                                                tintColor: "#ffcc00"
+
+                                            }}
+                                        />
+                                        :
+                                        <Image source={require("../Screens/assets/tab3.png")}
+                                            style={{
+                                                width: 20,
+                                                height: 20,
+                                                tintColor: "white"
 
 
-                        </View>
-                    ),
-                }} component={BlogBottomTab} />
-        </Tab.Navigator>
+                                            }}
+                                        />
+                                }
+
+                                <Text style={{ marginTop: 2, marginBottom: -4, marginLeft: -10, fontSize: 12, color: 'white', }}>Training</Text>
+
+                            </View>
+                        ),
+                    }} component={TrainingBottomTab} />
+
+                <Tab.Screen name="ShopBottomTab"
+                    options={{
+                        tabBarIcon: ({ focused }) => (
+                            <View>
+                                {
+                                    focused ?
+                                        <Image source={require("../Screens/assets/tab5.png")}
+                                            style={{
+                                                width: 20,
+                                                height: 20,
+                                                tintColor: "#ffcc00"
+                                            }}
+                                        />
+                                        :
+                                        <Image source={require("../Screens/assets/tab5.png")}
+                                            style={{
+                                                width: 20,
+                                                height: 20,
+                                                tintColor: "white"
+                                            }}
+                                        />
+                                }
+                                <Text style={{ marginTop: 2, marginBottom: -4, marginLeft: -5, fontSize: 12, color: 'white', }}>Shop</Text>
+
+
+                            </View>
+                        ),
+                    }} component={ShopBottomTab} />
+
+                <Tab.Screen name="BlogBottomTab"
+                    options={{
+                        tabBarIcon: ({ focused }) => (
+                            <View>
+                                {
+                                    focused ?
+                                        <Image source={require("../Screens/assets/tab4.png")}
+                                            style={{
+                                                width: 22,
+                                                height: 20,
+                                                tintColor: "#ffcc00"
+                                            }}
+                                        />
+                                        :
+                                        <Image source={require("../Screens/assets/tab4.png")}
+                                            style={{
+                                                width: 22,
+                                                height: 20,
+                                                tintColor: "white"
+                                            }}
+                                        />
+                                }
+
+                                <Text style={{ marginTop: 2, marginBottom: -4, marginLeft: -2, fontSize: 12, color: 'white', }}>Blogs</Text>
+
+
+                            </View>
+                        ),
+                    }} component={BlogBottomTab} />
+            </Tab.Navigator>
         </SafeAreaView>
     );
 }

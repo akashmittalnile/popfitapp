@@ -1,26 +1,34 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ActivityIndicator } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ActivityIndicator, Modal } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler';
 import Headers from '../../Routes/Headers';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import { WebView } from 'react-native-webview';
 import Share from 'react-native-share';
+import { Pages } from 'react-native-pages';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import VideoPlayer from 'react-native-video-controls';
+ 
+
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
 const Training = (props) => {
 
+  // const DATA = ['first row', 'second row', 'third row'];
+  const [videomodal, setVideoModal] = useState(false);
   const [trainingBlog_list, setTrainingBlog_list] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [imagebaseurl, setImagebaseurl] = useState('');
+  const [audiobaseurl, setAudiobaseurl] = useState('');
+  const [videobaseurl, setVideobaseurl] = useState('');
+  const [fullScreen, setFullScreen] = useState(false);
 
-  const gotoOutDoorCycleDetail = (item) => {
-    props.navigation.navigate("OutDoorCycleDetails", {
-      TrainingDATA: item
-    })
-  }
+
+  // const ref = React.useRef(null);
+
 
   const MycustomonShare = async () => {
 
@@ -59,11 +67,17 @@ const Training = (props) => {
       console.log(":::::::::TrainingCategoryListAPI_Response>>>", response.data.message);
 
       console.log("TrainingCategoryListAPI_data::::::", response.data.blog_list);
-      ;
-      setTrainingBlog_list(response.data.blog_list)
+      setIsLoading(false);
+      console.log("imageurl::", response.data.training_image);
+      console.log("AUDIO_url::", response.data.training_audio);
+      console.log("Video_url::", response.data.training_video);
+      setImagebaseurl(response.data.training_image);
+      setAudiobaseurl(response.data.training_audio);
+      setVideobaseurl(response.data.training_video);
+      setTrainingBlog_list(response.data.blog_list);
       // setyoutubelink(response.data.blog_list.youtube_link)
 
-      setIsLoading(false);
+
 
     }
     catch (error) {
@@ -77,7 +91,7 @@ const Training = (props) => {
     <SafeAreaView style={{
       flex: 1,
       width: WIDTH,
-      height: HEIGHT, flexGrow: 1
+      height: HEIGHT, flexGrow: 1,
     }} >
       <Headers
         Backicon={{
@@ -98,151 +112,227 @@ const Training = (props) => {
       />
       {!isLoading ?
         (<>
-        {
+          {
             trainingBlog_list.length != 0 ?
-          (<ScrollView>
-            <View style={{
-              width: WIDTH,
-              height: HEIGHT, justifyContent: "center", alignItems: "center",flex:1
-            }}>
-              <FlatList
-                vertical
-                style={{ margin: 10 }}
-                data={trainingBlog_list}
-                renderItem={({ item }) => (
-                  <View
-                    style={{
-                      marginTop: 1,
-                      height: HEIGHT,
-                      width: WIDTH * 0.99,
-                      // justifyContent: "center",
-                      // alignItems:"center",
-                      marginHorizontal: 5,
-                      // backgroundColor: "white"
-                    }}>
-                    <View style={{ height: 50, }}>
-                      <Text style={{ textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "bold" }}>{item.training_title}</Text>
+
+
+              (<ScrollView>
+                <View style={{ justifyContent: "flex-start", flex: 1, alignItems: "flex-start" }}>
+                  <View style={{
+                    marginBottom: 5,
+                    // backgroundColor: '#f7f7f7',
+                    backgroundColor: 'gray',
+                    height: 190,
+                    width: WIDTH * 0.92,
+                    marginTop: 15,
+                    borderRadius: 20,
+                    marginHorizontal: 8,
+                    flex: 1,
+                  }}>
+
+                    <Pages indicatorColor='#ffcc00'>
+                      {
+                        trainingBlog_list[0]?.training_image.map((itm, index) => {
+                          return (
+                            <View
+                              style={{
+                                height: 190, width: WIDTH * 0.92, borderRadius: 20
+                              }}>
+                              <Image
+                                source={{ uri: `${imagebaseurl + itm}` }}
+                                resizeMode="contain"
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  alignSelf: 'center',
+                                }}
+                              />
+                            </View>)
+                        })}
+                    </Pages>
+
+                  </View>
+                  <View style={{ marginLeft: 15, height: 50, width: WIDTH * 0.92, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
+                    <Text style={{ textAlign: 'left', fontSize: 18, color: '#000', fontWeight: "500" }} >{trainingBlog_list[0]?.training_title}</Text>
+                  </View>
+
+                  <View style={{ marginHorizontal: 20, marginTop: 5, height: "auto", width: WIDTH * 0.92, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}>
+                    <Text style={{ textAlign: 'left', fontSize: 12, color: '#000' }}>{trainingBlog_list[0].image_description}</Text>
+                  </View>
+
+                  {/* Training video */}
+                  <View style={{ marginTop: 30, height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
+                    <View style={{ flex: 0.8 }}>
+                      <Text style={{ marginLeft: 20, fontSize: 16, color: 'black', fontWeight: "500" }}>Training Videos</Text>
                     </View>
-                    <View style={{
-                      height: 200, borderRadius: 20, marginVertical: 1, width: WIDTH * 0.93,
-                    }}>
-                      <View style={{
-                        height: '100%',
-                        overflow: "hidden",
-                        width: WIDTH * 0.93,
-                        borderRadius: 20,
-
-                        justifyContent: 'center',
-                        alignSelf: "auto"
-
-                      }}>
-                        <WebView
-                          source={{ uri: item.youtube_link }}
-                        /></View>
-
-                    </View>
-
-                    <View style={{ marginTop: 20, justifyContent: 'center', alignItems: 'center' }}>
-                      <TouchableOpacity onPress={() => { gotoOutDoorCycleDetail(item) }}>
-                        <View style={{ backgroundColor: '#ffcc00', width: 35, height: 35, justifyContent: "center", alignItems: 'center', borderRadius: 35 / 2 }}>
-                          <Image source={require('../assets/rightArrow.png')}
-                          />
+                    <View style={{ flex: 0.25, right: 10, }}>
+                      <TouchableOpacity onPress={() => props.navigation.navigate("TrainingDetail")}>
+                        <View style={{ borderRadius: 50, height: 30, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center', }}>
+                          <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 9, color: 'white', fontWeight: "500" }}>View All</Text>
                         </View>
                       </TouchableOpacity>
                     </View>
 
-                    <View style={{ height: 35, marginTop: 5 }}>
-                      <Text style={{ textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "bold" }}>{item?.image_title}</Text>
-                    </View>
-                    {/* <View style={{ backgroundColor: "white", borderRadius: 20, marginTop: 20, height: HEIGHT * 0.2, width: WIDTH * 0.9, marginHorizontal: 18, }}>
-                      <Image resizeMode='contain'
-                        source={{ uri: item?.image }} style={{ width: '100%', height: '100%', justifyContent: "center", alignItems: 'center', borderRadius: 20, }}
-                      />
-                    </View> */}
-                    <View style={{ padding: 15, width: WIDTH * 0.93 }}>
-                      <Text style={{ textAlign: 'justify', fontSize: 14, color: '#000', }}>{item?.image_description}</Text>
-                    </View>
                   </View>
-                )}
-              />
-            </View>
-          </ScrollView>)
-             :
-             (<View style={{
-               justifyContent: "center", alignItems: "center", width: WIDTH,
-               height: 200,backgroundColor:"white",flex: 1,
-             }}>
-               <Image resizeMode='contain'
-                 source={require('../assets/Nodatafound.png')}
-                 style={{
-                   width: 200,
-                   height: 120, alignSelf: 'center'
-                 }} />
-               <Text style={{ fontSize: 14, fontWeight: "bold" }}>No data found</Text>
-             </View>)
-         }
-          {/* <View
-            style={{
-              position: "absolute",
-              bottom: 40,
-              flexDirection: 'row',
-              height: 45,
-              marginHorizontal: 20,
-              backgroundColor: "transparent",
-              justifyContent: "center",
-              alignSelf: "center"
+
+                  {/* //flastlist  for videos */}
+                  <FlatList
+                    horizontal
+                    // ref={ref}
+                    data={trainingBlog_list}
+                    keyExtractor={(item, index) => String(index)}
+                    renderItem={({ item, index }) => {
+                      // console.log("1st flastlist video:", item.id)
+                      return (
+                        // <TouchableOpacity onPress={() => setVideoModal(true)}
+                        //   style={{ marginLeft: 10, height: 150, width: WIDTH * 0.55, backgroundColor: "gray", marginVertical: 10, borderRadius: 20, justifyContent: "flex-start", alignItems: "flex-start" }}>
+
+                        // </TouchableOpacity>
+                        <>
+                          <View style={{
+                          height: '100%',
+                          overflow: "hidden",
+                          width: WIDTH * 0.9,
+                          borderRadius: 20,
+                          justifyContent: 'center',
+                          // alignSelf: "auto"
+
+                        }}>
+                          <WebView
+                            source={{ uri: "https://dev.pop-fiit.com/upload/training_video/20220929_1664457751_54648.mp4" }}
+                          />
 
 
-            }}>
-            <TouchableOpacity
-              onPress={() => { MycustomonShare() }}>
-              <View
-                style={{
-                  width: 160,
-                  flex: 1,
-                  backgroundColor: '#ffcc00',
-                  borderRadius: 35,
-                  justifyContent: "center",
-                  alignSelf: "center"
-                }}>
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Image
-                    source={require('../assets/share.png')}
-                    style={{
-                      width: 15,
-                      height: 15,
-                      alignSelf: 'center',
-                      marginRight: 10,
+                        </View>
+                          </>
+                      )
                     }}
                   />
 
-                  <Text
-                    style={{
-                      textAlign: 'center',
-                      fontSize: 15,
-                      color: 'white',
+                  {/* Training Audio */}
+                  <View style={{ marginTop: 10, height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
+                    <View style={{ flex: 0.8 }}>
+                      <Text style={{ marginLeft: 20, fontSize: 16, color: 'black', fontWeight: "500" }}>Training Audio</Text>
+                    </View>
+                    <View style={{ flex: 0.25, right: 10, }}>
+                      <TouchableOpacity onPress={() => props.navigation.navigate("TrainingDetail")}>
+                        <View style={{ borderRadius: 50, height: 30, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center', }}>
+                          <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 9, color: 'white', fontWeight: "500" }}>View All</Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
 
-                    }}>
-                    Share
-                  </Text>
+                  </View>
+                  {/* //flastlist  for AUDIO */}
+                  <FlatList
+                    horizontal
+
+                    data={trainingBlog_list}
+                    keyExtractor={(item, index) => String(index)}
+                    renderItem={({ item, index }) => {
+                      console.log("1st flastlist video:", item.id)
+                      return (
+                        // <TouchableOpacity onPress={() => setVideoModal(true)}
+                        //   style={{ marginLeft: 10, height: 150, width: WIDTH * 0.55, backgroundColor: "gray", marginVertical: 10, borderRadius: 20, justifyContent: "flex-start", alignItems: "flex-start" }}>
+
+                        // </TouchableOpacity>
+                        <View style={{ marginLeft: 10, height: 150, width: WIDTH * 0.55, backgroundColor: "gray", marginVertical: 10, borderRadius: 20, justifyContent: "flex-start", alignItems: "flex-start" }}>
+                          <Text>
+                            Play Audio
+                          </Text>
+                        </View>
+                      )
+                    }}
+                  />
+
                 </View>
-              </View>
-            </TouchableOpacity>
 
 
-          </View> */}
+                {
+                  videomodal ?
+                    (<Modal
+                      animationType="slide"
+                      transparent={true}
+                      visible={videomodal}
+                      onRequestClose={() => {
+                        setVideoModal(false);
+                      }}>
+                      <View
+                        style={{
+                          flex: 1,
+                          justifyContent: 'flex-end',
+                          alignItems: 'center',
+                          backgroundColor: 'rgba(140, 141, 142, 0.7)',
+                        }}>
+                        <View
+                          style={{
+                            // backgroundColor: 'red',
+                            // borderRadius: 20,
+                            height: "100%",
+                            width: "100%",
+                            justifyContent: "center",
+                            alignItems: 'center',
+
+                          }}>
+                          <VideoPlayer
+                            paused={true}
+                            controls={true}
+                            onBack={() => { props.navigation.navigate("Training"), setVideoModal(false) }}
+                            source={{
+                              isNetwork: true,
+                              uri: 'https://dev.pop-fiit.com/upload/training_video/20220929_1664457751_54648.mp4'
+                            }}
+                            style={{
+                              height: "100%",
+                              width: "100%",
+                              // borderRadius: 20
+                            }}
+                            videoStyle={{
+                              height: HEIGHT * 0.99,
+                              width: WIDTH * 0.99
+
+                            }}
+
+                            resizeMode={"contain"}
+                            showOnStart={false}
+                            tapAnywhereToPause={true}
+                          // id={}
+                          // disableFullscreen
+
+                          />
+                        </View>
+                      </View>
+                    </Modal>)
+                    :
+                    null
+                }
+
+              </ScrollView>
+
+              )
+              :
+              (<View style={{
+                justifyContent: "center", alignItems: "center", backgroundColor: "white", flex: 1,
+              }}>
+                <Image resizeMode='contain'
+                  source={require('../assets/Nodatafound.png')}
+                  style={{
+                    width: 200,
+                    height: 120, alignSelf: 'center'
+                  }} />
+                <Text style={{ fontSize: 14, fontWeight: "bold" }}>No data found</Text>
+              </View>)
+          }
+
+
+
         </>)
         :
         (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
           <ActivityIndicator size="large" color="#ffcc00" />
         </View>)}
-    </SafeAreaView>
+    </SafeAreaView >
+
   );
 }
 export default Training;

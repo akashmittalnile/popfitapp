@@ -1,40 +1,23 @@
-
-// export const ADD_TO_NOTI = 'ADD_TO_NOTI';
-// export const REMOVE_FROM_NOTI = 'REMOVE_FROM_NOTI';
-
-// export function NotiCountReducer(payload) { //Action Creator
-//     return {
-//         type: ADD_TO_NOTI,
-//         payload: payload
-//     }
-// }
-
-// export function NotiRemoveReducer(payload) { //Action Creator
-//     return {
-//         type: REMOVE_FROM_NOTI,
-//         payload: payload
-//     }
-// }
-export function incrementCounter(payload) { //Action Creator
+// export const ADD_TO_CART="ADD_TO_CART";
+ 
+// export const addToCart = cartItems => ({
+//     type:ADD_TO_CART,
+//     payload: cartItems,
+//   });
+ export function CartCounter(payload){
+    return { 
+        type:"cartcounter",
+        payload: payload 
+    }
+}
+export function incrementCounter(payload) {
     return {
         type: "notificatoncount",
         payload: payload
     }
-
 }
 
 
-// export const decrementCounter = () => { //Action Creator
-//     return {
-//         type: "DECREASE_COUNTER"
-//     }
-// }
-// export function setNotificationCount(count) {
-//     return function (dispatch, getState) {
-//           console.log('Action - setNotificationCount: '+count)
-//           dispatch( {
-//             type: 'SET_COUNT',
-//             payload: count,
-//           });
-//     };
-// };
+
+
+ 

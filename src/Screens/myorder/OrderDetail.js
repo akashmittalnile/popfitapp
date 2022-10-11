@@ -567,7 +567,26 @@ const OrderDetail = (props) => {
                                         )
                                 })
                                 :
-                                <Text>ajgruwvgvuy</Text>
+                                (<View style={{
+                                marginHorizontal: 6,
+                                height: HEIGHT,
+                                width: WIDTH * 0.97,
+                                borderRadius: 10,
+                                // backgroundColor: 'white',
+                                // width: 380,
+                                // justifyContent: "center",
+                                alignItems: "center",
+                                flexDirection: "column",
+                                marginTop:160
+                            }}>
+                                <Image resizeMode='contain'
+                                    source={require('../assets/Nodatafound.png')}
+                                    style={{
+                                        width: 200,
+                                        height: 120, alignSelf: 'center'
+                                    }} />
+                                <Text style={{ fontSize: 14, fontWeight: "bold" }}>Oops, order list is empty !</Text>
+                            </View>)
                         }
                     </ScrollView>
                 </View>)

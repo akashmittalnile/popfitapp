@@ -1,9 +1,11 @@
 import modifyCounterReducer from "./modifyCounter";
+import CartCounterReducer from "./CartcounterReducer";
 
 import { combineReducers } from "redux";
 
 const rootReducer = combineReducers({
-    modifyCounterReducer
+    mofiynoti: modifyCounterReducer,
+    Cartreducer: CartCounterReducer
 });
 
 

@@ -11,12 +11,16 @@ import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector, useDispatch } from 'react-redux';
+import { CartCounter } from '../../Redux/actions/UpdateCounter';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
 const CartAdded = (props) => {
 
+    const dispatch = useDispatch();
+    // const Mycartcount = useSelector((state) => state.Cartreducer);
     const [productdata, setproductdata] = useState([]);
     const [useraddress, setuseraddress] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -30,10 +34,14 @@ const CartAdded = (props) => {
 
 
     const gotoShippingDetail = () => {
-
         props.navigation.navigate("ShippingDetail");
     }
+    const gotoProductDetailsview = (item) => {
 
+        props.navigation.navigate("ProductDetail", {
+            Cartaddedview: item
+        });
+    }
 
 
     const Productincrease = async (item, i) => {
@@ -63,20 +71,20 @@ const CartAdded = (props) => {
     };
 
     useEffect(() => {
-         const unsubscribe = props.navigation.addListener('focus', () => {
-      
+        const unsubscribe = props.navigation.addListener('focus', () => {
             GetShippingProducts();
-    });
-    return unsubscribe;
-        
+        });
+        return unsubscribe;
+
     }, []);
 
     const ProductADDcart = async (num, productids) => {
+        const usertkn = await AsyncStorage.getItem("authToken");
         // console.log('productttttttt---------->', productids)
         // console.log("ADD_productin_QNTY cart.....", countnums);
         setIsLoading(true);
         try {
-            const usertkn = await AsyncStorage.getItem("authToken");
+
             const response = await axios.post(`${API.PRODUCT_DETAILS_ADD_ITEM}`, { "qty": num, "product_id": productids }, {
                 'headers': { "Authorization": ` ${usertkn}` }
             }
@@ -114,15 +122,16 @@ const CartAdded = (props) => {
             // console.log("", response);
             // console.log("ResponseShippingProducts(product) ::::", response.data.data);
             setproductdata(response.data.data);
-            setuseraddress(response.data.address_lists);
+            let cartdata = response.data.data.length;
+            console.log("cartdataReducer.....:", cartdata);
+            dispatch(CartCounter(parseInt(cartdata)));
+           setuseraddress(response.data.address_lists);
             setSubtotal(response.data.sub_total);
             setTax(response.data.tax);
             setcoupon(response.data.coupon_price);
             setshipping_cost(response.data.shipping_cost);
             setTotal(response.data.amount);
-            // console.log("User_token_not_received+yet!!!>>>", response.data.message);
-
-            setIsLoading(false)
+            setIsLoading(false);
         }
         catch (error) {
             console.log("ShippingProductserror:::", error.response.data.message);
@@ -218,10 +227,8 @@ const CartAdded = (props) => {
             />
             {!isLoading ?
                 (
-                    <View style={{ marginBottom: 60 }}>
-
+                    <View style={{ paddingBottom: 60 }}>
                         <ScrollView>
-
                             <View
                                 style={{
                                     backgroundColor: 'white',
@@ -270,9 +277,9 @@ const CartAdded = (props) => {
                                         <Text
                                             style={{
                                                 textAlign: 'left',
-                                                fontSize: 15,
+                                                fontSize: 18,
                                                 color: '#000000',
-                                                fontWeight: "bold",
+                                                fontWeight: "500",
                                             }}>
                                             My Cart
                                         </Text>
@@ -304,8 +311,9 @@ const CartAdded = (props) => {
                                     <FlatList
                                         vertical
                                         data={productdata}
-                                        renderItem={({ item }) =>
-                                            <View>
+                                        keyExtractor={(item, index) => String(index)}
+                                        renderItem={({ item }) => {
+                                            return (<TouchableOpacity onPress={() => { gotoProductDetailsview(item) }}>
                                                 <View style={{
                                                     marginHorizontal: 10,
                                                     marginTop: 6,
@@ -316,16 +324,17 @@ const CartAdded = (props) => {
                                                     backgroundColor: 'white',
                                                     justifyContent: "center",
                                                     alignItems: "center",
+                                                    borderWidth: 1,
+                                                    borderColor: "#FFFFFF",
                                                     shadowColor: '#000000',
-                                                    // shadowOffset: {
-                                                    //     width: 0,
-                                                    //     height: 3
-                                                    // },
-                                                    shadowRadius: 6,
+                                                    shadowOffset: {
+                                                        width: 0,
+                                                        height: 3
+                                                    },
+                                                    shadowRadius: 1,
                                                     shadowOpacity: 1.0,
                                                     elevation: 6,
                                                     // zIndex: 999,
-
                                                     // flex: 1
                                                 }}>
                                                     <TouchableOpacity onPress={() => ProductRemovecart(item)}
@@ -348,7 +357,7 @@ const CartAdded = (props) => {
                                                     </TouchableOpacity>
 
                                                     {/* min to max button */}
-                                                    <View style={{ backgroundColor: '#f2f2f2', flexDirection: 'row', borderRadius: 10, justifyContent: "center", alignItems: "center", height: 50, marginTop: 35, width: 110, marginLeft: 90, position: "absolute", bottom: 6, right: 6,paddingLeft:6,paddingRight:6 }}>
+                                                    <View style={{ backgroundColor: '#f2f2f2', flexDirection: 'row', borderRadius: 10, justifyContent: "center", alignItems: "center", height: 50, marginTop: 35, width: 110, marginLeft: 90, position: "absolute", bottom: 6, right: 6, paddingLeft: 6, paddingRight: 6 }}>
                                                         <View style={{
                                                             height: 44, marginRight: 5, justifyContent: "center", alignItems: "center",
                                                         }}>
@@ -359,7 +368,7 @@ const CartAdded = (props) => {
                                                                 </View>
                                                             </TouchableOpacity>
                                                         </View>
-                                                        
+
                                                         <View style={{
                                                             height: 44, marginRight: 5, justifyContent: "center", alignItems: 'center', flex: 1,
                                                         }}>
@@ -426,12 +435,13 @@ const CartAdded = (props) => {
 
                                                     <View style={{
                                                         height: 140,
+                                                        borderRadius: 20,
                                                         flexDirection: 'row',
                                                         width: WIDTH * 0.94,
                                                         justifyContent: "flex-start",
                                                         // backgroundColor: 'pink',
                                                         alignItems: "center",
-                                                         paddingLeft: 20
+                                                        paddingLeft: 20
                                                     }}>
 
                                                         <View style={{
@@ -481,7 +491,9 @@ const CartAdded = (props) => {
 
                                                     </View>
                                                 </View>
-                                            </View>
+                                            </TouchableOpacity>
+                                            )
+                                        }
                                         }
                                     />
                                 </View>
@@ -509,7 +521,7 @@ const CartAdded = (props) => {
                                 <View style={{
                                     backgroundColor: '#fffcee',
                                     height: 120,
-                                    width: WIDTH *0.99,
+                                    width: WIDTH * 0.99,
                                     marginTop: 20,
                                     shadowColor: '#efe8c7',
                                     shadowOffset:
@@ -519,35 +531,35 @@ const CartAdded = (props) => {
                                     },
                                     shadowOpacity: 0.2,
                                     elevation: 6,
-                                    marginBottom: 20, 
-                                    justifyContent: "flex-start", 
+                                    marginBottom: 20,
+                                    justifyContent: "flex-start",
                                     alignItems: 'flex-start',
                                     flex: 1
                                 }}>
-                                    <View style={{ marginTop: 10, height: 30, flexDirection: 'row',justifyContent: "space-between",alignItems: 'flex-start', marginLeft: 15,width: WIDTH*0.9 }}>
-                                        <View style={{width: WIDTH*0.9 ,height: 30,justifyContent: "flex-start",alignItems: 'flex-start' }}>
+                                    <View style={{ marginTop: 10, height: 30, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.9 }}>
+                                        <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
                                             <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Subtotal:</Text>
                                         </View>
-                                        <View style={{justifyContent: "flex-end",alignItems: 'flex-end' }}>
-                                        <Text style={{   textAlign: 'center', fontSize: 14, color: '#77869E', right: 50,fontWeight: "500" }}>${subtotal}</Text>
+                                        <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
+                                            <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>${subtotal}</Text>
                                         </View>
                                     </View>
 
-                                    <View style={{ marginTop: 10, height: 30, flexDirection: 'row',justifyContent: "space-between",alignItems: 'flex-start', marginLeft: 15,width: WIDTH*0.9 }}>
-                                        <View style={{width: WIDTH*0.9 ,height: 30,justifyContent: "flex-start",alignItems: 'flex-start' }}>
+                                    <View style={{ marginTop: 10, height: 30, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.9 }}>
+                                        <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
                                             <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Tax:</Text>
                                         </View>
-                                        <View style={{justifyContent: "flex-end",alignItems: 'flex-end' }}>
-                                        <Text style={{  textAlign: 'center', fontSize: 14, color: '#77869E', right: 50,fontWeight: "500" }}>{tax}</Text>
+                                        <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
+                                            <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>${tax}</Text>
                                         </View>
                                     </View>
 
-                                    <View style={{ marginTop: 10, height: 30, flexDirection: 'row',justifyContent: "space-between",alignItems: 'flex-start', marginLeft: 15,width: WIDTH*0.9 }}>
-                                        <View style={{width: WIDTH*0.9 ,height: 30,justifyContent: "flex-start",alignItems: 'flex-start' }}>
+                                    <View style={{ marginTop: 10, height: 30, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.9 }}>
+                                        <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
                                             <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Shipping charges:</Text>
                                         </View>
-                                        <View style={{justifyContent: "flex-end",alignItems: 'flex-end' }}>
-                                        <Text style={{  textAlign: 'center', fontSize: 14, color: '#77869E', right: 50,fontWeight: "500" }}>${shippingcost}</Text>
+                                        <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
+                                            <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>${shippingcost}</Text>
                                         </View>
                                     </View>
 
@@ -555,24 +567,24 @@ const CartAdded = (props) => {
                                 <View style={{
                                     backgroundColor: '#fffcee',
                                     height: 40,
-                                    width: WIDTH *0.99,
+                                    width: WIDTH * 0.99,
                                     marginTop: 10,
                                     shadowColor: '#efe8c7',
                                     // shadowOffset: { width: 0, height: 2 },
                                     shadowOpacity: 0.2,
                                     elevation: 6,
-                                    marginBottom: 20, 
-                                    justifyContent: "center", 
+                                    marginBottom: 20,
+                                    justifyContent: "center",
                                     alignItems: 'center',
-                                    flex:1
+                                    flex: 1
                                 }}>
-                                  
-                                  <View style={{ marginTop: 10, height: 40, flexDirection: 'row',justifyContent: "space-between",alignItems: 'flex-start', marginLeft: 15,width: WIDTH*0.94 }}>
-                                        <View style={{width: WIDTH*0.9 ,height: 30,justifyContent: "flex-start",alignItems: 'flex-start' }}>
+
+                                    <View style={{ marginTop: 10, height: 40, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.94 }}>
+                                        <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
                                             <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Total Amout:</Text>
                                         </View>
-                                        <View style={{justifyContent: "flex-end",alignItems: 'flex-end' }}>
-                                        <Text style={{   textAlign: 'center', fontSize: 14, color: '#77869E', right: 55,fontWeight: "500" }}>${total}</Text>
+                                        <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
+                                            <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 53, fontWeight: "500" }}>${total}</Text>
                                         </View>
                                     </View>
 

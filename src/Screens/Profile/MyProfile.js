@@ -397,7 +397,7 @@ const MyProfile = (props) => {
                             width: WIDTH * 0.97,
                             borderRadius: 10,
                             backgroundColor: 'white',
-                            width: 380,
+                            // width: 380,
                             justifyContent: "center",
                             alignItems: "center",
                             shadowColor: '#000000',
@@ -413,7 +413,7 @@ const MyProfile = (props) => {
                                     width: 200,
                                     height: 120, alignSelf: 'center'
                                 }} />
-                            <Text style={{ fontSize: 14, fontWeight: "bold" }}>Oops,your order list is empty !</Text>
+                            <Text style={{ fontSize: 14, fontWeight: "bold" }}>Oops, order list is empty !</Text>
                         </View>)}
 
                     {/* <View style={{ marginTop: 30, height: 45, flexDirection: 'row' }}>

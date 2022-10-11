@@ -135,6 +135,16 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
+// configurations.all {
+//           resolutionStrategy {
+//             force 'com.stripe:stripe-android:18.1.0'
+//           }
+//         }
+
+    //     configurations.all {
+    // resolutionStrategy { force 'androidx.core:core-ktx:1.6.0' }
+    //    }
+       
         applicationId "com.popfit"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
@@ -241,6 +251,7 @@ android {
             // Example: versionCode 1 will generate 1001 for armeabi-v7a, 1002 for x86, etc.
             def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3, "x86_64": 4]
             def abi = output.getFilter(OutputFile.ABI)
+            // def abi = output.getFilter(com.android.build.OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
                         defaultConfig.versionCode * 1000 + versionCodes.get(abi)
@@ -251,8 +262,11 @@ android {
 }
 
 dependencies {
+     
+    implementation "androidx.appcompat:appcompat:1.0.0"
     implementation fileTree(dir: "libs", include: ["*.jar"])
-
+    implementation 'com.stripe:stripe-java:21.0.0'
+    implementation 'com.google.android.material:material:<version>'
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 

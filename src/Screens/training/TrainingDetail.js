@@ -19,7 +19,7 @@ import Share from 'react-native-share';
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
-const DATA = ['first row', 'second row', 'third row', 'fourth row'];
+// const DATA = ['first row', 'second row', 'third row', 'fourth row'];
 
 const TrainingDetail = (props) => {
 
@@ -30,6 +30,7 @@ const TrainingDetail = (props) => {
     const [TrainingWorkCatgry, setTrainingWorkCatgry] = useState([]);
 
     const [subscriptiontoken, setsubscriptiontoken] = useState("");
+    const[planid,setPlanId]=useState("");
 
     const gotoTrainingpersondetails = () => {
         props.navigation.navigate("TrainingPersonaDetail")
@@ -54,38 +55,53 @@ const TrainingDetail = (props) => {
         }
     };
     useEffect(() => {
-        getusertoken();
+        // const getusertoken = async () => {
+        //     const usertoken = await AsyncStorage.getItem("authToken");
+        //     console.log("Training>>>>>..", usertoken);
+        //     setsubscriptiontoken(usertoken)
+        //     if (usertoken == null) {
+        //         console.log("..........USER..NOT LOGIN...................");
+        //         props.navigation.navigate('LoginMain', {
+        //             screen: 'LoginSignUp',
+        //         });
+        //     }
+        //     else {
+        //         // props.navigation.navigate("SubscriptionPlan")
+        //         console.log("............USER LOGIN...................");
+        //     }
+        // }
+        // getusertoken();
         workoutCategoryAPI();
     }, []);
 
-    const getusertoken = async () => {
-        const usertoken = await AsyncStorage.getItem("authToken");
-        console.log("Training>>>>>..", usertoken);
-        setsubscriptiontoken(usertoken)
-    }
+
     const Checkedtoken = (item) => {
+        props.navigation.navigate("OutdoorTrainning", {
+            TrainingData:planid,
+            categoryId: item
+        })
 
-        !subscriptiontoken ?
-            props.navigation.navigate("SubscriptionPlan")
-            :
-            props.navigation.navigate("OutdoorTrainning", {
-                categoryId: item
-            })
+    }
 
-    };
     const workoutCategoryAPI = async () => {
         const usertkn = await AsyncStorage.getItem("authToken");
         setIsLoading(true);
         try {
 
-            const response = await axios.get(`${API.TRAINING_WORKOUT_CATEGORY}`, { headers: { "Authorization": ` ${usertkn}` } });
-            console.log(":::::::::Traing_Workout_Response>>>::", response.data);
-            console.log("Traing_Workout_data:::>:::", response.data.data);
+            const response = await axios.get(`${API.TRAINING_WORKOUT_CATEGORY}`,
+                { headers: { "Authorization": ` ${usertkn}` } }
+            );
+            console.log("::::Traing_Workout_Response>>>::", response.data);
+            // console.log("Traing_Workout_data:::>:::", response.data.data);
+            setPlanId(response.data);
+            const Selectplainid = JSON.stringify(response.data?.plan_id);
+            await AsyncStorage.setItem('Planid',Selectplainid)
+           console.log("storeplanid:",Selectplainid);
             setTrainingWorkCatgry(response.data.data)
             setIsLoading(false);
         }
         catch (error) {
-            console.log("......error.........", error.response.data.message);
+            console.log(".....TrainingDetails.error.........", error.response.data.message);
             setIsLoading(false);
 
         }
@@ -241,10 +257,11 @@ const TrainingDetail = (props) => {
                                 flex: 1,
                                 justifyContent: "space-around"
                             }}
-                            numColumns={Math.ceil(DATA.length / 2)}
+                            keyExtractor={(item, index) => index}
+                            numColumns={2}
                             data={TrainingWorkCatgry}
-                            // style={{ margin: 6 }}
-                            renderItem={({ item }) => (
+                            style={{ paddingBottom: 20 }}
+                            renderItem={({ item, index }) => (
                                 <TouchableOpacity onPress={() => { Checkedtoken(item) }}>
                                     <View
                                         style={{

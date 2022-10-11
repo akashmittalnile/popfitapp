@@ -4,7 +4,7 @@ import axios from 'axios';
 import { API } from '../../Routes/Urls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
-import { incrementCounter } from '../../Redux/actions/UpdateCounter';
+import { incrementCounter, CartCounter } from '../../Redux/actions/UpdateCounter';
 
 const Splash = (props) => {
 
@@ -15,38 +15,68 @@ const Splash = (props) => {
   //   }, 3000)
   // }, [])
   const dispatch = useDispatch();
-    
+
   useEffect(() => {
-  
+
     const GetShippingProducts = async () => {
       const usertkn = await AsyncStorage.getItem("authToken");
       //  setIsLoading(true)
       try {
         const response = await axios.get(`${API.NOTIFICATION}`, { headers: { "Authorization": ` ${usertkn}` } });
         let data = response.data.data.length;
-        console.log('incrementCounter _Splash', data
-        );
+        console.log('incrementCounter _Splash', data);
         dispatch(incrementCounter(parseInt(data)));
         // AsyncStorage.setItem("notification", JSON.stringify(data));
-        if (response?.data?.status == '1') {
-          // setIsLoading(false)
-          // setNoti(response.data.data);
-        }
+        // if (response?.data?.status == '1') {
+        //   // setIsLoading(false)
+        //   // setNoti(response.data.data);
+        // }
       }
       catch (error) {
         // alert("SPLASH error", error);
         // setIsLoading(false)
-        //  console.log("ShippingProductserror:::", error);
+        console.log("Splash_error:::", error);
 
+      }
+
+    };
+    const Cartproducts = async () => {
+      const usertkn = await AsyncStorage.getItem("authToken");
+      // console.log(".....usertoken.....GetShippingProducts...", producttoken);
+
+      // setIsLoading(true)
+      try {
+        const response = await axios.get(`${API.SHIPPING_DETAILS}`, {
+          'headers': { "Authorization": ` ${usertkn}` }
+        },
+        );
+        // console.log("", response);
+        // console.log("ResponseShippingProducts(product) ::::", response.data.data);
+        // setproductdata(response.data.data);
+        let cartdata = response.data.data.length;
+        console.log("cartdataReducer_splash.....:", cartdata);
+        dispatch(CartCounter(parseInt(cartdata)));
+        //  setuseraddress(response.data.address_lists);
+        //   setSubtotal(response.data.sub_total);
+        //   setTax(response.data.tax);
+        //   setcoupon(response.data.coupon_price);
+        //   setshipping_cost(response.data.shipping_cost);
+        //   setTotal(response.data.amount);
+        // setIsLoading(false);
+      }
+      catch (error) {
+        console.log("Cartproducts_splash:::", error.response.data.message);
+        // setIsLoading(false)
       }
 
     };
     setTimeout(() => {
       GetShippingProducts();
+      Cartproducts()
     }, 3000)
-    
 
-  }, [incrementCounter])
+
+  }, [incrementCounter, CartCounter])
 
 
 

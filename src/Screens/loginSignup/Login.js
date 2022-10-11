@@ -94,7 +94,7 @@ const Login = (props) => {
       if (response.data.status == 1) {
         console.log("..........................", response.data.success.token);
         const userToken = response.data.success.token;
-        AsyncStorage.setItem('authToken', userToken);
+       await AsyncStorage.setItem('authToken', userToken);
         const userProfiles = response.data.success.token;
         await AsyncStorage.setItem("userView", userProfiles);
         props.navigation.navigate("DrawerMain1");

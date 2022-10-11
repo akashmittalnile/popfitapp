@@ -1,3 +1,4 @@
+import { Badge } from "react-native-elements";
 const BaseUrl = 'https://dev.pop-fiit.com';
 export const API = {
     LOGIN: BaseUrl + '/api/login',
@@ -47,13 +48,14 @@ export const API = {
     PROFILE_UPDATE: BaseUrl + '/api/update_profile',
     SHOP_FILTER: BaseUrl + '/api/filter',
     SHOP_CATEGORY: BaseUrl + '/api/shop_category',
-    SHOP_PRODUCTLIST:BaseUrl + '/api/shop_productlist',
-
+    SHOP_PRODUCTLIST: BaseUrl + '/api/shop_productlist',
+    NOTIFICATION_DETAILS: BaseUrl + '/api/notifications_detail',
     //  vrinda api integrations
     DELETE_ITEM: BaseUrl + '/api/delete_shipping_address',
     UPDATE_ITEM: BaseUrl + '/api/update_shipping_address',
     NOTIFICATION: BaseUrl + '/api/notifications',
     NOTIFICATION_DELETE: BaseUrl + '/api/delete_notification',
-     
-     
+    STRIPE_PAYMENT: BaseUrl + '/api/stripePost',
+    ORDER_PLACED: BaseUrl + '/api/save_order',
+
 }

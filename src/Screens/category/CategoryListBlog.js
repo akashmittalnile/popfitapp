@@ -54,7 +54,7 @@ const SubCategoryBlog = (props) => {
     const subcategoryid = subcategoryITEM;
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.BLOG_LISTBLOG}`, { "category_id": categoryitem, "subcategory_id": subcategoryid },{ headers: { "Authorization": ` ${Token}` } });
+      const response = await axios.post(`${API.BLOG_LISTBLOG}`, { "category_id": categoryitem, "subcategory_id": subcategoryid }, { headers: { "Authorization": ` ${Token}` } });
       console.log(":::::::::listBLog_Response>>>", response.data.blog_list);
       console.log("status _listBLog:", response.data.status);
       if (response.data.status == 1) {
@@ -73,35 +73,150 @@ const SubCategoryBlog = (props) => {
   return (
     <SafeAreaView style={{
       flex: 1,
-      width: '100%',
-      height: '100%', flexGrow: 1,
+      backgroundColor: 'black',
+      flexGrow: 1,
+      // width: WIDTH,
+      // height: HEIGHT,  
     }} >
+      <Headers
+        Backicon={{
+          visible: true,
+        }}
+        BackicononClick={() => { props.navigation.goBack() }}
+
+        CartIcon={{
+          visible: true,
+        }}
+        CartIconononClick={() => { props.navigation.navigate("CartAdded") }}
+
+        Bellicon={{
+          visible: true,
+
+        }}
+        BelliconononClick={() => { props.navigation.navigate("Notifications") }}
+      />
       {!isLoading ?
-        (<View>
-          <Headers
-            Backicon={{
-              visible: true,
-            }}
-            BackicononClick={() => { props.navigation.goBack() }}
+        (<>
+          {
+              subcategorylistBlogitems.length != 0 ?
+                (<ScrollView >
+                  <View style={{ height: 50, flexDirection: 'row' }}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ marginLeft: 15, marginTop: 20, textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "500" }}>Blogs</Text>
+                    </View>
 
-            CartIcon={{
-              visible: true,
-            }}
-            CartIconononClick={() => { props.navigation.navigate("CartAdded") }}
+                  </View>
 
-            Bellicon={{
-              visible: true,
+                  <FlatList
+                    numColumns={2}
+                    // style={{ margin: 10 }}
+                    data={subcategorylistBlogitems}
+                    renderItem={({ item }) => (
+                      <TouchableOpacity onPress={() => { gotoBlogDetail(item) }}>
+                        <View
+                          style={{
+                            marginTop: 10,
+                            backgroundColor: 'white',
+                            height: 180,
+                            width: WIDTH * 0.45,
+                            borderRadius: 15,
+                            marginBottom: 20,
+                            marginHorizontal: 10,
+                            justifyContent: "center",
+                            alignItems: 'center',
+                          }}>
 
-            }}
-            BelliconononClick={() => { props.navigation.navigate("Notifications") }}
-          />
-          <FlatList
-            vertical
-            // numColumns={2}
-            data={subcategorylistBlogitems}
-            renderItem={({ item }) => (
-              <ScrollView >
-                <View style={{ paddingBottom: 130 }}>
+                          <View
+                            style={{
+                              width: WIDTH * 0.45, height: 180, borderRadius: 15,
+                              justifyContent: "flex-start", alignItems: "flex-start"
+                            }}>
+                            <Image
+                              source={{ uri: `${item?.blog_image}` }}
+                              resizeMode="stretch"
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                borderRadius: 15,
+                                alignSelf: 'center',
+                              }}
+                            />
+                            <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 15 }}>
+                              <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.image_title?.slice(0, 13) + '...'}</Text>
+
+                            </View>
+
+                          </View>
+                          <View style={{
+                            justifyContent: "center",
+                            alignItems: 'center', position: "absolute", width: 40, height: 30, bottom: 0, right: 0
+                          }}>
+                            <Image resizeMode='contain'
+                              source={require('../assets/arrowWhiteBack.png')}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                alignSelf: 'center',
+                                borderBottomRightRadius: 15,
+
+                              }}
+                            />
+                          </View>
+
+                        </View>
+                        {/* <BackgroundImage
+                        resizeMode='stretch'
+                        source={{ uri: `${item.image}` }}
+                        style={{
+                          // marginTop: 6, 
+                          marginBottom: 6,
+                          marginHorizontal: 6,
+                          justifyContent: 'space-between',
+                          width: WIDTH * 0.45,
+                          height: 180,
+                          overflow: 'hidden',
+                          borderRadius: 15,
+                          backgroundColor: "gray"
+                        }}>
+                        <View style={{
+                          width: 115,
+                          backgroundColor: '#c9bca0',
+                          height: 25,
+                          borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center"
+                        }}>
+                          <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item.subcat_name.slice(0, 13) + '...'}</Text>
+                        </View>
+                        <View style={{ height: 30, borderBottomRightRadius: 10, alignItems: 'flex-end', justifyContent: 'flex-end' }}>
+                          <View style={{ height: 30, width: 50 }}>
+                            <Image source={require('../assets/arrowWhiteBack.png')}
+                              style={{
+                                width: 40,
+                                height: 30, alignSelf: 'center', borderBottomRightRadius: 10, right: -5
+                              }}
+                              resizeMode='stretch' />
+                          </View>
+                        </View>
+                      </BackgroundImage> */}
+                      </TouchableOpacity>
+                    )}
+                  />
+                </ScrollView>)
+                :
+                (<View style={{
+                  justifyContent: "center", alignItems: "center", width: WIDTH,
+                  height: 200, backgroundColor: "white", flex: 1,
+                }}>
+                  <Image resizeMode='contain'
+                    source={require('../assets/Nodatafound.png')}
+                    style={{
+                      width: 200,
+                      height: 120, alignSelf: 'center'
+                    }} />
+                  <Text style={{ fontSize: 14, fontWeight: "bold" }}>No data found</Text>
+                </View>)
+            }
+            
+            {/* <View style={{ paddingBottom: 130 }}>
                   <View 
                   style={{ height: 60 }}>
                     <Text style={{ marginLeft: 25, marginTop: 20, textAlign: 'left', fontSize: 14, color: 'black', fontWeight: "bold" }}>{item.youtube_title}</Text>
@@ -152,12 +267,10 @@ const SubCategoryBlog = (props) => {
                   </View>
 
                   <Text style={{ marginHorizontal: 20, marginTop: 20, textAlign: 'left', fontSize: 11, color: '#000', }}>{item.image_description}</Text>
-                </View>
-              </ScrollView>
-            )
-            }
-          />
-        </View>)
+                </View> */}
+           
+
+        </>)
         :
         (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
           <ActivityIndicator size="large" color="#ffcc00" />

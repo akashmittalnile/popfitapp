@@ -243,6 +243,7 @@ const Home = (props) => {
                 //   justifyContent: "space-around"
                 // }}
                 data={trainingdata}
+                 
                 renderItem={({ item }) =>
                   <TouchableOpacity onPress={() => { gotoTrainingsubcatgory(item) }}>
                     <View style={{
@@ -373,7 +374,7 @@ const Home = (props) => {
                       justifyContent: "center",
                     }}>
                     <View style={{
-                      height: 100,
+                      height: 150,
                       borderRadius: 20,
                       width: WIDTH * 0.45,
                       alignItems: "center",
@@ -404,16 +405,17 @@ const Home = (props) => {
                     <View
 
                       style={{
-                        height: 100, width: WIDTH * 0.45,
+                        height: 50, 
+                        width: WIDTH * 0.45,
                         backgroundColor: '#fceeb5',
                         borderBottomLeftRadius: 16,
-                        borderBottomRightRadius: 16, justifyContent: "flex-start", alignItems: "flex-start",
+                        borderBottomRightRadius: 16, justifyContent: "flex-start", alignItems: "flex-start",paddingTop: 5,paddingLeft: 10,
                       }}>
-                      <Text style={{ marginLeft: 10, marginTop: 5, textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "bold" }}>{item?.image_title?.slice(0, 20) + '...'}</Text>
+                      <Text numberOfLines={1} style={{ textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "500" }}>{item?.image_title?.slice(0, 20) + '...'}</Text>
 
-                      <View style={{ height: 65, alignItems: "flex-start", justifyContent: "flex-start", width: WIDTH * 0.45, marginTop: 2 }}>
-                        <Text
-                          style={{ marginHorizontal: 10, textAlign: 'left', fontSize: 7, color: '#000000', justifyContent: "center", alignItems: "center" }}>{item?.image_description?.slice(0, 308) + '...'}</Text>
+                      <View style={{ height: 30, alignItems: "flex-start", justifyContent: "flex-start",  width: WIDTH * 0.42, paddingTop: 4, marginBottom:4,}}>
+                        <Text numberOfLines={1}  
+                          style={{textAlign: 'left', fontSize: 8, color: '#000000',fontWeight: "300" }}>{item?.image_description?.slice(0, 200)+ '...'}</Text>
                       </View>
                     </View>
                   </TouchableOpacity>

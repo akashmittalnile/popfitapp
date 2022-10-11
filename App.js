@@ -18,15 +18,21 @@ import messaging from '@react-native-firebase/messaging';
 import { Provider } from 'react-redux';
 import modifyCounterReducer from './src/Redux/reducers/modifyCounter';
 import store from "./src/store";
-
-
-// const rootReducer = combineReducers({
-//   modifyCount: modifyCounterReducer
-// });
-
-// const store = createStores(rootReducer);
+import { StripeProvider } from '@stripe/stripe-react-native';
+ 
 
 const App = (props) => {
+
+   
+
+  // const fetchPublishableKey = async () => {
+  //   const key = await fetchKey('pk_test_51LogMKSI9r7oyTnGwG3IdAXSeadXKDKkwWBixJRfQEIqSC3bl2p7mGWz3q9APkpZoFf0uQcC3ZTPrjOz7GKmWGzQ00YSHiUXTR'); // fetch key from your server here
+  //   setPublishableKey(key);
+  // };
+  // LogBox.ignoreLogs([
+  //   "ViewPropTypes will be removed",
+  //   "ColorPropType will be removed",
+  //   ])
   LogBox.ignoreAllLogs()
   // useEffect(() => {
   //   const unsubscribe = messaging().onMessage(async remoteMessage => {
@@ -53,6 +59,8 @@ const App = (props) => {
     }
   }
   useEffect(() => {
+    
+     
     // requestUserPermission();
     // notificationListner()
     NotificationManagerAndroid.createChannel();
@@ -112,9 +120,13 @@ const App = (props) => {
   return (
     <>
       <Provider store={store}>
-        {/* <ForegroundHandler /> */}
-        <AppNavigation />
-
+        <StripeProvider
+          publishableKey="pk_test_51LpuUGHSmonu9QOMZ3kCDTDCWWflMSt29FZoPoe0Z2n8RqlewqKIYDIZ9gnMWX7UvvVMMGjgjAVgUnn7ncfeoQY100nPkmMIZB"
+          merchantIdentifier="merchant.identifier" // required for Apple Pay
+          urlScheme="your-url-scheme" // required for 3D Secure and bank redirects
+        >
+          <AppNavigation />
+        </StripeProvider>
       </Provider>
 
     </>
