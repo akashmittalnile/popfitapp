@@ -13,6 +13,7 @@ import Headers from '../../Routes/Headers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
 import { CartCounter } from '../../Redux/actions/UpdateCounter';
+import { async } from 'regenerator-runtime';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -33,8 +34,16 @@ const CartAdded = (props) => {
     const DATA = ['first row', 'second row', 'third row', 'third row', 'third row'];
 
 
-    const gotoShippingDetail = () => {
-        props.navigation.navigate("ShippingDetail");
+    const gotoShippingDetail = async() => {
+        const Clickonbuproduct = await AsyncStorage.getItem("authToken");
+// console.log("user not login:",Clickonbuproduct);
+         if(Clickonbuproduct == null){
+            Alert.alert("Before buy something, please login first !")
+         }
+         else{
+            props.navigation.navigate("ShippingDetail");
+         }
+       
     }
     const gotoProductDetailsview = (item) => {
 
@@ -98,6 +107,11 @@ const CartAdded = (props) => {
                 // setSubtotal(response.data.sub_total);
                 setIsLoading(false);
             }
+            // else {
+            //     Alert.alert("Add to cart", 'please login first!')
+            //     // setSubtotal(response.data.sub_total);
+            //     setIsLoading(false);
+            // }
 
 
         }
@@ -116,7 +130,7 @@ const CartAdded = (props) => {
         try {
             const usertkn = await AsyncStorage.getItem("authToken");
             const response = await axios.get(`${API.SHIPPING_DETAILS}`, {
-                'headers': { "Authorization": ` ${usertkn}` }
+                // 'headers': { "Authorization": ` ${usertkn}` }
             },
             );
             // console.log("", response);
@@ -125,7 +139,7 @@ const CartAdded = (props) => {
             let cartdata = response.data.data.length;
             console.log("cartdataReducer.....:", cartdata);
             dispatch(CartCounter(parseInt(cartdata)));
-           setuseraddress(response.data.address_lists);
+            setuseraddress(response.data.address_lists);
             setSubtotal(response.data.sub_total);
             setTax(response.data.tax);
             setcoupon(response.data.coupon_price);
@@ -183,7 +197,7 @@ const CartAdded = (props) => {
         try {
             const usertkn = await AsyncStorage.getItem("authToken");
             const response = await axios.post(`${API.PRODUCT_DETAILS_REMOVE_ITEM}`, { "cart_id": cartaddid }, {
-                'headers': { "Authorization": ` ${usertkn}` }
+                // 'headers': { "Authorization": ` ${usertkn}` }
             },);
             // console.log(":::::::::ProductRemovecart_Response>>>", response.data.message);
             // console.log("status _ProductRemovecart:", response.data.status);
@@ -226,39 +240,41 @@ const CartAdded = (props) => {
                 BelliconononClick={() => { props.navigation.navigate("Notifications") }}
             />
             {!isLoading ?
-                (
-                    <View style={{ paddingBottom: 60 }}>
-                        <ScrollView>
-                            <View
-                                style={{
-                                    backgroundColor: 'white',
-                                    height: "100%",
-                                    width: "100%",
-                                    // marginHorizontal: 10,
-                                    padding: 2,
-                                    // borderRadius: 20,
-                                    marginBottom: 10,
-                                    // alignItems: 'flex-start',
-                                    justifyContent: "center",
-                                    flex: 1,
+                <>
+                    {
+                        productdata.length > 0 ?
+                            <View style={{ paddingBottom: 60 }}>
+                                <ScrollView>
+                                    <View
+                                        style={{
+                                            backgroundColor: 'white',
+                                            height: "100%",
+                                            width: "100%",
+                                            // marginHorizontal: 10,
+                                            padding: 2,
+                                            // borderRadius: 20,
+                                            marginBottom: 10,
+                                            // alignItems: 'flex-start',
+                                            justifyContent: "center",
+                                            flex: 1,
 
-                                }}>
+                                        }}>
 
-                                {/* Mycart text */}
-                                <View
-                                    style={{
-                                        height: 50,
-                                        // width: "100%",
-                                        marginHorizontal: 20,
-                                        // marginTop: 10,
-                                        width: '100%',
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                        justifyContent: "center",
-                                        // backgroundColor: 'red',
-                                        // flex: 1
-                                    }}>
-                                    {/* <View
+                                        {/* Mycart text */}
+                                        <View
+                                            style={{
+                                                height: 50,
+                                                // width: "100%",
+                                                marginHorizontal: 20,
+                                                // marginTop: 10,
+                                                width: '100%',
+                                                flexDirection: 'row',
+                                                alignItems: 'center',
+                                                justifyContent: "center",
+                                                // backgroundColor: 'red',
+                                                // flex: 1
+                                            }}>
+                                            {/* <View
                                 style={{
                                     width: 35,
                                     height: 35,
@@ -273,18 +289,18 @@ const CartAdded = (props) => {
                                     source={require('../assets/bag2.png')} />
                             </View> */}
 
-                                    <View style={{ flex: 1 }}>
-                                        <Text
-                                            style={{
-                                                textAlign: 'left',
-                                                fontSize: 18,
-                                                color: '#000000',
-                                                fontWeight: "500",
-                                            }}>
-                                            My Cart
-                                        </Text>
-                                    </View>
-                                    {/* <View
+                                            <View style={{ flex: 1 }}>
+                                                <Text
+                                                    style={{
+                                                        textAlign: 'left',
+                                                        fontSize: 18,
+                                                        color: '#000000',
+                                                        fontWeight: "500",
+                                                    }}>
+                                                    My Cart
+                                                </Text>
+                                            </View>
+                                            {/* <View
                                 style={{
                                     marginLeft: -15,
                                     borderRadius: 25,
@@ -304,92 +320,92 @@ const CartAdded = (props) => {
                                     1
                                 </Text>
                             </View> */}
-                                </View>
+                                        </View>
 
-                                {/* item list */}
-                                <View style={{ justifyContent: "center" }}>
-                                    <FlatList
-                                        vertical
-                                        data={productdata}
-                                        keyExtractor={(item, index) => String(index)}
-                                        renderItem={({ item }) => {
-                                            return (<TouchableOpacity onPress={() => { gotoProductDetailsview(item) }}>
-                                                <View style={{
-                                                    marginHorizontal: 10,
-                                                    marginTop: 6,
-                                                    height: 140,
-                                                    width: WIDTH * 0.94,
-                                                    borderRadius: 20,
-                                                    marginBottom: 10,
-                                                    backgroundColor: 'white',
-                                                    justifyContent: "center",
-                                                    alignItems: "center",
-                                                    borderWidth: 1,
-                                                    borderColor: "#FFFFFF",
-                                                    shadowColor: '#000000',
-                                                    shadowOffset: {
-                                                        width: 0,
-                                                        height: 3
-                                                    },
-                                                    shadowRadius: 1,
-                                                    shadowOpacity: 1.0,
-                                                    elevation: 6,
-                                                    // zIndex: 999,
-                                                    // flex: 1
-                                                }}>
-                                                    <TouchableOpacity onPress={() => ProductRemovecart(item)}
-                                                        style={{
-                                                            position: "absolute",
-                                                            backgroundColor: 'red',
-                                                            width: 30, height: 30,
+                                        {/* item list */}
+                                        <View style={{ justifyContent: "center" }}>
+                                            <FlatList
+                                                vertical
+                                                data={productdata}
+                                                keyExtractor={(item, index) => String(index)}
+                                                renderItem={({ item }) => {
+                                                    return (<TouchableOpacity onPress={() => { gotoProductDetailsview(item) }}>
+                                                        <View style={{
+                                                            marginHorizontal: 10,
+                                                            marginTop: 6,
+                                                            height: 140,
+                                                            width: WIDTH * 0.94,
+                                                            borderRadius: 20,
+                                                            marginBottom: 10,
+                                                            backgroundColor: 'white',
                                                             justifyContent: "center",
-                                                            alignItems: 'center',
-                                                            borderRadius: 20 / 2,
-                                                            top: 10,
-                                                            right: 10
+                                                            alignItems: "center",
+                                                            borderWidth: 1,
+                                                            borderColor: "#FFFFFF",
+                                                            shadowColor: '#000000',
+                                                            shadowOffset: {
+                                                                width: 0,
+                                                                height: 3
+                                                            },
+                                                            shadowRadius: 1,
+                                                            shadowOpacity: 1.0,
+                                                            elevation: 6,
+                                                            // zIndex: 999,
+                                                            // flex: 1
                                                         }}>
+                                                            <TouchableOpacity onPress={() => ProductRemovecart(item)}
+                                                                style={{
+                                                                    position: "absolute",
+                                                                    backgroundColor: 'red',
+                                                                    width: 30, height: 30,
+                                                                    justifyContent: "center",
+                                                                    alignItems: 'center',
+                                                                    borderRadius: 20 / 2,
+                                                                    top: 10,
+                                                                    right: 10
+                                                                }}>
 
-                                                        <Image resizeMode='contain'
-                                                            source={require('../assets/delete.png')}
+                                                                <Image resizeMode='contain'
+                                                                    source={require('../assets/delete.png')}
 
-                                                        />
+                                                                />
 
-                                                    </TouchableOpacity>
-
-                                                    {/* min to max button */}
-                                                    <View style={{ backgroundColor: '#f2f2f2', flexDirection: 'row', borderRadius: 10, justifyContent: "center", alignItems: "center", height: 50, marginTop: 35, width: 110, marginLeft: 90, position: "absolute", bottom: 6, right: 6, paddingLeft: 6, paddingRight: 6 }}>
-                                                        <View style={{
-                                                            height: 44, marginRight: 5, justifyContent: "center", alignItems: "center",
-                                                        }}>
-                                                            <TouchableOpacity onPress={() => { Productincrease(item, '') }}>
-                                                                <View style={{ backgroundColor: '#d6d6d6', width: 36, height: 36, padding: 1, justifyContent: "center", alignItems: 'center', borderRadius: 15 / 2 }}>
-                                                                    <Text style={{ textAlign: 'center', fontSize: 37, color: 'black', marginBottom: 8, height: 50, justifyContent: "center", alignItems: "center", }}>-</Text>
-
-                                                                </View>
                                                             </TouchableOpacity>
-                                                        </View>
 
-                                                        <View style={{
-                                                            height: 44, marginRight: 5, justifyContent: "center", alignItems: 'center', flex: 1,
-                                                        }}>
-                                                            <View style={{ justifyContent: "center", alignItems: 'center', borderRadius: 20 / 2, }}>
-                                                                <Text style={{ textAlign: 'center', fontSize: 15, color: 'black', fontWeight: "bold" }}>{item.qty}</Text>
+                                                            {/* min to max button */}
+                                                            <View style={{ backgroundColor: '#f2f2f2', flexDirection: 'row', borderRadius: 10, justifyContent: "center", alignItems: "center", height: 50, marginTop: 35, width: 110, marginLeft: 90, position: "absolute", bottom: 6, right: 6, paddingLeft: 6, paddingRight: 6 }}>
+                                                                <View style={{
+                                                                    height: 44, marginRight: 5, justifyContent: "center", alignItems: "center",
+                                                                }}>
+                                                                    <TouchableOpacity onPress={() => { Productincrease(item, '') }}>
+                                                                        <View style={{ backgroundColor: '#d6d6d6', width: 36, height: 36, padding: 1, justifyContent: "center", alignItems: 'center', borderRadius: 15 / 2 }}>
+                                                                            <Text style={{ textAlign: 'center', fontSize: 37, color: 'black', marginBottom: 8, height: 50, justifyContent: "center", alignItems: "center", }}>-</Text>
 
+                                                                        </View>
+                                                                    </TouchableOpacity>
+                                                                </View>
+
+                                                                <View style={{
+                                                                    height: 44, marginRight: 5, justifyContent: "center", alignItems: 'center', flex: 1,
+                                                                }}>
+                                                                    <View style={{ justifyContent: "center", alignItems: 'center', borderRadius: 20 / 2, }}>
+                                                                        <Text style={{ textAlign: 'center', fontSize: 15, color: 'black', fontWeight: "bold" }}>{item.qty}</Text>
+
+                                                                    </View>
+                                                                </View>
+
+                                                                <View style={{
+                                                                    height: 44, justifyContent: "center", alignItems: "center",
+                                                                }}>
+                                                                    <TouchableOpacity onPress={() => { Productincrease(item, "inc") }}>
+                                                                        <View style={{ backgroundColor: '#dbdbdb', width: 36, height: 36, padding: 1, justifyContent: "center", alignItems: 'center', borderRadius: 15 / 2 }}>
+                                                                            <Text style={{ textAlign: 'center', fontSize: 28, color: 'black', marginTop: 8, height: 50, justifyContent: "center", alignItems: "center", }}>+</Text>
+
+                                                                        </View>
+                                                                    </TouchableOpacity>
+                                                                </View>
                                                             </View>
-                                                        </View>
-
-                                                        <View style={{
-                                                            height: 44, justifyContent: "center", alignItems: "center",
-                                                        }}>
-                                                            <TouchableOpacity onPress={() => { Productincrease(item, "inc") }}>
-                                                                <View style={{ backgroundColor: '#dbdbdb', width: 36, height: 36, padding: 1, justifyContent: "center", alignItems: 'center', borderRadius: 15 / 2 }}>
-                                                                    <Text style={{ textAlign: 'center', fontSize: 28, color: 'black', marginTop: 8, height: 50, justifyContent: "center", alignItems: "center", }}>+</Text>
-
-                                                                </View>
-                                                            </TouchableOpacity>
-                                                        </View>
-                                                    </View>
-                                                    {/* <TouchableOpacity onPress={() => { ProductRemovecart(item) }}
+                                                            {/* <TouchableOpacity onPress={() => { ProductRemovecart(item) }}
                                                         style={{
                                                             position: "absolute",
                                                             width: 30,
@@ -410,7 +426,7 @@ const CartAdded = (props) => {
 
                                                         />
                                                     </TouchableOpacity> */}
-                                                    {/* <TouchableOpacity onPress={() => { ProductRemovecart() }}
+                                                            {/* <TouchableOpacity onPress={() => { ProductRemovecart() }}
                                                 style={{
                                                     position: "absolute",
                                                     backgroundColor: 'red',
@@ -433,72 +449,72 @@ const CartAdded = (props) => {
 
                                             </TouchableOpacity> */}
 
-                                                    <View style={{
-                                                        height: 140,
-                                                        borderRadius: 20,
-                                                        flexDirection: 'row',
-                                                        width: WIDTH * 0.94,
-                                                        justifyContent: "flex-start",
-                                                        // backgroundColor: 'pink',
-                                                        alignItems: "center",
-                                                        paddingLeft: 20
-                                                    }}>
+                                                            <View style={{
+                                                                height: 140,
+                                                                borderRadius: 20,
+                                                                flexDirection: 'row',
+                                                                width: WIDTH * 0.94,
+                                                                justifyContent: "flex-start",
+                                                                // backgroundColor: 'pink',
+                                                                alignItems: "center",
+                                                                paddingLeft: 20
+                                                            }}>
 
-                                                        <View style={{
-                                                            width: 100, height: 100,
-                                                            // backgroundColor: '#fceeb5', 
-                                                            justifyContent: "center",
-                                                            alignItems: "center",
+                                                                <View style={{
+                                                                    width: 100, height: 100,
+                                                                    // backgroundColor: '#fceeb5', 
+                                                                    justifyContent: "center",
+                                                                    alignItems: "center",
 
-                                                        }}>
-                                                            <Image
-                                                                resizeMode="contain"
-                                                                style={{
-                                                                    width: "100%",
-                                                                    borderRadius: 20,
-                                                                    height: "100%",
-                                                                    alignSelf: 'center',
+                                                                }}>
+                                                                    <Image
+                                                                        resizeMode="contain"
+                                                                        style={{
+                                                                            width: "100%",
+                                                                            borderRadius: 20,
+                                                                            height: "100%",
+                                                                            alignSelf: 'center',
 
-                                                                }}
-                                                                source={{ uri: item?.product_image }}
-                                                            />
+                                                                        }}
+                                                                        source={{ uri: item?.product_image }}
+                                                                    />
 
-                                                        </View>
-
-                                                        <View style={{
-                                                            justifyContent: "flex-start",
-                                                            alignItems: "flex-start",
-                                                            width: WIDTH * 0.4,
-                                                            height: 100,
-                                                            marginLeft: 13,
-                                                            // backgroundColor: 'pink'
-                                                        }}>
-                                                            <Text style={{ textAlign: 'left', fontSize: 16, color: '#455A64', fontWeight: "500", }}>
-                                                                {item.product_name.slice(0, 20)}
-                                                            </Text>
-                                                            <View style={{ width: WIDTH * 0.4, alignItems: "flex-start", justifyContent: "flex-start", marginTop: 6 }}>
-                                                                <View>
-                                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Price: <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', }}>$
-                                                                        {item.product_price}
-                                                                    </Text></Text>
-                                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Quantity: <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', }}>
-                                                                        {item.qty}
-                                                                    </Text></Text>
                                                                 </View>
+
+                                                                <View style={{
+                                                                    justifyContent: "flex-start",
+                                                                    alignItems: "flex-start",
+                                                                    width: WIDTH * 0.4,
+                                                                    height: 100,
+                                                                    marginLeft: 13,
+                                                                    // backgroundColor: 'pink'
+                                                                }}>
+                                                                    <Text style={{ textAlign: 'left', fontSize: 16, color: '#455A64', fontWeight: "500", }}>
+                                                                        {item.product_name.slice(0, 20)}
+                                                                    </Text>
+                                                                    <View style={{ width: WIDTH * 0.4, alignItems: "flex-start", justifyContent: "flex-start", marginTop: 6 }}>
+                                                                        <View>
+                                                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Price: <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', }}>$
+                                                                                {item.product_price}
+                                                                            </Text></Text>
+                                                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Quantity: <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', }}>
+                                                                                {item.qty}
+                                                                            </Text></Text>
+                                                                        </View>
+                                                                    </View>
+                                                                </View>
+
+
                                                             </View>
                                                         </View>
+                                                    </TouchableOpacity>
+                                                    )
+                                                }
+                                                }
+                                            />
+                                        </View>
 
-
-                                                    </View>
-                                                </View>
-                                            </TouchableOpacity>
-                                            )
-                                        }
-                                        }
-                                    />
-                                </View>
-
-                                {/* <View style={{
+                                        {/* <View style={{
                                     backgroundColor: '#fffcee',
                                     height: 100,
                                     marginTop: 20,
@@ -518,150 +534,163 @@ const CartAdded = (props) => {
 
 
                                 </View> */}
-                                <View style={{
-                                    backgroundColor: '#fffcee',
-                                    height: 120,
-                                    width: WIDTH * 0.99,
-                                    marginTop: 20,
-                                    shadowColor: '#efe8c7',
-                                    shadowOffset:
-                                    {
-                                        width: 0,
-                                        height: 2
-                                    },
-                                    shadowOpacity: 0.2,
-                                    elevation: 6,
-                                    marginBottom: 20,
-                                    justifyContent: "flex-start",
-                                    alignItems: 'flex-start',
-                                    flex: 1
-                                }}>
-                                    <View style={{ marginTop: 10, height: 30, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.9 }}>
-                                        <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
-                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Subtotal:</Text>
-                                        </View>
-                                        <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
-                                            <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>${subtotal}</Text>
-                                        </View>
-                                    </View>
-
-                                    <View style={{ marginTop: 10, height: 30, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.9 }}>
-                                        <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
-                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Tax:</Text>
-                                        </View>
-                                        <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
-                                            <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>${tax}</Text>
-                                        </View>
-                                    </View>
-
-                                    <View style={{ marginTop: 10, height: 30, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.9 }}>
-                                        <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
-                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Shipping charges:</Text>
-                                        </View>
-                                        <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
-                                            <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>${shippingcost}</Text>
-                                        </View>
-                                    </View>
-
-                                </View>
-                                <View style={{
-                                    backgroundColor: '#fffcee',
-                                    height: 40,
-                                    width: WIDTH * 0.99,
-                                    marginTop: 10,
-                                    shadowColor: '#efe8c7',
-                                    // shadowOffset: { width: 0, height: 2 },
-                                    shadowOpacity: 0.2,
-                                    elevation: 6,
-                                    marginBottom: 20,
-                                    justifyContent: "center",
-                                    alignItems: 'center',
-                                    flex: 1
-                                }}>
-
-                                    <View style={{ marginTop: 10, height: 40, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.94 }}>
-                                        <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
-                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Total Amout:</Text>
-                                        </View>
-                                        <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
-                                            <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 53, fontWeight: "500" }}>${total}</Text>
-                                        </View>
-                                    </View>
-
-
-
-                                </View>
-                                {/* futter buttons */}
-                                < View
-                                    style={{
-                                        // bottom: 40,
-                                        // position: "absolute",
-                                        // marginBottom: 20,
-                                        flexDirection: 'row',
-                                        height: 34,
-                                        marginHorizontal: 20,
-                                        alignItems: 'center',
-                                        justifyContent: "center"
-
-
-                                    }}>
-                                    <TouchableOpacity
-                                        onPress={() => {
-                                            props.navigation.navigate("Home")
+                                        <View style={{
+                                            backgroundColor: '#fffcee',
+                                            height: 120,
+                                            width: WIDTH * 0.99,
+                                            marginTop: 20,
+                                            shadowColor: '#efe8c7',
+                                            shadowOffset:
+                                            {
+                                                width: 0,
+                                                height: 2
+                                            },
+                                            shadowOpacity: 0.2,
+                                            elevation: 6,
+                                            marginBottom: 20,
+                                            justifyContent: "flex-start",
+                                            alignItems: 'flex-start',
+                                            flex: 1
                                         }}>
-                                        <View
-                                            style={{
-                                                justifyContent: 'center',
-                                                width: 200,
-                                                flex: 1,
-                                                backgroundColor: '#ffcc00',
-                                                borderRadius: 50,
-                                            }}>
-                                            <Text
-                                                style={{
-                                                    textAlign: 'center',
-                                                    fontSize: 15,
-                                                    color: 'white',
+                                            <View style={{ marginTop: 10, height: 30, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.9 }}>
+                                                <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
+                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Subtotal:</Text>
+                                                </View>
+                                                <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
+                                                    <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>${subtotal}</Text>
+                                                </View>
+                                            </View>
 
-                                                    fontWeight: '700',
-                                                }}>
-                                                Continue Shopping
-                                            </Text>
+                                            <View style={{ marginTop: 10, height: 30, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.9 }}>
+                                                <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
+                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Tax:</Text>
+                                                </View>
+                                                <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
+                                                    <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>${tax}</Text>
+                                                </View>
+                                            </View>
+
+                                            <View style={{ marginTop: 10, height: 30, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.9 }}>
+                                                <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
+                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Shipping charges:</Text>
+                                                </View>
+                                                <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
+                                                    <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>${shippingcost}</Text>
+                                                </View>
+                                            </View>
+
                                         </View>
-                                    </TouchableOpacity>
-
-                                    <TouchableOpacity
-                                        onPress={() => {
-                                            gotoShippingDetail()
-
+                                        <View style={{
+                                            backgroundColor: '#fffcee',
+                                            height: 40,
+                                            width: WIDTH * 0.99,
+                                            marginTop: 10,
+                                            shadowColor: '#efe8c7',
+                                            // shadowOffset: { width: 0, height: 2 },
+                                            shadowOpacity: 0.2,
+                                            elevation: 6,
+                                            marginBottom: 20,
+                                            justifyContent: "center",
+                                            alignItems: 'center',
+                                            flex: 1
                                         }}>
-                                        <View
-                                            style={{
-                                                justifyContent: 'center',
-                                                width: 120,
-                                                flex: 1,
-                                                backgroundColor: '#ffcc00',
-                                                borderRadius: 50,
-                                                marginLeft: 10,
-                                            }}>
-                                            <Text
-                                                style={{
-                                                    textAlign: 'center',
-                                                    fontSize: 15,
-                                                    color: 'white',
 
-                                                    fontWeight: '700',
-                                                }}>
-                                                Check Out
-                                            </Text>
+                                            <View style={{ marginTop: 10, height: 40, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.94 }}>
+                                                <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
+                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Total Amout:</Text>
+                                                </View>
+                                                <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
+                                                    <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 53, fontWeight: "500" }}>${total}</Text>
+                                                </View>
+                                            </View>
+
+
+
                                         </View>
-                                    </TouchableOpacity>
-                                </View >
+                                        {/* futter buttons */}
+                                        < View
+                                            style={{
+                                                // bottom: 40,
+                                                // position: "absolute",
+                                                // marginBottom: 20,
+                                                flexDirection: 'row',
+                                                height: 34,
+                                                marginHorizontal: 20,
+                                                alignItems: 'center',
+                                                justifyContent: "center"
+
+
+                                            }}>
+                                            <TouchableOpacity
+                                                onPress={() => {
+                                                    props.navigation.navigate("Home")
+                                                }}>
+                                                <View
+                                                    style={{
+                                                        justifyContent: 'center',
+                                                        width: 200,
+                                                        flex: 1,
+                                                        backgroundColor: '#ffcc00',
+                                                        borderRadius: 50,
+                                                    }}>
+                                                    <Text
+                                                        style={{
+                                                            textAlign: 'center',
+                                                            fontSize: 15,
+                                                            color: 'white',
+
+                                                            fontWeight: '700',
+                                                        }}>
+                                                        Continue Shopping
+                                                    </Text>
+                                                </View>
+                                            </TouchableOpacity>
+
+                                            <TouchableOpacity
+                                                onPress={() => {
+                                                    gotoShippingDetail()
+
+                                                }}>
+                                                <View
+                                                    style={{
+                                                        justifyContent: 'center',
+                                                        width: 120,
+                                                        flex: 1,
+                                                        backgroundColor: '#ffcc00',
+                                                        borderRadius: 50,
+                                                        marginLeft: 10,
+                                                    }}>
+                                                    <Text
+                                                        style={{
+                                                            textAlign: 'center',
+                                                            fontSize: 15,
+                                                            color: 'white',
+fontWeight: '500',
+                                                        }}>
+                                                        Check Out
+                                                    </Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                        </View >
+                                    </View >
+
+                                </ScrollView >
+
                             </View >
-
-                        </ScrollView >
-
-                    </View >)
+                            :
+                            (<View style={{
+                                justifyContent: "center", alignItems: "center", backgroundColor: "white", flex: 1,
+                            }}>
+                                <Image resizeMode='contain'
+                                    source={require('../assets/Nodatafound.png')}
+                                    style={{
+                                        width: 200,
+                                        height: 120, alignSelf: 'center'
+                                    }} />
+                                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>Oops! Cart is Empty</Text>
+                            </View>)
+                    }
+                </>
                 :
                 (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                     <ActivityIndicator size="large" color="#ffcc00" />

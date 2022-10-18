@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { View, TouchableHighlight, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, Keyboard, ActivityIndicator } from 'react-native'
+import { View, SafeAreaView, Text, TouchableOpacity, Dimensions, TextInput, Image, Alert, Pressable, Keyboard, ActivityIndicator } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';
 import LinearGradient from 'react-native-linear-gradient';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
 
-import { useCode } from 'react-native-reanimated';
+var WIDTH = Dimensions.get('window').width;
+var HEIGHT = Dimensions.get('window').height;
 
 
 const VerificationCode = (props) => {
@@ -31,7 +32,7 @@ const VerificationCode = (props) => {
         props.navigation.goBack()
     }
 
-    console.log("props.route.params::", props.route.params)
+    // console.log("props.route.params::", props.route.params)
     const { phone, codeotp, Countrycode } = props.route.params
 
     useEffect(() => {
@@ -53,7 +54,7 @@ const VerificationCode = (props) => {
 
         const country_code = countrycod;
         setIsLoading(true);
-        console.log("country_code.................", country_code);
+        // console.log("country_code.................", country_code);
         // if (phone_number == "") {
 
 
@@ -61,7 +62,7 @@ const VerificationCode = (props) => {
         // }
         try {
             const response = await axios.post(`${API.MOBILE_NO_VERIFY}`, { phone_number, country_code });
-            console.log("Mobile_Response>>>", response.data);
+            // console.log("Mobile_Response>>>", response.data);
             setPin(response.data.code);
             setIsLoading(false);
             //   Alert.alert("Your OTP is ",response.data.country_code);
@@ -96,36 +97,30 @@ const VerificationCode = (props) => {
                     url: API.VERIFY_OTP,
                     method: 'POST',
                     data: data,
-
-                    headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'multipart/form-data',
-                        'Authorization': 'Basic YnJva2VyOmJyb2tlcl8xMjM='
-                    }
                 })
 
                     .then(function (response) {
-                        setIsLoading(false);
-                        console.log("responseVerify :", response.data);
+                        // setIsLoading(false);
+                        // console.log("responseVerify :", response.data);
                         if (response.data.status == 1) {
                             //alert("otp matched!!");
                             props.navigation.navigate("SignUp");
 
                             setIsLoading(false);
                         }
-                        else {
+                        else if(response.data.status == 0) {
                             setAlertMsg(response.data.message);
                             setMsgAlert(true);
                             setIsLoading(false);
                         }
                     })
-                 setIsLoading(false);
+                //  setIsLoading(false);
 
 
             }
             catch (error) {
 
-                console.log("error_verify:", error.response.data.message);
+                console.log("error_verify:", error.response?.data?.message);
                 setIsLoading(false);
 
             }
@@ -135,7 +130,11 @@ const VerificationCode = (props) => {
 
 
     return (
-
+        <SafeAreaView style={{
+            flex: 1,
+            width: WIDTH,
+            height: HEIGHT, flexGrow: 1
+          }} >
         <ScrollView style={{ backgroundColor: '#272727' }} >
             {!isLoading ?
                 (<View>
@@ -343,6 +342,7 @@ const VerificationCode = (props) => {
                 </View>)}
 
         </ScrollView>
+        </SafeAreaView>
     );
 };
 

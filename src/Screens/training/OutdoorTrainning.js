@@ -21,7 +21,7 @@ const OutdoorTrainning = (props) => {
 
   useEffect(() => {
     workoutSubCategoryAPI();
-    console.log("Traingplanstatus...:",props?.route?.params?.TrainingData);
+    console.log("Traingplanstatus...:", props?.route?.params?.TrainingData);
     //   const checklogin = async () => {
     //     let Usertoken = await AsyncStorage.getItem("authToken");
     //     console.log("token.......", Usertoken);
@@ -44,10 +44,10 @@ const OutdoorTrainning = (props) => {
   }, []);
 
   const gotoOutdoorCycle = (item) => {
-   
+
     // Alert.alert(" status 0")
-    if (checkplanid.plan_status == "Active") {
-      // switch (Inactive) {
+    if (checkplanid?.plan_status == "Active") {
+      // switch (Active) {
       //   case checkplanid.plan_id == "1":
       //     console.log("plan 1 used");
       //     break;
@@ -66,11 +66,25 @@ const OutdoorTrainning = (props) => {
         Trainingsubcat_data: item
       })
     }
-    else if (checkplanid.plan_status == "Inactive") {
-      // Alert.alert("Please, Login First!")
-      props.navigation.navigate('LoginMain', {
-                    screen: 'LoginSignUp',
-                   });
+    else if (checkplanid?.plan_status == "Inactive") {
+      Alert.alert("Please, Login First and Suscribe any plan!")
+      // if(checkplanid?.plan_id > "0"){
+        props.navigation.navigate('LoginMain', {
+          screen: 'LoginSignUp',
+        });
+      // }
+      // else if(checkplanid?.plan_id == "0")
+      // {
+      //   return
+      // }
+     
+    
+    }
+    else if (checkplanid?.plan_status == null){
+      props.navigation.navigate("Training", {
+        Tainingcat_id: categoryId ? categoryId : TrainingID,
+        Trainingsubcat_data: item
+      })
     }
 
   }
@@ -82,7 +96,7 @@ const OutdoorTrainning = (props) => {
 
   // console.log("categoryId_item...............:", props?.route?.params?.categoryId?.id);
   const categoryId = props?.route?.params?.categoryId?.id
-  // console.log("TrainingID_item...............:", props?.route?.params?.TrainingID?.id);
+  console.log("TrainingID_item.from home..............:", props?.route?.params?.TrainingID?.id);
   const TrainingID = props?.route?.params?.TrainingID?.id
 
   // setCheckPlanId(props?.route?.params?.TrainingData);
@@ -187,8 +201,8 @@ const OutdoorTrainning = (props) => {
           {
             TrainingSUBCatgry.length != 0 ?
               (<ScrollView>
-                <View style={{ marginLeft: 10, marginTop: 15, justifyContent: "center", alignItems: "center", width: WIDTH * 0.3, height: 50 }}>
-                  <Text style={{ textAlign: 'left', fontSize: 18, color: '#ffffff', fontWeight: "500" }}>Sub Category</Text>
+                <View style={{marginTop: 10, justifyContent: "center", alignItems: "center", width: WIDTH * 0.4, height: 50 }}>
+                  <Text style={{ textAlign: 'left', fontSize: 18, color: '#ffffff', fontWeight: "500" }}>Sub Categories</Text>
                 </View>
 
                 <View style={{
@@ -196,51 +210,52 @@ const OutdoorTrainning = (props) => {
                 }}>
                   <FlatList
                     numColumns={2}
-                    // style={{ margin: 1 }}
                     columnWrapperStyle={{
                       flex: 1,
-                      // justifyContent: "center"
+                      justifyContent: "space-between"
                     }}
                     keyExtractor={(item, index) => String(index)}
                     data={TrainingSUBCatgry}
-                    renderItem={({ item }) => (
-                      <TouchableOpacity onPress={() => { gotoOutdoorCycle(item) }}>
-                        <View
-                          style={{
-                            marginTop: 10,
-                            backgroundColor: 'lightgray',
-                            height: 160,
-                            width: WIDTH * 0.45,
-                            borderRadius: 20,
-                            marginBottom: 6,
-                            marginHorizontal: 10,
-                            justifyContent: "flex-start",
-                            alignItems: 'center',
-                          }}>
+                    renderItem={({ item, index }) => {
+                      return (
+                        <TouchableOpacity onPress={() => { gotoOutdoorCycle(item) }}>
                           <View
                             style={{
-                              width: WIDTH * 0.45, height: 160, borderRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
+                              marginTop: 6,
+                              backgroundColor: 'lightgray',
+                              height: 160,
+                              width: WIDTH * 0.45,
+                              borderRadius: 20,
+                              marginBottom: 6,
+                              marginHorizontal: 10,
+                              justifyContent: "flex-start",
+                              alignItems: 'center',
                             }}>
-                            <Image
-                              source={{ uri: item.image }}
-                              resizeMode="contain"
+                            <View
                               style={{
-                                width: "100%",
-                                height: "100%",
-                                borderRadius: 20,
-                                // borderTopRightRadius: 20,
-                                alignSelf: 'center',
-                              }}
-                            />
-                            <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
-                              <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.subcat_name.slice(0, 13) + '...'}</Text>
+                                width: WIDTH * 0.45, height: 160, borderRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
+                              }}>
+                              <Image
+                                source={{ uri: item.image }}
+                                resizeMode="contain"
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  borderRadius: 20,
+                                  // borderTopRightRadius: 20,
+                                  alignSelf: 'center',
+                                }}
+                              />
+                              <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
+                                <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.subcat_name.slice(0, 13) + '...'}</Text>
+
+                              </View>
 
                             </View>
-
                           </View>
-                        </View>
-                      </TouchableOpacity>
-                    )}
+                        </TouchableOpacity>
+                      )
+                    }}
                   />
 
 
@@ -260,10 +275,10 @@ const OutdoorTrainning = (props) => {
                   </View> */}
 
 
-                  <View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row', height: 36, marginHorizontal: 20, marginTop: 20, flex: 1, }}>
+                  <View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 20, flex: 1, }}>
                     <TouchableOpacity onPress={() => { gotoSubsciption() }}>
-                      <View style={{ alignItems: 'center', width: 230, justifyContent: 'center', backgroundColor: '#ffcc00', borderRadius: 35, flex: 1 }}>
-                        <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', fontWeight: "500" }}>SubscriptionPlan Buy Now</Text>
+                      <View style={{ alignItems: 'center', width: 220, justifyContent: 'center', backgroundColor: '#ffcc00', borderRadius: 50, flex: 1 }}>
+                        <Text style={{ textAlign: 'center', fontSize: 14, color: 'white', fontWeight: "400" }}>SubscriptionPlan Buy Now</Text>
                       </View>
                     </TouchableOpacity>
                   </View>
@@ -281,7 +296,7 @@ const OutdoorTrainning = (props) => {
                     width: 200,
                     height: 120, alignSelf: 'center'
                   }} />
-                <Text style={{ fontSize: 14, fontWeight: "bold" }}>No data found</Text>
+                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>Oops! No data found</Text>
               </View>)
           }
         </>)

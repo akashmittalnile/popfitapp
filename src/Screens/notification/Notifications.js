@@ -34,7 +34,7 @@ const Notifications = (props) => {
         }
         else if (item.type == "blog") {
             props.navigation.navigate("Blog")
-        }else{
+        } else {
             Alert.alert("TYPE:COUPON")
             console.log("Go to current page for coupon !!");
         }
@@ -179,16 +179,18 @@ const Notifications = (props) => {
                 BelliconononClick={() => { props.navigation.navigate("Notifications") }}
             />
             {!isLoading ?
-                (<ScrollView style={{ paddingTop: 6 }}>
+                (<>
+
                     {noti?.length > 0 ?
                         noti.map((item, index) => {
                             return (
-
-                                <>
+                                <><ScrollView style={{ paddingTop: 6 }}>
                                     {item.is_read == "1" ?
                                         <>
-                                            <TouchableOpacity onPress={() => {Clicknotication(item),
-                                            NoticationDetails(item) }}
+                                            <TouchableOpacity onPress={() => {
+                                                Clicknotication(item),
+                                                    NoticationDetails(item)
+                                            }}
                                                 style={{
                                                     marginHorizontal: 10,
                                                     marginTop: 6,
@@ -252,8 +254,10 @@ const Notifications = (props) => {
                                         </>
                                         :
                                         <>
-                                            <TouchableOpacity onPress={() => {Clicknotication(item),
-                                            NoticationDetails(item) }}
+                                            <TouchableOpacity onPress={() => {
+                                                Clicknotication(item),
+                                                    NoticationDetails(item)
+                                            }}
                                                 style={{
                                                     marginHorizontal: 10,
                                                     marginTop: 6,
@@ -321,24 +325,27 @@ const Notifications = (props) => {
                                         </>
                                     }
 
-                                </>
+                                </ScrollView>  </>
                             )
                         })
 
-                        : 
+                        :
                         (<View style={{
-                            justifyContent: "center", alignItems: "center", backgroundColor: "white", flex: 1,
-                          }}>
+                            justifyContent: "center",
+                            alignItems: "center",
+                            flex: 1,
+                        }}>
                             <Image resizeMode='contain'
-                              source={require('../assets/Nodatafound.png')}
-                              style={{
-                                width: 200,
-                                height: 120, alignSelf: 'center'
-                              }} />
-                            <Text style={{ fontSize: 14, fontWeight: "bold" }}>No data found</Text>
-                          </View>)
-                        }
-                </ScrollView>)
+                                source={require('../assets/Nodatafound.png')}
+                                style={{
+                                    width: 200,
+                                    height: 120, alignSelf: 'center'
+                                }} />
+                            <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>No data found !</Text>
+                        </View>)
+                    }
+
+                </>)
                 :
 
                 (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>

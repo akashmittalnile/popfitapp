@@ -117,9 +117,7 @@ const Blog = (props) => {
       width: WIDTH,
       height: HEIGHT, backgroundColor: 'black', flexGrow: 1
     }} >
-      {!isLoading ?
-        (<View style={{ width: WIDTH, height: HEIGHT, paddingBottom: 50 }}>
-          <Headers
+      <Headers
             Drawericon={{
               visible: true,
             }}
@@ -136,6 +134,9 @@ const Blog = (props) => {
             }}
             BelliconononClick={() => { props.navigation.navigate('Notifications') }}
           />
+      {!isLoading ?
+        (<View style={{ width: WIDTH, height: HEIGHT,flex:1}}>
+          
           <ScrollView nestedScrollEnabled={true} >
             <Divider color="#393939" width={1.2} />
 
@@ -208,9 +209,9 @@ const Blog = (props) => {
                       <Text
                         style={{
                           textAlign: 'left',
-                          fontSize: 15,
+                          fontSize: 17,
                           color: 'black',
-                          fontWeight: "bold"
+                          fontWeight: "600"
                         }}>
                         Subscribe to Newsletter
                       </Text>
@@ -218,11 +219,11 @@ const Blog = (props) => {
                     <View style={{ flex: 0.9, alignItems: 'flex-end', justifyContent: 'flex-end', }}>
                       <View
                         style={{
-                          height: 48,
-                          width: 70,
-                          right:-1,
+                          height: 45,
+                          width: 60,
+                          // right:-1,
                           //  backgroundColor: '#ffcc00', 
-                          borderRadius: 20,
+                          borderRadius: 50,
                         }}>
                         <Image
                           source={require('../assets/arrowWhiteBack.png')}
@@ -246,8 +247,8 @@ const Blog = (props) => {
               <View style={{ flex: 1 }}>
                 <Text
                   style={{
-                    marginLeft: 20,
-                    fontSize: 15,
+                    marginLeft: 15,
+                    fontSize: 18,
                     color: 'white',
                     fontWeight: "500"
                   }}>
@@ -305,8 +306,8 @@ const Blog = (props) => {
               <View style={{ flex: 1 }}>
                 <Text
                   style={{
-                    marginLeft: 20,
-                    fontSize: 15,
+                    marginLeft: 15,
+                    fontSize: 18,
                     color: 'white',
                     fontWeight: "500"
                   }}>
@@ -317,13 +318,14 @@ const Blog = (props) => {
             <FlatList
               numColumns={2}
               showsHorizontalScrollIndicator={true}
-              keyExtractor={(_, index) => index}
+              keyExtractor={(item, index) => String(index)}
               data={Blogcategorylist}
-              style={{ margin: 0 ,paddingBottom:20}}
-              renderItem={({ item }) => (
+              // style={{ margin: 0}}
+              renderItem={({ item,index }) => {
+              return(
                 <TouchableOpacity
                   onPress={() => {
-                    gotoCategory(item);
+                    gotoCategory(item)
                   }}>
                   <View
                     style={{
@@ -331,7 +333,7 @@ const Blog = (props) => {
                       backgroundColor: 'white',
                       height: 180,
                       width: WIDTH * 0.45,
-                      borderRadius: 15,
+                      borderRadius: 20,
                       marginBottom: 10,
                       marginHorizontal: 10,
                       justifyContent: "center",
@@ -340,7 +342,7 @@ const Blog = (props) => {
 
                     <View
                       style={{
-                        width: WIDTH * 0.45, height: 180, borderRadius: 15,
+                        width: WIDTH * 0.45, height: 180, borderRadius: 20,
                         justifyContent: "flex-start", alignItems: "flex-start"
                       }}>
                       <Image
@@ -349,19 +351,20 @@ const Blog = (props) => {
                         style={{
                           width: "100%",
                           height: "100%",
-                          borderRadius: 15,
+                          borderRadius: 20,
                           alignSelf: 'center',
                         }}
                       />
-                      <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 15 }}>
-                        <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name}</Text>
+                      <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
+                        <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "500" }}>{item?.cat_name}</Text>
 
                       </View>
 
                     </View>
                     <View style={{
-                      justifyContent: "center",
-                      alignItems: 'center', position: "absolute", width: 40, height: 30, bottom: 0, right: 0
+                      justifyContent: "flex-end",
+                      alignItems: 'flex-end', 
+                      position: "absolute", width: 40, height: 30, bottom: 0, right: 0
                     }}>
                       <Image resizeMode='contain'
                         source={require('../assets/arrowWhiteBack.png')}
@@ -369,7 +372,7 @@ const Blog = (props) => {
                           width: "100%",
                           height: "100%",
                           alignSelf: 'center',
-                          borderBottomRightRadius: 15,
+                          borderBottomRightRadius: 20,
 
                         }}
                       />
@@ -430,7 +433,7 @@ const Blog = (props) => {
                     </View>
                   </BackgroundImage> */}
                 </TouchableOpacity>
-              )}
+              )}}
             />
 
             {NewsletterPopup ? (
@@ -504,8 +507,8 @@ const Blog = (props) => {
                               source={require('../assets/newslogo.png')}
                               style={{ width: "100%", height: 190, borderTopLeftRadius: 20, borderTopRightRadius: 20, justifyContent: "center", alignSelf: "center" }} />
 
-                            <View style={{ position: "absolute", marginLeft: 110, justifyContent: "center", alignItems: "center" }}>
-                              <Text style={{ marginTop: 15, textAlign: 'center', fontSize: 15, color: 'white', fontWeight: "bold" }}>Subscribe News Letter</Text>
+                            <View style={{ marginTop: 20,position: "absolute", marginLeft: 110, justifyContent: "center", alignItems: "center" }}>
+                              <Text style={{  textAlign: 'center', fontSize: 17, color: 'white', fontWeight: "600" }}>Subscribe News Letter</Text>
                             </View>
 
                           </View>

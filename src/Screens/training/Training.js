@@ -9,7 +9,18 @@ import Share from 'react-native-share';
 import { Pages } from 'react-native-pages';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import VideoPlayer from 'react-native-video-controls';
- 
+// third parties
+import TrackPlayer, { RepeatMode } from 'react-native-track-player';
+// import { useTrackPlayerProgress} from 'react-native-track-player/lib/hooks';
+import { useProgress } from 'react-native-track-player';
+
+//styles
+import { styles } from "./styles";
+//svg
+// import PauseSvg from "../../Screens/assets/pause-button.png";
+// import PlaySvg from "../../Screens/assets/play-button.png";
+// import MoreSvg from "../../Screens/assets/stop-audio.png";
+
 
 
 var WIDTH = Dimensions.get('window').width;
@@ -21,14 +32,64 @@ const Training = (props) => {
   const [videomodal, setVideoModal] = useState(false);
   const [trainingBlog_list, setTrainingBlog_list] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [imagebaseurl, setImagebaseurl] = useState('');
-  const [audiobaseurl, setAudiobaseurl] = useState('');
-  const [videobaseurl, setVideobaseurl] = useState('');
+  const [imagebaseurl, setImagebaseurl] = useState("");
+  const [audiobaseurl, setAudiobaseurl] = useState("");
+  const [videobaseurl, setVideobaseurl] = useState("");
   const [fullScreen, setFullScreen] = useState(false);
 
+  // console.log('audio123456:', audiobaseurl + "" + trainingBlog_list[0]?.training_audio[0]);
+  // const { position, duration } = useTrackPlayerProgress(250);
+  const { position, duration } = useProgress(250);
+  const [flag, setFlag] = useState(false);
+  const audioPercentage = (position / duration) * 100;
 
-  // const ref = React.useRef(null);
+  useEffect(() => {
+    WorkoutSubCategorytraininglist()
+    // addAudio()
+    return () => {
+      pauseAudio()
+      // stopAudio()
+    }
+  }, []);
 
+  // useEffect(() => {
+  //   addAudio()
+
+  // }, [trainingBlog_list]);
+
+
+
+  //function : music function
+  // const musicData = {
+  //   id: 'trackId',
+  //   url: `${audiobaseurl + trainingBlog_list[0]?.training_audio[0]}`,
+  //   title: 'brandnue',
+  //   artist: 'brandnue',
+  // }
+  // "https://dev.pop-fiit.com/upload/training_audio/20220915_1663232323_13199.mp3"
+  //function : audio function
+  const addAudio = async (musicData) => {
+    // RepeatMode(musicData)
+
+    await TrackPlayer?.setupPlayer();
+  
+    // Add a track to the queue
+    // console.log('amittracklist:', musicData);
+    // setRepeatMode(Track)
+    await TrackPlayer.add(musicData);
+  }
+  
+  const playAudio = async () => {
+    await TrackPlayer?.play()
+    setFlag(true)
+  }
+  const pauseAudio = async () => {
+    await TrackPlayer?.pause()
+    setFlag(false)
+  }
+  // const stopAudio = async () => {
+  //   await TrackPlayer?.stop()
+  // }
 
   const MycustomonShare = async () => {
 
@@ -49,17 +110,28 @@ const Training = (props) => {
       console.log('ERROR=>', error);
     }
   };
-  useEffect(() => {
-    WorkoutSubCategorytraininglist();
-  }, []);
 
-  console.log("Tainingcat_id_item...............:", props?.route?.params?.Tainingcat_id);
+  const gotoAudiolist = () => {
+    props.navigation.navigate("Audiolist", {
+      catgid: props?.route?.params?.Tainingcat_id,
+      subcatid: Trainingsubcat_data
+    })
+  }
+  const gotoVideolist = () => {
+    props.navigation.navigate("Videolist", {
+      catgid: props?.route?.params?.Tainingcat_id,
+      subcatid: Trainingsubcat_data
+    })
+  }
+
+  // console.log("Tainingcat_id_item...............:", props?.route?.params?.Tainingcat_id);
   const Tainingcat_id = props?.route?.params?.Tainingcat_id
 
-  console.log("Trainingsubcat_Data...............:", props?.route?.params?.Trainingsubcat_data?.id);
+  // console.log("Trainingsubcat_Data...............:", props?.route?.params?.Trainingsubcat_data?.id);
   const Trainingsubcat_data = props?.route?.params?.Trainingsubcat_data?.id
 
   const WorkoutSubCategorytraininglist = async () => {
+
     const usertkn = await AsyncStorage.getItem("authToken");
     setIsLoading(true);
     try {
@@ -67,7 +139,7 @@ const Training = (props) => {
       console.log(":::::::::TrainingCategoryListAPI_Response>>>", response.data.message);
 
       console.log("TrainingCategoryListAPI_data::::::", response.data.blog_list);
-      setIsLoading(false);
+
       console.log("imageurl::", response.data.training_image);
       console.log("AUDIO_url::", response.data.training_audio);
       console.log("Video_url::", response.data.training_video);
@@ -75,8 +147,18 @@ const Training = (props) => {
       setAudiobaseurl(response.data.training_audio);
       setVideobaseurl(response.data.training_video);
       setTrainingBlog_list(response.data.blog_list);
-      // setyoutubelink(response.data.blog_list.youtube_link)
 
+      const musicData = {
+        id: 'trackId',
+        url: `${response.data.training_audio + response.data.blog_list[0]?.training_audio}`,
+        title: 'brandnue',
+        artist: 'brandnue',
+      }
+      console.log('addAudio(musicData)',musicData);
+      // setyoutubelink(response.data.blog_list.youtube_link)
+      setIsLoading(false);
+
+      addAudio(musicData)
 
 
     }
@@ -123,7 +205,7 @@ const Training = (props) => {
                     // backgroundColor: '#f7f7f7',
                     backgroundColor: 'gray',
                     height: 190,
-                    width: WIDTH * 0.92,
+                    width: WIDTH * 0.96,
                     marginTop: 15,
                     borderRadius: 20,
                     marginHorizontal: 8,
@@ -153,22 +235,22 @@ const Training = (props) => {
 
                   </View>
                   <View style={{ marginLeft: 15, height: 50, width: WIDTH * 0.92, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
-                    <Text style={{ textAlign: 'left', fontSize: 18, color: '#000', fontWeight: "500" }} >{trainingBlog_list[0]?.training_title}</Text>
+                    <Text style={{ textAlign: 'left', fontSize: 17, color: '#000', fontWeight: "500" }} >{trainingBlog_list[0]?.training_title}</Text>
                   </View>
 
-                  <View style={{ marginHorizontal: 20, marginTop: 5, height: "auto", width: WIDTH * 0.92, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}>
+                  <View style={{ marginHorizontal: 20, marginTop: 1, height: "auto", width: WIDTH * 0.92, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}>
                     <Text style={{ textAlign: 'left', fontSize: 12, color: '#000' }}>{trainingBlog_list[0].image_description}</Text>
                   </View>
 
                   {/* Training video */}
                   <View style={{ marginTop: 30, height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
                     <View style={{ flex: 0.8 }}>
-                      <Text style={{ marginLeft: 20, fontSize: 16, color: 'black', fontWeight: "500" }}>Training Videos</Text>
+                      <Text style={{ marginLeft: 20, fontSize: 17, color: 'black', fontWeight: "500" }}>Training Videos</Text>
                     </View>
                     <View style={{ flex: 0.25, right: 10, }}>
-                      <TouchableOpacity onPress={() => props.navigation.navigate("TrainingDetail")}>
+                      <TouchableOpacity onPress={() => { gotoVideolist() }}>
                         <View style={{ borderRadius: 50, height: 30, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center', }}>
-                          <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 9, color: 'white', fontWeight: "500" }}>View All</Text>
+                          <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 12, color: 'white', fontWeight: "500" }}>View All</Text>
                         </View>
                       </TouchableOpacity>
                     </View>
@@ -190,34 +272,43 @@ const Training = (props) => {
                         // </TouchableOpacity>
                         <>
                           <View style={{
-                          height: '100%',
-                          overflow: "hidden",
-                          width: WIDTH * 0.9,
-                          borderRadius: 20,
-                          justifyContent: 'center',
-                          // alignSelf: "auto"
+                            height: 150,
+                            overflow: "hidden",
+                            width: WIDTH * 0.6,
+                            borderRadius: 20,
+                            marginHorizontal: 10,
+                            marginVertical:10,
+                            justifyContent: 'center',
+                            // alignSelf: "auto"
 
-                        }}>
-                          <WebView
-                            source={{ uri: "https://dev.pop-fiit.com/upload/training_video/20220929_1664457751_54648.mp4" }}
-                          />
+                          }}>
+                            <WebView
+                              source={{
+                                uri:
+                                  "https://www.youtube.com/embed/3STTSi_jdHk"
+                                  // "https://dev.pop-fiit.com/upload/training_video/20220929_1664457751_54648.mp4" 
+                                  // `${videobaseurl + item.training_video}`
+                              }}
+                            />
 
 
-                        </View>
-                          </>
+                          </View>
+                        </>
                       )
                     }}
                   />
 
                   {/* Training Audio */}
-                  <View style={{ marginTop: 10, height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
+                  <View style={{ marginTop: 1, height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
                     <View style={{ flex: 0.8 }}>
-                      <Text style={{ marginLeft: 20, fontSize: 16, color: 'black', fontWeight: "500" }}>Training Audio</Text>
+                      <Text style={{ marginLeft: 20, fontSize: 17, color: 'black', fontWeight: "500" }}>Training Audio</Text>
                     </View>
                     <View style={{ flex: 0.25, right: 10, }}>
-                      <TouchableOpacity onPress={() => props.navigation.navigate("TrainingDetail")}>
+                      <TouchableOpacity onPress={() => { 
+                        // gotoAudiolist() 
+                        }}>
                         <View style={{ borderRadius: 50, height: 30, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center', }}>
-                          <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 9, color: 'white', fontWeight: "500" }}>View All</Text>
+                          <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 12, color: 'white', fontWeight: "500" }}>View All</Text>
                         </View>
                       </TouchableOpacity>
                     </View>
@@ -230,16 +321,70 @@ const Training = (props) => {
                     data={trainingBlog_list}
                     keyExtractor={(item, index) => String(index)}
                     renderItem={({ item, index }) => {
-                      console.log("1st flastlist video:", item.id)
-                      return (
-                        // <TouchableOpacity onPress={() => setVideoModal(true)}
-                        //   style={{ marginLeft: 10, height: 150, width: WIDTH * 0.55, backgroundColor: "gray", marginVertical: 10, borderRadius: 20, justifyContent: "flex-start", alignItems: "flex-start" }}>
 
-                        // </TouchableOpacity>
-                        <View style={{ marginLeft: 10, height: 150, width: WIDTH * 0.55, backgroundColor: "gray", marginVertical: 10, borderRadius: 20, justifyContent: "flex-start", alignItems: "flex-start" }}>
-                          <Text>
-                            Play Audio
+                      return (
+                        <View style={styles.audioPlayerView}>
+                          {
+                            flag
+                              ?
+                              <TouchableOpacity
+                                onPress={pauseAudio}
+                              >
+                                {/* <PauseSvg /> */}
+                                <Image
+                                  source={require('../assets/pause-button.png')}
+                                  resizeMode="contain"
+                                  style={{
+                                    width: 30,
+                                    height: 30,
+                                    alignSelf: 'center',
+                                  }}
+                                />
+                              </TouchableOpacity>
+                              :
+                              <TouchableOpacity
+                                onPress={playAudio}
+                              >
+                                {/* <PlaySvg /> */}
+                                <Image
+                                  source={require('../assets/play-button.png')}
+                                  resizeMode="contain"
+                                  style={{
+                                    width: 30,
+                                    height: 30,
+                                    alignSelf: 'center',
+                                  }}
+                                />
+
+                              </TouchableOpacity>
+                          }
+                          <Text style={{ color: 'black' }}>
+                            {(position / 60).toFixed(2)}
                           </Text>
+                          <View style={styles.audioTimeDurationView}>
+                            <View style={styles.audioProgressView}>
+                              <View style={{ ...styles.audioActiveProgress, width: `${audioPercentage}%` }} />
+                              <View style={{ ...styles.audioInAtiveProgress, width: `${100 - audioPercentage}%` }} />
+                            </View>
+                            <View style={{ ...styles.audioActiveDotView, left: `${audioPercentage}%` }} />
+                          </View>
+                          <Text style={{ color: 'black' }}>
+                            {(duration / 60).toFixed(2)}
+                          </Text>
+                          {/* <TouchableOpacity
+                            onPress={stopAudio}
+                          >
+                           
+                            <Image
+                                source={require('../assets/stop-audio.png')}
+                                resizeMode="contain"
+                                style={{
+                                  width: 30,
+                                  height: 30,
+                                  alignSelf: 'center',
+                                }}
+                              />
+                          </TouchableOpacity> */}
                         </View>
                       )
                     }}
@@ -320,7 +465,7 @@ const Training = (props) => {
                     width: 200,
                     height: 120, alignSelf: 'center'
                   }} />
-                <Text style={{ fontSize: 14, fontWeight: "bold" }}>No data found</Text>
+                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>Oops! No data found</Text>
               </View>)
           }
 
@@ -335,4 +480,4 @@ const Training = (props) => {
 
   );
 }
-export default Training;
+export default React.memo(Training);

@@ -585,7 +585,7 @@ const OrderDetail = (props) => {
                                         width: 200,
                                         height: 120, alignSelf: 'center'
                                     }} />
-                                <Text style={{ fontSize: 14, fontWeight: "bold" }}>Oops, order list is empty !</Text>
+                                <Text style={{fontSize: 14, fontWeight: "500", color: 'black' }}>Oops, order list is empty !</Text>
                             </View>)
                         }
                     </ScrollView>

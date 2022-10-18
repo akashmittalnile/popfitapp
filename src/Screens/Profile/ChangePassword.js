@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, Modal, SafeAreaView } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, Modal, SafeAreaView,Dimensions } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';
@@ -13,10 +13,15 @@ import { API } from '../../Routes/Urls';
 import * as yup from 'yup'
 import { Formik } from 'formik'
 import Headers from '../../Routes/Headers';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+var WIDTH = Dimensions.get('window').width;
+var HEIGHT = Dimensions.get('window').height;
+
 
 const ChangePassword = (props) => {
 
-    const [ChangePasswordPopUp, setChangePasswordPopUp] = React.useState(false);
+    const [ChangePasswordPopUp, setChangePasswordPopUp] = useState(false);
     const [AlertMsg, setAlertMsg] = useState("");
     const [Msg, setMsgAlert] = useState(false);
 
@@ -25,9 +30,9 @@ const ChangePassword = (props) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const buttonClickedHandler = () => {
-        setChangePasswordPopUp(!ChangePasswordPopUp)
+        setChangePasswordPopUp(false)
             // props.navigation.navigate("MyProfile")
-            .props.navigation.reset(
+            props.navigation.reset(
                 {
                     index: 0,
                     routes: [{ name: 'MyProfile' }]
@@ -36,6 +41,7 @@ const ChangePassword = (props) => {
 
 
     const ChangeAPI = async (values) => {
+        const usertkn = await AsyncStorage.getItem("authToken");
         const data = {
             old_password: values.old_pswd,
             new_password: values.password,
@@ -44,10 +50,10 @@ const ChangePassword = (props) => {
         console.log(".......userInputdata", data);
         setIsLoading(true);
         try {
-            const response = await axios.post(`${API.CHANGE_PSWD}`, data);
+            const response = await axios.post(`${API.CHANGE_PSWD}`, data,{ headers: { "Authorization": ` ${usertkn}` } });
             console.log("inputdata...", response.data);
             console.log("ResponseChangePsswd ::::", response.data.status);
-            if (response.data.status != 0) {
+            if (response.data.status == 1) {
                 setChangePasswordPopUp(!ChangePasswordPopUp)
                 console.log("User_change_psswd_successfully...>>>", response.data.message);
                 setIsLoading(false)
@@ -68,7 +74,10 @@ const ChangePassword = (props) => {
 
     return (
         <SafeAreaView style={{
-            height: "100%"
+            flex: 1,
+            width: WIDTH,
+            height: HEIGHT, flexGrow: 1
+
         }} >
             <Headers
                 Backicon={{
@@ -88,7 +97,7 @@ const ChangePassword = (props) => {
                 BelliconononClick={() => { props.navigation.navigate("Notifications") }}
             />
 
-            <View style={{ height: "100%" }}>
+            <View style={{ height: "100%",width:"100%",flex:1 }}>
 
                 <Formik
                     initialValues={{
@@ -118,18 +127,21 @@ const ChangePassword = (props) => {
                         <View style={{ height: 1390, marginTop: 15 }}>
                             <View style={{
                                 marginHorizontal: 15,
-                                borderRadius: 15,
+                                borderRadius: 20,
                                 backgroundColor: 'white',
                                 marginTop: 20,
                                 borderColor: "#bbbaba",
                                 borderWidth: 1,
-                                height: 300
+                                height: 310
                             }}>
-                                <Text style={{ marginLeft: 25, marginTop: 20, textAlign: 'left', fontSize: 16, color: 'black', }}>Change Password</Text>
+                                <View style={{ marginLeft: 15, marginTop: 20, }}>
+                                    <Text style={{ textAlign: 'left', fontSize: 18, color: '#455A64', fontWeight: "500" }}>Change Password</Text>
+                                </View>
+
 
                                 <View style={{ marginTop: 15 }}>
                                     <View style={{
-                                        borderRadius: 25, margin: 10,
+                                        borderRadius: 20, margin: 10,
                                         height: 45,
                                         shadowColor: '#11032586',
                                         backgroundColor: 'white',
@@ -229,7 +241,7 @@ const ChangePassword = (props) => {
                                     handleSubmit(values);
                                     // ChangeAPI(values)
                                 }}>
-                                    <View style={{ justifyContent: 'center', width: 150,height:34,backgroundColor: '#ffcc00', borderRadius: 50, marginLeft: 10 }}>
+                                    <View style={{ justifyContent: 'center', width: 120, height: 34, backgroundColor: '#ffcc00', borderRadius: 50, marginLeft: 10 }}>
 
                                         <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', }}>Save</Text>
 
@@ -249,7 +261,7 @@ const ChangePassword = (props) => {
                         transparent={true}
                         visible={ChangePasswordPopUp}
                         onRequestClose={() => {
-                            setChangePasswordPopUp(!ChangePasswordPopUp);
+                            setChangePasswordPopUp(false);
                         }}>
                         <View
                             style={{
@@ -260,30 +272,22 @@ const ChangePassword = (props) => {
                             }}>
                             <View
                                 style={{
-                                    margin: 10,
+                                    margin: 2,
                                     backgroundColor: 'white',
                                     borderRadius: 20,
-                                    //paddingTop: 40,
-
+                                    width: "98%",
                                     alignItems: 'center',
                                     shadowColor: '#000',
-                                    shadowOffset: {
-                                        width: 0,
-                                        height: 2,
-                                    },
                                     shadowOpacity: 0.25,
                                     shadowRadius: 4,
-                                    elevation: 5,
+                                    elevation: 6,
                                 }}>
 
                                 <View style={{
-                                    backgroundColor: 'white',
                                     height: 320,
-                                    //marginHorizontal: 10,
-
+                                    width: "100%",
                                     marginHorizontal: 30,
                                     borderRadius: 10,
-
                                     alignItems: 'center',
                                     flexDirection: 'column'
                                 }}>
@@ -291,14 +295,17 @@ const ChangePassword = (props) => {
                                         <Image source={require('../assets/congrats.png')}
                                             style={{ alignSelf: 'center', width: '100%', height: '100%', borderRadius: 15 }} />
                                     </View>
-                                    <Text style={{ marginTop: 25, marginHorizontal: 80, textAlign: 'center', fontSize: 15, color: 'black', }}>Password Changed Successfully</Text>
+                                    <View style={{marginTop: 25,width:"50%"}}>
+                                    <Text style={{ textAlign: 'center', fontSize: 15, color: 'black', }}>Password Changed Successfully</Text>
+                                    </View>
+                                    
                                     <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 50, marginHorizontal: 20, marginTop: 30 }}>
 
 
-                                        <TouchableOpacity onPress={buttonClickedHandler}>
-                                            <View style={{ alignItems: 'center', justifyContent: 'center', width: 140, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
+                                        <TouchableOpacity onPress={()=>{buttonClickedHandler()}}>
+                                            <View style={{ alignItems: 'center', justifyContent: 'center', width: 110,  height:34, backgroundColor: '#ffcc00', borderRadius: 50 }}>
 
-                                                <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Close</Text>
+                                                <Text style={{ textAlign: 'center', fontSize: 15, color: 'white',fontWeight:"400" }}>Close</Text>
 
                                             </View>
                                         </TouchableOpacity>

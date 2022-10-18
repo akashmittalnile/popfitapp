@@ -66,7 +66,7 @@ const Home = (props) => {
     })
   };
   const gotoTrainingsubcatgory = (item) => {
-
+// console.log("trainingdata:",item)
     props.navigation.navigate("OutdoorTrainning", {
       TrainingID: item
     })
@@ -85,9 +85,7 @@ const Home = (props) => {
 
   }, []);
 
-  // const Responsefun = ()=>{
-
-  // }
+  
 
   const StoresProductget = async () => {
     setIsLoading(true);
@@ -110,32 +108,14 @@ const Home = (props) => {
       setIsLoading(false);
     }
     catch (error) {
-      // console.log("......error.........", error.response.data.message);
+      console.log(".....Home.error.........", error.response.data.message);
       setIsLoading(false);
 
     }
 
   };
 
-  // const NewBlogget = async () => {
-  //   try {
-  //     const response = await axios.get(`${API.HOME_BLOG_LIST}`);
-  //     console.log(":::::::::NewBlog_Response>>>", response.data.blog);
-  //     setNewblogitem(response.data.blog);
-
-
-  //     // setIsLoading(false);
-  //   }
-  //   catch (error) {
-
-  //     console.log("......error.........", error.response.data.message);
-  //     // setIsLoading(false);
-
-  //   }
-
-  // };
-
-  return (
+return (
     <SafeAreaView style={{
       flex: 1,
       width: '100%',
@@ -222,12 +202,12 @@ const Home = (props) => {
               {/* //trainingCategory/// */}
               <View style={{ marginTop: 30, height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
                 <View style={{ flex: 0.8 }}>
-                  <Text style={{ marginLeft: 20, fontSize: 16, color: 'white', fontWeight: "bold" }}>Training Categories</Text>
+                  <Text style={{ marginLeft: 20, fontSize: 17, color: 'white', fontWeight: "bold" }}>Training Categories</Text>
                 </View>
                 <View style={{ flex: 0.25, right: 10, }}>
                   <TouchableOpacity onPress={() => props.navigation.navigate("TrainingDetail")}>
                     <View style={{ borderRadius: 50, height: 30, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center',  }}>
-                      <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 9, color: 'white', fontWeight: "bold" }}>Explore Training</Text>
+                      <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 10, color: 'white', fontWeight: "400" }}>Explore Trainings</Text>
                     </View>
                   </TouchableOpacity>
                 </View>
@@ -342,12 +322,12 @@ const Home = (props) => {
 
               <View style={{ marginTop: 10, height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
                 <View style={{ flex: 0.8 }}>
-                  <Text style={{ marginLeft: 20, fontSize: 16, color: 'white', fontWeight: "bold" }}>New Blogs</Text>
+                  <Text style={{ marginLeft: 20, fontSize: 17, color: 'white', fontWeight: "bold" }}>New Blogs</Text>
                 </View>
                 <View style={{ flex: 0.25, right: 10 }}>
                   <TouchableOpacity onPress={() => { gotoBlog() }}>
                     <View style={{ borderRadius: 24, height: 30, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
-                      <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 9, color: 'white', fontWeight: "bold" }}>Explore Blogs</Text>
+                      <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 10, color: 'white', fontWeight: "400" }}>Explore Blogs</Text>
                     </View>
                   </TouchableOpacity>
                 </View>
@@ -426,12 +406,12 @@ const Home = (props) => {
               {/* //New Recipes & Tips  container//// */}
               <View style={{ marginTop: 10, height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between' }}>
                 <View style={{ flex: 0.8 }}>
-                  <Text style={{ marginLeft: 20, fontSize: 16, color: 'white', fontWeight: "bold" }}>New Recipes & Tips</Text>
+                  <Text style={{ marginLeft: 20, fontSize: 17, color: 'white', fontWeight: "bold" }}>New Recipes & Tips</Text>
                 </View>
                 <View style={{ flex: 0.25, right: 10 }}>
                   <TouchableOpacity onPress={() => { gotoRecipecategory() }}>
                     <View style={{ borderRadius: 24, height: 30, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
-                      <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 9, color: 'white', fontWeight: "bold" }}>Explore Recipe</Text>
+                      <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 10, color: 'white', fontWeight: "400" }}>Explore Recipes</Text>
                     </View>
                   </TouchableOpacity>
                 </View>
@@ -516,12 +496,12 @@ const Home = (props) => {
               {/* //store/// */}
               <View style={{ marginTop: 10, height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
                 <View style={{ flex: 0.8 }}>
-                  <Text style={{ marginLeft: 20, fontSize: 16, color: 'white', fontWeight: "bold" }}>Fitness Equipment Store</Text>
+                  <Text style={{ marginLeft: 20, fontSize: 17, color: 'white', fontWeight: "bold" }}>Fitness Equipment Store</Text>
                 </View>
                 <View style={{ flex: 0.25, right: 10, }}>
                   <TouchableOpacity onPress={() => { gotoShop() }}>
                     <View style={{ borderRadius: 24, height: 30, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
-                      <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 9, color: 'white', fontWeight: "bold" }}>Explore Shop</Text>
+                      <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 10, color: 'white', fontWeight: "400" }}>Explore Store</Text>
                     </View>
                   </TouchableOpacity>
                 </View>
@@ -607,12 +587,12 @@ const Home = (props) => {
               {/* //clothing store view// */}
               <View style={{ marginTop: 10, height: 45, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1 }}>
                 <View style={{ flex: 0.8 }}>
-                  <Text style={{ marginLeft: 20, fontSize: 16, color: 'white', fontWeight: "bold" }}>Clothing Store </Text>
+                  <Text style={{ marginLeft: 20, fontSize: 17, color: 'white', fontWeight: "bold" }}>Clothing Store </Text>
                 </View>
                 <View style={{ flex: 0.25, right: 10 }}>
                   <TouchableOpacity onPress={() => { gotoClothesType() }}>
                     <View style={{ borderRadius: 24, height: 30, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
-                      <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 9, color: 'white', fontWeight: "bold" }}>Explore Store</Text>
+                      <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 10, color: 'white', fontWeight: "400" }}>Explore Store</Text>
                     </View>
                   </TouchableOpacity>
                 </View>

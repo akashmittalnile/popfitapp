@@ -98,8 +98,8 @@ const EditMyProfile = (props) => {
     formdata.append("last_name", lastname);
     formdata.append("phone", mobileno);
     formdata.append("email", email);
-     
-if (profileImage != '') {
+
+    if (profileImage != '') {
       const imageName = profileImage.path.slice(
         profileImage.path.lastIndexOf('/'),
         profileImage.path.length,
@@ -111,9 +111,9 @@ if (profileImage != '') {
         uri: profileImage.path,
       });
     }
-    console.log("upload image",formdata);
+    console.log("upload image", formdata);
     try {
-      const response = await axios.post(`${API.PROFILE_UPDATE}`, formdata, { headers: { "Authorization": ` ${usertkn}`, 'Content-Type': 'multipart/form-data'} });
+      const response = await axios.post(`${API.PROFILE_UPDATE}`, formdata, { headers: { "Authorization": ` ${usertkn}`, 'Content-Type': 'multipart/form-data' } });
       console.log("ResponseProfile_UpdateStatus ::::", response.data);
       // console.log("Profile_Update ::::", response.data.message);
       if (response.data.status == 1) {
@@ -124,7 +124,7 @@ if (profileImage != '') {
         console.log("Profile_Update_else ::::", response.data.message);
         setIsLoading(false);
       }
-}
+    }
     catch (error) {
       Alert.alert("something went wrong user Update Profile catch!")
       // console.log("Profile_Update _error:", error.response.data.message);
@@ -156,7 +156,7 @@ if (profileImage != '') {
         BelliconononClick={() => { props.navigation.navigate("Notifications") }}
       />
       {!isLoading ?
-        (<ScrollView >
+        (<ScrollView>
 
           <View style={{
             marginHorizontal: 15,
@@ -360,13 +360,13 @@ if (profileImage != '') {
 
           <View style={{ marginBottom: 20, flexDirection: 'row', height: 34, marginTop: 40, justifyContent: 'center' }}>
             <TouchableOpacity onPress={() => { buttonClickedHandler() }}>
-              <View style={{ justifyContent: 'center', width: 120, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
+              <View style={{ justifyContent: 'center', width: 110, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
                 <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', }}>Cancel</Text>
               </View>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => { GetProfile() }}>
-              <View style={{ justifyContent: 'center', width: 120, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50, marginLeft: 10 }}>
+              <View style={{ justifyContent: 'center', width: 110, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50, marginLeft: 10 }}>
                 <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', }}>Save</Text>
 
               </View>
@@ -390,30 +390,22 @@ if (profileImage != '') {
                 }}>
                 <View
                   style={{
-                    margin: 10,
+                    margin:2,
                     backgroundColor: 'white',
                     borderRadius: 20,
-                    //paddingTop: 40,
-
+                    width: '98%',
                     alignItems: 'center',
                     shadowColor: '#000',
-                    shadowOffset: {
-                      width: 0,
-                      height: 2,
-                    },
                     shadowOpacity: 0.25,
                     shadowRadius: 4,
-                    elevation: 5,
+                    elevation: 6,
                   }}>
 
                   <View style={{
-                    // backgroundColor: 'white',
                     height: 320,
-                    //marginHorizontal: 10,
-
+                    width: '100%',
                     marginHorizontal: 30,
                     borderRadius: 10,
-
                     alignItems: 'center',
                     flexDirection: 'column'
                   }}>
@@ -421,15 +413,18 @@ if (profileImage != '') {
                       <Image source={require('../assets/congrats.png')}
                         style={{ alignSelf: 'center', width: '100%', height: '100%', borderRadius: 15 }} />
                     </View>
-                    <Text style={{ marginTop: 25, marginHorizontal: 80, textAlign: 'center', fontSize: 15, color: 'black', }}>Profile Details Update
+                    <View style={{marginTop: 25,width:"50%"}}>
+                    <Text style={{ textAlign: 'center', fontSize: 15, color: 'black', }}>Profile Details Update
                       Successfully</Text>
+                    </View>
+                    
                     <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 50, marginHorizontal: 20, marginTop: 30 }}>
 
 
                       <TouchableOpacity onPress={buttonClickedHandler}>
-                        <View style={{ alignItems: 'center', justifyContent: 'center', width: 140, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
+                        <View style={{ alignItems: 'center', justifyContent: 'center', width: 110, height:34, backgroundColor: '#ffcc00', borderRadius: 50 }}>
 
-                          <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Close</Text>
+                          <Text style={{ textAlign: 'center', fontSize: 15, color: 'white',fontWeight:"400" }}>Close</Text>
 
                         </View>
                       </TouchableOpacity>

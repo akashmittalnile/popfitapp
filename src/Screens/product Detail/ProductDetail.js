@@ -129,11 +129,12 @@ const ProductDetail = (props) => {
 
   const ProductADDcart = async () => {
     const usertkn = await AsyncStorage.getItem("authToken");
+   
     // console.log("ADD_productin_QNTY cart.....", countnums);
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.PRODUCT_DETAILS_ADD_ITEM}`, { "qty": countnums, "product_id": productids }, {
-        'headers': { "Authorization": ` ${usertkn}` }
+        // 'headers': { "Authorization": ` ${usertkn}` }
       });
       // console.log(":::::::::ProductADD_Response>>>", response.data.message);
       // console.log("status _ProductADD:", response.data.status);

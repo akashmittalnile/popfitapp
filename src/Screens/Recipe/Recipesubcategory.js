@@ -95,7 +95,7 @@ const Recipesubcategory = props => {
               <ScrollView>
 
 
-                <View style={{ marginTop: 20, height: 30, flexDirection: 'row' }}>
+                <View style={{ marginTop: 10, height: 30, flexDirection: 'row' }}>
                   <View style={{ flex: 1 }}>
                     <Text
                       style={{
@@ -230,7 +230,7 @@ const Recipesubcategory = props => {
                     width: 200,
                     height: 120, alignSelf: 'center'
                   }} />
-                <Text style={{ fontSize: 14, fontWeight: "bold" }}>No data found</Text>
+                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>Oops!, No data found</Text>
               </View>)
           }
         </>)

@@ -31,7 +31,7 @@ const Shop = (props) => {
   const [CartAddedPopUp, setCartAddedPopUp] = useState(false);
   const [shopitems, setshopitems] = useState([]);
 
-  const openDrawer = () => props.navigation.dispatch(DrawerActions.openDrawer());
+  // const openDrawer = () => props.navigation.dispatch(DrawerActions.openDrawer());
 
   const gotoShippingDetail = (item) => {
     props.navigation.navigate('ProductDetail', {
@@ -67,10 +67,10 @@ const Shop = (props) => {
         setFilterPopUp(false)
 
       } else {
-        Alert.alert(" If-else status 0 !");
-        setIsLoading(false);
+        // Alert.alert(" If-else status 0 !");
+        setIsLoading(false)
       }
-
+      setIsLoading(false)
     }
     catch (error) {
       // console.log("......error.........", error.response.data.message);
@@ -280,14 +280,14 @@ const Shop = (props) => {
             showsHorizontalScrollIndicator={true}
             style={{ margin: 0, paddingBottom: 10 }}
             numColumns={2}
-            keyExtractor={(item, index) =>  String(index)}
+
             columnWrapperStyle={{
               flex: 1,
               // justifyContent: "space-around"
             }}
-
+            keyExtractor={(item, index) => String(index)}
             data={shopitems}
-            renderItem={({ item }) => {
+            renderItem={({ item, index }) => {
               return (
                 <TouchableOpacity onPress={() => { gotoShippingDetail(item) }}
                   style={{
@@ -301,16 +301,10 @@ const Shop = (props) => {
                     justifyContent: "center",
                     marginHorizontal: 10,
                     shadowColor: '#000000',
-                    shadowOffset: {
-                      width: 0,
-                      height: 3
-                    },
                     shadowRadius: 5,
                     shadowOpacity: 1.0,
                     elevation: 5,
                     zIndex: 999,
-
-
                   }}>
 
                   <View
@@ -339,28 +333,26 @@ const Shop = (props) => {
                     }}>
                     <Text
                       style={{
-                        marginLeft: 16,
-                        fontSize: 12,
-                        color: 'black', fontWeight: "bold"
+                        marginLeft: 15,
+                        fontSize: 14,
+                        color: 'black', fontWeight: "500"
 
                       }}>
-                      {item?.name?.slice(0, 15) + '...' ? item?.name?.slice(0, 15) + '...' : item?.product_name?.slice(0, 15) + '...'}
+                      {item?.name != null ? item?.name?.slice(0, 15) + '...' : item?.product_name?.slice(0, 15) + '...'}
                     </Text>
 
                     <View
                       style={{
-                        marginLeft: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: -3,
+                        marginLeft: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: -3,
                       }}>
 
                       <Text
                         style={{
                           fontSize: 12,
-                          color: 'black', fontWeight: "bold"
+                          color: 'black', fontWeight: "500"
 
-                        }}>$ {item?.price ? item?.price : item?.product_price}
+                        }}>$ {item?.price != null ? item?.price : item?.product_price}
                       </Text>
-
-
 
                       <View
                         style={{
@@ -484,7 +476,7 @@ const Shop = (props) => {
                     borderRadius: 20,
                     // paddingTop: 20,
                     width: "100%",
-                    height: "35%",
+                    height: 220,
                     // height: "60%",
                     justifyContent: "center",
                     alignItems: 'center',
@@ -499,7 +491,7 @@ const Shop = (props) => {
                   }}>
                   <View
                     style={{
-                      backgroundColor: 'white',
+                      // backgroundColor: 'white',
                       // height: 480,
                       height: "100%",
                       width: "99%",
@@ -857,7 +849,7 @@ const Shop = (props) => {
                     <View
                       style={{
                         height: 200,
-                        marginTop: 20,
+                        marginTop: 2,
                       }}>
                       <View
                         style={{
@@ -872,10 +864,10 @@ const Shop = (props) => {
                           }}>
                           <View
                             style={{
-                              marginTop: 30,
-                              borderRadius: 25,
-                              width: 200,
-                              height: 45,
+                              marginTop: 20,
+                              borderRadius: 50,
+                              width: 150,
+                              height: 34,
                               backgroundColor: '#ffcc00',
                               alignItems: 'center',
                               justifyContent: 'center',
@@ -901,7 +893,7 @@ const Shop = (props) => {
           ) : null}
 
 
-          {CartAddedPopUp ? (
+          {/* {CartAddedPopUp ? (
             <Modal
               animationType="fade"
               transparent={true}
@@ -1169,7 +1161,7 @@ const Shop = (props) => {
                 </View>
               </View>
             </Modal>
-          ) : null}
+          ) : null} */}
         </ScrollView>)
         :
         (<View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions,ActivityIndicator } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ActivityIndicator } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';
@@ -41,7 +41,7 @@ const RecipeDetails = (props) => {
     }
   };
 
-return (
+  return (
     <SafeAreaView style={{
       flex: 1,
       width: WIDTH,
@@ -66,47 +66,52 @@ return (
       />
       {!isLoading ?
         (<View style={{ marginBottom: 60 }}>
-      <ScrollView>
-        <View style={{ paddingBottom: 65 }}>
-          <View style={{ height: 60 }}>
-            <Text style={{ marginLeft: 25, marginTop: 20, textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "500" }}>{recipedetails?.title}</Text>
-          </View>
-          <View style={{
-            marginHorizontal: 20, height: 200, borderRadius: 20, marginVertical: 1, width: WIDTH * 0.9}}>
-            <View style={{
-              height: '100%',
-              overflow: "hidden",
-              width: WIDTH * 0.9,
-              borderRadius: 20,
-              justifyContent: 'center',
-              alignSelf: "auto",
+          <ScrollView>
+            <View style={{ paddingBottom: 65 }}>
+            <View style={{ marginLeft: 15,marginTop: 2, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
+                <Text style={{textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "500" }}>{recipedetails?.title}</Text>
+              </View>
+              <View style={{
+                marginHorizontal: 20, height: 200, borderRadius: 20, marginVertical: 1, width: WIDTH * 0.9
               }}>
-              <WebView
-                source={{ uri: recipedetails?.youtube_link }}
-              />
-</View>
+                <View style={{
+                  height: '100%',
+                  overflow: "hidden",
+                  width: WIDTH * 0.9,
+                  borderRadius: 20,
+                  justifyContent: 'center',
+                  alignSelf: "auto",
+                }}>
+                  <WebView
+                    source={{ uri: recipedetails?.youtube_link }}
+                  />
+                </View>
 
-          </View>
+              </View>
+              <View style={{ marginHorizontal: 20, marginTop: 15, height: "auto", width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}>
+                <Text style={{ textAlign: 'left', fontSize: 12, color: '#000', fontWeight: "400" }}>{recipedetails?.youtube_description}</Text>
+              </View>
 
-          <Text style={{ marginHorizontal: 20, marginTop: 10, textAlign: 'left', fontSize: 12, color: '#000', }}>{recipedetails?.youtube_description}</Text>
+              <View style={{ marginLeft: 20, marginTop: 5, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
+                <Text style={{ textAlign: 'left', fontSize: 18, color: '#000', fontWeight: "500" }} >{recipedetails?.recipe_title}</Text>
+              </View>
 
-          <Text style={{ marginLeft: 20, textAlign: 'left', marginTop: 20, fontSize: 18, color: '#000', fontWeight: "500" }} >{recipedetails?.recipe_title}</Text>
-
-
-          <View style={{ backgroundColor: "white", borderRadius: 20, marginTop: 20, height: HEIGHT * 0.2, width: WIDTH * 0.9, marginHorizontal: 18, }}>
-            <Image resizeMode='contain'
-              source={{ uri: recipedetails?.image }} style={{ width: '100%', height: '100%', justifyContent: "center", alignItems: 'center', borderRadius: 20,backgroundColor: "lightgray" }}
-            />
-          </View>
-
-          <Text style={{ marginHorizontal: 20, marginTop: 20, textAlign: 'left', fontSize: 12, color: '#000', }}>{recipedetails?.recipe_description}</Text>
-        </View>
-      </ScrollView>
-      </View>)
-       :
-       (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-         <ActivityIndicator size="large" color="#ffcc00" />
-       </View>)}
+              <View style={{ backgroundColor: "white", borderRadius: 20, marginTop: 20, height: HEIGHT * 0.2, width: WIDTH * 0.9, marginHorizontal: 18, }}>
+                <Image resizeMode='contain'
+                  source={{ uri: recipedetails?.image }}
+                  style={{ width: '100%', height: '100%', justifyContent: "center", alignItems: 'center', borderRadius: 20, backgroundColor: "lightgray" }}
+                />
+              </View>
+              <View style={{ marginHorizontal: 20, marginTop: 15, height: "auto", width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}>
+                <Text style={{ textAlign: 'left', fontSize: 12, color: '#000',fontWeight:"400" }}>{recipedetails?.recipe_description}</Text>
+              </View>
+            </View>
+          </ScrollView>
+        </View>)
+        :
+        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <ActivityIndicator size="large" color="#ffcc00" />
+        </View>)}
     </SafeAreaView>
   );
 }

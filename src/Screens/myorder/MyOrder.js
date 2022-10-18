@@ -221,16 +221,16 @@ const MyOrder = (props) => {
                                     vertical
                                     data={ordereditem}
                                     keyExtractor={(_e, index) => index}
-                                    style={{ margin: 10 }}
+                                    // style={{ margin: 10 }}
                                     scrollEnabled={false}
                                     renderItem={({ item }) => {
                                         return <View style={{
-                                            marginHorizontal: 6,
+                                            marginHorizontal: 10,
                                             height: 240,
-                                            width: WIDTH * 0.97,
+                                            width: WIDTH * 0.95,
                                             borderRadius: 10,
                                             backgroundColor: 'white',
-                                            width: 380,
+                                            // width: 380,
                                             justifyContent: "center",
                                             alignItems: "center",
                                             shadowColor: '#000000',
@@ -246,7 +246,7 @@ const MyOrder = (props) => {
     
                                                 <View style={{ height: 30, marginTop: 1, justifyContent: 'flex-start', alignItems: "flex-start", marginLeft: 1, }}>
     
-                                                    <Text style={{ fontSize: 14, color: 'black', fontWeight: "bold" }}>Order No. : <Text style={{ fontSize: 14, color: '#FFCC00', }}> {item.order_number}</Text></Text>
+                                                    <Text style={{ fontSize: 14, color: '#455A64', fontWeight: "500" }}>Order No. : <Text style={{ fontSize: 14, color: '#FFCC00', }}> {item.order_number}</Text></Text>
     
     
                                                 </View>
@@ -259,8 +259,8 @@ const MyOrder = (props) => {
                                                                 height: 13,
                                                             }} />
                                                     </View>
-                                                    <View style={{ marginLeft: 0, }}>
-                                                        <TouchableOpacity>
+                                                    <View>
+                                                        <TouchableOpacity style={{marginLeft:-10}}>
                                                             <Text style={{ textAlign: 'left', fontSize: 10, color: 'white', }}>Download Invoice</Text>
                                                         </TouchableOpacity>
                                                     </View>
@@ -287,7 +287,7 @@ const MyOrder = (props) => {
                                                         resizeMode="contain"
                                                         style={{
                                                             width: "100%",
-                                                            borderRadius: 20,
+                                                            borderRadius: 10,
                                                             height: "100%", alignSelf: 'center',
     
                                                         }}
@@ -298,14 +298,14 @@ const MyOrder = (props) => {
                                                 <View style={{
                                                     justifyContent: "flex-start", alignItems: "flex-start", width: WIDTH * 0.97, marginLeft: 15,
                                                 }}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 15, color: '#000000', fontWeight: "600" }}>{item.product_name.slice(0, 25) + '...'}</Text>
+                                                    <Text style={{ textAlign: 'left', fontSize: 15, color: '#455A64', fontWeight: "600" }}>{item.product_name.slice(0, 25) + '...'}</Text>
     
                                                     <View style={{ marginTop: 6, flexDirection: 'row', justifyContent: "flex-start", alignItems: "flex-start", height: 60, width: WIDTH * 0.97 }}>
     
     
                                                         <View style={{ flexDirection: 'row' }}>
-                                                            <View style={{}}>
-                                                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000' }}>Price : <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#000000' }}>$ {item.product_price}</Text></Text>
+                                                            <View>
+                                                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64' }}>Price : <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#77869E' }}>$ {item.product_price}</Text></Text>
                                                             </View>
     
                                                         </View>
@@ -361,20 +361,20 @@ const MyOrder = (props) => {
                                             <View style={{
                                                 marginTop: 10, flexDirection: 'row', justifyContent: "flex-start", flex: 1, margin: 10, height: 70, width: WIDTH * 0.92
                                             }}>
-                                                <View style={{ marginTop: 8, height: 20, justifyContent: "center", alignItems: "center", flex: 0.3, }}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: 'black', fontWeight: "bold" }}>Order Status :</Text>
+                                                <View style={{ marginTop: 9, height: 20, justifyContent: "center", alignItems: "center", flex: 0.3, }}>
+                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#353535', fontWeight: "500" }}>Order Status :</Text>
                                                 </View>
     
                                                 {item.order_status == "1" ?
                                                     (<View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}>
-                                                        <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>Order placed</Text>
+                                                        <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "400" }}>Order placed</Text>
                                                         <View style={{ marginTop: 6, }}>
-                                                            <Text style={{ textAlign: 'left', fontSize: 9, color: 'black' }}>on {item.created_at}</Text>
+                                                            <Text style={{ textAlign: 'left', fontSize: 9, color: '#455A64',fontWeight: "400" }}>on {item.created_at}</Text>
                                                         </View>
                                                     </View>)
                                                     :
                                                     (
-                                                        <View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}><Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>data not available</Text>
+                                                        <View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}><Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "400" }}>data not available</Text>
                                                         </View>)
     
                                                 }
@@ -405,7 +405,11 @@ const MyOrder = (props) => {
                                 // justifyContent: "center",
                                 alignItems: "center",
                                 flexDirection: "column",
-                                marginTop:160
+                                marginTop:160,
+                                shadowColor: '#000000',
+                            shadowRadius: 6,
+                            shadowOpacity: 1.0,
+                            elevation: 6,
                             }}>
                                 <Image resizeMode='contain'
                                     source={require('../assets/Nodatafound.png')}
@@ -413,7 +417,7 @@ const MyOrder = (props) => {
                                         width: 200,
                                         height: 120, alignSelf: 'center'
                                     }} />
-                                <Text style={{ fontSize: 14, fontWeight: "bold" }}>Oops, order list is empty !</Text>
+                                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black'  }}>Oops, Order list is empty !</Text>
                             </View>)
                         }
                        

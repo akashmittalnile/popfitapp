@@ -106,8 +106,12 @@ const AboutsUs = (props) => {
             </View> */}
             <ScrollView>
                 <View style={{ justifyContent: "center", padding: 10, height: "100%", width: "99.8%", }}>
+
+                    <View style={{ marginLeft: 15, marginTop: 10, }}>
+                        <Text style={{ textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "500" }}>{aboutus.title}</Text>
+                    </View>
                     <View style={{
-                        marginHorizontal: 20, marginTop: 20, height: 190, borderRadius: 20,
+                        marginHorizontal: 10, marginTop: 10, height: 190, borderRadius: 20,
                     }}>
 
                         <Image resizeMode='stretch'
@@ -123,9 +127,12 @@ const AboutsUs = (props) => {
 
                     </View>
 
-                    <Text style={{ marginLeft: 20, marginTop: 20, textAlign: 'left', fontSize: 17, color: 'black', fontWeight: "bold" }}>{aboutus.title}</Text>
 
-                    <Text style={{ marginLeft: 20, marginTop: 10, textAlign: 'left', fontSize: 11, color: 'black', }}>{aboutus.description}</Text>
+
+                    <View style={{ marginLeft: 20, marginTop: 20, height: "auto" }}>
+                        <Text style={{ textAlign: 'left', fontSize: 11, color: 'black', fontWeight: "400" }}>{aboutus.description}</Text>
+                    </View>
+
 
 
 

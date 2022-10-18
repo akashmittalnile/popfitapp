@@ -113,26 +113,28 @@ const Category = (props) => {
             subcategoryitems.length != 0 ?
               (<ScrollView >
                 <View style={{ height: 50, flexDirection: 'row' }}>
-                  <View style={{ flex: 1 }}>
-                    <Text style={{ marginLeft: 15, marginTop: 20, textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "500" }}>Sub-Category Blogs</Text>
+                  <View style={{ flex: 1,marginLeft: 15, marginTop: 20, }}>
+                    <Text style={{  textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "500" }}>Sub-Category Blogs</Text>
                   </View>
 
                 </View>
 
                 <FlatList
                   numColumns={2}
+                  showsHorizontalScrollIndicator={true}
                   // style={{ margin: 10 }}
                   data={subcategoryitems}
-                  renderItem={({ item }) => (
-                    <TouchableOpacity onPress={() => { gotoCategoryListBlog(item) }}>
+                  keyExtractor={(item, index) => String(index)}
+                  renderItem={({ item, index }) => {
+                   return( <TouchableOpacity onPress={() => { gotoCategoryListBlog(item) }}>
                       <View
                         style={{
                           marginTop: 10,
                           backgroundColor: 'white',
                           height: 180,
                           width: WIDTH * 0.45,
-                          borderRadius: 15,
-                          marginBottom: 20,
+                          borderRadius: 20,
+                          marginBottom: 10,
                           marginHorizontal: 10,
                           justifyContent: "center",
                           alignItems: 'center',
@@ -140,7 +142,7 @@ const Category = (props) => {
 
                         <View
                           style={{
-                            width: WIDTH * 0.45, height: 180, borderRadius: 15,
+                            width: WIDTH * 0.45, height: 180, borderRadius: 20,
                             justifyContent: "flex-start", alignItems: "flex-start"
                           }}>
                           <Image
@@ -149,19 +151,21 @@ const Category = (props) => {
                             style={{
                               width: "100%",
                               height: "100%",
-                              borderRadius: 15,
+                              borderRadius: 20,
                               alignSelf: 'center',
                             }}
                           />
-                          <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 15 }}>
-                            <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.subcat_name?.slice(0, 13) + '...'}</Text>
+                          <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
+                            <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "500" }}>{item?.subcat_name?.slice(0, 15) + '...'}</Text>
 
                           </View>
-
+ 
                         </View>
                         <View style={{
-                          justifyContent: "center",
-                          alignItems: 'center', position: "absolute", width: 40, height: 30, bottom: 0, right: 0
+                          justifyContent: "flex-end",
+                          alignItems: 'flex-end', 
+                          position: "absolute", width: 40, height: 30, 
+                          bottom: -1, right: 0
                         }}>
                           <Image resizeMode='contain'
                             source={require('../assets/arrowWhiteBack.png')}
@@ -169,7 +173,7 @@ const Category = (props) => {
                               width: "100%",
                               height: "100%",
                               alignSelf: 'center',
-                              borderBottomRightRadius: 15,
+                              borderBottomRightRadius: 20,
 
                             }}
                           />
@@ -209,8 +213,8 @@ const Category = (props) => {
                           </View>
                         </View>
                       </BackgroundImage> */}
-                    </TouchableOpacity>
-                  )}
+                    </TouchableOpacity>)
+                  }}
                 />
               </ScrollView>)
               :
@@ -224,7 +228,7 @@ const Category = (props) => {
                     width: 200,
                     height: 120, alignSelf: 'center'
                   }} />
-                <Text style={{ fontSize: 14, fontWeight: "bold" }}>No data found</Text>
+                <Text style={{  fontSize: 14, fontWeight: "500", color: 'black'  }}>No data found!</Text>
               </View>)
           }
 

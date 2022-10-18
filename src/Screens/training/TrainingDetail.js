@@ -1,15 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ActivityIndicator } from 'react-native'
-import LinearGradient from 'react-native-linear-gradient';
+import { View, FlatList, Text, TouchableOpacity, Image, SafeAreaView, Dimensions, ActivityIndicator } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { BackgroundImage } from 'react-native-elements/dist/config';
-import { RadioButton } from 'react-native-paper';
-import DropDownPicker from 'react-native-dropdown-picker';
 import { Pages } from 'react-native-pages';
-import styles from '../../Routes/style'
 import { DrawerActions } from '@react-navigation/native';
 import { Divider } from 'react-native-elements';
-import MyTabBar from '../../Routes/MyTabBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
@@ -19,18 +13,13 @@ import Share from 'react-native-share';
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
-// const DATA = ['first row', 'second row', 'third row', 'fourth row'];
-
 const TrainingDetail = (props) => {
 
-    // const gotoCartAdded = () => {
-    //     props.navigation.navigate("CartAdded")
-    // }
     const [isLoading, setIsLoading] = useState(false);
     const [TrainingWorkCatgry, setTrainingWorkCatgry] = useState([]);
 
     const [subscriptiontoken, setsubscriptiontoken] = useState("");
-    const[planid,setPlanId]=useState("");
+    const [planid, setPlanId] = useState("");
 
     const gotoTrainingpersondetails = () => {
         props.navigation.navigate("TrainingPersonaDetail")
@@ -77,7 +66,7 @@ const TrainingDetail = (props) => {
 
     const Checkedtoken = (item) => {
         props.navigation.navigate("OutdoorTrainning", {
-            TrainingData:planid,
+            TrainingData: planid,
             categoryId: item
         })
 
@@ -95,8 +84,8 @@ const TrainingDetail = (props) => {
             // console.log("Traing_Workout_data:::>:::", response.data.data);
             setPlanId(response.data);
             const Selectplainid = JSON.stringify(response.data?.plan_id);
-            await AsyncStorage.setItem('Planid',Selectplainid)
-           console.log("storeplanid:",Selectplainid);
+            await AsyncStorage.setItem('Planid', Selectplainid)
+            console.log("storeplanid:", Selectplainid);
             setTrainingWorkCatgry(response.data.data)
             setIsLoading(false);
         }
@@ -195,7 +184,7 @@ const TrainingDetail = (props) => {
             </View>
             </View> */}
                     <Divider color='#393939' width={1.2} />
-                    <ScrollView  >
+                    <ScrollView>
                         <View style={{ backgroundColor: '#262626', height: 180, borderBottomLeftRadius: 25, borderBottomRightRadius: 25 }}>
                             <Pages indicatorColor='#ffcc00' >
                                 <View style={{ marginTop: 20, height: 130, flexDirection: 'row', marginHorizontal: 20, borderRadius: 20 }}>
@@ -251,7 +240,7 @@ const TrainingDetail = (props) => {
                         </View>
 
                         {/* Workout Category */}
-                        <Text style={{ marginTop: 20, marginLeft: 15, textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "bold" }}>Workout Category</Text>
+                        <Text style={{ marginTop: 20, marginLeft: 15, textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "bold" }}>Workout Categories</Text>
                         <FlatList
                             columnWrapperStyle={{
                                 flex: 1,

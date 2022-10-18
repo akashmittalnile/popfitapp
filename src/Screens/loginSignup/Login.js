@@ -61,7 +61,7 @@ const Login = (props) => {
         console.log("FIRE_Token_loginscreen-USEEFFECT-ANDRIOD>>>", FIRE_Token);
       } else if (FB_TOKEN != 0) {
         setfirebase_token(FB_TOKEN);
-        console.log("FIRE_Token_loginscreen-USEEFFECT::ISO>", FIRE_Token);
+        // console.log("FIRE_Token_loginscreen-USEEFFECT::ISO>", FIRE_Token);
       }
 
     }
@@ -99,13 +99,13 @@ const Login = (props) => {
         await AsyncStorage.setItem("userView", userProfiles);
         props.navigation.navigate("DrawerMain1");
       }
-      else {
-        Alert.alert("User email and password is not matched, Please Check Again! ", response.data.message);
+      else if(response.data.status == 0){
+        Alert.alert("please enter correct email and password!");
       }
     }
     catch (error) {
-      console.log("error??????", error);
-      Alert.alert(error);
+      console.log("error??login????", error);
+      // Alert.alert(error);
     }
   };
 
@@ -117,10 +117,10 @@ const Login = (props) => {
 
     // setForgotPassword(true)
 
-    console.log(".......userInputdata", phndata);
+    // console.log(".......userInputdata", phndata);
     try {
       const response = await axios.post(`${API.FORGOT_PASSWORD}`, phndata)
-      console.log("responseforget ::::", response.data);
+      // console.log("responseforget ::::", response.data);
       // console.log("forget_OTP ::::", response.data.code);
       setforgetOtp(response.data.code);
       if (response.data.status != 0) {
@@ -133,7 +133,7 @@ const Login = (props) => {
       }
       setIsLoading(false);
     } catch (error) {
-      console.log("error:", error.response.data.message);
+      console.log("error_forgot:", error.response.data.message);
       setIsLoading(false);
     }
 
@@ -157,7 +157,7 @@ const Login = (props) => {
           phone_number: phnnumber,
           otp: otp,
         }
-        console.log("...VerifyOtp", data);
+        // console.log("...VerifyOtp", data);
         axios({
           url: API.VERIFY_OTP,
           method: 'POST',
@@ -170,8 +170,8 @@ const Login = (props) => {
         })
 
           .then(function (response) {
-            console.log("...VerifyOtp", data);
-            console.log("responseVerify_forgetpsswd :", response.data);
+            // console.log("...VerifyOtp", data);
+            // console.log("responseVerify_forgetpsswd :", response.data);
             if (response.data.status == 1) {
               //alert("otp matched!!");
               setforgotSendotp(false);
@@ -181,8 +181,8 @@ const Login = (props) => {
               setIsLoading(false);
             }
             else {
-              setAlertMsg(response.data.message);
-              console.log("....alertmsg", response.data.message);
+              setAlertMsg(response?.data?.message);
+              console.log("....alertmsg", response?.data?.message);
               setMsgAlert(true);
               setIsLoading(false);
             }
@@ -288,12 +288,12 @@ const Login = (props) => {
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.CHANGE_PSWD}`, data);
-      console.log("inputdata...", response.data);
-      console.log("Response_ChangepsswdAPI ::::", response.data.status);
-      if (response.data.status != 0) {
+      // console.log("inputdata...", response.data);
+      // console.log("Response_ChangepsswdAPI ::::", response.data.status);
+      if (response.data.status == 1) {
         setChangePasword(false);
         alert('Password changed successfully');
-        console.log("User_change_psswd_successfully...>>>", response.data.message);
+        // console.log("User_change_psswd_successfully...>>>", response.data.message);
         setIsLoading(false)
       }
       else {
@@ -303,7 +303,7 @@ const Login = (props) => {
       }
     }
     catch (error) {
-      console.log("Countryerror:", error.response.data.message);
+      console.log("ChangePSwdApierror:", error.response.data.message);
       setIsLoading(false)
     }
 
@@ -392,14 +392,14 @@ const Login = (props) => {
               </TouchableOpacity> */}
             </View>
             <View style={{ marginTop: 15, width: "100%", height: 40, alignItems: 'center', justifyContent: 'center', flexDirection: "row", }}>
-              <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'black', justifyContent: 'center', }}>Don't have an accout </Text>
+              <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'black', justifyContent: 'center', }}>Don't have an account </Text>
 
               <TouchableOpacity
                 onPress={() => { gotoSignUp() }}>
                 <Text style={{ textAlign: 'center', fontSize: 14, color: '#ffcc00', textDecorationLine: 'underline' }}> Sign up </Text>
               </TouchableOpacity>
 
-              <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'black', justifyContent: 'center' }}>?</Text>
+              {/* <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'black', justifyContent: 'center' }}>?</Text> */}
 
 
             </View>

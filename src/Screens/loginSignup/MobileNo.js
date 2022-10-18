@@ -35,8 +35,8 @@ const MobileNo = (props) => {
   console.log("......store", code1);
 
   const [isvisuable, setisvisuable] = useState(false)
-  const firstCodeRef = useRef();
-
+  // const firstCodeRef = useRef();
+  const lastdigitRef = useRef();
 
   const [alertVisibility, setAlertVisibility] = useState(false);
 
@@ -166,7 +166,7 @@ const MobileNo = (props) => {
                           </View>
                           <View style={{ paddingLeft: 8, backgroundColor: "white", height: 49, width: 170, borderRadius: 30 }}>
                             <TextInput
-                              ref={firstCodeRef}
+                              ref={lastdigitRef}
                               style={{
                                 height: 45,
                                 // width: '100%',
@@ -183,6 +183,7 @@ const MobileNo = (props) => {
                               placeholder={'Phone Number'}
                               placeholderTextColor="#8F93A0"
                               value={values.phoneNumber}
+                              onSubmitEditing={() => lastdigitRef.current.focus()}
                               onChangeText={handleChange('phoneNumber')}
                               onBlur={() => setFieldTouched('phoneNumber')}
                               keyboardType="number-pad"

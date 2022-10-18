@@ -132,11 +132,11 @@ const MenTshirts = props => {
           {
             shopitems.length != 0 ?
               (<ScrollView>
-                <View style={{ height: 50, flexDirection: 'row', flex: 1, justifyContent: "flex-start", alignItems: "flex-start", width: "95%", marginHorizontal: 18 }}>
+                <View style={{ height: 50, flexDirection: 'row', flex: 1, justifyContent: "flex-start", alignItems: "flex-start", width: "100%" }}>
                   <View style={{ justifyContent: "flex-start", alignItems: "flex-start", flex: 0.45, }}>
                     <Text
                       style={{
-                        // marginLeft: 1,
+                        marginLeft: 15,
                         marginTop: 20,
                         textAlign: 'left',
                         fontSize: 18,
@@ -175,108 +175,115 @@ const MenTshirts = props => {
 
                 <FlatList
                   vertical
-                  // style={{ margin: 10 }}
+
                   numColumns={2}
+                  columnWrapperStyle={{
+                    flex: 1,
+                    justifyContent: "space-between"
+                  }}
                   data={shopitems}
-                  renderItem={({ item }) => (
+                  keyExtractor={(item, index) => String(index)}
+                  renderItem={({ item ,index}) => {
+                    return (
 
-                    <TouchableOpacity
-                      onPress={() => {
-                        gotoShippingDetail(item) 
-                      }}
-                      style={{
-                        marginBottom: 6,
-                        backgroundColor: '#f7f7f7',
-                        height: 200,
-                        width: WIDTH * 0.45,
-                        marginTop: 15,
-                        borderRadius: 20,
-                        alignItems: 'center',
-                        justifyContent: "center",
-                        marginHorizontal: 10,
-                        shadowColor: '#000000',
-                        shadowOffset: {
-                          width: 0,
-                          height: 3
-                        },
-                        shadowRadius: 5,
-                        shadowOpacity: 1.0,
-                        elevation: 5,
-                        zIndex: 999,
-
-
-                      }}>
-
-                      <View
+                      <TouchableOpacity
+                        onPress={() => {
+                          gotoShippingDetail(item)
+                        }}
                         style={{
+                          marginBottom: 6,
+                          backgroundColor: '#f7f7f7',
+                          height: 200,
                           width: WIDTH * 0.45,
-                          height: 155,
-                          borderTopLeftRadius: 20,
-                          borderTopRightRadius: 20,
-                          backgroundColor: 'white',
-                        }}>
-                        <Image
-                          source={{ uri: item.product_image }}
-                          resizeMode="contain"
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            borderTopLeftRadius: 20,
-                            borderTopRightRadius: 20,
-                            alignSelf: 'center',
-                          }}
-                        />
-                      </View>
-                      <View
-                        style={{
-                          width: WIDTH * 0.45, flexDirection: 'column', justifyContent: "center", alignItems: 'stretch', height: 45, backgroundColor: '#fceeb5', borderBottomRightRadius: 20, borderBottomLeftRadius: 20
-                        }}>
-                        <Text
-                          style={{
-                            marginLeft: 16,
-                            fontSize: 12,
-                            color: 'black', fontWeight: "bold"
+                          marginTop: 15,
+                          borderRadius: 20,
+                          alignItems: 'center',
+                          justifyContent: "center",
+                          marginHorizontal: 10,
+                          shadowColor: '#000000',
+                          shadowOffset: {
+                            width: 0,
+                            height: 3
+                          },
+                          shadowRadius: 5,
+                          shadowOpacity: 1.0,
+                          elevation: 5,
+                          zIndex: 999,
 
-                          }}>
-                          {item.product_name.slice(0, 15) + '...'}
-                        </Text>
+
+                        }}>
 
                         <View
                           style={{
-                            marginLeft: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: -3,
+                            width: WIDTH * 0.45,
+                            height: 155,
+                            borderTopLeftRadius: 20,
+                            borderTopRightRadius: 20,
+                            backgroundColor: 'white',
                           }}>
-
+                          <Image
+                            source={{ uri: item.product_image }}
+                            resizeMode="contain"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              borderTopLeftRadius: 20,
+                              borderTopRightRadius: 20,
+                              alignSelf: 'center',
+                            }}
+                          />
+                        </View>
+                        <View
+                          style={{
+                            width: WIDTH * 0.45, flexDirection: 'column', justifyContent: "center", alignItems: 'stretch', height: 45, backgroundColor: '#fceeb5', borderBottomRightRadius: 20, borderBottomLeftRadius: 20
+                          }}>
                           <Text
                             style={{
-                              fontSize: 12,
-                              color: 'black', fontWeight: "bold"
+                              marginLeft: 16,
+                              fontSize: 14,
+                              color: 'black', fontWeight: "500"
 
-                            }}>$ {item.product_price}
+                            }}>
+                            {item.product_name.slice(0, 15) + '...'}
                           </Text>
-
-
 
                           <View
                             style={{
-                              alignItems: 'center', justifyContent: 'center', marginRight: 6, width: 30, height: 30, borderRadius: 20 / 2, backgroundColor: '#ffcc00', bottom: 6
+                              marginLeft: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: -3,
                             }}>
-                            <Image
-                              resizeMode="contain"
+
+                            <Text
                               style={{
-                                width: 15,
-                                height: 20,
-                                alignSelf: 'center',
-                              }}
-                              source={require('../assets/bag1.png')}
-                            />
+                                fontSize: 12,
+                                color: 'black', fontWeight: "500"
+
+                              }}>$ {item.product_price}
+                            </Text>
+
+
+
+                            <View
+                              style={{
+                                alignItems: 'center', justifyContent: 'center', marginRight: 6, width: 30, height: 30, borderRadius: 20 / 2, backgroundColor: '#ffcc00', bottom: 6
+                              }}>
+                              <Image
+                                resizeMode="contain"
+                                style={{
+                                  width: 15,
+                                  height: 20,
+                                  alignSelf: 'center',
+                                }}
+                                source={require('../assets/bag1.png')}
+                              />
+                            </View>
+
+
                           </View>
-
-
                         </View>
-                      </View>
-                    </TouchableOpacity>
+                      </TouchableOpacity>
 
-                  )}
+                    )
+                  }}
                 />
 
 
@@ -302,7 +309,7 @@ const MenTshirts = props => {
                         borderRadius: 20,
                         // paddingTop: 20,
                         width: "100%",
-                        height: "35%",
+                        height: 220,
                         // height: "60%",
                         justifyContent: "center",
                         alignItems: 'center',
@@ -317,7 +324,7 @@ const MenTshirts = props => {
                       }}>
                       <View
                         style={{
-                          backgroundColor: 'white',
+                          // backgroundColor: 'white',
                           // height: 480,
                           height: "100%",
                           width: "99%",
@@ -470,7 +477,7 @@ const MenTshirts = props => {
                         <View
                           style={{
                             height: 200,
-                            marginTop: 20,
+                            marginTop: 2,
                           }}>
                           <View
                             style={{
@@ -485,10 +492,10 @@ const MenTshirts = props => {
                               }}>
                               <View
                                 style={{
-                                  marginTop: 30,
-                                  borderRadius: 25,
-                                  width: 200,
-                                  height: 45,
+                                  marginTop: 20,
+                                  borderRadius: 50,
+                                  width: 150,
+                                  height: 34,
                                   backgroundColor: '#ffcc00',
                                   alignItems: 'center',
                                   justifyContent: 'center',
@@ -527,7 +534,7 @@ const MenTshirts = props => {
                     width: 200,
                     height: 120, alignSelf: 'center'
                   }} />
-                <Text style={{fontSize:14,fontWeight:"bold"}}>No data found</Text>
+                <Text style={{ fontSize: 14, fontWeight: "bold" }}>No data found</Text>
               </View>)
           }
 

@@ -23,7 +23,7 @@ const Splash = (props) => {
       //  setIsLoading(true)
       try {
         const response = await axios.get(`${API.NOTIFICATION}`, { headers: { "Authorization": ` ${usertkn}` } });
-        let data = response.data.data.length;
+        let data = response?.data?.data?.length;
         console.log('incrementCounter _Splash', data);
         dispatch(incrementCounter(parseInt(data)));
         // AsyncStorage.setItem("notification", JSON.stringify(data));
@@ -53,7 +53,7 @@ const Splash = (props) => {
         // console.log("", response);
         // console.log("ResponseShippingProducts(product) ::::", response.data.data);
         // setproductdata(response.data.data);
-        let cartdata = response.data.data.length;
+        let cartdata = response?.data?.data?.length;
         console.log("cartdataReducer_splash.....:", cartdata);
         dispatch(CartCounter(parseInt(cartdata)));
         //  setuseraddress(response.data.address_lists);

@@ -593,13 +593,13 @@ const TrainingPersonaDetail = (props) => {
                             </View>
                         </View>
 
-                        <View style={{ flexDirection: 'row', height: 45, justifyContent: 'center', width: "100%", alignItems: "center", flex: 1 }}>
+                        <View style={{ flexDirection: 'row', height: 34, justifyContent: 'center', width: "100%", alignItems: "center", flex: 1 }}>
                             <TouchableOpacity
                                 onPress={() => {
                                     SetTrainingPlan(),
                                         steOnsubmiterrormsg(true);
                                 }}>
-                                <View style={{ borderWidth: 1, borderColor: '#ffcc00', justifyContent: 'center', alignItems: "center", width: 120, height: 45, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
+                                <View style={{ borderWidth: 1, borderColor: '#ffcc00', justifyContent: 'center', alignItems: "center", width: 110, height: 34, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
                                     <Text style={{ textAlign: 'center', fontSize: 12, color: 'white', }}>Save Detail</Text>
                                 </View>
                             </TouchableOpacity>

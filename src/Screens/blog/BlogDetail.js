@@ -132,7 +132,7 @@ const BlogDetail = (props) => {
     setIsLoading(true);
     try {
 
-      const response = await axios.post(`${API.BLOG_DETAILS}`, { "blog_id": blogdetail_id ? blogdetail_id : Categoryblogid ? Categoryblogid : homeblogid ? homeblogid : null }, { headers: { "Authorization": ` ${Token}` } });
+      const response = await axios.post(`${API.BLOG_DETAILS}`, { "blog_id": blogdetail_id ? blogdetail_id : Categoryblogid ? Categoryblogid : homeblogid }, { headers: { "Authorization": ` ${Token}` } });
       console.log(":::::::::DetailsBLog_Response>>>", response.data.blog_detail);
       console.log("status _DetailsBLog:", response.data.status);
       console.log("status _comment_count:", response.data.comment_count);
@@ -272,11 +272,11 @@ const BlogDetail = (props) => {
 
 
                     <View>
-                      <View style={{ marginLeft: 20,marginTop: 15, height: 60, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
+                      <View style={{ marginLeft: 20,marginTop: 6, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
                         <Text style={{ textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "500" }}>{subcategoryBlogdetailsitems?.blog_detail?.youtube_title}</Text>
                       </View>
                       <View style={{
-                        marginHorizontal: 20,marginTop: 10, height: 200, borderRadius: 20, marginVertical: 1, width: WIDTH * 0.9,
+                        marginHorizontal: 20,marginTop: 6, height: 200, borderRadius: 20, marginVertical: 1, width: WIDTH * 0.9,
                       }}>
                         <View style={{
                           height: '100%',
@@ -324,7 +324,7 @@ const BlogDetail = (props) => {
                   </TouchableOpacity> */}
                       </View>
                       <View style={{marginHorizontal: 20,marginTop: 15, height: "auto", width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}>
-                        <Text style={{textAlign: 'left', fontSize: 12, color: '#000'}}>{subcategoryBlogdetailsitems?.blog_detail?.youtube_description}</Text>
+                        <Text style={{textAlign: 'left', fontSize: 12, color: '#000',fontWeight:"400"}}>{subcategoryBlogdetailsitems?.blog_detail?.youtube_description}</Text>
                       </View>
 
                       <View style={{ marginLeft: 20,marginTop: 5, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
@@ -339,7 +339,7 @@ const BlogDetail = (props) => {
                       </View>
 
                       <View style={{marginHorizontal: 20,marginTop: 15, height: "auto", width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}>
-                      <Text style={{textAlign: 'left', fontSize: 12, color: '#000'}}>{subcategoryBlogdetailsitems?.blog_detail?.image_description}</Text>
+                      <Text style={{textAlign: 'left', fontSize: 12, color: '#000',fontWeight:"400"}}>{subcategoryBlogdetailsitems?.blog_detail?.image_description}</Text>
                       </View>
                     </View>
 
@@ -665,7 +665,7 @@ const BlogDetail = (props) => {
                             marginLeft: 30,
                             marginBottom: 20,
                             flexDirection: 'row',
-                            height: 50,
+                            height: 34,
                             marginHorizontal: 20,
                             marginTop: 30,
                           }}>
@@ -674,7 +674,7 @@ const BlogDetail = (props) => {
                               style={{
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                width: 140,
+                                width: 120,
                                 flex: 1,
                                 backgroundColor: '#ffcc00',
                                 borderRadius: 35,
@@ -707,7 +707,7 @@ const BlogDetail = (props) => {
                     width: 200,
                     height: 120, alignSelf: 'center'
                   }} />
-                <Text style={{ fontSize: 14, fontWeight: "bold" }}>No data found</Text>
+                  <Text style={{ fontSize: 14, fontWeight: "500" ,color:'black'}}>Oops! No data found</Text>
               </View>)
           }
         </>)

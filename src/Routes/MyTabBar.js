@@ -40,6 +40,8 @@ import CartAdded from '../Screens/cart/CartAddedPopUp';
 import Recipesubcategory from '../Screens/Recipe/Recipesubcategory';
 import Address from '../Screens/shipping/Address';
 import PaymentScreen from '../Screens/PaymentGateway/PaymentScreen';
+import Audiolist from '../Screens/training/Audiolist';
+import Videolist from '../Screens/training/Videolist';
 
 
 const Tab = createBottomTabNavigator();
@@ -116,6 +118,9 @@ const TrainingBottomTab = (props) => {
             <Stack.Screen options={{ headerShown: false }} name="Notifications" component={Notifications} />
             <Stack.Screen options={{ headerShown: false }} name="Address" component={Address} />
             <Stack.Screen options={{ headerShown: false }} name="PaymentScreen" component={PaymentScreen} />
+            <Stack.Screen options={{ headerShown: false }} name="Audiolist" component={Audiolist} />
+            <Stack.Screen options={{ headerShown: false }} name="Videolist" component={Videolist} />
+
         </Stack.Navigator>
     )
 }

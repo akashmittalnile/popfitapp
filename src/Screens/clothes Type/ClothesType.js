@@ -140,10 +140,15 @@ const ClothesType = (props) => {
             </View>
 
             <FlatList
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              // numColumns={2}
+              vertical
+              // showsHorizontalScrollIndicator={false}
+              numColumns={2}
+              columnWrapperStyle={{
+                flex: 1,
+                justifyContent: "space-between"
+              }}
               // style={{ margin: 10 }}
+              keyExtractor={(item, index) => String(index)} 
               data={shopitems}
               renderItem={({ item }) => (
                 <TouchableOpacity onPress={() => {
@@ -183,7 +188,7 @@ const ClothesType = (props) => {
                         }}
                       />
                       <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
-                        <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.name?.slice(0, 15) + '...'}</Text>
+                        <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "500" }}>{item?.name?.slice(0, 15) + '...'}</Text>
 
                       </View>
 

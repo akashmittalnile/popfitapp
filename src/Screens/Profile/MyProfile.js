@@ -98,196 +98,198 @@ const MyProfile = (props) => {
                 BelliconononClick={() => { props.navigation.navigate("Notifications") }}
             />
             {!isLoading ?
+                (<>
+                    <ScrollView>
+                        <View style={{ paddingBottom: 0 }}>
 
-                (<View style={{ paddingBottom: 50 }}>
+                            <View style={{ marginHorizontal: 6, marginTop: 20, height: 150, borderRadius: 10, backgroundColor: 'white', flexDirection: 'row',width:WIDTH * 0.97 }}>
 
-                    <View style={{ marginHorizontal: 10, marginTop: 30, height: 150, borderRadius: 10, backgroundColor: 'white', flexDirection: 'row' }}>
-
-                        <View style={{ margin: 5, flex: 1 / 3, borderRadius: 15 }}>
-                            <Image source={{ uri: Userprofile?.user_profile }} resizeMode="contain"
-                                style={{ alignSelf: 'center', width: '100%', height: '100%', borderRadius: 15, borderWidth: 1, backgroundColor: "black" }} />
-                        </View>
-                        <View style={{ margin: 5, flex: 1 / 1.2, flexDirection: 'column' }}>
-                            <Text style={{ marginTop: 15, fontSize: 16, color: 'black' }}>{Userprofile?.first_name + "  " + Userprofile?.last_name}</Text>
-                            <View style={{ flex: 1 / 3, flexDirection: 'row', marginTop: 10 }}>
-                                <View style={{ flex: 1.5, flexDirection: 'row', }}>
-                                    <View style={{ width: 30, height: 30, marginTop: 5 }} >
-                                        <Image source={require('../assets/message.png')}
-                                            resizeMode="contain"
-                                            style={{
-                                                width: 23,
-                                                height: 16, alignSelf: 'center',
-                                            }} />
-                                    </View>
-                                    <View style={{ width: 100, height: 20, marginTop: 3, marginLeft: 4}}  >
-                                        <Text numberOfLines={1} style={{ fontSize: 11, color: 'black', textAlign: 'left'}} >
-                                            {Userprofile?.email}
-                                        </Text>
-                                    </View>
+                                <View style={{ margin: 5, flex: 1 / 3, borderRadius: 10 }}>
+                                    <Image source={{ uri: Userprofile?.user_profile }} resizeMode="contain"
+                                        style={{ alignSelf: 'center', width: '100%', height: '100%', borderRadius: 10, borderWidth: 1, backgroundColor: "#455A64" }} />
                                 </View>
-                                <View style={{ marginLeft: 22, flex: 1.5, flexDirection: 'row',  }}>
-                                    <View style={{ width: 30, height: 30, marginTop: 2 }} >
-                                        <Image source={require('../assets/telephone.png')}
-                                            resizeMode="contain"
-                                            style={{
-                                                width: 20,
-                                                height: 20, alignSelf: 'center'
-                                            }} />
-                                    </View>
-                                    <View style={{ width: 80, height: 20, marginTop: 3, marginLeft: 4 }} >
-                                        <Text style={{ fontSize: 11, color: 'black', textAlign: 'left' }}>{Userprofile?.phone}</Text>
-                                    </View>
-                                </View>
-                            </View>
-
-
-                            <View style={{ flex: 1, height: 50, marginTop: 20, flexDirection: 'row' }}>
-
-                                <TouchableOpacity style={{ flex: 0.9 / 2 }} onPress={() => { gotoEditMyProfile() }}>
-                                    <View style={{ borderWidth: 1, borderColor: '#ffcc00', borderRadius: 20, backgroundColor: 'white', height: 30, flexDirection: 'row', alignItems: 'center' }}>
-                                        <View style={{ width: 30, marginLeft: 17 }}>
-                                            <Image source={require('../assets/edit.png')}
-                                                style={{
-                                                    width: 15,
-                                                    height: 15,
-                                                }} />
-                                        </View>
-
-                                        <View style={{ flex: 1 }}>
-
-                                            <Text style={{ marginLeft: -10, textAlign: 'left', fontSize: 10, color: '#ffcc00', }}>Edit Profile</Text>
-
-
-                                        </View>
-
-                                    </View>
-                                </TouchableOpacity>
-
-                                <TouchableOpacity style={{ flex: 1.1 / 2 }} onPress={() => { gotoChangePassword() }}>
-                                    <View style={{ marginLeft: 6, borderWidth: 1, borderColor: '#ffcc00', borderRadius: 20, backgroundColor: 'white', height: 30, flexDirection: 'row', alignItems: 'center' }}>
-                                        <View style={{ width: 30, marginLeft: 14 }}>
-                                            <Image source={require('../assets/lock2.png')}
-                                                style={{
-                                                    width: 11,
-                                                    height: 15,
-                                                }} />
-                                        </View>
-                                        <View style={{ flex: 1 }}>
-
-                                            <Text style={{ marginLeft: -10, textAlign: 'left', fontSize: 10, color: '#ffcc00', }}>Change Password</Text>
-
-                                        </View>
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
-
-
-                        </View>
-                    </View>
-
-                    <View style={{ marginTop: 30, height: 45, flexDirection: 'row' }}>
-                        <View style={{ flex: 1 }}>
-                            <Text style={{ marginLeft: 20, fontSize: 14, color: 'white', }}>Recent Orders</Text>
-                        </View>
-                        <View style={{ flex: 1.3 / 3, right: 10 }}>
-                            <TouchableOpacity onPress={() => { gotoMyOrder() }}>
-                                <View style={{ borderRadius: 50, height: 34, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
-                                    <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 12, color: 'white', }}>View All Orders</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-
-                    {/* Myorderlist */}
-                    {orderdata.length > 0 ?
-                        orderdata.map((item, index) => {
-                            return (
-                                <View style={{
-                                    marginHorizontal: 6,
-                                    height: 240,
-                                    width: WIDTH * 0.97,
-                                    borderRadius: 10,
-                                    backgroundColor: 'white',
-                                    width: 380,
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    shadowColor: '#000000',
-                                    shadowRadius: 6,
-                                    shadowOpacity: 1.0,
-                                    elevation: 6,
-                                    flexDirection: "column",
-                                    marginBottom: 10
-
-                                }}>
-
-                                    <View style={{ height: 50, width: WIDTH * 0.92, flexDirection: 'row', padding: 10, justifyContent: "space-between", }}>
-
-                                        <View style={{ height: 30, marginTop: 1, justifyContent: 'flex-start', alignItems: "flex-start", marginLeft: 1, }}>
-
-                                            <Text style={{ fontSize: 14, color: 'black', }}>Order No. : {item.order_number}</Text>
-
-                                        </View>
-
-                                        <View style={{ backgroundColor: '#ffcc00', borderRadius: 20, height: 30, width: 140, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
-                                            <View style={{ width: 30, marginLeft: 6 }}>
-                                                <Image source={require('../assets/download1.png')}
+                                <View style={{ margin: 5, flex: 1 / 1.2, flexDirection: 'column', marginTop: 15, }}>
+                                    <Text style={{ fontSize: 16, color: 'black', fontWeight: "500" }}>{Userprofile?.first_name + "  " + Userprofile?.last_name}</Text>
+                                    <View style={{ flex: 1 / 3, flexDirection: 'row', marginTop: 10 }}>
+                                        <View style={{ flex: 1.5, flexDirection: 'row', }}>
+                                            <View style={{ width: 30, height: 30, marginTop: 5 }} >
+                                                <Image source={require('../assets/message.png')}
+                                                    resizeMode="contain"
                                                     style={{
-                                                        width: 10,
-                                                        height: 13,
+                                                        width: 23,
+                                                        height: 16, alignSelf: 'center',
                                                     }} />
                                             </View>
-                                            <View style={{ marginLeft: 0, }}>
-                                                <TouchableOpacity>
-                                                    <Text style={{ textAlign: 'left', fontSize: 10, color: 'white', }}>Download Invoice</Text>
-                                                </TouchableOpacity>
+                                            <View style={{ width: 100, height: 20, marginTop: 3, marginLeft: 4 }}  >
+                                                <Text numberOfLines={1} style={{ fontSize: 11, color: 'black', textAlign: 'left' }} >
+                                                    {Userprofile?.email}
+                                                </Text>
                                             </View>
                                         </View>
-
-
+                                        <View style={{ marginLeft: 22, flex: 1.5, flexDirection: 'row', }}>
+                                            <View style={{ width: 30, height: 30, marginTop: 2 }} >
+                                                <Image source={require('../assets/telephone.png')}
+                                                    resizeMode="contain"
+                                                    style={{
+                                                        width: 20,
+                                                        height: 20, alignSelf: 'center'
+                                                    }} />
+                                            </View>
+                                            <View style={{ width: 80, height: 20, marginTop: 3, marginLeft: 4 }} >
+                                                <Text style={{ fontSize: 11, color: 'black', textAlign: 'left' }}>{Userprofile?.phone}</Text>
+                                            </View>
+                                        </View>
                                     </View>
 
-                                    <View style={{
-                                        height: 120,
-                                        flexDirection: 'row',
-                                        width: WIDTH * 0.92,
-                                        justifyContent: "flex-start",
-                                        alignItems: "center",
-                                        // backgroundColor: 'red',
-                                    }}>
 
-                                        <View style={{
-                                            width: 115, height: 120,
-                                            justifyContent: "center",
-                                            alignItems: "center"
-                                        }}>
-                                            <Image
-                                                resizeMode="contain"
-                                                style={{
-                                                    width: "100%",
-                                                    borderRadius: 20,
-                                                    height: "100%", alignSelf: 'center',
+                                    <View style={{ flex: 1, height: 50, marginTop: 20, flexDirection: 'row' }}>
 
-                                                }}
-                                                source={{ uri: item.product_image }} />
+                                        <TouchableOpacity style={{ flex: 0.9 / 2 }} onPress={() => { gotoEditMyProfile() }}>
+                                            <View style={{ borderWidth: 1, borderColor: '#ffcc00', borderRadius: 20, backgroundColor: 'white', height: 30, flexDirection: 'row', alignItems: 'center' }}>
+                                                <View style={{ width: 30, marginLeft: 17 }}>
+                                                    <Image source={require('../assets/edit.png')}
+                                                        style={{
+                                                            width: 15,
+                                                            height: 15,
+                                                        }} />
+                                                </View>
 
-                                        </View>
+                                                <View style={{ flex: 1, marginLeft: -6, }}>
 
-                                        <View style={{
-                                            justifyContent: "flex-start", alignItems: "flex-start", width: WIDTH * 0.97, marginLeft: 15,
-                                        }}>
-                                            <Text style={{ textAlign: 'left', fontSize: 15, color: '#000000', fontWeight: "bold" }}>{item.product_name.slice(0, 25) + '...'}</Text>
+                                                    <Text style={{ textAlign: 'left', fontSize: 10, color: '#ffcc00', }}>Edit Profile</Text>
 
-                                            <View style={{ marginTop: 10, flexDirection: 'row', justifyContent: "flex-start", alignItems: "flex-start", height: 60, width: WIDTH * 0.97 }}>
-
-
-                                                <View style={{ marginTop: 1, flexDirection: 'row', marginLeft: 15 }}>
-                                                    <View style={{}}>
-                                                        <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "bold" }}>Price : <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 12, color: '#000000', }}>$ {item.product_price}</Text></Text>
-                                                    </View>
 
                                                 </View>
 
-                                                {/* <View style={{ flexDirection: 'row', marginLeft: 17,marginTop: 3 }}>
+                                            </View>
+                                        </TouchableOpacity>
+
+                                        <TouchableOpacity style={{ flex: 1.1 / 2 }} onPress={() => { gotoChangePassword() }}>
+                                            <View style={{ marginLeft: 6, borderWidth: 1, borderColor: '#ffcc00', borderRadius: 20, backgroundColor: 'white', height: 30, flexDirection: 'row', alignItems: 'center' }}>
+                                                <View style={{ width: 30, marginLeft: 14 }}>
+                                                    <Image source={require('../assets/lock2.png')}
+                                                        style={{
+                                                            width: 11,
+                                                            height: 15,
+                                                        }} />
+                                                </View>
+                                                <View style={{ flex: 1, marginLeft: -10, }}>
+
+                                                    <Text style={{ textAlign: 'left', fontSize: 10, color: '#ffcc00', }}>Change Password</Text>
+
+                                                </View>
+                                            </View>
+                                        </TouchableOpacity>
+                                    </View>
+
+
+                                </View>
+                            </View>
+
+                            <View style={{ marginTop: 20, height: 45, flexDirection: 'row' }}>
+                                <View style={{ flex: 1, marginLeft: 10, }}>
+                                    <Text style={{ fontSize: 18, color: 'white', fontWeight: "500" }}>Recent Orders</Text>
+                                </View>
+                                <View style={{ flex: 1.3 / 3, right: 10 }}>
+                                    <TouchableOpacity onPress={() => { gotoMyOrder() }}>
+                                        <View style={{ borderRadius: 50, height: 34, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
+                                            <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 12, color: 'white', }}>View All Orders</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+
+                            {/* Myorderlist */}
+
+                            {orderdata.length > 0 ?
+                                orderdata.map((item, index) => {
+                                    return (
+                                        <View style={{
+                                            marginHorizontal: 6,
+                                            height: 240,
+                                            width: WIDTH * 0.97,
+                                            borderRadius: 10,
+                                            backgroundColor: 'white',
+                                            // width: 380,
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            shadowColor: '#000000',
+                                            shadowRadius: 6,
+                                            shadowOpacity: 1.0,
+                                            elevation: 6,
+                                            flexDirection: "column",
+                                            marginBottom: 10
+
+                                        }}>
+
+                                            <View style={{ height: 50, width: WIDTH * 0.92, flexDirection: 'row', padding: 10, justifyContent: "space-between", }}>
+
+                                                <View style={{ height: 30, marginTop: 1, justifyContent: 'flex-start', alignItems: "flex-start", marginLeft: 1, }}>
+
+                                                    <Text style={{ fontSize: 14, color: '#455A64', fontWeight: "500" }}>Order No. : <Text style={{ fontSize: 14, color: '#FFCC00', }}> {item.order_number}</Text></Text>
+
+                                                </View>
+
+                                                <View style={{ backgroundColor: '#ffcc00', borderRadius: 20, height: 30, width: 140, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
+                                                    <View style={{ width: 30, marginLeft: 6 }}>
+                                                        <Image source={require('../assets/download1.png')}
+                                                            style={{
+                                                                width: 10,
+                                                                height: 13,
+                                                            }} />
+                                                    </View>
+                                                    <View>
+                                                        <TouchableOpacity style={{marginLeft:-10}}>
+                                                            <Text style={{ textAlign: 'left', fontSize: 10, color: 'white', }}>Download Invoice</Text>
+                                                        </TouchableOpacity>
+                                                    </View>
+                                                </View>
+
+
+                                            </View>
+
+                                            <View style={{
+                                                height: 120,
+                                                flexDirection: 'row',
+                                                width: WIDTH * 0.92,
+                                                justifyContent: "flex-start",
+                                                alignItems: "center",
+                                                // backgroundColor: 'red',
+                                            }}>
+
+                                                <View style={{
+                                                    width: 115, height: 120,
+                                                    justifyContent: "center",
+                                                    alignItems: "center"
+                                                }}>
+                                                    <Image
+                                                        resizeMode="contain"
+                                                        style={{
+                                                            width: "100%",
+                                                            borderRadius: 10,
+                                                            height: "100%", alignSelf: 'center',
+
+                                                        }}
+                                                        source={{ uri: item.product_image }} />
+
+                                                </View>
+
+                                                <View style={{
+                                                    justifyContent: "flex-start", alignItems: "flex-start", width: WIDTH * 0.97, marginLeft: 15,
+                                                }}>
+                                                    <Text style={{ textAlign: 'left', fontSize: 15, color: '#455A64', fontWeight: "600" }}>{item.product_name.slice(0, 25) + '...'}</Text>
+
+                                                    <View style={{ marginTop: 6, flexDirection: 'row', justifyContent: "flex-start", alignItems: "flex-start", height: 60, width: WIDTH * 0.97 }}>
+
+
+                                                        <View style={{ marginTop: 1, flexDirection: 'row', marginLeft: 0 }}>
+                                                            <View>
+                                                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Price : <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#77869E', }}>${item.order_price}</Text></Text>
+                                                            </View>
+
+                                                        </View>
+
+                                                        {/* <View style={{ flexDirection: 'row', marginLeft: 17,marginTop: 3 }}>
                                                 <View style={{}}>
                                                     <Text style={{ textAlign: 'left', fontSize: 12, color: '#000000',fontWeight:"bold" }}>Tax : <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 10, color: '#000000', }}>$ {item?.tax}</Text></Text>
                                                 </View>
@@ -300,12 +302,12 @@ const MyProfile = (props) => {
                                                 </View>
 
                                             </View> */}
+                                                    </View>
+                                                </View>
+
+
                                             </View>
-                                        </View>
-
-
-                                    </View>
-                                    {/* <View style={{
+                                            {/* <View style={{
                                             height: 120, marginLeft: 0, flexDirection: 'row', width: WIDTH * 0.9, justifyContent: "center", flex: 2, backgroundColor: "pink",marginTop:10
                                         }}>
                                             <View style={{
@@ -334,37 +336,37 @@ const MyProfile = (props) => {
                                                 </View>
                                             </View>
                                         </View> */}
-                                    <View style={{
-                                        marginTop: 10, flexDirection: 'row', justifyContent: "flex-start", flex: 1, margin: 10, height: 70, width: WIDTH * 0.92
-                                    }}>
-                                        <View style={{ marginTop: 8, height: 20, justifyContent: "center", alignItems: "center", flex: 0.3, }}>
-                                            <Text style={{ textAlign: 'left', fontSize: 14, color: 'black', fontWeight: "bold" }}>Order Status :</Text>
-                                        </View>
-
-                                        {item.order_status == "1" ?
-                                            (<View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}>
-                                                <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>Order placed</Text>
-                                                <View style={{ marginTop: 6, }}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 9, color: 'black' }}>on {item.created_at}</Text>
+                                            <View style={{
+                                                marginTop: 10, flexDirection: 'row', justifyContent: "flex-start", flex: 1, margin: 10, height: 70, width: WIDTH * 0.92
+                                            }}>
+                                                <View style={{ marginTop: 9, height: 20, justifyContent: "center", alignItems: "center", flex: 0.3, }}>
+                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#353535', fontWeight: "500" }}>Order Status :</Text>
                                                 </View>
-                                            </View>)
-                                            :
-                                            (
-                                                <View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}><Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>data not available</Text>
-                                                </View>)
 
-                                        }
-                                        <View style={{ marginTop: 10, justifyContent: 'center', alignItems: 'flex-end', marginRight: 10, flex: 0.1 }}>
-                                            <TouchableOpacity
-                                                onPress={() => gotoOrderDetail(item)}>
-                                                <View style={{ backgroundColor: '#ffcc00', width: 35, height: 35, justifyContent: "center", alignItems: 'center', borderRadius: 35 / 2 }}>
-                                                    <Image source={require('../assets/rightArrow.png')}
-                                                    />
+                                                {item.order_status == "1" ?
+                                                    (<View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}>
+                                                        <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "400" }}>Order placed</Text>
+                                                        <View style={{ marginTop: 6, }}>
+                                                            <Text style={{ textAlign: 'left', fontSize: 9, color: '#455A64',fontWeight: "400" }}>on {item.created_at}</Text>
+                                                        </View>
+                                                    </View>)
+                                                    :
+                                                    (
+                                                        <View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}><Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "400" }}>data not available</Text>
+                                                        </View>)
+
+                                                }
+                                                <View style={{ marginTop: 10, justifyContent: 'center', alignItems: 'flex-end', marginRight: 10, flex: 0.1 }}>
+                                                    <TouchableOpacity
+                                                        onPress={() => gotoOrderDetail(item)}>
+                                                        <View style={{ backgroundColor: '#ffcc00', width: 35, height: 35, justifyContent: "center", alignItems: 'center', borderRadius: 35 / 2 }}>
+                                                            <Image source={require('../assets/rightArrow.png')}
+                                                            />
+                                                        </View>
+                                                    </TouchableOpacity>
                                                 </View>
-                                            </TouchableOpacity>
-                                        </View>
-                                    </View>
-                                    {/* <View style={{
+                                            </View>
+                                            {/* <View style={{
                                         marginTop: 10, flexDirection: 'row', justifyContent: "flex-start", flex: 1, margin: 10, height: 70, width: WIDTH * 0.92
                                     }}>
                                         <View style={{ marginTop: 8, height: 20, justifyContent: "center", alignItems: "center", flex: 0.3, }}>
@@ -388,35 +390,35 @@ const MyProfile = (props) => {
                                             </TouchableOpacity>
                                         </View>
                                     </View> */}
-                                </View>)
+                                        </View>)
 
-                        })
-                        : (<View style={{
-                            marginHorizontal: 6,
-                            height: 240,
-                            width: WIDTH * 0.97,
-                            borderRadius: 10,
-                            backgroundColor: 'white',
-                            // width: 380,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            shadowColor: '#000000',
-                            shadowRadius: 6,
-                            shadowOpacity: 1.0,
-                            elevation: 6,
-                            flexDirection: "column",
-                            marginBottom: 10
-                        }}>
-                            <Image resizeMode='contain'
-                                source={require('../assets/Nodatafound.png')}
-                                style={{
-                                    width: 200,
-                                    height: 120, alignSelf: 'center'
-                                }} />
-                            <Text style={{ fontSize: 14, fontWeight: "bold" }}>Oops, order list is empty !</Text>
-                        </View>)}
+                                })
+                                : (<View style={{
+                                    marginHorizontal: 6,
+                                    height: 240,
+                                    width: WIDTH * 0.97,
+                                    borderRadius: 10,
+                                    backgroundColor: 'white',
+                                    // width: 380,
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    shadowColor: '#000000',
+                                    shadowRadius: 6,
+                                    shadowOpacity: 1.0,
+                                    elevation: 6,
+                                    flexDirection: "column",
+                                    marginBottom: 10
+                                }}>
+                                    <Image resizeMode='contain'
+                                        source={require('../assets/Nodatafound.png')}
+                                        style={{
+                                            width: 200,
+                                            height: 120, alignSelf: 'center'
+                                        }} />
+                                    <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>Oops, order list is empty !</Text>
+                                </View>)}
 
-                    {/* <View style={{ marginTop: 30, height: 45, flexDirection: 'row' }}>
+                            {/* <View style={{ marginTop: 30, height: 45, flexDirection: 'row' }}>
                             <View style={{ flex: 1 }}>
                                 <Text style={{ marginLeft: 20, fontSize: 14, color: 'white', }}>Recent Training Activity</Text>
                             </View>
@@ -446,7 +448,12 @@ const MyProfile = (props) => {
                                 </TouchableOpacity>
                             }
                         /> */}
-                </View>)
+                        </View>
+                    </ScrollView>
+                </>
+                )
+
+
                 :
                 (<View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
                     <ActivityIndicator size="large" color="#ffcc00" />

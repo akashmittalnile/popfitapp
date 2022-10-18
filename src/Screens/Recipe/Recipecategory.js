@@ -90,7 +90,7 @@ const Recipecategory = props => {
           <ScrollView >
 
 
-            <View style={{ marginTop: 20, height: 30, flexDirection: 'row' }}>
+            <View style={{ marginTop: 10, height: 30, flexDirection: 'row' }}>
               <View style={{ flex: 1 }}>
                 <Text
                   style={{

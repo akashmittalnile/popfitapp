@@ -122,7 +122,7 @@ const ShippingDetail = (props) => {
         }
         else {
             setIsLoading(false)
-            alert("Please enter all fields")
+            alert("All the fields are required!")
         }
     }
 
@@ -142,9 +142,9 @@ const ShippingDetail = (props) => {
             Totalprice: Selectcoupons == null ? ammont : total,
             SetAddrs: setselectaddress == null ?
 
-                (address?.address_type + "," + address?.house_no + "," + address?.area_village + "," + address?.city + "," + address?.landmark + "," + address?.pincode)
+                (address?.address_type + "," + address?.full_name + "," + address?.house_no + "," + address?.area_village + "," + address?.city + "," + address?.landmark + "," + address?.state + "," + address?.pincode + "," + address?.phone)
                 :
-                (setselectaddress?.address_type + "," + setselectaddress?.house_no + "," + setselectaddress?.area_village + "," + setselectaddress?.city + "," + setselectaddress?.landmark + "," + setselectaddress?.pincode)
+                (setselectaddress?.address_type + "," + setselectaddress?.full_name + "," + setselectaddress?.house_no + "," + setselectaddress?.area_village + "," + setselectaddress?.city + "," + setselectaddress?.landmark + "," + setselectaddress?.state + "," + setselectaddress?.pincode + "," + setselectaddress?.phone)
         });
     }
     const gotoApplyCoupon = () => {
@@ -251,10 +251,10 @@ const ShippingDetail = (props) => {
 
     };
 
-    const onChangePasswordHandler = landmark => {
+    const onChangeLandmarkHandler = landmark => {
         setlandmark(landmark);
     };
-    const onChangeEmailHandler = area_village => {
+    const onChangeAreaHandler = area_village => {
         setarea_village(area_village);
     };
     const onChangeAddressHandler = address_type => {
@@ -419,11 +419,11 @@ const ShippingDetail = (props) => {
 
                     {/* Choose Shipping Address */}
 
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 10, marginRight: 15 }}>
-                        <Text style={{ marginTop: 20, textAlign: 'left', fontSize: 18, color: '#000000', fontFamily: 'Roboto', fontWeight: 'bold' }}>Choose Shipping Address </Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 12, marginRight: 15, marginTop: 10, }}>
+                        <Text style={{ textAlign: 'left', fontSize: 18, color: '#000000', fontWeight: '500' }}>Choose Shipping Address </Text>
                         <TouchableOpacity onPress={() => { setShippingAddressPopUp(true) }}><View>
                             <Text style={{
-                                marginTop: 23, fontFamily: 'Roboto', fontWeight: '400', fontSize: 15, color: '#FFCC00'
+                                fontWeight: '400', fontSize: 15, color: '#FFCC00'
                             }} >Create Address</Text>
                         </View></TouchableOpacity>
                     </View>
@@ -432,11 +432,11 @@ const ShippingDetail = (props) => {
 
                     <View style={{
                         marginHorizontal: 10,
-                        height: 100,
+                        height: 110,
                         width: WIDTH * 0.95,
                         backgroundColor: 'white',
                         // backgroundColor: "pink",
-                        marginTop: 10,
+                        marginTop: 14,
                         shadowColor: '#000000',
                         // shadowOffset: { width: 0, height: 4 },
                         shadowRadius: 6,
@@ -451,20 +451,25 @@ const ShippingDetail = (props) => {
                         borderColor: "#FFFFFF"
                     }}>
                         <>
-                            <View style={{ height: 90, width: WIDTH * 0.95, borderRadius: 20, }}>
-                                <View style={{ height: 90, flexDirection: 'row', marginLeft: 15 }}>
+                            <View style={{ height: 105, width: WIDTH * 0.95, borderRadius: 20, }}>
+                                <View style={{ height: 85, flexDirection: 'row', marginLeft: 15 }}>
                                     {/* <View style={{ width: 25, height: 80, justifyContent: "center",alignItems: "center",backgroundColor: 'white' }} >
                                              <Image 
                                              source={require('../assets/checked.png')}
                                              />
                                             
                                         </View> */}
+
                                     {
                                         setselectaddress == null ?
+
                                             (<View style={{ width: WIDTH * 0.67, marginLeft: 20, justifyContent: 'center', alignItems: 'flex-start' }}>
                                                 <Text style={{ color: '#000000', fontWeight: "500", fontSize: 16, textAlign: 'left' }}>{address.address_type}</Text>
-                                                <View style={{ width: WIDTH * 0.67, height: 40, marginTop: 5 }}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#676767', fontWeight: '400' }}>{address.house_no} {address.landmark} {address.area_village},  {address.city} {address.pincode}
+                                                <View style={{ width: WIDTH * 0.67, height: 50, marginTop: 5 }}>
+                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#676767', fontWeight: '400' }}>{address.full_name}, {address.house_no}, {address.area_village}, {address.city},{address.landmark}, {address.state}, {address.pincode}
+                                                    </Text>
+                                                    <Text style={{ marginTop: 5, textAlign: 'left', fontSize: 14, color: '#676767', fontWeight: '400' }}>
+                                                        {address.phone}
                                                     </Text>
                                                 </View>
                                             </View>)
@@ -472,7 +477,10 @@ const ShippingDetail = (props) => {
                                             (<View style={{ width: WIDTH * 0.67, marginLeft: 20, justifyContent: 'center', alignItems: 'flex-start' }}>
                                                 <Text style={{ color: '#000000', fontWeight: "500", fontSize: 16, textAlign: 'left' }}>{setselectaddress.address_type}</Text>
                                                 <View style={{ width: WIDTH * 0.67, height: 40, marginTop: 5 }}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#676767', fontWeight: '400' }}>{setselectaddress.house_no} {setselectaddress.landmark} {setselectaddress.area_village},  {setselectaddress.city} {setselectaddress.pincode}
+                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#676767', fontWeight: '400' }}>{setselectaddress.full_name}, {setselectaddress.house_no}, {setselectaddress.area_village}, {setselectaddress.city}, {setselectaddress.landmark}, {setselectaddress.state}, {setselectaddress.pincode}
+                                                    </Text>
+                                                    <Text style={{ marginTop: 5, textAlign: 'left', fontSize: 14, color: '#676767', fontWeight: '400' }}>
+                                                        {address.phone}
                                                     </Text>
                                                 </View>
                                             </View>)
@@ -636,17 +644,19 @@ const ShippingDetail = (props) => {
                     {/* Add Delivery Instruction */}
                     <View style={{
                         backgroundColor: 'white',
-                        height: 70,
+                        height: "auto",
+                        width: WIDTH * 0.95,
                         marginHorizontal: 10,
-                        marginTop: 20,
-                        marginHorizontal: 15,
+                        marginTop: 10,
+                        marginHorizontal: 10,
                         shadowColor: '#000',
                         shadowOffset: { width: 0, height: 2 },
                         shadowOpacity: 0.2,
-                        elevation: 2,
+                        elevation: 3,
                         borderRadius: 15,
                         marginBottom: 20,
                         justifyContent: "center",
+                        paddingVertical: 10
                     }}>
                         <TextInput
                             style={{
@@ -672,7 +682,7 @@ const ShippingDetail = (props) => {
                         backgroundColor: '#fffcee',
                         height: 160,
                         width: WIDTH * 0.99,
-                        marginTop: 20,
+                        marginTop: 4,
                         shadowColor: '#efe8c7',
                         // shadowOffset: { width: 0, height: 2 },
                         shadowOpacity: 0.2,
@@ -788,20 +798,19 @@ const ShippingDetail = (props) => {
                                     flex: 1,
                                     justifyContent: 'flex-end',
                                     alignItems: 'center',
-                                    backgroundColor: 'rgba(140, 141, 142, 0.7)',
+                                    backgroundColor: 'rgba(140, 141, 142, 0.7)'
                                 }}>
                                 <ScrollView>
                                     <View
                                         style={{
                                             //margin: 10,
-                                            width: "100%",
-                                            // height: "50%",
-                                            // backgroundColor: 'white',
+                                            width: "98%",
+                                            // height: HEIGHT*0.76,
+                                            backgroundColor: '#FFFFFF',
                                             borderRadius: 20,
 
-                                            marginTop: 115,
-                                            justifyContent: "center",
-                                            alignItems: 'center',
+                                            marginTop: 111,
+                                            alignItems: "center",
                                             shadowColor: '#000',
                                             shadowOffset: {
                                                 width: 0,
@@ -814,85 +823,95 @@ const ShippingDetail = (props) => {
                                         }}>
 
                                         <View style={{
-                                            backgroundColor: '#FFFFFF',
+                                            // backgroundColor: '#FFFFFF',
+                                            // height: 670,
                                             height: "100%",
-                                            width: WIDTH * 0.99,
+                                            width: WIDTH * 0.97,
                                             // paddingTop: 20,
-                                            padding: 10,
+                                            // padding: 10,
                                             // marginHorizontal: 10,
                                             // justifyContent: "center",
-                                            // marginHorizontal: 15,
-                                            borderRadius: 32,
+                                            marginHorizontal: 10,
+                                            borderRadius: 20,
                                             //marginBottom: 10,
                                             alignItems: 'center',
                                             flexDirection: 'column'
                                         }}>
 
                                             <View style={{ marginTop: 15, marginHorizontal: 20, height: 30, flexDirection: "row", justifyContent: "center", alignItems: 'center' }}>
-                                                <Text style={{ marginTop: 2, marginLeft: 10, textAlign: 'center', fontSize: 20, color: '#000000', fontFamily: 'Inter', fontWeight: '500' }}>Add Address</Text>
+                                                <Text style={{ marginTop: 2, marginLeft: 10, textAlign: 'center', fontSize: 20, color: '#000000', fontWeight: '500' }}>Add Address</Text>
 
 
                                             </View>
-
                                             <TextInput style={styles.textInput}
-                                                placeholder='Address Title'
-                                                label="area_village"
-                                                value={area_village}
-                                                onChangeText={e => onChangeEmailHandler(e)}
-                                            />
-                                            <TextInput style={styles.textInput}
-                                                placeholder='Enter your landmark'
-                                                label="landmark"
-                                                value={landmark}
-                                                onChangeText={e => onChangePasswordHandler(e)}
-                                            />
-                                            <TextInput style={styles.textInput}
-                                                placeholder='Enter Address type'
-                                                label="Address type"
-                                                value={address_type}
-                                                onChangeText={e => onChangeAddressHandler(e)}
-                                            />
-                                            <TextInput style={styles.textInput}
-                                                placeholder='Enter your City'
-                                                label="Address type"
-                                                value={city}
-                                                onChangeText={e => onChangeCityHandler(e)}
-                                            />
-                                            <TextInput style={styles.textInput}
-                                                placeholder='Enter full name'
-                                                label="Address type"
+                                                placeholder='Full Name(Required)*'
+                                                placeholderTextColor="#8F93A0"
+                                                label="full_name"
                                                 value={full_name}
                                                 onChangeText={e => onChangeNameHandler(e)}
                                             />
                                             <TextInput style={styles.textInput}
-                                                placeholder='Enter house number'
-                                                label="Address type"
-                                                value={house_no}
-                                                onChangeText={e => onChangeHouseHandler(e)}
-                                            />
-                                            <TextInput style={styles.textInput}
-                                                placeholder='Enter phone number'
-                                                label="Address type"
+                                                placeholder='Phone number(Required)*'
+                                                placeholderTextColor="#8F93A0"
+                                                label="phone"
                                                 value={phone}
                                                 onChangeText={e => onChangePhoneHandler(e)}
                                             />
                                             <TextInput style={styles.textInput}
-                                                placeholder='Enter pincode'
-                                                label="Address type"
+                                                placeholder='Pincode(Required)*'
+                                                placeholderTextColor="#8F93A0"
+                                                label="pincode"
                                                 value={pincode}
                                                 onChangeText={e => onChangePinHandler(e)}
                                             />
                                             <TextInput style={styles.textInput}
-                                                placeholder='Enter State'
-                                                label="Address type"
+                                                placeholder='State(Required)*'
+                                                placeholderTextColor="#8F93A0"
+                                                label="state"
                                                 value={state}
                                                 onChangeText={e => onChangeStateHandler(e)}
                                             />
-                                            <View style={{ justifyContent: "center", alignItems: "center", marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 30 }}>
+                                            <TextInput style={styles.textInput}
+                                                placeholder='City(Required)*'
+                                                placeholderTextColor="#8F93A0"
+                                                label="ity"
+                                                value={city}
+                                                onChangeText={e => onChangeCityHandler(e)}
+                                            />
+                                            <TextInput style={styles.textInput}
+                                                placeholder='House number(Required)*'
+                                                placeholderTextColor="#8F93A0"
+                                                label="house_no"
+                                                value={house_no}
+                                                onChangeText={e => onChangeHouseHandler(e)}
+                                            />
+                                            <TextInput style={styles.textInput}
+                                                placeholder='Roard name,Area,Colony(Required)*'
+                                                placeholderTextColor="#8F93A0"
+                                                label="area_village"
+                                                value={area_village}
+                                                onChangeText={e => onChangeAreaHandler(e)}
+                                            />
+                                            <TextInput style={styles.textInput}
+                                                placeholder='Landmark(Required)*'
+                                                placeholderTextColor="#8F93A0"
+                                                label="landmark"
+                                                value={landmark}
+                                                onChangeText={e => onChangeLandmarkHandler(e)}
+                                            />
+                                            <TextInput style={styles.textInput}
+                                                placeholder='Type of address'
+                                                placeholderTextColor="#8F93A0"
+                                                label="address_type"
+                                                value={address_type}
+                                                onChangeText={e => onChangeAddressHandler(e)}
+                                            />
+
+                                            <View style={{ justifyContent: "center", alignItems: "center", marginBottom: 20, flexDirection: 'row', height: 38, marginHorizontal: 20, marginTop: 30 }}>
                                                 <TouchableOpacity
                                                     onPress={() => { gotocurrentpage() }} >
-                                                    <View style={{ justifyContent: 'center', width: 120, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
-                                                        <Text style={styles.text}>Save </Text>
+                                                    <View style={{ justifyContent: 'center', width: 110, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
+                                                        <Text style={styles.text}>Save</Text>
                                                     </View>
                                                 </TouchableOpacity>
                                             </View>
@@ -915,7 +934,7 @@ export default ShippingDetail;
 
 const styles = StyleSheet.create({
     textInput: {
-        width: '98%', marginTop: 14, borderRadius: 10, marginHorizontal: 20,
+        width: '98%', marginTop: 14, borderRadius: 10, marginHorizontal: 20, paddingLeft: 15,
         flexDirection: 'row',
         height: 45,
         shadowColor: '#11032586',
@@ -930,4 +949,4 @@ const styles = StyleSheet.create({
     },
     text: { textAlign: 'center', fontSize: 15, color: 'white', fontWeight: '500' }
 })
-{/*809 <View style={{ borderColor: "gray", borderWidth: 0.5, height: 60, backgroundColor: "gray", right: -100, flexDirection: 'row' }} /> */ }
+ 
