@@ -1,10 +1,10 @@
-import {Image, Modal, StyleSheet, View} from 'react-native';
-import React, { Component } from 'react';
+import { Image, Modal, StyleSheet, View } from 'react-native';
+import React, { useState } from 'react';
 import CalendarPicker from 'react-native-calendar-picker';
- 
 
-const CalendarModal = ({visibleModal,onClose}) => {
-  
+
+const CalendarModal = ({ visibleModal, onClose }) => {
+ 
   // STYLING SUNDAYS AS RED
   const customDayHeaderStylesCallback = (DayOfWeekName) => {
     switch (DayOfWeekName.dayOfWeek) {
@@ -18,10 +18,12 @@ const CalendarModal = ({visibleModal,onClose}) => {
   };
   // on date change
   const onDateChange = (selectedDate) => {
-    
+
     onClose(selectedDate);
 
   };
+  
+
   const customDatesStylesCallback = (date) => {
     // only weekend styling
     if (date.isoWeekday() === 7) {
@@ -31,9 +33,11 @@ const CalendarModal = ({visibleModal,onClose}) => {
     }
     return {};
   };
+
+  
   return (
     <View>
-    
+
       <Modal
         animationType="fade"
         transparent={true}
@@ -44,7 +48,7 @@ const CalendarModal = ({visibleModal,onClose}) => {
         <View style={styles.centeredView}>
           <View style={styles.modalViewCalendar}>
             <CalendarPicker
-            
+              maxDate={new Date()}
               customDayHeaderStyles={customDayHeaderStylesCallback}
               customDatesStyles={customDatesStylesCallback}
               dayLabelsWrapper={styles.days}
@@ -103,19 +107,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: "#ffcc00",
   },
-  nextBtn: {marginRight: 25, marginTop: 10},
-  nextImg: {width: 20, height: 20},
+  nextBtn: { marginRight: 25, marginTop: 10 },
+  nextImg: { width: 20, height: 20 },
   onlyWeekEnd: {
     color: "red",
   },
-  previousBtn: {marginLeft: 25, marginTop: 10},
-  previousImg: {width: 20, height: 20},
+  previousBtn: { marginLeft: 25, marginTop: 10 },
+  previousImg: { width: 20, height: 20 },
   selectedDate: {
     backgroundColor: "gray",
   },
   today: {
     fontSize: 21,
- 
+
   },
   weekEnd: {
     color: "red",
@@ -132,7 +136,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.66)',
   },
   modalViewCalendar: {
-    backgroundColor:"white",
+    backgroundColor: "white",
     borderRadius: 10,
     padding: 10,
     margin: 10,

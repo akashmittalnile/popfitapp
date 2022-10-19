@@ -192,12 +192,12 @@ const Signup = (props, navigation) => {
         }
         else {
           // setIsLoading(false);
-          Alert.alert("data field enter correctily!", response.data.message)
+          Alert.alert('All the fields are required *','Fill correctly')
         }
 
       })
       .catch(function (error) {
-        Alert.alert("Signup_error:", error.response.data.message)
+        Alert.alert('Try again later', error.response.data.message)
         // console.log("Signup_error:", error);
         setIsLoading(false);
       })
@@ -232,7 +232,7 @@ const Signup = (props, navigation) => {
       }
     }
     catch (error) {
-      Alert.alert("Country_error:", error.response.data.message)
+      Alert.alert('Country not found','Something went wrong !')
       // console.log("Countryerror:", error.response.data.message);
       setIsLoading(false);
       setAlertVisibility(false);
@@ -265,7 +265,7 @@ const Signup = (props, navigation) => {
       }
     }
     catch (error) {
-      Alert.alert("State_error:", error.response.data.message)
+      Alert.alert('State not found','Something went wrong !')
       // console.log("emailerror:", error.response.data.message);
       setIsLoading(false);
       setAlertVisibility(false);
@@ -297,7 +297,7 @@ const Signup = (props, navigation) => {
       }
     }
     catch (error) {
-      Alert.alert("City_catcherror:", error.response.data.message)
+      Alert.alert('City not found','Something went wrong !')
       // console.log("emailerror:", error.response.data.message);
       setIsLoading(false);
       setAlertVisibility(false);

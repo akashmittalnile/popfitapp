@@ -218,7 +218,7 @@ const TrainingPersonaDetail = (props) => {
 
                         {/* Please Enter Your Basic Details */}
                         <View style={{ paddingBottom: 30, width: "99.9%", flex: 1, justifyContent: "flex-start", alignItems: "flex-start" }}>
-                            <Text style={{ marginTop: 30, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000', fontWeight: "bold" }}>Please Enter Your Basic Details</Text>
+                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 17, color: '#000', fontWeight: "500" }}>Please Enter Your Basic Details</Text>
 
                             <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 12, color: '#000', }}>Select Gender</Text>
 

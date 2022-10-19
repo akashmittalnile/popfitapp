@@ -67,11 +67,15 @@ const OutdoorTrainning = (props) => {
       })
     }
     else if (checkplanid?.plan_status == "Inactive") {
-      Alert.alert("Please, Login First and Suscribe any plan!")
+      props.navigation.navigate("Training", {
+        Tainingcat_id: categoryId ? categoryId : TrainingID,
+        Trainingsubcat_data: item
+      })
+      // Alert.alert("Please, Login First and Suscribe any plan!")
       // if(checkplanid?.plan_id > "0"){
-        props.navigation.navigate('LoginMain', {
-          screen: 'LoginSignUp',
-        });
+        // props.navigation.navigate('LoginMain', {
+        //   screen: 'LoginSignUp',
+        // });
       // }
       // else if(checkplanid?.plan_id == "0")
       // {
@@ -116,7 +120,7 @@ const OutdoorTrainning = (props) => {
         setIsLoading(false);
       } else if (response.data.status == '0') {
 
-        Alert.alert("Workout sub category have no data at status 0")
+        Alert.alert('Training Not Accessible', 'Login First !')
       }
 
 

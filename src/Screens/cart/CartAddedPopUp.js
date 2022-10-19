@@ -31,19 +31,19 @@ const CartAdded = (props) => {
     const [total, setTotal] = useState('');
     const [coupon, setcoupon] = useState('');
     const [shippingcost, setshipping_cost] = useState('');
-    const DATA = ['first row', 'second row', 'third row', 'third row', 'third row'];
+    const [usertoken, setUsertoken] = useState("");
 
 
-    const gotoShippingDetail = async() => {
+    const gotoShippingDetail = async () => {
         const Clickonbuproduct = await AsyncStorage.getItem("authToken");
-// console.log("user not login:",Clickonbuproduct);
-         if(Clickonbuproduct == null){
-            Alert.alert("Before buy something, please login first !")
-         }
-         else{
+
+        if (Clickonbuproduct == null) {
+            Alert.alert('Access Deny', 'Login first !')
+        }
+        else if (Clickonbuproduct != null) {
             props.navigation.navigate("ShippingDetail");
-         }
-       
+        }
+
     }
     const gotoProductDetailsview = (item) => {
 
@@ -80,8 +80,20 @@ const CartAdded = (props) => {
     };
 
     useEffect(() => {
+
         const unsubscribe = props.navigation.addListener('focus', () => {
-            GetShippingProducts();
+            // GetShippingProducts();
+            const UserToken = async () => {
+                const usertkn = await AsyncStorage.getItem("authToken");
+                console.log("TOKEN:", usertkn);
+                setUsertoken(usertkn)
+                if (usertkn == null) {
+                    // Alert.alert('Access Deny', 'Login first !')
+                } else if (usertkn != null) {
+                    GetShippingProducts();
+                }
+            }
+            UserToken();
         });
         return unsubscribe;
 
@@ -130,7 +142,7 @@ const CartAdded = (props) => {
         try {
             const usertkn = await AsyncStorage.getItem("authToken");
             const response = await axios.get(`${API.SHIPPING_DETAILS}`, {
-                // 'headers': { "Authorization": ` ${usertkn}` }
+                'headers': { "Authorization": ` ${usertkn}` }
             },
             );
             // console.log("", response);
@@ -197,8 +209,9 @@ const CartAdded = (props) => {
         try {
             const usertkn = await AsyncStorage.getItem("authToken");
             const response = await axios.post(`${API.PRODUCT_DETAILS_REMOVE_ITEM}`, { "cart_id": cartaddid }, {
-                // 'headers': { "Authorization": ` ${usertkn}` }
+                'headers': { "Authorization": ` ${usertkn}` }
             },);
+            Alert.alert(' product successfully removed', '');
             // console.log(":::::::::ProductRemovecart_Response>>>", response.data.message);
             // console.log("status _ProductRemovecart:", response.data.status);
             GetShippingProducts();
@@ -207,7 +220,8 @@ const CartAdded = (props) => {
             setIsLoading(false);
         }
         catch (error) {
-            console.log("....ProductRemovecart..error. cartscreen........", error.response.data.message);
+            Alert.alert('Something went wrong !', 'Try again later')
+            // console.log("....ProductRemovecart..error. cartscreen........", error.response.data.message);
             setIsLoading(false);
 
         }
@@ -242,7 +256,7 @@ const CartAdded = (props) => {
             {!isLoading ?
                 <>
                     {
-                        productdata.length > 0 ?
+                        productdata.length > 0 && usertoken != null ?
                             <View style={{ paddingBottom: 60 }}>
                                 <ScrollView>
                                     <View
@@ -665,7 +679,7 @@ const CartAdded = (props) => {
                                                             textAlign: 'center',
                                                             fontSize: 15,
                                                             color: 'white',
-fontWeight: '500',
+                                                            fontWeight: '500',
                                                         }}>
                                                         Check Out
                                                     </Text>

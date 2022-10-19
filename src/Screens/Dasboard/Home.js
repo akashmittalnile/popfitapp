@@ -13,6 +13,8 @@ import axios from 'axios';
 import { API } from '../../Routes/Urls';
 import Banner from './Banner';
 import Headers from '../../Routes/Headers';
+import { async } from 'regenerator-runtime';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { WebView } from 'react-native-webview';
 
 var WIDTH = Dimensions.get('window').width;
@@ -32,45 +34,52 @@ const Home = (props) => {
   const gotoBlog = () => {
     props.navigation.navigate("BlogBottomTab")
   };
-  const gotoBlogDetail = (item) => {
-    props.navigation.navigate("BlogDetail", {
-      homeblogid: item
-    })
-  };
+  const gotoBlogDetail = async(item) => {
+    const usertkn = await AsyncStorage.getItem("authToken");
+    if (usertkn == null) {
+      Alert.alert('Blog details', 'Login first!')
+    }
+    else if (usertkn != null) {
+      props.navigation.navigate("BlogDetail", {
+        homeblogid: item
+      })
+    }
+   
+  }
   const gotoShop = () => {
     props.navigation.navigate("FitnessEquipment", {
       FitnessstoreId: "1"
     })
-  };
+  }
   const gotoproductshop = (item) => {
     props.navigation.navigate('ProductDetail', {
       ITEM: item
     });
-  };
+  }
   const gototshirtproduct = (item) => {
     props.navigation.navigate("ProductDetail", {
       CLOTHITEM: item
     })
-  };
+  }
   const gotoClothesType = () => {
     props.navigation.navigate("ClothesType", {
       Clothexploreid: "2"
     })
-  };
+  }
   const gotoRecipecategory = () => {
     props.navigation.navigate("Recipecategory")
-  };
+  }
   const gotoRecipeDetails = (item) => {
     props.navigation.navigate("Recipesubcategory", {
       getHomeRecipelistID: item
     })
-  };
+  }
   const gotoTrainingsubcatgory = (item) => {
 // console.log("trainingdata:",item)
     props.navigation.navigate("OutdoorTrainning", {
       TrainingID: item
     })
-  };
+  }
   // const gotoNotification = () => {
   //   props.navigation.navigate("Notifications")
   // }
@@ -200,7 +209,7 @@ return (
               </View>
 
               {/* //trainingCategory/// */}
-              <View style={{ marginTop: 30, height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
+              <View style={{ marginTop: 20, height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
                 <View style={{ flex: 0.8 }}>
                   <Text style={{ marginLeft: 20, fontSize: 17, color: 'white', fontWeight: "bold" }}>Training Categories</Text>
                 </View>
@@ -354,7 +363,7 @@ return (
                       justifyContent: "center",
                     }}>
                     <View style={{
-                      height: 150,
+                      height: 170,
                       borderRadius: 20,
                       width: WIDTH * 0.45,
                       alignItems: "center",
@@ -385,18 +394,18 @@ return (
                     <View
 
                       style={{
-                        height: 50, 
+                        height: 30, 
                         width: WIDTH * 0.45,
                         backgroundColor: '#fceeb5',
                         borderBottomLeftRadius: 16,
-                        borderBottomRightRadius: 16, justifyContent: "flex-start", alignItems: "flex-start",paddingTop: 5,paddingLeft: 10,
+                        borderBottomRightRadius: 16, justifyContent: "flex-start", alignItems: "center",paddingTop: 5,paddingLeft: 0,
                       }}>
-                      <Text numberOfLines={1} style={{ textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "500" }}>{item?.image_title?.slice(0, 20) + '...'}</Text>
+                      <Text numberOfLines={1} style={{ textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "500" }}>{item?.image_title?.slice(0, 15) + '...'}</Text>
 
-                      <View style={{ height: 30, alignItems: "flex-start", justifyContent: "flex-start",  width: WIDTH * 0.42, paddingTop: 4, marginBottom:4,}}>
+                      {/* <View style={{ height: 30, alignItems: "flex-start", justifyContent: "flex-start",  width: WIDTH * 0.42, paddingTop: 4, marginBottom:4,}}>
                         <Text numberOfLines={1}  
                           style={{textAlign: 'left', fontSize: 8, color: '#000000',fontWeight: "300" }}>{item?.image_description?.slice(0, 200)+ '...'}</Text>
-                      </View>
+                      </View> */}
                     </View>
                   </TouchableOpacity>
                 }

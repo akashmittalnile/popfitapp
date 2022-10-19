@@ -9,6 +9,7 @@ import Headers from '../../Routes/Headers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { API } from '../../Routes/Urls';
+import { async } from 'regenerator-runtime';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -21,11 +22,17 @@ const ClothesType = (props) => {
   const [imagepath, setimagepath] = useState("");
   const [FilterPopup, setFilterPopUp] = useState(false);
   
-  const gotoMensTshirts = (item) => {
-    props.navigation.navigate('MenTshirts', {
-      categoryID: item.id,
-      SHOPID: ClothID
-    });
+  const gotoMensTshirts = async(item) => {
+    const Token = await AsyncStorage.getItem("authToken");
+    if (Token == null) {
+      Alert.alert('Clothing Store', 'Login First !')
+    } else if (Token != null) {
+      props.navigation.navigate('MenTshirts', {
+        categoryID: item.id,
+        SHOPID: ClothID
+      })
+    }
+   
   }
   
   console.log("clothing_storeId......:", props?.route?.params?.Clothexploreid);
@@ -49,7 +56,9 @@ const ClothesType = (props) => {
     // console.log("FitnessStoresProduct_append data::::",fitnessdata);
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.SHOP_CATEGORY}`, { 'shop_id': ClothID }, { headers: { "Authorization": ` ${Token}` } });
+      const response = await axios.post(`${API.SHOP_CATEGORY}`, { 'shop_id': ClothID }, 
+      // { headers: { "Authorization": ` ${Token}` } }
+      );
       console.log(":::::::::FitnessEquipmentStore_Response>>>", response.data.shop_category);
       console.log("status _FitnessEquipment", response.data.status);
       setimagepath(response.data.image_path);
@@ -58,14 +67,14 @@ const ClothesType = (props) => {
 
         setIsLoading(false);
       } else {
-        Alert.alert("Fitness product status==0 found from backend side");
+        // Alert.alert("Clothing product status ==0 found from backend side");
         setIsLoading(false);
       }
 
     }
     catch (error) {
       // console.log("......error.........", error.response.data.message);
-      Alert.alert("Catch error msg FitnessEquipment !!!!")
+      Alert.alert("Clothing Store!", error.response.data.message)
       setIsLoading(false);
     }
 

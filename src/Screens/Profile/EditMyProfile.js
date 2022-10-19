@@ -395,10 +395,10 @@ const EditMyProfile = (props) => {
                     borderRadius: 20,
                     width: '98%',
                     alignItems: 'center',
-                    shadowColor: '#000',
-                    shadowOpacity: 0.25,
-                    shadowRadius: 4,
-                    elevation: 6,
+                    // shadowColor: '#000',
+                    // shadowOpacity: 0.25,
+                    // shadowRadius: 4,
+                    // elevation: 6,
                   }}>
 
                   <View style={{

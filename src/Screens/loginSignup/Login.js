@@ -36,6 +36,9 @@ const Login = (props) => {
   const [alertpsswdMsg, setAlertpsswdMsg] = useState("");
   const [msgpsswd, setMsgpsswdAlert] = useState(false);
 
+  const [alertMsgForget0, setAlertMsgForget0] = useState("");
+  // const [alertMsgForget, setAlertMsgForget] = useState("");
+
   const [LoginWithNumberPopup, setLoginWithNumberPopup] = useState(false);
   const [LoginSendotp, setLoginSendotp] = useState(false);
   const [mobileNumber, setmobileNumber] = useState("")
@@ -45,6 +48,7 @@ const Login = (props) => {
   const [firebase_token, setfirebase_token] = useState("");
 
   const [ForgotPassword, setForgotPassword] = useState(false);
+
   const [forgetOtp, setforgetOtp] = useState("");
   const [forgotSendotp, setforgotSendotp] = useState(false);
   const [ChangePasword, setChangePasword] = useState(false);
@@ -83,6 +87,7 @@ const Login = (props) => {
     //   return;
     // }
     console.log("LOGIN DETAILS ENTER:::", email, password, firebase_token);
+    setIsLoading(true)
     try {
       const response = await axios.post(`${API.LOGIN}`, {
         email,
@@ -94,44 +99,60 @@ const Login = (props) => {
       if (response.data.status == 1) {
         console.log("..........................", response.data.success.token);
         const userToken = response.data.success.token;
-       await AsyncStorage.setItem('authToken', userToken);
+        await AsyncStorage.setItem('authToken', userToken);
         const userProfiles = response.data.success.token;
         await AsyncStorage.setItem("userView", userProfiles);
         props.navigation.navigate("DrawerMain1");
+        setIsLoading(false)
       }
-      else if(response.data.status == 0){
-        Alert.alert("please enter correct email and password!");
+      else if (response.data.status == 0) {
+        setIsLoading(false)
+        Alert.alert('please check email and password!', '');
       }
     }
     catch (error) {
-      console.log("error??login????", error);
-      // Alert.alert(error);
+      setIsLoading(false)
+      // console.log("error??login????", error);
+      Alert.alert('Something went wrong !', 'Try again later');
     }
   };
 
   const ForgetAPI = async (values) => {
+    const usertkn = await AsyncStorage.getItem("authToken");
     const phndata = {
       phone_number: values.phoneNumber
     }
     setphnnumber(values.phoneNumber)
+    setIsLoading(true);
 
-    // setForgotPassword(true)
-
-    // console.log(".......userInputdata", phndata);
     try {
-      const response = await axios.post(`${API.FORGOT_PASSWORD}`, phndata)
+      const response = await axios.post(`${API.FORGOT_PASSWORD}`, phndata, {
+        'headers': { "Authorization": ` ${usertkn}` }
+      })
       // console.log("responseforget ::::", response.data);
       // console.log("forget_OTP ::::", response.data.code);
-      setforgetOtp(response.data.code);
-      if (response.data.status != 0) {
 
+      if (response.data.status == 1) {
+        setforgetOtp(response.data.code);
         //forget psswd otp verified modal open
         setForgotPassword(false)
         setforgotSendotp(true)
-
+        setIsLoading(false);
         // codeotp: response.data.code, 
+      } else if (response.data.status == 0) {
+        setAlertMsgForget0('Enter Registered Mobile No.');
+        console.log("..status == 0..alertmsg", response.data.message);
+        setMsgAlert(true);
+        setIsLoading(false);
+
+
+      } else if (response.data.phone_number != null) {
+        console.log("....alertmsg", response.data.phone_number[0]);
+        setAlertMsgForget0(response.data.phone_number[0]);
+        setMsgAlert(true);
+        setIsLoading(false);
       }
-      setIsLoading(false);
+
     } catch (error) {
       console.log("error_forgot:", error.response.data.message);
       setIsLoading(false);
@@ -142,12 +163,12 @@ const Login = (props) => {
   const Validation = () => {
     const otp = otp1 + otp2 + otp3 + otp4;
     if (otp.length < 4) {
-      // Alert.alert('Invalid Otp');
+      Alert.alert('Invalid Otp');
     } else return true;
   };
 
   const VerifyOtp = async () => {
-
+    const usertkn = await AsyncStorage.getItem("authToken");
     if (Validation()) {
       setIsLoading(true);
 
@@ -165,24 +186,24 @@ const Login = (props) => {
           headers: {
             Accept: 'application/json',
             'Content-Type': 'multipart/form-data',
-            'Authorization': 'Basic YnJva2VyOmJyb2tlcl8xMjM='
+            'Authorization': ` ${usertkn}`
           }
         })
 
           .then(function (response) {
             // console.log("...VerifyOtp", data);
-            // console.log("responseVerify_forgetpsswd :", response.data);
+            console.log("responseVerify_forgetpsswd :", response.data);
             if (response.data.status == 1) {
-              //alert("otp matched!!");
+
               setforgotSendotp(false);
-              // setforgotSendotp(true)
+
               setLoginSendotp(false);
               setChangePasword(true);
               setIsLoading(false);
             }
-            else {
-              setAlertMsg(response?.data?.message);
-              console.log("....alertmsg", response?.data?.message);
+            else if (response.data.status == 0) {
+              setAlertMsg(response.data.message);
+              // console.log("....alertmsg", response?.data?.message);
               setMsgAlert(true);
               setIsLoading(false);
             }
@@ -280,6 +301,7 @@ const Login = (props) => {
   // };
 
   const ChangeAPI = async (values) => {
+    const usertkn = await AsyncStorage.getItem("authToken");
     const data = {
       new_password: values.password,
       confirm_new_password: values.cfm_password
@@ -287,7 +309,9 @@ const Login = (props) => {
     console.log(".......userInputdata", data);
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.CHANGE_PSWD}`, data);
+      const response = await axios.post(`${API.CHANGE_PSWD}`, data, {
+        'headers': { "Authorization": ` ${usertkn}` }
+      });
       // console.log("inputdata...", response.data);
       // console.log("Response_ChangepsswdAPI ::::", response.data.status);
       if (response.data.status == 1) {
@@ -299,12 +323,12 @@ const Login = (props) => {
       else {
         setAlertpsswdMsg(response.data.message);
         setMsgpsswdAlert(true);
-        setIsLoading(false)
+        setIsLoading(false);
       }
     }
     catch (error) {
       console.log("ChangePSwdApierror:", error.response.data.message);
-      setIsLoading(false)
+      setIsLoading(false);
     }
 
 
@@ -705,7 +729,7 @@ const Login = (props) => {
                       <View style={{ height: 30 }}>
                         {
                           msg ?
-                            (<View style={{ justifyContent: "center", marginHorizontal: 40, marginTop: 5 }}><Text style={{ color: "red", fontSize: 15, }}>{alertMsg}</Text></View>)
+                            (<View style={{ justifyContent: "center", marginHorizontal: 40, marginTop: 5 }}><Text style={{ color: "red", fontSize: 14,textAlign:"left" }}>{alertMsg}</Text></View>)
                             :
                             (null)
                         }
@@ -771,7 +795,7 @@ const Login = (props) => {
                       validationSchema={yup.object().shape({
                         phoneNumber: yup
                           .string()
-                          .required('Please, Enter the valid mobile number'),
+                          .required('Enter the valid mobile number'),
                       })}
                     >
                       {({ values, handleChange, errors, setFieldTouched, touched, isValid, handleSubmit }) => (
@@ -816,9 +840,21 @@ const Login = (props) => {
                               touched.phoneNumber && errors.phoneNumber &&
                               <Text style={{ fontSize: 14, color: '#FF0D10', paddingLeft: 10, marginTop: 5 }}>{errors.phoneNumber}</Text>
                             }
+                            <View style={{ height: 50 }}>
+                              {
+                                msg ?
+                                  (<View style={{ justifyContent: "center", marginHorizontal: 20, marginTop: 5 }}><Text style={{ color: "red", fontSize: 14, textAlign:"left"}}>{alertMsgForget0}</Text>
+                                  {/* <Text style={{ color: "red", fontSize: 15,textAlign:"left" }}>
+                                  {alertMsgForget}
+                                  </Text> */}
+                                  </View>)
+                                  :
+                                  (null)
+                              }
+                            </View>
                           </View>
 
-                          <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 50 }}>
+                          <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 60 }}>
                             <TouchableOpacity onPress={() => {
                               handleSubmit()
                               // ForgetAPI(values);
@@ -1025,7 +1061,7 @@ const Login = (props) => {
                       <View style={{ height: 30 }}>
                         {
                           msg ?
-                            (<View style={{ justifyContent: "center", marginHorizontal: 40, marginTop: 5 }}><Text style={{ color: "red", fontSize: 15, }}>{alertMsg}</Text></View>)
+                            (<View style={{ justifyContent: "center", marginHorizontal: 30, marginTop: 5 }}><Text style={{ color: "red", fontSize: 14,textAlign:"left" }}>{alertMsg}</Text></View>)
                             :
                             (null)
                         }

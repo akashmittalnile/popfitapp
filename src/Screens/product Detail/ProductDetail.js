@@ -10,11 +10,12 @@ import styles from '../../Routes/style'
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { async } from 'regenerator-runtime';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
-const DATA = ['first row', 'second row', 'third row', 'fourth row'];
+
 
 const ProductDetail = (props) => {
 
@@ -26,36 +27,33 @@ const ProductDetail = (props) => {
   // console.log("StoresProductDetails????",Productitems);
   const [ImageBaseUrl, setImageBaseUrl] = useState('');
   const [countnums, setCountnum] = useState(1);
+  const [usertoken, setUsertoken] = useState("");
   // const [CartAddedPopUp, setCartAddedPopUp] = useState(false);
 
-  const buttonClickedHandler = () => {
-    props.navigation.goBack()
-  };
+
   // const gotoShippingDetail = () => {
   //   // setCartAddedPopUp(false);
   //   props.navigation.navigate("ShippingDetail");
   // }
 
-  const gotoNotification = () => {
-    props.navigation.navigate("Notifications")
-  };
 
-  const Productincrease = () => {
-    // console.log(".before.", countnums);
-    if (countnums < 10) {
-      var Num = countnums + 1;
-      setCountnum(+Num);
-      // console.log(".numm.", Num);
 
-      // console.log("..", countnums);
-    }
-  };
-  const Productdecrease = () => {
-    if (countnums > 1) {
-      setCountnum(countnums - 1);
+  // const Productincrease = () => {
+  //   console.log(".before.", countnums);
+  //   if (countnums < 10) {
+  //     var Num = countnums + 1;
+  //     setCountnum(+Num);
+  //     console.log(".numm.", Num);
 
-    }
-  };
+  //     console.log("..", countnums);
+  //   }
+  // };
+  // const Productdecrease = () => {
+  //   if (countnums > 1) {
+  //     setCountnum(countnums - 1);
+
+  //   }
+  // };
 
 
   // console.log("Store_item...............:", props?.route?.params?.ITEM?.id);
@@ -73,6 +71,7 @@ const ProductDetail = (props) => {
   let productids = ITEM ? ITEM : CLOTHITEM ? CLOTHITEM : FitnessItem ? FitnessItem : MENSITEM ? MENSITEM : Cartaddedview ? Cartaddedview : Isshippingview;
 
   useEffect(() => {
+    UserToken();
     StoresProductDetails();
     const unsubscribe = props.navigation.addListener('focus', () => {
 
@@ -126,17 +125,22 @@ const ProductDetail = (props) => {
     }
 
   };
-
+  const UserToken = async () => {
+    const usertkn = await AsyncStorage.getItem("authToken");
+    console.log("TOKEN:",usertkn);
+    setUsertoken(usertkn)
+  }
   const ProductADDcart = async () => {
     const usertkn = await AsyncStorage.getItem("authToken");
-   
+
+
     // console.log("ADD_productin_QNTY cart.....", countnums);
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.PRODUCT_DETAILS_ADD_ITEM}`, { "qty": countnums, "product_id": productids }, {
-        // 'headers': { "Authorization": ` ${usertkn}` }
+        'headers': { "Authorization": ` ${usertkn}` }
       });
-      // console.log(":::::::::ProductADD_Response>>>", response.data.message);
+      console.log(":::::::::ProductADD_Response>>>", response.data.message);
       // console.log("status _ProductADD:", response.data.status);
       if (response.data.status == 1) {
         props.navigation.navigate("CartAdded")
@@ -144,7 +148,10 @@ const ProductDetail = (props) => {
         // Alert.alert("Added to cart")
         setIsLoading(false);
       }
-
+      else {
+        Alert.alert('Something went wrong !', 'Data not found')
+        setIsLoading(false);
+      }
 
     }
     catch (error) {
@@ -180,7 +187,7 @@ const ProductDetail = (props) => {
     <SafeAreaView style={{
       flex: 1,
       width: WIDTH,
-      height: HEIGHT,flexGrow: 1,  backgroundColor: '#ffffff',
+      height: HEIGHT, flexGrow: 1, backgroundColor: '#ffffff',
     }} >
       <Headers
         Backicon={{
@@ -205,7 +212,7 @@ const ProductDetail = (props) => {
             flex: 1,
             // width: WIDTH,
             // height: HEIGHT, 
-            flexGrow: 1, 
+            flexGrow: 1,
             backgroundColor: 'transparent',
           }}>
 
@@ -614,8 +621,12 @@ const ProductDetail = (props) => {
               </TouchableOpacity>
 
               <TouchableOpacity onPress={() => {
-                // setCartAddedPopUp(!CartAddedPopUp);
-                ProductADDcart()
+                if (usertoken == null) {
+                  Alert.alert('User not found', 'Login first !')
+                } else if (usertoken != null) {
+                  ProductADDcart()
+                }
+
               }}
                 style={{ justifyContent: 'center', height: 34, backgroundColor: '#ffcc00', borderRadius: 50, marginLeft: 10, width: 130 }}>
                 <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', fontWeight: "500" }}>Add To Cart</Text>
@@ -631,7 +642,7 @@ Cartaddedview && Isshippingview == "" ?
             </View>
           </View>)
         :
-        (<View style={{ flex: 1,flexGrow: 1,  justifyContent: "center", alignItems: "center"}}>
+        (<View style={{ flex: 1, flexGrow: 1, justifyContent: "center", alignItems: "center" }}>
           <ActivityIndicator size="large" color="#ffcc00" />
         </View>)}
     </SafeAreaView>

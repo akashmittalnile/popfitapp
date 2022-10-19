@@ -18,7 +18,7 @@ const Videolist = (props) => {
     const [trainingBlog_list, setTrainingBlog_list] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [videobaseurl, setVideobaseurl] = useState('');
-
+    const[youtubelinks,setyoutubelinks]=useState([]);
 
     useEffect(() => {
         WorkoutSubCategorytraininglist();
@@ -34,14 +34,16 @@ const Videolist = (props) => {
         const usertkn = await AsyncStorage.getItem("authToken");
         setIsLoading(true);
         try {
-            const response = await axios.post(`${API.TRAINING_LIST}`, { "category_id": Tainingcat_id, "subcategory_id": Trainingsubcat_data }, { headers: { "Authorization": ` ${usertkn}` } });
-            console.log(":::::::::TrainingCategoryListAPI_Response>>>", response.data.message);
+            const response = await axios.post(`${API.TRAINING_LIST}`, { "category_id": Tainingcat_id, "subcategory_id": Trainingsubcat_data }, 
+            // { headers: { "Authorization": ` ${usertkn}` } }
+            );
+            // console.log(":::::::::TrainingCategoryListAPI_Response>>>", response.data.message);
 
-            console.log("TrainingCategoryListAPI_data::::::", response.data.blog_list);
+            // console.log("TrainingCategoryListAPI_data::::::", response.data);
             setIsLoading(false);
-            console.log("Video_url::", response.data.training_video);
-
-            setVideobaseurl(response.data.training_video);
+            // console.log("Video_url::", response.data.training_video);
+            setyoutubelinks(response.data.blog_list[0].youtube_link);
+            // setVideobaseurl(response.data.training_video);
             setTrainingBlog_list(response.data.blog_list);
             // setyoutubelink(response.data.blog_list.youtube_link)
 
@@ -49,8 +51,8 @@ const Videolist = (props) => {
 
         }
         catch (error) {
-            console.log("......error.........", error.response.data.message);
-            Alert.alert("Something went wrong!", error.response.data.message);
+            // console.log("......error.........", error.response.data.message);
+            Alert.alert('Video list',"Something went wrong!");
             setIsLoading(false);
 
         }
@@ -85,18 +87,21 @@ const Videolist = (props) => {
                             (<ScrollView>
                                 <View style={{ justifyContent: "flex-start", flex: 1, alignItems: "flex-start" }}>
                                     {/* Training video */}
-                                    <View style={{ marginTop: 10,marginBottom:10, height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
-                                        
-                                            <Text style={{ marginLeft: 15, fontSize: 16, color: 'black', fontWeight: "500" }}>Training Videos</Text>
-                                       
+                                    <View style={{ marginTop: 10, height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
+
+                                        <Text style={{ marginLeft: 15, fontSize: 18, color: 'black', fontWeight: "500" }}>Training Videos</Text>
+
                                     </View>
 
                                     {/* //flastlist  for videos */}
                                     <FlatList
-                                        data={trainingBlog_list}
+                                        // data={trainingBlog_list}
+                                        showsHorizontalScrollIndicator={true}
+                                      
+                                        data={youtubelinks}
                                         keyExtractor={(item, index) => String(index)}
                                         renderItem={({ item, index }) => {
-                                            // console.log("1st flastlist video:", item.id)
+                                             console.log("liknsvideos:",item)
                                             return (
                                                 // <TouchableOpacity onPress={() => setVideoModal(true)}
                                                 //   style={{ marginLeft: 10, height: 150, width: WIDTH * 0.55, backgroundColor: "gray", marginVertical: 10, borderRadius: 20, justifyContent: "flex-start", alignItems: "flex-start" }}>
@@ -104,19 +109,19 @@ const Videolist = (props) => {
                                                 // </TouchableOpacity>
                                                 <>
                                                     <View style={{
-                                                        height: 180,
+                                                        height: 250,
                                                         overflow: "hidden",
                                                         width: WIDTH * 0.95,
                                                         borderRadius: 20,
                                                         marginHorizontal: 10,
                                                         justifyContent: 'center',
+                                                        marginVertical:10
                                                         // alignSelf: "auto"
 
                                                     }}>
                                                         <WebView
                                                             source={{
-                                                                uri: "https://www.youtube.com/embed/3STTSi_jdHk"
-                                                                // "https://dev.pop-fiit.com/upload/training_video/20220929_1664457751_54648.mp4" 
+                                                                uri:   `${item}`
                                                             }}
                                                         />
 

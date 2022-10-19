@@ -175,7 +175,7 @@ const ShippingDetail = (props) => {
     // console.log("...........", Selectcoupons);
     useEffect(() => {
         const unsubscribe = props.navigation.addListener('focus', () => {
-            checklogin();
+            // checklogin();
             // gotoCoupon();
             GetShippingProducts();
         });
@@ -183,20 +183,20 @@ const ShippingDetail = (props) => {
 
 
     }, []);
-    const checklogin = async () => {
-        let Usertoken = await AsyncStorage.getItem("authToken");
-        setproducttoken(Usertoken);
-        //console.log("token.......", Usertoken);
-        if (Usertoken == null) {
-            props.navigation.navigate('LoginMain', {
-                screen: 'LoginSignUp',
-            });
+    // const checklogin = async () => {
+    //     let Usertoken = await AsyncStorage.getItem("authToken");
+    //     setproducttoken(Usertoken);
+       
+    //     if (Usertoken == null) {
+    //         props.navigation.navigate('LoginMain', {
+    //             screen: 'LoginSignUp',
+    //         });
 
-        }
-        else {
+    //     }
+    //     else {
 
-        }
-    };
+    //     }
+    // }
     const GetShippingProducts = async () => {
         const usertkn = await AsyncStorage.getItem("authToken");
         setIsLoading(true);

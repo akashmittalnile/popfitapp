@@ -41,18 +41,19 @@ const SubscriptionPlan = (props, navigation) => {
     console.log("token.......", Usertoken);
     setchecktoken(Usertoken);
     if (Usertoken == null) {
+      Alert.alert('Please login First ','')
       props.navigation.navigate('LoginMain', {
         screen: 'LoginSignUp',
 
       });
-      console.log("...............................");
+       
     }
     else {
       // GetSubscriptionPlan(item.id);
       props.navigation.navigate("PaymentScreen",{
         SubscriptionPlan:item
       });
-      console.log("??????????????error", item.id);
+      // console.log("??????????????error", item.id);
     }
   };
 
@@ -63,8 +64,10 @@ const SubscriptionPlan = (props, navigation) => {
 
     setIsLoading(true)
     try {
-      const response = await axios.get(`${API.SUBSCRIPTION_PLAN}`, { headers: { "Authorization": ` ${Usertoken1}` } });
-      // console.log("", response);
+      const response = await axios.get(`${API.SUBSCRIPTION_PLAN}`, 
+      // { headers: { "Authorization": ` ${Usertoken1}` } }
+      );
+      
       // console.log("ResponseSUBscribtion_plan ::::", response.data);
       if (response.data.status == 1) {
         setSubscriptionsId(response.data.data)

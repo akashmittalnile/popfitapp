@@ -104,7 +104,7 @@ const OrderDetail = (props) => {
                                                     <View style={{ height: 40, flexDirection: "column", flex: 1, justifyContent: 'flex-start', alignItems: "flex-start", paddingLeft: 15 }}>
 
                                                         <View style={{ flex: 1, }}>
-                                                            <Text style={{ fontSize: 12, color: 'black', }}>25/08/2020, 4:50PM</Text>
+                                                            <Text style={{ fontSize: 12, color: 'black', }}>{item?.order_updatedDate}</Text>
                                                         </View>
                                                         <View style={{ flexDirection: 'row', flex: 1, }}>
 
@@ -215,7 +215,7 @@ const OrderDetail = (props) => {
 
                                                 </View>
                                             </View>
-                                            <Text style={{ marginLeft: 15, marginTop: 20, textAlign: 'left', fontSize: 15, color: '#000000', fontWeight: "400" }}>Your Shipping Address</Text>
+                                            <Text style={{ marginLeft: 15, marginTop: 20, textAlign: 'left', fontSize: 17, color: '#000000', fontWeight: "500" }}>Your Shipping Address</Text>
 
                                             <View style={{
                                                 height: 95,
@@ -258,14 +258,14 @@ const OrderDetail = (props) => {
                                             </View>
 
                                             {/* Order status , Order dispatched,Order for delivery,Order delivered*/}
-                                            <Text style={{ marginLeft: 15, marginTop: 10, textAlign: 'left', fontSize: 15, color: '#000000', fontWeight: "400" }}>Order status</Text>
+                                            <Text style={{ marginLeft: 15, marginTop: 10, textAlign: 'left', fontSize: 17, color: '#000000', fontWeight: "500" }}>Order status</Text>
 
-                                            <View style={{ justifyContent: "flex-start", alignItems: "flex-start", flexDirection: "column", height: 300, width: WIDTH * 0.9, marginTop: 20, marginHorizontal: 20 }}>
+                                            <View style={{ justifyContent: "flex-start", alignItems: "flex-start", flexDirection: "column", height: 300, width: WIDTH * 0.9, marginTop: 20, marginHorizontal: 20,  }}>
 
                                                 {
-                                                    item.order_status == "1" ?
+                                                    item.order_status >= "1" ?
 
-                                                        (<View style={{ backgroundColor: "white", justifyContent: "center", alignItems: "center", flexDirection: "row", width: WIDTH * 0.56, height: 45, paddingBottom: 5 }}>
+                                                        (<View style={{ backgroundColor: "white", justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", width: WIDTH * 0.63, height: 45, paddingBottom: 5 }}>
 
                                                             <View style={{ position: "absolute", left: 10, justifyContent: "center", alignItems: "center", top: 15 }}>
 
@@ -310,7 +310,7 @@ const OrderDetail = (props) => {
 
                                                 <View style={{ backgroundColor: "white", justifyContent: "space-between", alignItems: "flex-start", width: WIDTH * 0.5, height: 30, }}>
                                                     {
-                                                        item.order_status == "1" ?
+                                                        item.order_status >= "1" ?
                                                             (<View style={{ position: "absolute", left: 18, justifyContent: "center", alignItems: "center" }}>
                                                                 <Image source={require('../assets/Ellipse_183.png')}
                                                                     style={{
@@ -352,9 +352,9 @@ const OrderDetail = (props) => {
                                                 </View>
 
                                                 {
-                                                    item.order_status == "2" ?
+                                                    item.order_status >= "2" ?
 
-                                                        (<View style={{ backgroundColor: "white", justifyContent: "center", alignItems: "center", flexDirection: "row", width: WIDTH * 0.56, height: 45, paddingBottom: 5 }}>
+                                                        (<View style={{ backgroundColor: "white", justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", width: WIDTH * 0.63, height: 45, paddingBottom: 5 }}>
 
                                                             <View style={{ position: "absolute", left: 10, justifyContent: "center", alignItems: "center", top: 15 }}>
 
@@ -391,7 +391,7 @@ const OrderDetail = (props) => {
 
                                                 <View style={{ backgroundColor: "white", justifyContent: "space-between", alignItems: "flex-start", width: WIDTH * 0.5, height: 30, }}>
                                                     {
-                                                        item.order_status == "2" ?
+                                                        item.order_status >= "2" ?
                                                             (<View style={{ position: "absolute", left: 18, justifyContent: "center", alignItems: "center" }}>
                                                                 <Image source={require('../assets/Ellipse_183.png')}
                                                                     style={{
@@ -431,9 +431,9 @@ const OrderDetail = (props) => {
                                                 </View>
 
                                                 {
-                                                    item.order_status == "3" ?
+                                                    item.order_status >= "3" ?
 
-                                                        (<View style={{ backgroundColor: "white", justifyContent: "center", alignItems: "center", flexDirection: "row", width: WIDTH * 0.56, height: 45, paddingBottom: 5 }}>
+                                                        (<View style={{ backgroundColor: "white", justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", width: WIDTH * 0.63, height: 45, paddingBottom: 5 }}>
 
                                                             <View style={{ position: "absolute", left: 10, justifyContent: "center", alignItems: "center", top: 15 }}>
 
@@ -477,7 +477,7 @@ const OrderDetail = (props) => {
 
                                                 <View style={{ backgroundColor: "white", justifyContent: "space-between", alignItems: "flex-start", width: WIDTH * 0.5, height: 30, }}>
                                                     {
-                                                        item.order_status == "3" ?
+                                                        item.order_status >= "3" ?
                                                             (<View style={{ position: "absolute", left: 18, justifyContent: "center", alignItems: "center" }}>
                                                                 <Image source={require('../assets/Ellipse_183.png')}
                                                                     style={{
@@ -519,7 +519,7 @@ const OrderDetail = (props) => {
                                                 {
                                                     item.order_status == "4" ?
 
-                                                        (<View style={{ backgroundColor: "white", justifyContent: "center", alignItems: "center", flexDirection: "row", width: WIDTH * 0.56, height: 45, paddingBottom: 5 }}>
+                                                        (<View style={{ backgroundColor: "white", justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", width: WIDTH * 0.63, height: 45, paddingBottom: 5 }}>
 
                                                             <View style={{ position: "absolute", left: 10, justifyContent: "center", alignItems: "center", top: 15 }}>
 

@@ -54,7 +54,7 @@ const MyOrder = (props) => {
 
         setIsLoading(true);
         try {
-            const response = await axios.post(`${API.MY_ORDER}`, { "search": values == null? values:null }, { headers: { "Authorization": ` ${ordertoken}` } });
+            const response = await axios.post(`${API.MY_ORDER}`, { "search": values == null ? values : null }, { headers: { "Authorization": ` ${ordertoken}` } });
             // console.log("", response);
             // console.log("Response_MYorders  ::::", response.data.success);
             // console.log('====================================');
@@ -101,6 +101,26 @@ const MyOrder = (props) => {
     //     }
 
     // };
+
+
+    function Orderstatus(status) {
+
+        if (status == '1') {
+            return 'Order placed'
+        }
+        else if (status == '2') {
+            return 'Order dispatched'
+        }
+        else if (status == '3') {
+            return 'Order for delivery'
+        } else if (status == '4') {
+            return 'Order delivered'
+        }
+        else {
+            return 'data not available'
+        }
+    }
+
     return (
         <SafeAreaView style={{
             flex: 1,
@@ -132,91 +152,92 @@ const MyOrder = (props) => {
                             :
                             (null)
                     }
-                    <View style={{ height: 50, marginHorizontal: 10, marginVertical: 20 }}>
-                        <DropDownPicker
-                            items={[
-                                { label: 'Today', value: 'today' },
-                                { label: '30 Days', value: '30_days' },
-                                { label: '60 Days', value: '60_days' },
-                                { label: '90 Days', value: '90_days' },
-                                { label: '120 Days', value: '120_days' },
-                                { label: 'Last Year', value: 'last_year' },
-                                { label: 'Last 3 Year', value: 'last_3_year' },
-                            ]}
-                            listParentContainerStyle={{
-                                justifyContent: "center",
-                                alignItems: "center", paddingLeft: 25
-                            }}
-                            listParentLabelStyle={{
-                                fontWeight: "600", fontSize: 16
-                            }}
 
-                            backgroundColor='white'
-                            // loading={loading}
-                            placeholder="Select History"
-                            containerStyle={{ height: 70 }}
-                            dropDownDirection="BOTTOM"
-                            // defaultValue={changeCountry}
-                            itemStyle={{ justifyContent: 'flex-start', }}
-                            textStyle={{
-                                fontSize: 14
-                            }}
-                            listMode="MODAL"
-                            open={open}
-                            setOpen={setOpen}
-                            value={value}
-                            setValue={setValue}
-                            // setValue={(v) => {
-                            //     setValue(v)
-                            //     MyorderApi(v)
-                            // }
-                            // }
-                            scrollViewProps={{
-                                decelerationRate: "medium", ScrollView: "#ffcc00"
-                            }}
-                            onChangeText={(item) => setValue(item)}
 
-                            onChangeValue={(value) => {
-                                MyorderApi(value)
+                    {
+                        ordereditem?.length > 0 ?
+                            (<> <ScrollView>
+                                <View style={{ height: 50, marginHorizontal: 10, marginVertical: 20 }}>
+                                    <DropDownPicker
+                                        items={[
+                                            { label: 'Today', value: 'today' },
+                                            { label: '30 Days', value: '30_days' },
+                                            { label: '60 Days', value: '60_days' },
+                                            { label: '90 Days', value: '90_days' },
+                                            { label: '120 Days', value: '120_days' },
+                                            { label: 'Last Year', value: 'last_year' },
+                                            { label: 'Last 3 Year', value: 'last_3_year' },
+                                        ]}
+                                        listParentContainerStyle={{
+                                            justifyContent: "center",
+                                            alignItems: "center", paddingLeft: 25
+                                        }}
+                                        listParentLabelStyle={{
+                                            fontWeight: "600", fontSize: 16
+                                        }}
 
-                            }}
+                                        backgroundColor='white'
+                                        // loading={loading}
+                                        placeholder="Select History"
+                                        containerStyle={{ height: 70 }}
+                                        dropDownDirection="BOTTOM"
+                                        // defaultValue={changeCountry}
+                                        itemStyle={{ justifyContent: 'flex-start', }}
+                                        textStyle={{
+                                            fontSize: 14
+                                        }}
+                                        listMode="MODAL"
+                                        open={open}
+                                        setOpen={setOpen}
+                                        value={value}
+                                        setValue={setValue}
+                                        // setValue={(v) => {
+                                        //     setValue(v)
+                                        //     MyorderApi(v)
+                                        // }
+                                        // }
+                                        scrollViewProps={{
+                                            decelerationRate: "medium", ScrollView: "#ffcc00"
+                                        }}
+                                        onChangeText={(item) => setValue(item)}
 
-                            defaultValue={null}
-                            dropDownContainerStyle={{
-                                // backgroundColor:"red",
-                                borderColor: '#8F93A0',
-                                color: '#8F93A0',
-                                alignItems: "center",
-                                justifyContent: "center",
-                                fontSize: 16,
-                                borderWidth: 1,
-                                borderRadius: 10,
-                                shadowColor: '#000000',
-                                shadowOffset: {
-                                    width: 0,
-                                    height: 3
-                                },
-                                shadowRadius: 5,
-                                shadowOpacity: 1.0,
-                                elevation: 5,
-                                zIndex: 999,
+                                        onChangeValue={(value) => {
+                                            MyorderApi(value)
 
-                            }}
-                            style={{
-                                borderColor: 'white', backgroundColor: 'white', borderRadius: 25, shadowColor: '#000',
-                                shadowOffset: { width: 0, height: 2 },
-                                shadowOpacity: 0.2,
-                                elevation: 2,
-                                alignItems: "center"
-                                , justifyContent: "center", zIndex: 3, paddingLeft: 20
-                            }}
-                        />
+                                        }}
+                                        style={{
+                                            borderColor: 'white', backgroundColor: 'white', borderRadius: 25, shadowColor: '#000',
+                                            shadowOffset: { width: 0, height: 2 },
+                                            shadowOpacity: 0.2,
+                                            elevation: 2,
+                                            alignItems: "center"
+                                            , justifyContent: "center", zIndex: 3, paddingLeft: 20
+                                        }}
+                                        defaultValue={null}
+                                        dropDownContainerStyle={{
+                                            // backgroundColor:"red",
+                                            borderColor: '#8F93A0',
+                                            color: '#8F93A0',
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            fontSize: 16,
+                                            borderWidth: 1,
+                                            borderRadius: 10,
+                                            shadowColor: '#000000',
+                                            shadowOffset: {
+                                                width: 0,
+                                                height: 3
+                                            },
+                                            shadowRadius: 5,
+                                            shadowOpacity: 1.0,
+                                            elevation: 5,
+                                            zIndex: 999,
 
-                    </View>
-                    <ScrollView>
-                        {
-                            ordereditem.length > 0 ?
-                            ( <>
+                                        }}
+
+                                    />
+
+                                </View>
                                 <FlatList
                                     vertical
                                     data={ordereditem}
@@ -239,18 +260,18 @@ const MyOrder = (props) => {
                                             elevation: 6,
                                             flexDirection: "column",
                                             marginBottom: 10
-    
+
                                         }}>
-    
+
                                             <View style={{ height: 50, width: WIDTH * 0.92, flexDirection: 'row', padding: 10, justifyContent: "space-between", }}>
-    
+
                                                 <View style={{ height: 30, marginTop: 1, justifyContent: 'flex-start', alignItems: "flex-start", marginLeft: 1, }}>
-    
+
                                                     <Text style={{ fontSize: 14, color: '#455A64', fontWeight: "500" }}>Order No. : <Text style={{ fontSize: 14, color: '#FFCC00', }}> {item.order_number}</Text></Text>
-    
-    
+
+
                                                 </View>
-    
+
                                                 <View style={{ backgroundColor: '#ffcc00', borderRadius: 20, height: 30, width: 140, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
                                                     <View style={{ width: 30, marginLeft: 6 }}>
                                                         <Image source={require('../assets/download1.png')}
@@ -260,15 +281,15 @@ const MyOrder = (props) => {
                                                             }} />
                                                     </View>
                                                     <View>
-                                                        <TouchableOpacity style={{marginLeft:-10}}>
+                                                        <TouchableOpacity style={{ marginLeft: -10 }}>
                                                             <Text style={{ textAlign: 'left', fontSize: 10, color: 'white', }}>Download Invoice</Text>
                                                         </TouchableOpacity>
                                                     </View>
                                                 </View>
-    
-    
+
+
                                             </View>
-    
+
                                             <View style={{
                                                 height: 120,
                                                 flexDirection: 'row',
@@ -277,7 +298,7 @@ const MyOrder = (props) => {
                                                 alignItems: "center",
                                                 // backgroundColor: 'red',
                                             }}>
-    
+
                                                 <View style={{
                                                     width: 115, height: 120,
                                                     justifyContent: "center",
@@ -289,27 +310,27 @@ const MyOrder = (props) => {
                                                             width: "100%",
                                                             borderRadius: 10,
                                                             height: "100%", alignSelf: 'center',
-    
+
                                                         }}
                                                         source={{ uri: item.product_image }} />
-    
+
                                                 </View>
-    
+
                                                 <View style={{
                                                     justifyContent: "flex-start", alignItems: "flex-start", width: WIDTH * 0.97, marginLeft: 15,
                                                 }}>
                                                     <Text style={{ textAlign: 'left', fontSize: 15, color: '#455A64', fontWeight: "600" }}>{item.product_name.slice(0, 25) + '...'}</Text>
-    
+
                                                     <View style={{ marginTop: 6, flexDirection: 'row', justifyContent: "flex-start", alignItems: "flex-start", height: 60, width: WIDTH * 0.97 }}>
-    
-    
+
+
                                                         <View style={{ flexDirection: 'row' }}>
                                                             <View>
                                                                 <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64' }}>Price : <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#77869E' }}>$ {item.product_price}</Text></Text>
                                                             </View>
-    
+
                                                         </View>
-    
+
                                                         {/* <View style={{ flexDirection: 'row', marginLeft: 17,marginTop: 3 }}>
                                                     <View style={{}}>
                                                         <Text style={{ textAlign: 'left', fontSize: 12, color: '#000000',fontWeight:"bold" }}>Tax : <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 10, color: '#000000', }}>$ {item?.tax}</Text></Text>
@@ -325,8 +346,8 @@ const MyOrder = (props) => {
                                                 </View> */}
                                                     </View>
                                                 </View>
-    
-    
+
+
                                             </View>
                                             {/* <View style={{
                                                 height: 120, marginLeft: 0, flexDirection: 'row', width: WIDTH * 0.9, justifyContent: "center", flex: 2, backgroundColor: "pink",marginTop:10
@@ -357,26 +378,26 @@ const MyOrder = (props) => {
                                                     </View>
                                                 </View>
                                             </View> */}
-    
+
                                             <View style={{
                                                 marginTop: 10, flexDirection: 'row', justifyContent: "flex-start", flex: 1, margin: 10, height: 70, width: WIDTH * 0.92
                                             }}>
                                                 <View style={{ marginTop: 9, height: 20, justifyContent: "center", alignItems: "center", flex: 0.3, }}>
                                                     <Text style={{ textAlign: 'left', fontSize: 14, color: '#353535', fontWeight: "500" }}>Order Status :</Text>
                                                 </View>
-    
-                                                {item.order_status == "1" ?
+
+                                                {item.order_status >= "1" ?
                                                     (<View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}>
-                                                        <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "400" }}>Order placed</Text>
+                                                        <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "400" }}>{Orderstatus(item.order_status)}</Text>
                                                         <View style={{ marginTop: 6, }}>
-                                                            <Text style={{ textAlign: 'left', fontSize: 9, color: '#455A64',fontWeight: "400" }}>on {item.created_at}</Text>
+                                                            <Text style={{ textAlign: 'left', fontSize: 9, color: '#455A64', fontWeight: "400" }}>on {item.created_at}</Text>
                                                         </View>
                                                     </View>)
                                                     :
                                                     (
                                                         <View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}><Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "400" }}>data not available</Text>
                                                         </View>)
-    
+
                                                 }
                                                 <View style={{ marginTop: 10, justifyContent: 'center', alignItems: 'flex-end', marginRight: 10, flex: 0.1 }}>
                                                     <TouchableOpacity
@@ -389,27 +410,18 @@ const MyOrder = (props) => {
                                                 </View>
                                             </View>
                                         </View>
-    
+
                                     }
                                     }
                                 />
-                            </>)
+                            </ScrollView>  </>)
                             :
                             (<View style={{
-                                marginHorizontal: 6,
-                                height: HEIGHT,
-                                width: WIDTH * 0.97,
-                                borderRadius: 10,
-                                // backgroundColor: 'white',
-                                // width: 380,
-                                // justifyContent: "center",
+                                justifyContent: "center",
                                 alignItems: "center",
-                                flexDirection: "column",
-                                marginTop:160,
-                                shadowColor: '#000000',
-                            shadowRadius: 6,
-                            shadowOpacity: 1.0,
-                            elevation: 6,
+                                flex: 1,
+                                
+
                             }}>
                                 <Image resizeMode='contain'
                                     source={require('../assets/Nodatafound.png')}
@@ -417,11 +429,11 @@ const MyOrder = (props) => {
                                         width: 200,
                                         height: 120, alignSelf: 'center'
                                     }} />
-                                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black'  }}>Oops, Order list is empty !</Text>
+                                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>Oops, Order list is empty !</Text>
                             </View>)
-                        }
-                       
-                    </ScrollView>
+                    }
+
+
                 </>)
                 :
                 (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>

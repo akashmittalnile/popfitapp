@@ -31,6 +31,7 @@ import * as yup from 'yup';
 import { Formik } from 'formik';
 import Headers from '../../Routes/Headers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { async } from 'regenerator-runtime';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -45,10 +46,17 @@ const Blog = (props) => {
   const [NewsletterPopup, setNewsletterPopup] = useState(false);
 
 
-  const gotoBlogDetail = (item) => {
-    props.navigation.navigate('BlogDetail', {
-      blogdetail_id: item
-    });
+  const gotoBlogDetail = async (item) => {
+    const usertkn = await AsyncStorage.getItem("authToken");
+    if (usertkn == null) {
+      Alert.alert('Blog details', 'Login first!')
+    }
+    else if (usertkn != null) {
+      props.navigation.navigate('BlogDetail', {
+        blogdetail_id: item
+      });
+    }
+
   };
   const gotoCategory = (item) => {
     props.navigation.navigate('Category', {
@@ -66,10 +74,12 @@ const Blog = (props) => {
 
   const GetNewsletterApi = async (values) => {
     const usertkn = await AsyncStorage.getItem("authToken");
+ 
     // const EnterEmail = UserEmail;
     const data = {
       email: values.Checkemail,
     }
+    if(usertkn != null){
     // console.log("......userenteremail::", EnterEmail);
     setIsLoading(true);
     try {
@@ -81,15 +91,19 @@ const Blog = (props) => {
         props.navigation.goBack()
         setIsLoading(false);
       } else if (response.data.status == 0) {
-        Alert.alert("Not access before Login this, first go and login your id")
+        Alert.alert('Not Accessible', 'Login First !')
       }
 
     }
     catch (error) {
+      Alert.alert('Blog Data', ' Something went wrong, Try again later !')
       // console.log("......error.........", error.response.data.message);
       setIsLoading(false);
 
     }
+  }else {
+    Alert.alert('','User not found')
+  }
   };
 
   const GetCategoryBlogApi = async () => {
@@ -97,7 +111,9 @@ const Blog = (props) => {
     setIsLoading(true);
     try {
 
-      const response = await axios.get(`${API.BLOG_MAIN_SCREEN}`, { headers: { "Authorization": ` ${usertkn}` } });
+      const response = await axios.get(`${API.BLOG_MAIN_SCREEN}`,
+        // { headers: { "Authorization": ` ${usertkn}` } }
+      );
       // console.log(":::::::::Traing_Workout_Response>>>", response.data);
       // console.log("Traing_Workout_data::::::", response.data.status);
       setBlogvideolist(response.data.blog)
@@ -106,6 +122,7 @@ const Blog = (props) => {
 
     }
     catch (error) {
+      Alert.alert('Blog Data', ' Something went wrong, Try again later !')
       // console.log("......error.........", error.response.data.message);
       setIsLoading(false);
 
@@ -118,25 +135,25 @@ const Blog = (props) => {
       height: HEIGHT, backgroundColor: 'black', flexGrow: 1
     }} >
       <Headers
-            Drawericon={{
-              visible: true,
-            }}
-            DrawericononClick={() => { props.navigation.dispatch(DrawerActions.openDrawer()) }}
+        Drawericon={{
+          visible: true,
+        }}
+        DrawericononClick={() => { props.navigation.dispatch(DrawerActions.openDrawer()) }}
 
-            CartIcon={{
-              visible: true,
-            }}
-            CartIconononClick={() => { props.navigation.navigate("CartAdded") }}
+        CartIcon={{
+          visible: true,
+        }}
+        CartIconononClick={() => { props.navigation.navigate("CartAdded") }}
 
-            Bellicon={{
-              visible: true,
+        Bellicon={{
+          visible: true,
 
-            }}
-            BelliconononClick={() => { props.navigation.navigate('Notifications') }}
-          />
+        }}
+        BelliconononClick={() => { props.navigation.navigate('Notifications') }}
+      />
       {!isLoading ?
-        (<View style={{ width: WIDTH, height: HEIGHT,flex:1}}>
-          
+        (<View style={{ width: WIDTH, height: HEIGHT, flex: 1 }}>
+
           <ScrollView nestedScrollEnabled={true} >
             <Divider color="#393939" width={1.2} />
 
@@ -173,12 +190,12 @@ const Blog = (props) => {
                   <View
                     style={{
                       // width:120,
-                      height: 150,
+                      height: 140,
                       // marginLeft: 20,
                       flex: 0.4,
                       borderRadius: 20,
                       marginRight: 10,
-                      backgroundColor: 'white',
+                      backgroundColor: 'whiredte',
                     }}>
                     <Image
                       resizeMode='cover'
@@ -187,8 +204,8 @@ const Blog = (props) => {
                         alignSelf: 'center',
                         width: "100%",
                         height: "100%",
-                        borderBottomLeftRadius: 15,
-                        borderTopLeftRadius: 15,
+                        borderBottomLeftRadius: 20,
+                        borderTopLeftRadius: 20,
                       }}
                     />
                   </View>
@@ -205,11 +222,11 @@ const Blog = (props) => {
                       // backgroundColor: 'white',
                     }}>
                     <View
-                      style={{ flex: 0.7, justifyContent: 'center', marginTop: 20, marginLeft: 10, }}>
+                      style={{ flex: 0.6, justifyContent: 'center', marginTop: 30, marginLeft: 0, right: 2, alignItems: "center" }}>
                       <Text
                         style={{
                           textAlign: 'left',
-                          fontSize: 17,
+                          fontSize: 16,
                           color: 'black',
                           fontWeight: "600"
                         }}>
@@ -263,11 +280,11 @@ const Blog = (props) => {
               // style={{ margin: 10 }}
               keyExtractor={(item, index) => String(index)}
               data={Blogvideolist}
-              renderItem={({ item ,index}) => (
+              renderItem={({ item, index }) => (
                 <TouchableOpacity onPress={() => { gotoBlogDetail(item) }}
                   style={{
                     backgroundColor: 'white',
-                    height: 200,
+                    height: 180,
                     width: WIDTH * 0.45,
                     marginTop: 10,
                     marginHorizontal: 10,
@@ -287,15 +304,15 @@ const Blog = (props) => {
                       style={{ justifyContent: 'center', borderTopLeftRadius: 20, borderTopRightRadius: 20, alignItems: 'center', backgroundColor: 'white', width: '100%', height: '100%', }} />
                   </View>
                   <View
-                    style={{ height: 50, backgroundColor: '#fceeb5', borderBottomLeftRadius: 16, borderBottomRightRadius: 16, width: WIDTH * 0.45, justifyContent: "flex-start", alignItems: "flex-start",paddingTop: 5,paddingLeft: 10, }}>
+                    style={{ height: 30, backgroundColor: '#fceeb5', borderBottomLeftRadius: 16, borderBottomRightRadius: 16, width: WIDTH * 0.45, justifyContent: "flex-start", alignItems: "center", paddingTop: 5, paddingLeft: 0, }}>
 
-                    <Text  numberOfLines={1}
-                    style={{textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "500" }}>{item.youtube_title.slice(0, 20) + '...'}</Text>
+                    <Text numberOfLines={1}
+                      style={{ textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "500" }}>{item.youtube_title.slice(0, 15) + '...'}</Text>
 
-                    <View style={{ height: 30, alignItems: "flex-start", paddingTop: 4, justifyContent: "flex-start", width: WIDTH * 0.42, marginBottom:4, }}>
+                    {/* <View style={{ height: 30, alignItems: "flex-start", paddingTop: 4, justifyContent: "flex-start", width: WIDTH * 0.42, marginBottom:4, }}>
                       <Text  numberOfLines={1}
                         style={{textAlign: 'left', fontSize: 8, color: '#000000',fontWeight: "300"  }}>{item.youtube_description.slice(0, 200) + '...'}</Text>
-                    </View>
+                    </View> */}
                   </View>
                 </TouchableOpacity>
 
@@ -321,65 +338,65 @@ const Blog = (props) => {
               keyExtractor={(item, index) => String(index)}
               data={Blogcategorylist}
               // style={{ margin: 0}}
-              renderItem={({ item,index }) => {
-              return(
-                <TouchableOpacity
-                  onPress={() => {
-                    gotoCategory(item)
-                  }}>
-                  <View
-                    style={{
-                      marginTop: 10,
-                      backgroundColor: 'white',
-                      height: 180,
-                      width: WIDTH * 0.45,
-                      borderRadius: 20,
-                      marginBottom: 10,
-                      marginHorizontal: 10,
-                      justifyContent: "center",
-                      alignItems: 'center',
+              renderItem={({ item, index }) => {
+                return (
+                  <TouchableOpacity
+                    onPress={() => {
+                      gotoCategory(item)
                     }}>
-
                     <View
                       style={{
-                        width: WIDTH * 0.45, height: 180, borderRadius: 20,
-                        justifyContent: "flex-start", alignItems: "flex-start"
+                        marginTop: 10,
+                        backgroundColor: 'white',
+                        height: 180,
+                        width: WIDTH * 0.45,
+                        borderRadius: 20,
+                        marginBottom: 10,
+                        marginHorizontal: 10,
+                        justifyContent: "center",
+                        alignItems: 'center',
                       }}>
-                      <Image
-                        source={{ uri: `${item?.image}` }}
-                        resizeMode="stretch"
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          borderRadius: 20,
-                          alignSelf: 'center',
-                        }}
-                      />
-                      <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
-                        <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "500" }}>{item?.cat_name}</Text>
 
+                      <View
+                        style={{
+                          width: WIDTH * 0.45, height: 180, borderRadius: 20,
+                          justifyContent: "flex-start", alignItems: "flex-start"
+                        }}>
+                        <Image
+                          source={{ uri: `${item?.image}` }}
+                          resizeMode="stretch"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            borderRadius: 20,
+                            alignSelf: 'center',
+                          }}
+                        />
+                        <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
+                          <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "500" }}>{item?.cat_name}</Text>
+
+                        </View>
+
+                      </View>
+                      <View style={{
+                        justifyContent: "flex-end",
+                        alignItems: 'flex-end',
+                        position: "absolute", width: 40, height: 30, bottom: 0, right: 0
+                      }}>
+                        <Image resizeMode='contain'
+                          source={require('../assets/arrowWhiteBack.png')}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            alignSelf: 'center',
+                            borderBottomRightRadius: 20,
+
+                          }}
+                        />
                       </View>
 
                     </View>
-                    <View style={{
-                      justifyContent: "flex-end",
-                      alignItems: 'flex-end', 
-                      position: "absolute", width: 40, height: 30, bottom: 0, right: 0
-                    }}>
-                      <Image resizeMode='contain'
-                        source={require('../assets/arrowWhiteBack.png')}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          alignSelf: 'center',
-                          borderBottomRightRadius: 20,
-
-                        }}
-                      />
-                    </View>
-
-                  </View>
-                  {/* <BackgroundImage
+                    {/* <BackgroundImage
                     resizeMode=''
                     source={{ uri: `${item.image}` }}
                     style={{
@@ -432,8 +449,9 @@ const Blog = (props) => {
                       </View>
                     </View>
                   </BackgroundImage> */}
-                </TouchableOpacity>
-              )}}
+                  </TouchableOpacity>
+                )
+              }}
             />
 
             {NewsletterPopup ? (
@@ -460,14 +478,14 @@ const Blog = (props) => {
                       width: "100%",
                       justifyContent: "flex-end",
                       alignItems: 'center',
-                      shadowColor: '#000',
-                      shadowOffset: {
-                        width: 0,
-                        height: 2,
-                      },
-                      shadowOpacity: 0.25,
-                      shadowRadius: 4,
-                      elevation: 6,
+                      // shadowColor: '#000',
+                      // shadowOffset: {
+                      //   width: 0,
+                      //   height: 2,
+                      // },
+                      // shadowOpacity: 0.25,
+                      // shadowRadius: 4,
+                      // elevation: 6,
                     }}>
                     <Formik
                       initialValues={{
@@ -507,8 +525,8 @@ const Blog = (props) => {
                               source={require('../assets/newslogo.png')}
                               style={{ width: "100%", height: 190, borderTopLeftRadius: 20, borderTopRightRadius: 20, justifyContent: "center", alignSelf: "center" }} />
 
-                            <View style={{ marginTop: 20,position: "absolute", marginLeft: 110, justifyContent: "center", alignItems: "center" }}>
-                              <Text style={{  textAlign: 'center', fontSize: 17, color: 'white', fontWeight: "600" }}>Subscribe News Letter</Text>
+                            <View style={{ marginTop: 20, position: "absolute", marginLeft: 110, justifyContent: "center", alignItems: "center" }}>
+                              <Text style={{ textAlign: 'center', fontSize: 17, color: 'white', fontWeight: "600" }}>Subscribe News Letter</Text>
                             </View>
 
                           </View>
@@ -558,7 +576,7 @@ const Blog = (props) => {
                               onPress={() => { handleSubmit(values) }}>
                               <View style={{ alignItems: 'center', justifyContent: 'center', width: 150, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
 
-                                <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Subscribe</Text>
+                                <Text style={{ textAlign: 'center', fontSize: 15, color: 'white'}}>Subscribe</Text>
 
                               </View>
                             </TouchableOpacity>

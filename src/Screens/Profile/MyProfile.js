@@ -38,6 +38,23 @@ const MyProfile = (props) => {
     const gotoMyOrder = () => {
         props.navigation.navigate("MyOrder")
     }
+    function Orderstatus(status) {
+
+        if (status == '1') {
+            return 'Order placed'
+        }
+        else if (status == '2') {
+            return 'Order dispatched'
+        }
+        else if (status == '3') {
+            return 'Order for delivery'
+        } else if (status == '4') {
+            return 'Order delivered'
+        }
+        else {
+            return 'data not available'
+        }
+    }
 
     // console.log("props.route.params::", props.route.params)
     // const { UserProfile } = props.route.params
@@ -343,9 +360,9 @@ const MyProfile = (props) => {
                                                     <Text style={{ textAlign: 'left', fontSize: 14, color: '#353535', fontWeight: "500" }}>Order Status :</Text>
                                                 </View>
 
-                                                {item.order_status == "1" ?
+                                                {item.order_status >= "1" ?
                                                     (<View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}>
-                                                        <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "400" }}>Order placed</Text>
+                                                        <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "400" }}>{Orderstatus(item.order_status)}</Text>
                                                         <View style={{ marginTop: 6, }}>
                                                             <Text style={{ textAlign: 'left', fontSize: 9, color: '#455A64',fontWeight: "400" }}>on {item.created_at}</Text>
                                                         </View>

@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
 import { Divider } from 'react-native-elements';
+import { async } from 'regenerator-runtime';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -33,14 +34,20 @@ const Shop = (props) => {
 
   // const openDrawer = () => props.navigation.dispatch(DrawerActions.openDrawer());
 
-  const gotoShippingDetail = (item) => {
-    props.navigation.navigate('ProductDetail', {
-      ITEM: item
-    });
+  const gotoShippingDetail = async (item) => {
+    const Token = await AsyncStorage.getItem("authToken")
+    if (Token == null) {
+      Alert.alert('Shop', 'Login First!')
+    } else if (Token != null) {
+      props.navigation.navigate('ProductDetail', {
+        ITEM: item
+      })
+    }
+
   };
-  const gotoshippingdetails = () => {
-    props.navigation.navigate('ShippingDetail');
-  };
+  // const gotoshippingdetails = () => {
+  //   props.navigation.navigate('ShippingDetail');
+  // };
 
   useEffect(() => {
 
@@ -58,7 +65,9 @@ const Shop = (props) => {
     console.log("SHOP filter...........>>>", ischecked);
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.SHOP_FILTER}`, { "search": ischecked, "shop_id": '' }, { headers: { "Authorization": ` ${Token}` } });
+      const response = await axios.post(`${API.SHOP_FILTER}`, { "search": ischecked, "shop_id": '' },
+        // { headers: { "Authorization": ` ${Token}` } }
+      );
       console.log(":::::::::Shop_FIlter>>>", response.data.data);
       console.log("SHOP_Status", response.data.status);
       if (response.data.status == 1) {
@@ -74,7 +83,7 @@ const Shop = (props) => {
     }
     catch (error) {
       // console.log("......error.........", error.response.data.message);
-      Alert.alert(" Error in filter api catch part!");
+      Alert.alert("filter",error.response.data.message);
       setIsLoading(false);
     }
 
@@ -84,7 +93,9 @@ const Shop = (props) => {
 
     setIsLoading(true);
     try {
-      const response = await axios.get(`${API.SHOP_MAIN}`, { headers: { "Authorization": ` ${Token}` } });
+      const response = await axios.get(`${API.SHOP_MAIN}`,
+        // { headers: { "Authorization": ` ${Token}` } }
+      );
       // console.log(":::::::::Shop_Store_Response>>>", response.data.best_seller);
       // console.log("status _SHOP", response.data.status);
       setshopitems(response.data.best_seller)
@@ -92,7 +103,7 @@ const Shop = (props) => {
     }
     catch (error) {
       // console.log("......error.........", error.response.data.message);
-      Alert.alert("Please login First !!!!")
+      Alert.alert('Something went wrong !','Try again later')
       setIsLoading(false);
     }
 
@@ -189,17 +200,17 @@ const Shop = (props) => {
         (<ScrollView >
 
           <View style={{ height: 50, flexDirection: 'row', flex: 1, justifyContent: "flex-start", alignItems: "flex-start", width: "100%" }}>
-            <View style={{ justifyContent: "center", alignItems: "center", flex: 0.3, }}>
+            <View style={{ justifyContent: "center", alignItems: "center", flex: 0.2, }}>
               <Text
                 style={{
-                  marginLeft: 10,
+                  // marginLeft: 10,
                   marginTop: 20,
                   textAlign: 'left',
                   fontSize: 18,
                   color: 'black',
                   fontWeight: "500"
                 }}>
-                Best Seller
+                Shop
               </Text>
             </View>
 

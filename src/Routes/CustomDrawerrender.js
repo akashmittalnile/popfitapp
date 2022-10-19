@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React, { useState } from "react";
-import { ScrollView, View, Text, TouchableOpacity, StyleSheet, TextInput, Image, Dimensions, Modal, ActivityIndicator, BackHandler, SafeAreaView } from 'react-native'
+import { ScrollView, View, Text, TouchableOpacity, StyleSheet, TextInput, Image, Dimensions, Modal, ActivityIndicator, BackHandler, SafeAreaView, Alert } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useEffect } from 'react';
@@ -114,6 +114,7 @@ const CustomDrawerrender = (props) => {
       console.log("response_contactus ::::", response.data);
       if (response.data.status == 1) {
         setContactUs(false);
+        // Alert.alert('','')
         props.navigation.navigate("Home");
         setUserName = "";
         setUseremail = "";
@@ -166,18 +167,18 @@ const CustomDrawerrender = (props) => {
           {
             userprofile == null ?
               (<TouchableOpacity onPress={() => gotologin_signuppage()}
-              style={{ borderRadius: 20, backgroundColor: 'white', marginHorizontal: 20, height: 100, flexDirection: 'row', marginTop: 30 }}>
+                style={{ borderRadius: 20, backgroundColor: 'white', marginHorizontal: 20, height: 100, flexDirection: 'row', marginTop: 30 }}>
                 <View style={{ justifyContent: 'center', width: 100, height: 100 }} >
-                  <Image resizeMode="contain" 
-                  source={require('../Screens/assets/AvatarImg.png')}
+                  <Image resizeMode="contain"
+                    source={require('../Screens/assets/AvatarImg.png')}
                     style={{
                       width: 70,
                       height: 70, alignSelf: 'center',
                     }} />
                 </View>
 
-                <View  style={{ justifyContent: 'center',alignItems:"center", flex: 1, height: 100}} >
-                  <Text style={{ fontSize: 14, color: 'black', textAlign: 'left',fontWeight:"500" }}>User's Login</Text>
+                <View style={{ justifyContent: 'center', alignItems: "center", flex: 1, height: 100 }} >
+                  <Text style={{ fontSize: 14, color: 'black', textAlign: 'left', fontWeight: "500" }}>User's Login</Text>
                 </View>
 
                 <View style={{ justifyContent: 'flex-end', flex: 1 / 2, width: 50, borderBottomRightRadius: 20 }}>
@@ -191,7 +192,7 @@ const CustomDrawerrender = (props) => {
               :
               (<TouchableOpacity onPress={() => {
                 props.navigation.navigate("MyProfile")
-                }}>
+              }}>
                 <View style={{ borderRadius: 20, backgroundColor: 'white', marginHorizontal: 20, height: 100, flexDirection: 'row', marginTop: 30 }}>
                   <View style={{ justifyContent: 'center', width: 100, height: 100 }} >
                     <Image
@@ -260,11 +261,11 @@ const CustomDrawerrender = (props) => {
               }
               <TouchableOpacity onPress={() => { props.navigation.navigate("TrainingBottomTab") }}>
                 <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
-                  <View style={{ width: 50, height: 50,marginLeft: 5 }} >
+                  <View style={{ width: 50, height: 50, marginLeft: 5 }} >
                     <Image source={require('../Screens/assets/menu2.png')}
                       style={{
                         width: 20,
-                        height: 20, 
+                        height: 20,
                       }} />
                   </View>
                   <View style={{ height: 50 }} >
@@ -292,11 +293,11 @@ const CustomDrawerrender = (props) => {
               </TouchableOpacity>
               <TouchableOpacity onPress={() => props.navigation.navigate("BlogBottomTab")}>
                 <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
-                  <View style={{ width: 50, height: 50 ,marginLeft: 5}} >
+                  <View style={{ width: 50, height: 50, marginLeft: 5 }} >
                     <Image source={require('../Screens/assets/menu4.png')}
                       style={{
                         width: 22,
-                        height: 20, 
+                        height: 20,
                       }} />
                   </View>
                   <View style={{ height: 50 }} >
@@ -308,11 +309,11 @@ const CustomDrawerrender = (props) => {
               </TouchableOpacity>
               <TouchableOpacity onPress={() => props.navigation.navigate("TermsAndCondition")}>
                 <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
-                  <View style={{ width: 50, height: 50,marginLeft: 5 }} >
+                  <View style={{ width: 50, height: 50, marginLeft: 5 }} >
                     <Image source={require('../Screens/assets/menu5.png')}
                       style={{
                         width: 20,
-                        height: 20, 
+                        height: 20,
                       }} />
                   </View>
                   <View style={{ height: 50 }} >
@@ -327,7 +328,7 @@ const CustomDrawerrender = (props) => {
                   <View style={{ width: 50, height: 50, marginLeft: 5, }} >
                     <Image source={require('../Screens/assets/menu6.png')}
                       style={{
-                       width: 20,
+                        width: 20,
                         height: 20,
                       }} resizeMode="contain" />
                   </View>
@@ -340,11 +341,11 @@ const CustomDrawerrender = (props) => {
               </TouchableOpacity>
               <TouchableOpacity onPress={() => props.navigation.navigate("RefundPolicy")}>
                 <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
-                  <View style={{ width: 50, height: 50 ,marginLeft: 5}} >
+                  <View style={{ width: 50, height: 50, marginLeft: 5 }} >
                     <Image source={require('../Screens/assets/menu7.png')}
                       style={{
                         width: 20,
-                        height: 20, 
+                        height: 20,
                       }} />
                   </View>
                   <View style={{ height: 50 }} >
@@ -359,7 +360,7 @@ const CustomDrawerrender = (props) => {
                 setContactUs(true)
                 setcheck(true)
               }}>
-                 
+
                 <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
                   <View style={{ width: 50, height: 50, marginLeft: 5 }} >
                     <Image source={require('../Screens/assets/menu8.png')}
@@ -437,97 +438,81 @@ const CustomDrawerrender = (props) => {
                   backgroundColor: 'rgba(140, 141, 142, 0.7)',
 
                 }}>
-                <ScrollView showsVerticalScrollIndicator={false}>
-                  <View
-                    style={{
-                      marginTop: 315,
-                      backgroundColor: 'white',
-                      borderRadius: 20,
-                      width: "100%",
-                      // alignItems: 'flex-end',
-                      justifyContent: "flex-end",
-                      // alignContent:"flex-end",
-                      // alignSelf: "flex-end",
-                      shadowColor: '#000',
-                      shadowOpacity: 0.25,
-                      shadowRadius: 4,
-                      elevation: 6,
-                    }}>
+
+                <View
+                  style={{
+                    backgroundColor: 'white',
+                    borderRadius: 20,
+                    width: "100%",
+                    justifyContent: "flex-end",
+                  
+                  }}>
+
+                  <View style={{
+                    height: 460,
+                    width: "100%",
+                    borderRadius: 20,
+                    
+                    alignItems: 'center',
+                    // backgroundColor: 'pink',
+                    justifyContent: "center",
+                  }}>
+                    <TouchableOpacity onPress={() => { setContactUs(false) }}
+                      style={{ position: "absolute", width: 30, backgroundColor: 'red', borderRadius: 35, height: 35, right: 10, top: 10 }}>
+                      <Image
+                        source={require('../Screens/assets/cancelWhite.png')}
+                        style={{
+                          width: 35,
+                          height: 35, alignSelf: 'center'
+                        }}
+
+                      />
+                    </TouchableOpacity>
+                    <View style={{ marginTop: 15, marginHorizontal: 20, height: 30, flexDirection: "row", justifyContent: "center", alignItems: 'center' }}>
+
+
+                      <View style={{ width: 25, height: 25, justifyContent: "center", alignItems: 'center', borderRadius: 40 / 2 }}>
+                        <Image source={require('../Screens/assets/contactUs.png')}
+                          style={{
+                            width: 20,
+                            height: 20, alignSelf: 'center'
+                          }} />
+
+                      </View>
+                      <View style={{ marginLeft: 10, }}>
+                        <Text style={{ textAlign: 'center', fontSize: 18, color: 'black', fontWeight: "500" }}>Contact Us</Text>
+                      </View>
+
+
+                    </View>
+
+
 
                     <View style={{
-                        height: 460,
-                        width: "100%",
-                      borderRadius: 10,
-                        alignItems: 'center',
-                        // justifyContent: "flex-end",
-                      // marginHorizontal: 15,
-                      // borderRadius: 20,
-                      // backgroundColor: 'red',
-                      //marginTop: 150,
-                      // borderColor: "white",
-                      // borderWidth: 1,
-                      // height: "100%",
-                      // width: "100%",
-                      padding: 10,
-                      // alignItems: 'center',
-                      justifyContent:"center",
-                    }}>
-                      <TouchableOpacity onPress={() => { setContactUs(false) }}
-                        style={{ position: "absolute", width: 30, backgroundColor: 'red', borderRadius: 35, height: 35, right: 10, top: 10 }}>
-                        <Image
-                          source={require('../Screens/assets/cancelWhite.png')}
-                          style={{
-                            width: 35,
-                            height: 35, alignSelf: 'center'
-                          }}
-
-                        />
-                      </TouchableOpacity>
-                      <View style={{ marginTop: 15, marginHorizontal: 20, height: 30, flexDirection: "row", justifyContent: "center", alignItems: 'center' }}>
-
-
-                        <View style={{ width: 25, height: 25, justifyContent: "center", alignItems: 'center', borderRadius: 40 / 2 }}>
-                          <Image source={require('../Screens/assets/contactUs.png')}
-                            style={{
-                              width: 20,
-                              height: 20, alignSelf: 'center'
-                            }} />
-
-                        </View>
-                        <View style={{ marginLeft: 10,}}>
-                        <Text style={{ textAlign: 'center', fontSize: 18, color: 'black',fontWeight:"500" }}>Contact Us</Text>
-                        </View>
-                       
-
-                      </View>
-
-
-
-                      <View style={{
-                        marginTop: 30, borderRadius: 25, marginHorizontal: 20,
-                        flexDirection: 'row',
-                        height: 45,
-                        shadowColor: '#11032586',
-                        backgroundColor: 'white',
-                        alignItems: 'center',
-                        borderColor: "#D7D7D7",
-                        borderWidth: 1,
-                        // backgroundColor: 'red', 
-                        justifyContent: "center",
-                      }}
-                      >
-                        <TextInput
-                          placeholder="Name"
-                          value={UserName}
-                          onChangeText={(text) => setUserName(text)}
-                          fontWeight='normal'
-                          placeholderTextColor='#D7D7D7'
-                          style={{
-                            width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 15, color: "black",
-                            fontSize: 14
-                          }} />
-                      </View>
-                      {/* <View style={{ height: 50, marginHorizontal: 25, marginTop: 15 }}>
+                      marginTop: 30, borderRadius: 25, marginHorizontal: 20,
+                      flexDirection: 'row',
+                      height: 45,
+                      shadowColor: '#11032586',
+                      // backgroundColor: 'white',
+                      alignItems: 'center',
+                      borderColor: "#D7D7D7",
+                      borderWidth: 1,
+                      // backgroundColor: 'red', 
+                      justifyContent: "center",
+                    }}
+                    >
+                      <TextInput
+                        placeholder="Name"
+                        value={UserName}
+                        onChangeText={(text) => setUserName(text)}
+                        fontWeight='normal'
+                        placeholderTextColor='#D7D7D7'
+                        style={{
+                          width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 15, color: "black",
+                          fontSize: 14
+                        }} />
+                    </View>
+                    {/* <View style={{ height: 50, marginHorizontal: 25, marginTop: 15 }}>
                         <DropDownPicker
                           items={[
                             { label: 'France', value: 'fr' },
@@ -556,81 +541,83 @@ const CustomDrawerrender = (props) => {
                           }}
                         />
                       </View> */}
-                      <View style={{
-                        marginTop: 25, borderRadius: 25, marginHorizontal: 20, flexDirection: 'row',
-                        height: 45,
-                        shadowColor: '#11032586',
-                        backgroundColor: 'white',
-                        alignItems: 'center',
-                        borderColor: "#D7D7D7",
-                        borderWidth: 1,
-                        justifyContent: "center", alignItems: 'center'
-                      }}
-                      ><TextInput
-                          placeholder="Please Enter Your Email ID"
-                          value={Useremail}
-                          //editable={!isLoading}
-                          onChangeText={(text) => setUseremail(text)}
-                          keyboardType="email-address"
-                          fontWeight='normal'
-                          autoCorrect={false}
-                          placeholderTextColor='#D7D7D7'
-                          style={{
-                            width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 15, color: "black",
-                            fontSize: 14
-                          }} />
+                    <View style={{
+                      marginTop: 25, borderRadius: 25, marginHorizontal: 20, flexDirection: 'row',
+                      height: 45,
+                      shadowColor: '#11032586',
+                      // backgroundColor: 'white',
+                      alignItems: 'center',
+                      borderColor: "#D7D7D7",
+                      borderWidth: 1,
+                      justifyContent: "center", alignItems: 'center'
+                    }}
+                    ><TextInput
+                        placeholder="Please Enter Your Email ID"
+                        value={Useremail}
+                        //editable={!isLoading}
+                        onChangeText={(text) => setUseremail(text)}
+                        keyboardType="email-address"
+                        fontWeight='normal'
+                        autoCorrect={false}
+                        placeholderTextColor='#D7D7D7'
+                        style={{
+                          width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 15, color: "black",
+                          fontSize: 14
+                        }} />
 
 
-                      </View>
-                      <View style={{
-                        borderRadius: 15,
-                        backgroundColor: 'white',
-                        marginTop: 20,
-                        borderColor: "#D7D7D7",
-                        borderWidth: 1,
-                        height: 140,
-                        width: 300,
-                        justifyContent: "center", alignItems: 'center'
+                    </View>
+                    <View style={{
+                      borderRadius: 20,
+                      // backgroundColor: 'white',
+                      marginTop: 20,
+                      borderColor: "#D7D7D7",
+                      borderWidth: 1,
+                      height: 160,
+                      width: '85%',
+                      marginHorizontal: 20,
+                      justifyContent: "center",
+                      alignItems: 'center'
+                    }}>
+                      <TextInput
+                        placeholder="Type Message here"
+                        value={Typemessage}
+                        //editable={!isLoading}
+                        onChangeText={(text) => setTypemessage(text)}
+                        fontWeight='normal'
+                        placeholderTextColor='#D7D7D7'
+                        numberOfLines={7}
+                        multiline={true}
+                        textAlignVertical='top'
+                        style={{
+                          width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 6, color: "black",
+                          fontSize: 14,  
+                        }} />
+                    </View>
+
+                    <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 30 }}>
+                      <TouchableOpacity onPress={() => {
+                        GetContactUs()
+
                       }}>
-                        <TextInput
-                          placeholder="Type Message here"
-                          value={Typemessage}
-                          //editable={!isLoading}
-                          onChangeText={(text) => setTypemessage(text)}
-                          fontWeight='normal'
-                          placeholderTextColor='#D7D7D7'
-                          numberOfLines={10}
-                          multiline={true}
-                          textAlignVertical='top'
-                          style={{
-                            width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 6, color: "black",
-                            fontSize: 14,height:'auto'
-                          }} />
-                      </View>
+                        <View style={{ alignItems: 'center', justifyContent: 'center', width: 120, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
 
-                      <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 30 }}>
-                        <TouchableOpacity onPress={() => {
-                          GetContactUs()
+                          <Text style={{ textAlign: 'center', fontSize: 15, color: 'white' }}>Send</Text>
 
-                        }}>
-                          <View style={{ alignItems: 'center', justifyContent: 'center', width: 120, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
-
-                            <Text style={{ textAlign: 'center', fontSize: 15, color: 'white' }}>Send</Text>
-
-                          </View>
-                        </TouchableOpacity>
-                      </View>
-
+                        </View>
+                      </TouchableOpacity>
                     </View>
 
                   </View>
-                </ScrollView>
+
+                </View>
+
               </View>
             </Modal>
           ) : <></>}
         </>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center"}}>
+        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
           <ActivityIndicator size="large" color="#ffcc00" />
         </View>)}
     </SafeAreaView>
