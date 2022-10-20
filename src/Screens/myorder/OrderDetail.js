@@ -37,7 +37,7 @@ const OrderDetail = (props) => {
                 setOrderitemdata(response.data.order)
                 setIsLoading(false);
             } else {
-                Alert.alert("Myorder details status 0");
+                Alert.alert("Myorder details status 0",'');
                 setIsLoading(false);
             }
 

@@ -62,7 +62,7 @@ const Notifications = (props) => {
             }
         }
         catch (error) {
-            Alert.alert('Something went wrong', '')
+            // Alert.alert('Something went wrong', '')
             setIsLoading(false)
             //  console.log("ShippingProductserror:::", error);
 
@@ -133,7 +133,7 @@ const Notifications = (props) => {
 
             try {
                 const response = await axios.post(`${API.NOTIFICATION_DETAILS}`, { "notification_id": notifiID }, { headers: { "Authorization": ` ${usertkn}` } });
-                console.log("notificationdetails response:", response.data.message,response.data.status);
+                console.log("notificationdetails response:", response.data.message, response.data.status);
                 if (response.data.status == 1) {
                     GetNotification();
                     setIsLoading(false);
@@ -181,35 +181,46 @@ const Notifications = (props) => {
             />
 
             {!isLoading ?
-                (<View>
+                (<View style={{
+                    flex: 1,
+                    width: "100%",
+                    height: "100%", backgroundColor: 'red'
+                }}>
 
                     {
                         noti?.length > 0 ?
                             noti.map((item, index) => {
                                 return (
-                                    <>
+                                    <View style={{
+                                        flex: 1,
+                                        width: "100%",
+                                        height: "100%",  
+                                    }}>
+                                        <ScrollView>
+                                            {item.is_read == "1" ?
+                                                <>
 
-                                        {item.is_read == "1" ?
-                                            <>
-                                                <ScrollView>
                                                     <TouchableOpacity onPress={() => {
                                                         Clicknotication(item),
                                                             NoticationDetails(item)
                                                     }}
                                                         style={{
                                                             marginHorizontal: 10,
-                                                            marginTop: 6,
-                                                            height: 80,
-                                                            borderRadius: 10,
-                                                            marginBottom: 10,
+                                                            // marginTop: 6,
+                                                            height: 85,
+                                                            borderRadius: 20,
+                                                            // marginBottom: 10,
+                                                            marginVertical: 10,
+                                                            // backgroundColor: 'red',
                                                             backgroundColor: '#FFFFFF',
                                                             width: WIDTH * 0.95,
                                                             justifyContent: "center",
-                                                            paddingBottom: 10,
-                                                            shadowColor: '#cdcbcb',
-                                                            shadowRadius: 6,
-                                                            shadowOpacity: 0.1,
-                                                            elevation: 6,
+                                                            alignItems: "flex-start",
+                                                            // paddingBottom: 10,
+                                                            // shadowColor: '#cdcbcb',
+                                                            // shadowRadius: 6,
+                                                            // shadowOpacity: 0.1,
+                                                            // elevation: 6,
                                                             borderWidth: 1,
                                                             borderColor: '#F4F4F4'
 
@@ -235,81 +246,7 @@ const Notifications = (props) => {
                                                         </TouchableOpacity>
 
 
-                                                        <View style={{ marginHorizontal: 10, width: WIDTH * 0.8, height: 75, flexDirection: "row", justifyContent: 'flex-start', alignItems: 'flex-start', }}>
-                                                            <View style={{ marginRight: 20, justifyContent: "center", alignItems: "center",  height: 80, }}>
-                                                                <Image
-                                                                    style={{
-                                                                        width: 30,
-                                                                        height: 30, alignSelf: 'center'
-                                                                    }}
-
-
-                                                                    source={require('../assets/notification.png')}
-                                                                />
-                                                            </View>
-                                                            <View
-                                                                style={{ height: 70, width: WIDTH * 0.67, marginTop: 3, justifyContent: 'flex-start', alignItems: 'flex-start', }}>
-                                                                <Text numberOfLines={1}
-                                                                    style={{ marginTop: 2, textAlign: 'left', fontSize: 15, color: 'black', fontFamily: 'Inter', fontWeight: 'bold' }}>{item.title}</Text>
-                                                                <View
-                                                                    style={{
-                                                                        
-                                                                        marginTop: 4,
-                                                                    }}>
-                                                                    <Text numberOfLines={2} style={{ textAlign: 'left', fontSize: 12, color: '#455A64', fontFamily: 'Inter', fontWeight: '400' }}>{item.message}</Text>
-                                                                </View>
-                                                                <Text numberOfLines={1} style={{ marginTop: 4, textAlign: 'left', fontSize: 12, color: '#455A64', fontWeight: '400' }}>{item.created_at}</Text>
-
-                                                            </View>
-                                                        </View>
-                                                    </TouchableOpacity>
-                                                </ScrollView>
-                                            </>
-                                            :
-                                            <>
-                                                <ScrollView>
-                                                    <TouchableOpacity onPress={() => {
-                                                        Clicknotication(item),
-                                                            NoticationDetails(item)
-                                                    }}
-                                                        style={{
-                                                            marginHorizontal: 10,
-                                                            marginTop: 6,
-                                                            height: 80,
-                                                            borderRadius: 10,
-                                                            marginBottom: 10,
-                                                            backgroundColor: '#F4F4F4',
-                                                            width: WIDTH * 0.95,
-                                                            justifyContent: "center",
-                                                            paddingBottom: 10,
-                                                            shadowColor: '#cdcbcb',
-                                                            shadowRadius: 6,
-                                                            shadowOpacity: 0.1,
-                                                            elevation: 6,
-                                                            borderWidth: 1,
-                                                            borderColor: '#F4F4F4'
-
-                                                        }}>
-                                                        <TouchableOpacity onPress={() => ItemRemove(item)}
-                                                            style={{
-                                                                position: "absolute",
-                                                                backgroundColor: 'red',
-                                                                width: 30, height: 30,
-                                                                justifyContent: "center",
-                                                                alignItems: 'center',
-                                                                borderRadius: 20 / 2,
-                                                                top: 20,
-                                                                right: 10
-                                                            }}>
-
-                                                            <Image resizeMode='contain'
-                                                                source={require('../assets/delete.png')}
-
-                                                            />
-
-                                                        </TouchableOpacity>
-
-                                                        <View style={{ marginHorizontal: 10, width: WIDTH * 0.8, height: 75, flexDirection: "row", justifyContent: 'flex-start', alignItems: 'flex-start', }}>
+                                                        <View style={{ marginHorizontal: 10, width: WIDTH * 0.8, height: 80, flexDirection: "row", justifyContent: 'flex-start', alignItems: 'flex-start' }}>
                                                             <View style={{ marginRight: 20, justifyContent: "center", alignItems: "center", height: 80, }}>
                                                                 <Image
                                                                     style={{
@@ -322,9 +259,9 @@ const Notifications = (props) => {
                                                                 />
                                                             </View>
                                                             <View
-                                                                style={{ height: 70, width: WIDTH * 0.67, marginTop: 3, justifyContent: 'flex-start', alignItems: 'flex-start', }}>
+                                                                style={{ height: 80, width: WIDTH * 0.67, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
                                                                 <Text numberOfLines={1}
-                                                                    style={{ marginTop: 2, textAlign: 'left', fontSize: 15, color: 'black', fontFamily: 'Inter', fontWeight: 'bold' }}>{item.title}</Text>
+                                                                    style={{ marginTop: 2, textAlign: 'left', fontSize: 15, color: 'black', fontFamily: 'Inter', fontWeight: '500' }}>{item.title}</Text>
                                                                 <View
                                                                     style={{
 
@@ -337,12 +274,88 @@ const Notifications = (props) => {
                                                             </View>
                                                         </View>
                                                     </TouchableOpacity>
-                                                </ScrollView>
-                                            </>
-                                        }
+
+                                                </>
+                                                :
+                                                <>
+
+                                                    <TouchableOpacity onPress={() => {
+                                                        Clicknotication(item),
+                                                            NoticationDetails(item)
+                                                    }}
+                                                        style={{
+                                                            marginHorizontal: 10,
+                                                            // marginTop: 6,
+                                                            height: 85,
+                                                            borderRadius: 20,
+                                                            // marginBottom: 10,
+                                                            marginVertical: 10,
+                                                            backgroundColor: '#F4F4F4',
+                                                            width: WIDTH * 0.95,
+                                                            justifyContent: "flex-start",
+                                                            alignItems: "flex-start",
+                                                            // paddingBottom: 10,
+                                                            // shadowColor: '#cdcbcb',
+                                                            // shadowRadius: 6,
+                                                            // shadowOpacity: 0.1,
+                                                            // elevation: 6,
+                                                            borderWidth: 1,
+                                                            borderColor: '#F4F4F4'
+
+                                                        }}>
+                                                        <TouchableOpacity onPress={() => ItemRemove(item)}
+                                                            style={{
+                                                                position: "absolute",
+                                                                backgroundColor: 'red',
+                                                                width: 30, height: 30,
+                                                                justifyContent: "center",
+                                                                alignItems: 'center',
+                                                                borderRadius: 20 / 2,
+                                                                top: 20,
+                                                                right: 10
+                                                            }}>
+
+                                                            <Image resizeMode='contain'
+                                                                source={require('../assets/delete.png')}
+
+                                                            />
+
+                                                        </TouchableOpacity>
+
+                                                        <View style={{ marginHorizontal: 10, width: WIDTH * 0.8, height: 80, flexDirection: "row", justifyContent: 'flex-start', alignItems: 'flex-start', }}>
+                                                            <View style={{ marginRight: 20, justifyContent: "center", alignItems: "center", height: 80, }}>
+                                                                <Image
+                                                                    style={{
+                                                                        width: 30,
+                                                                        height: 30, alignSelf: 'center'
+                                                                    }}
 
 
-                                    </>
+                                                                    source={require('../assets/notification.png')}
+                                                                />
+                                                            </View>
+                                                            <View
+                                                                style={{ height: 80, width: WIDTH * 0.67, justifyContent: 'flex-start', alignItems: 'flex-start', }}>
+                                                                <Text numberOfLines={1}
+                                                                    style={{ marginTop: 2, textAlign: 'left', fontSize: 15, color: 'black', fontFamily: 'Inter', fontWeight: '500' }}>{item.title}</Text>
+                                                                <View
+                                                                    style={{
+
+                                                                        marginTop: 4,
+                                                                    }}>
+                                                                    <Text numberOfLines={2} style={{ textAlign: 'left', fontSize: 12, color: '#455A64', fontFamily: 'Inter', fontWeight: '400' }}>{item.message}</Text>
+                                                                </View>
+                                                                <Text numberOfLines={1} style={{ marginTop: 4, textAlign: 'left', fontSize: 12, color: '#455A64', fontWeight: '400' }}>{item.created_at}</Text>
+
+                                                            </View>
+                                                        </View>
+                                                    </TouchableOpacity>
+
+                                                </>
+                                            }
+
+                                        </ScrollView>
+                                    </View>
                                 )
                             })
 

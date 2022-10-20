@@ -46,14 +46,9 @@ const CardPayment = (props) => {
         setToggle3(false)
     }
 
-    const buttonClickedHandler = () => {
-        props.navigation.goBack()
-    };
-    const gotoNotification = () => {
-        props.navigation.navigate("Notifications")
-    }
+   
     const gotoOrderDetail = () => {
-        props.navigation.navigate("OrderDetail")
+        props.navigation.navigate("MyOrder")
     }
 
 
@@ -440,14 +435,13 @@ const CardPayment = (props) => {
                                     </View>
 
                                     <Text style={{ marginTop: 55, marginLeft: 10, textAlign: 'center', fontSize: 18, color: 'black', }}>Order Placed Successfully</Text>
-                                    <Text style={{ marginHorizontal: 20, marginTop: 10, textAlign: 'left', fontSize: 12, color: 'black', }}>It is a long established fact that a reader will be distracted by
-                                        The readable of a page when looking its layout.
+                                    <Text style={{ marginHorizontal: 20, marginTop: 10, textAlign: 'left', fontSize: 12, color: 'black', }}>Your order has been placed successfully you can click on View Orders to track the status and delivery.
                                     </Text>
                                     <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 50, marginHorizontal: 30, marginTop: 30 }}>
                                         <TouchableOpacity onPress={() => { gotoOrderDetail() }}>
                                             <View style={{ alignItems: 'center', justifyContent: 'center', width: 190, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
 
-                                                <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>View Order Detail</Text>
+                                                <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>View Orders</Text>
 
                                             </View>
                                         </TouchableOpacity>

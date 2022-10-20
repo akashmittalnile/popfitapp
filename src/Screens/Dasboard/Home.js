@@ -104,7 +104,7 @@ const Home = (props) => {
 
       setbanneritem(response.data.banner)
       // console.log(".....banner....", response.data.banner)
-      setTrainingdata(response.data.trainingCategory_list)
+      setTrainingdata(response.data.trainingCategory_list);
       setImageBaseUrl(response.data.product_url)
       setStoreitem(response.data.fitnes_product)
       setClothingitem(response.data.clothe_product)
@@ -200,7 +200,7 @@ return (
       </View> */}
               <View style={{ height: 200, borderBottomLeftRadius: 20, borderBottomRightRadius: 20, backgroundColor: '#262626', justifyContent: "center", alignItems: "center", alignSelf: "center", width: "100%" }}>
 
-                <View style={{ height: 200, flexDirection: 'row', width: "100%", justifyContent: "center", alignItems: "center", paddingBottom: 3, }}>
+                <View style={{ height: 200, flexDirection: 'row', width: "100%", justifyContent: "center", alignItems: "center", paddingBottom: 3}}>
 
                   <Banner data={banneritem} />
 

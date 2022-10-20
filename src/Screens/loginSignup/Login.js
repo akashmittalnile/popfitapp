@@ -118,7 +118,7 @@ const Login = (props) => {
   };
 
   const ForgetAPI = async (values) => {
-    const usertkn = await AsyncStorage.getItem("authToken");
+    
     const phndata = {
       phone_number: values.phoneNumber
     }
@@ -126,9 +126,7 @@ const Login = (props) => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post(`${API.FORGOT_PASSWORD}`, phndata, {
-        'headers': { "Authorization": ` ${usertkn}` }
-      })
+      const response = await axios.post(`${API.FORGOT_PASSWORD}`,phndata)
       // console.log("responseforget ::::", response.data);
       // console.log("forget_OTP ::::", response.data.code);
 
@@ -168,7 +166,7 @@ const Login = (props) => {
   };
 
   const VerifyOtp = async () => {
-    const usertkn = await AsyncStorage.getItem("authToken");
+   
     if (Validation()) {
       setIsLoading(true);
 
@@ -178,16 +176,16 @@ const Login = (props) => {
           phone_number: phnnumber,
           otp: otp,
         }
-        // console.log("...VerifyOtp", data);
+        console.log("...VerifyOtp", data);
         axios({
           url: API.VERIFY_OTP,
           method: 'POST',
           data: data,
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'multipart/form-data',
-            'Authorization': ` ${usertkn}`
-          }
+          // headers: {
+          //   Accept: 'application/json',
+          //   'Content-Type': 'multipart/form-data',
+          //   'Authorization': ` ${usertkn}`
+          // }
         })
 
           .then(function (response) {
@@ -301,28 +299,29 @@ const Login = (props) => {
   // };
 
   const ChangeAPI = async (values) => {
-    const usertkn = await AsyncStorage.getItem("authToken");
+ 
+    console.log("Change psswd user No.:",phnnumber);
     const data = {
       new_password: values.password,
-      confirm_new_password: values.cfm_password
+      confirm_new_password: values.cfm_password,
+      phone:phnnumber
     };
     console.log(".......userInputdata", data);
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.CHANGE_PSWD}`, data, {
-        'headers': { "Authorization": ` ${usertkn}` }
-      });
-      // console.log("inputdata...", response.data);
-      // console.log("Response_ChangepsswdAPI ::::", response.data.status);
+      const response = await axios.post(`${API.CHANGE_PSWD}`, data);
+      console.log("inputdata...", response.data);
+      console.log("Response_ChangepsswdAPI ::::", response.data.status);
       if (response.data.status == 1) {
         setChangePasword(false);
-        alert('Password changed successfully');
-        // console.log("User_change_psswd_successfully...>>>", response.data.message);
+        Alert.alert('Password changed successfully','');
+        console.log("User_change_psswd_successfully...>>>", response.data.message);
         setIsLoading(false)
       }
-      else {
-        setAlertpsswdMsg(response.data.message);
-        setMsgpsswdAlert(true);
+      else  
+      {Alert.alert('Technical error','Try again later !')
+        // setAlertpsswdMsg(response.data.message);
+        // setMsgpsswdAlert(true);
         setIsLoading(false);
       }
     }
@@ -340,7 +339,8 @@ const Login = (props) => {
       height: HEIGHT, flexGrow: 1
     }} >
       {!isLoading ?
-        (<View>
+        (<View style={{ width: WIDTH,
+          height: HEIGHT, flex: 1,}}>
           <ScrollView>
             <BackgroundImage source={require('../assets/ellipse4.png')} style={{ height: 280, }}>
               <BackgroundImage source={require('../assets/ellipse.png')} style={{ height: 274, }}>
@@ -356,7 +356,7 @@ const Login = (props) => {
               <Text style={{ marginLeft: 30, textAlign: 'left', fontSize: 16, color: 'black', }}>
                 Username</Text>
               <View style={{
-                width: '130%',
+                width: WIDTH *0.9,
                 justifyContent: 'center',
                 alignContent: 'center',
                 fontSize: 18,
@@ -372,17 +372,17 @@ const Login = (props) => {
                   fontWeight='normal'
                   placeholderTextColor='#D7D7D7'
                   style={{
-                    width: '70%', justifyContent: 'center', alignItems: 'center', paddingLeft: 15, color: "black",
-                    fontSize: 11
+                    width: '90%', justifyContent: 'center', alignItems: 'center', paddingLeft: 5, color: "black", fontSize: 11
                   }} />
               </View>
               <Text style={{ marginTop: 25, marginLeft: 30, textAlign: 'left', fontSize: 16, color: 'black', }}>
                 Password</Text>
               <View style={{
-                width: '130%',
+                width: WIDTH *0.9,
                 justifyContent: 'center',
                 alignContent: 'center',
                 fontSize: 18,
+                
               }}
               >
                 <Textinput
@@ -395,7 +395,7 @@ const Login = (props) => {
                   placeholderTextColor='#D7D7D7'
                   secureTextEntry={true}
                   isPass={false}
-                  style={{ width: '70%', justifyContent: 'center', alignItems: 'center', paddingLeft: 15, color: "black", fontSize: 11 }} />
+                  style={{ width: '90%', justifyContent: 'center', alignItems: 'center', paddingLeft: 15, color: "black", fontSize: 11 }} />
               </View>
               <TouchableOpacity onPress={() => { setForgotPassword(true) }}>
                 <Text style={{ marginTop: 10, marginRight: 25, textAlign: 'right', fontSize: 12, color: 'black', }}>
@@ -729,7 +729,7 @@ const Login = (props) => {
                       <View style={{ height: 30 }}>
                         {
                           msg ?
-                            (<View style={{ justifyContent: "center", marginHorizontal: 40, marginTop: 5 }}><Text style={{ color: "red", fontSize: 14,textAlign:"left" }}>{alertMsg}</Text></View>)
+                            (<View style={{ justifyContent: "center", marginHorizontal: 40, marginTop: 5 }}><Text style={{ color: "red", fontSize: 14, textAlign: "left" }}>{alertMsg}</Text></View>)
                             :
                             (null)
                         }
@@ -843,8 +843,8 @@ const Login = (props) => {
                             <View style={{ height: 50 }}>
                               {
                                 msg ?
-                                  (<View style={{ justifyContent: "center", marginHorizontal: 20, marginTop: 5 }}><Text style={{ color: "red", fontSize: 14, textAlign:"left"}}>{alertMsgForget0}</Text>
-                                  {/* <Text style={{ color: "red", fontSize: 15,textAlign:"left" }}>
+                                  (<View style={{ justifyContent: "center", marginHorizontal: 20, marginTop: 5 }}><Text style={{ color: "red", fontSize: 14, textAlign: "left" }}>{alertMsgForget0}</Text>
+                                    {/* <Text style={{ color: "red", fontSize: 15,textAlign:"left" }}>
                                   {alertMsgForget}
                                   </Text> */}
                                   </View>)
@@ -1061,17 +1061,18 @@ const Login = (props) => {
                       <View style={{ height: 30 }}>
                         {
                           msg ?
-                            (<View style={{ justifyContent: "center", marginHorizontal: 30, marginTop: 5 }}><Text style={{ color: "red", fontSize: 14,textAlign:"left" }}>{alertMsg}</Text></View>)
+                            (<View style={{ justifyContent: "center", marginHorizontal: 30, marginTop: 5 }}><Text style={{ color: "red", fontSize: 14, textAlign: "left" }}>{alertMsg}</Text></View>)
                             :
                             (null)
                         }
                       </View>
-                      <View style={{ marginLeft: 30, marginBottom: 1, flexDirection: 'row', height: 50, marginHorizontal: 20, marginTop: 30 }}>
-                        <TouchableOpacity onPress={() => {
+                      <View style={{ marginLeft: 30, marginBottom: 1, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 30, borderRadius: 50,backgroundColor: 'transparent'   }}>
+                        <TouchableOpacity style={{borderRadius: 50,backgroundColor: 'transparent'}}
+                         onPress={() => {
                           VerifyOtp()
 
                         }}>
-                          <View style={{ alignItems: 'center', justifyContent: 'center', width: 200, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
+                          <View style={{ alignItems: 'center', justifyContent: 'center', width: 160, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
 
                             <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Reset Password</Text>
 
@@ -1085,7 +1086,7 @@ const Login = (props) => {
               </Modal>
             ) : null}
 
-            {/* fogot with Mobile no. change Password */}
+            {/* forgot with Mobile no. change Password */}
             {ChangePasword ? (
               <Modal
                 animationType="fade"
@@ -1164,21 +1165,21 @@ const Login = (props) => {
                           <Text style={{ marginHorizontal: 31, marginTop: 20, textAlign: 'center', fontSize: 16, color: 'black', fontWeight: "bold" }}>Change Password</Text>
 
                           <View style={{
-                            marginTop: 26, alignItems: 'center',
+                            marginTop: 20, alignItems: 'center',
                             justifyContent: "center", backgroundColor: 'white',
                           }}>
                             <View style={{
-                              borderRadius: 25,
-                              margin: 10,
+                              borderRadius: 40,
+                              // margin: 10,
                               shadowColor: '#11032586',
                               backgroundColor: 'white',
                               height: 45,
                               width: "100%",
                               borderColor: "#bbbaba",
                               borderWidth: 1,
-                              marginTop: 14,
-                              alignItems: 'center',
-                              justifyContent: "center",
+                              marginTop: 10,
+                              // alignItems: 'center',
+                              // justifyContent: "center",
                             }}>
 
 
@@ -1191,31 +1192,35 @@ const Login = (props) => {
                                 value={values.password}
                                 onChangeText={handleChange('password')}
                                 onBlur={() => setFieldTouched('password')}
-                                style={{ width: '80%', justifyContent: 'center', alignItems: 'center', color: "black", paddingLeft: 1 }} />
+                                style={{ width: '80%', justifyContent: 'center', alignItems: 'center', color: "black", paddingLeft: 10,color: "black" }} 
+                                />
                               {
                                 touched.password && errors.password &&
-                                <Text style={{ fontSize: 12, color: '#FF0D10', paddingLeft: 20, }}>{errors.password}</Text>
+                                <Text style={{ fontSize: 14, color: '#FF0D10', paddingLeft: 10,marginTop: 5,textAlign: "left" }}>{errors.password}</Text>
                               }
-                              {
-                                msgpsswd ?
-                                  (<View style={{ justifyContent: "center", marginHorizontal: 20, }}><Text style={{ color: "red", fontSize: 12, }}>{alertpsswdMsg}</Text></View>)
-                                  :
-                                  (null)
-                              }
+                              <View style={{ height: 50 }}>
+                                {
+                                  msgpsswd ?
+                                    (<View style={{ justifyContent: "center", marginHorizontal: 20,marginTop: 5 }}><Text style={{ color: "red", fontSize: 14,textAlign: "left" }}>{alertpsswdMsg}</Text></View>)
+                                    :
+                                    (null)
+                                }
+                              </View>
                             </View>
 
                             <View style={{
-                              borderRadius: 25,
-                              margin: 10,
+                              borderRadius: 40,
+                              // margin: 10,
                               shadowColor: '#11032586',
                               backgroundColor: 'white',
                               height: 45,
                               width: "100%",
                               borderColor: "#bbbaba",
                               borderWidth: 1,
-                              marginTop: 14,
-                              justifyContent: "center",
-                              alignItems: 'center',
+                              marginTop: 32,
+                              // marginVertical:20
+                              // justifyContent: "center",
+                              // alignItems: 'center',
                             }}>
 
 
@@ -1228,22 +1233,23 @@ const Login = (props) => {
                                 value={values.cfm_password}
                                 onChangeText={handleChange('cfm_password')}
                                 onBlur={() => setFieldTouched('cfm_password')}
-                                style={{ width: '80%', justifyContent: 'center', alignItems: 'center', color: "black", paddingLeft: 1 }}
+                                style={{ width: '80%', justifyContent: 'center', alignItems: 'center', color: "black", paddingLeft: 10,color: "black" }}
                               />
-                              {touched.cfm_password && errors.cfm_password &&
-                                <Text style={{ fontSize: 12, color: '#FF0D10', paddingLeft: 20, }}>{errors.cfm_password}</Text>
+                              {
+                                touched.cfm_password && errors.cfm_password &&
+                                <Text style={{ fontSize: 14, color: '#FF0D10', paddingLeft: 10,textAlign: "left",marginTop: 5  }}>{errors.cfm_password}</Text>
                               }
                             </View>
 
                           </View>
 
-                          <View style={{ marginLeft: 85, marginBottom: 20, flexDirection: 'row', height: 50, marginHorizontal: 20, marginTop: 30 }}>
+                          <View style={{   marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 40, justifyContent:"center",alignItems:"center" }}>
                             <TouchableOpacity onPress={() => {
                               handleSubmit();
                               // ChangeAPI()
 
                             }}>
-                              <View style={{ alignItems: 'center', justifyContent: 'center', width: 160, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
+                              <View style={{ alignItems: 'center', justifyContent: 'center', width: 160, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
 
                                 <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Save Password</Text>
 

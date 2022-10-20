@@ -27,7 +27,9 @@ const MyProfile = (props) => {
         props.navigation.navigate("EditMyProfile")
     }
     const gotoChangePassword = () => {
-        props.navigation.navigate("ChangePassword")
+        props.navigation.navigate("ChangePassword", {
+            PhoneNo: Userprofile.phone
+        })
     }
     const gotoOrderDetail = (item) => {
         props.navigation.navigate("OrderDetail", {
@@ -65,6 +67,7 @@ const MyProfile = (props) => {
 
     const GetProfile = async () => {
         const usertkn = await AsyncStorage.getItem("authToken");
+        console.log(usertkn);
         setIsLoading(true)
         try {
             const response = await axios.get(`${API.GET_PROFILE}`, { headers: { "Authorization": ` ${usertkn}` } });
@@ -74,14 +77,18 @@ const MyProfile = (props) => {
                 setIsLoading(false);
                 setUserprofile(response.data.data)
                 setorderdata(response.data.orders)
+                const Emaiil = response.data.data.email;
+                console.log(".......e,mail:",Emaiil);
+                await AsyncStorage.setItem('useremail',Emaiil);
                 console.log("User_ordersdetails>>>", response.data.orders);
             } else {
-                Alert.alert("something went wrong!")
+                Alert.alert('','Something went wrong please exit the app and try again.');
                 setIsLoading(false);
             }
         }
         catch (error) {
-            console.log("Countryerror:", error.response.data.message);
+            // console.log("Countryerror:", error.response.data.message);
+            Alert.alert('','Something went wrong please exit the app and try again.');
             setIsLoading(false)
         }
     };
@@ -119,7 +126,7 @@ const MyProfile = (props) => {
                     <ScrollView>
                         <View style={{ paddingBottom: 0 }}>
 
-                            <View style={{ marginHorizontal: 6, marginTop: 20, height: 150, borderRadius: 10, backgroundColor: 'white', flexDirection: 'row',width:WIDTH * 0.97 }}>
+                            <View style={{ marginHorizontal: 6, marginTop: 20, height: 150, borderRadius: 10, backgroundColor: 'white', flexDirection: 'row', width: WIDTH * 0.97 }}>
 
                                 <View style={{ margin: 5, flex: 1 / 3, borderRadius: 10 }}>
                                     <Image source={{ uri: Userprofile?.user_profile }} resizeMode="contain"
@@ -256,7 +263,7 @@ const MyProfile = (props) => {
                                                             }} />
                                                     </View>
                                                     <View>
-                                                        <TouchableOpacity style={{marginLeft:-10}}>
+                                                        <TouchableOpacity style={{ marginLeft: -10 }}>
                                                             <Text style={{ textAlign: 'left', fontSize: 10, color: 'white', }}>Download Invoice</Text>
                                                         </TouchableOpacity>
                                                     </View>
@@ -364,7 +371,7 @@ const MyProfile = (props) => {
                                                     (<View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}>
                                                         <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "400" }}>{Orderstatus(item.order_status)}</Text>
                                                         <View style={{ marginTop: 6, }}>
-                                                            <Text style={{ textAlign: 'left', fontSize: 9, color: '#455A64',fontWeight: "400" }}>on {item.created_at}</Text>
+                                                            <Text style={{ textAlign: 'left', fontSize: 9, color: '#455A64', fontWeight: "400" }}>on {item.created_at}</Text>
                                                         </View>
                                                     </View>)
                                                     :

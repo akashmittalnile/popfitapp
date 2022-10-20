@@ -307,7 +307,7 @@ const Address = (props) => {
                     <View
                         style={{
                             justifyContent: "center",
-                            alignItems: "center",
+                            alignItems: "flex-start",
                             flexDirection: "row",
                             height: '74%',
                             marginHorizontal: 10,

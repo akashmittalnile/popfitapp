@@ -36,7 +36,7 @@ const Training = (props) => {
   const [audiobaseurl, setAudiobaseurl] = useState("");
   const [videobaseurl, setVideobaseurl] = useState("");
   const [fullScreen, setFullScreen] = useState(false);
-  const[youtubelinks,setyoutubelinks]=useState([]);
+  const [youtubelinks, setyoutubelinks] = useState([]);
   // console.log("links:",youtubelinks);
 
   // console.log('audio123456:', audiobaseurl + "" + trainingBlog_list[0]?.training_audio[0]);
@@ -74,13 +74,13 @@ const Training = (props) => {
     // RepeatMode(musicData)
 
     await TrackPlayer?.setupPlayer();
-  
+
     // Add a track to the queue
     // console.log('amittracklist:', musicData);
     // setRepeatMode(Track)
     await TrackPlayer.add(musicData);
   }
-  
+
   const playAudio = async () => {
     await TrackPlayer?.play()
     setFlag(true)
@@ -126,10 +126,10 @@ const Training = (props) => {
     })
   }
 
-  // console.log("Tainingcat_id_item...............:", props?.route?.params?.Tainingcat_id);
+  console.log("Tainingcat_id_item...............:", props?.route?.params?.Tainingcat_id);
   const Tainingcat_id = props?.route?.params?.Tainingcat_id
 
-  // console.log("Trainingsubcat_Data...............:", props?.route?.params?.Trainingsubcat_data?.id);
+  console.log("Trainingsubcat_Data...............:", props?.route?.params?.Trainingsubcat_data?.id);
   const Trainingsubcat_data = props?.route?.params?.Trainingsubcat_data?.id
 
   const WorkoutSubCategorytraininglist = async () => {
@@ -137,38 +137,44 @@ const Training = (props) => {
     const usertkn = await AsyncStorage.getItem("authToken");
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.TRAINING_LIST}`, { "category_id": Tainingcat_id, "subcategory_id": Trainingsubcat_data }, 
-      // { headers: { "Authorization": ` ${usertkn}` } }
+      const response = await axios.post(`${API.TRAINING_LIST}`, { "category_id": Tainingcat_id, "subcategory_id": Trainingsubcat_data },
+        { headers: { "Authorization": ` ${usertkn}` } }
       );
-      console.log(":::::::::TrainingCategoryListAPI_Response>>>", response.data.message);
+      console.log(":::::::::TrainingCategoryListAPI_Response>>>", response.data);
 
-      console.log("TrainingCategoryListAPI_data::::::", response.data.blog_list);
+    
+      if (response?.data?.status == 1) {
+        console.log("TrainingCategoryListAPI_data::::::", response.data.blog_list);
+        // console.log("imageurl::", response.data.training_image);
+        // console.log("AUDIO_url::", response.data.training_audio);
+        // console.log("Video_url::", response.data.training_video);
+        setImagebaseurl(response?.data?.training_image);
+        setAudiobaseurl(response?.data?.training_audio);
+        setVideobaseurl(response?.data?.training_video);
+        setTrainingBlog_list(response?.data?.blog_list);
 
-      // console.log("imageurl::", response.data.training_image);
-      // console.log("AUDIO_url::", response.data.training_audio);
-      // console.log("Video_url::", response.data.training_video);
-      setImagebaseurl(response.data.training_image);
-      setAudiobaseurl(response?.data?.training_audio);
-      setVideobaseurl(response?.data?.training_video);
-      setTrainingBlog_list(response.data.blog_list);
+        // const musicData = {
+        //   id: 'trackId',
+        //   url: `${response.data.training_audio + response.data.blog_list[0]?.training_audio}`,
+        //   title: 'brandnue',
+        //   artist: 'brandnue',
+        // }
+        // console.log('addAudio(musicData)',musicData);
+        setyoutubelinks(response?.data?.blog_list[0].youtube_link)
+        setIsLoading(false);
+      }
+      else {
+        console.log(".WorkoutSubCategorytraininglist.....error.........", error.response.data.message);
+        setIsLoading(false);
+        // Alert.alert('Technical Issue', '')
+      }
 
-      // const musicData = {
-      //   id: 'trackId',
-      //   url: `${response.data.training_audio + response.data.blog_list[0]?.training_audio}`,
-      //   title: 'brandnue',
-      //   artist: 'brandnue',
-      // }
-      // console.log('addAudio(musicData)',musicData);
-      setyoutubelinks(response.data.blog_list[0].youtube_link)
-      setIsLoading(false);
-
-      // addAudio(musicData)
 
 
     }
     catch (error) {
-      // console.log("......error.........", error.response.data.message);
-      Alert.alert('Something went wrong!', error.response.data.message);
+      console.log(".WorkoutSubCategorytraininglist.....error.........", error?.response?.data?.message);
+      // Alert.alert(error);
       setIsLoading(false);
 
     }
@@ -199,7 +205,7 @@ const Training = (props) => {
       {!isLoading ?
         (<>
           {
-            trainingBlog_list.length != 0 ?
+            trainingBlog_list?.length != 0 ?
 
 
               (<ScrollView>
@@ -253,9 +259,9 @@ const Training = (props) => {
                       <Text style={{ marginLeft: 20, fontSize: 17, color: 'black', fontWeight: "500" }}>Training Videos</Text>
                     </View>
                     <View style={{ flex: 0.25, right: 10, }}>
-                      <TouchableOpacity onPress={() => { 
-                        gotoVideolist() 
-                        }}>
+                      <TouchableOpacity onPress={() => {
+                        gotoVideolist()
+                      }}>
                         <View style={{ borderRadius: 50, height: 30, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center', }}>
                           <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 12, color: 'white', fontWeight: "500" }}>View All</Text>
                         </View>
@@ -274,7 +280,7 @@ const Training = (props) => {
                     renderItem={({ item, index }) => {
                       console.log("1st flastlist video:", item)
                       return (
-                        
+
                         <>
                           <View style={{
                             height: 170,
@@ -282,9 +288,9 @@ const Training = (props) => {
                             width: WIDTH * 0.7,
                             borderRadius: 20,
                             marginHorizontal: 10,
-                            marginVertical:10,
+                            marginVertical: 10,
                             justifyContent: 'center',
-                          
+
 
                           }}>
                             <WebView

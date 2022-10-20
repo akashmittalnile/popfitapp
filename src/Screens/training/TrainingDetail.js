@@ -9,6 +9,7 @@ import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
 import Share from 'react-native-share';
+import { async } from 'regenerator-runtime';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -17,8 +18,9 @@ const TrainingDetail = (props) => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [TrainingWorkCatgry, setTrainingWorkCatgry] = useState([]);
+    const [recommendation, setRecommendation] = useState([]);
 
-    const [subscriptiontoken, setsubscriptiontoken] = useState("");
+    // const [subscriptiontoken, setsubscriptiontoken] = useState("");
     const [planid, setPlanId] = useState("");
 
     const gotoTrainingpersondetails = () => {
@@ -44,30 +46,20 @@ const TrainingDetail = (props) => {
         }
     };
     useEffect(() => {
-        // const getusertoken = async () => {
-        //     const usertoken = await AsyncStorage.getItem("authToken");
-        //     console.log("Training>>>>>..", usertoken);
-        //     setsubscriptiontoken(usertoken)
-        //     if (usertoken == null) {
-        //         console.log("..........USER..NOT LOGIN...................");
-        //         props.navigation.navigate('LoginMain', {
-        //             screen: 'LoginSignUp',
-        //         });
-        //     }
-        //     else {
-        //         // props.navigation.navigate("SubscriptionPlan")
-        //         console.log("............USER LOGIN...................");
-        //     }
-        // }
-        // getusertoken();
         workoutCategoryAPI();
-    }, []);
+        const checktoken = async () => {
+            const usertkn = await AsyncStorage.getItem("authToken");
 
+        }
+    }, []);
+    const gotoSubscriptionPlan = () => {
+        props.navigation.navigate("SubscriptionPlan")
+    }
 
     const Checkedtoken = (item) => {
         props.navigation.navigate("OutdoorTrainning", {
-            TrainingData: planid,
-            categoryId: item
+            TrainingData: item,
+            categoryId: planid
         })
 
     }
@@ -78,15 +70,16 @@ const TrainingDetail = (props) => {
         try {
 
             const response = await axios.get(`${API.TRAINING_WORKOUT_CATEGORY}`,
-                // { headers: { "Authorization": ` ${usertkn}` } }
+                { headers: { "Authorization": ` ${usertkn}` } }
             );
             console.log("::::Traing_Workout_Response>>>::", response.data);
             // console.log("Traing_Workout_data:::>:::", response.data.data);
             setPlanId(response.data);
-            const Selectplainid = JSON.stringify(response.data?.plan_id);
-            await AsyncStorage.setItem('Planid', Selectplainid)
-            console.log("storeplanid:", Selectplainid);
+            // const Selectplainid = JSON.stringify(response.data?.plan_id);
+            // await AsyncStorage.setItem('Planid', Selectplainid)
+            // console.log("storeplanid:", Selectplainid);
             setTrainingWorkCatgry(response.data.data)
+            setRecommendation(response.data.recommendation_category)
             setIsLoading(false);
         }
         catch (error) {
@@ -221,30 +214,81 @@ const TrainingDetail = (props) => {
                                         </View>
 
                                         <View style={{ marginHorizontal: 20, flexDirection: 'row', height: 30, justifyContent: 'center' }}>
-                                            <TouchableOpacity>
-                                                <View style={{ borderWidth: 1, borderColor: '#ffcc00', justifyContent: 'center', width: 90, flex: 1, backgroundColor: 'white', borderRadius: 35 }}>
-                                                    <Text style={{ textAlign: 'center', fontSize: 8, color: '#ffcc00', }}>Save Detail</Text>
+                                            <TouchableOpacity onPress={() => { gotoSubscriptionPlan() }}>
+                                                <View style={{ borderWidth: 1, borderColor: '#ffcc00', justifyContent: 'center', width: 140, flex: 1, backgroundColor: 'white', borderRadius: 35 }}>
+                                                    <Text style={{ textAlign: 'center', fontSize: 9, color: '#ffcc00', }}>View Subscription Plan</Text>
                                                 </View>
                                             </TouchableOpacity>
-                                            <TouchableOpacity onPress={() => { MycustomonShare() }}>
-                                                <View style={{ marginLeft: 10, borderWidth: 1, borderColor: '#ffcc00', justifyContent: 'center', width: 90, flex: 1, backgroundColor: 'white', borderRadius: 35 }}>
-                                                    <Text style={{ textAlign: 'center', fontSize: 8, color: '#ffcc00', }}>Invite Friends</Text>
-                                                </View>
-                                            </TouchableOpacity>
+
                                         </View>
                                     </View>
                                 </View>
 
-
                             </Pages>
                         </View>
-
-                        {/* Workout Category */}
-                        <Text style={{ marginTop: 20, marginLeft: 15, textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "bold" }}>Workout Categories</Text>
+                        {/* Recommended category */}
+                        <Text style={{ marginTop: 20, marginLeft: 15, textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "500" }}>Recommended Categories</Text>
                         <FlatList
                             columnWrapperStyle={{
                                 flex: 1,
-                                justifyContent: "space-around"
+                              
+                            }}
+                            keyExtractor={(item, index) => index}
+                            numColumns={2}
+                            data={recommendation}
+                            style={{ paddingBottom: 20 }}
+                            renderItem={({ item, index }) => (
+                                <TouchableOpacity onPress={() => { Checkedtoken(item) }}>
+                                    <View
+                                        style={{
+                                            marginTop: 20,
+                                            backgroundColor: 'white',
+                                            height: 180,
+                                            width: WIDTH * 0.45,
+                                            borderRadius: 25,
+                                            // marginBottom: 10,
+                                            marginHorizontal: 10,
+                                            justifyContent: "center",
+                                            alignItems: 'center',
+                                        }}>
+
+                                        <View
+                                            style={{
+                                                width: WIDTH * 0.45, height: 150, borderTopRightRadius: 20,
+                                                borderTopLeftRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
+                                            }}>
+                                            <Image
+                                                source={{ uri: `${item.image}` }}
+                                                resizeMode="stretch"
+                                                style={{
+                                                    width: "100%",
+                                                    height: "100%",
+                                                    borderTopLeftRadius: 20,
+                                                    borderTopRightRadius: 20,
+                                                    alignSelf: 'center',
+                                                }}
+                                            />
+                                            <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
+                                                <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name}</Text>
+
+                                            </View>
+
+                                        </View>
+                                        <View style={{ width: WIDTH * 0.45, height: 30, borderBottomRightRadius: 20, justifyContent: 'center', borderBottomLeftRadius: 20, backgroundColor: '#262626' }}>
+                                            <Text style={{ textAlign: 'center', fontSize: 9, color: '#c9bca0' }}>Subscription {item?.plan_name} @ {item?.plan_price} {item.plan_type} </Text>
+                                        </View>
+
+                                    </View>
+                                </TouchableOpacity>
+                            )}
+                        />
+
+                        {/* Workout Category */}
+                        <Text style={{ marginTop: 1, marginLeft: 15, textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "500" }}>Workout Categories</Text>
+                        <FlatList
+                            columnWrapperStyle={{
+                                flex: 1,
+                                 
                             }}
                             keyExtractor={(item, index) => index}
                             numColumns={2}

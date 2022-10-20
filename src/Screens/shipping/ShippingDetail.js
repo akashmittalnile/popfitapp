@@ -186,7 +186,7 @@ const ShippingDetail = (props) => {
     // const checklogin = async () => {
     //     let Usertoken = await AsyncStorage.getItem("authToken");
     //     setproducttoken(Usertoken);
-       
+
     //     if (Usertoken == null) {
     //         props.navigation.navigate('LoginMain', {
     //             screen: 'LoginSignUp',
@@ -206,7 +206,7 @@ const ShippingDetail = (props) => {
                 'headers': { "Authorization": ` ${usertkn}` }
             });
 
-            if (response?.data?.status == '1') {
+            if (response.data.status == '1') {
                 setIsLoading(false);
                 var address0 = response.data.address_lists[0];
                 // console.log('adreeesss----------->', address)
@@ -225,7 +225,7 @@ const ShippingDetail = (props) => {
         catch (error) {
 
             setIsLoading(false);
-            Alert.alert("something went wrong");
+            Alert.alert("something went wrong",'');
         }
 
     };
@@ -462,25 +462,32 @@ const ShippingDetail = (props) => {
 
                                     {
                                         setselectaddress == null ?
-
-                                            (<View style={{ width: WIDTH * 0.67, marginLeft: 20, justifyContent: 'center', alignItems: 'flex-start' }}>
-                                                <Text style={{ color: '#000000', fontWeight: "500", fontSize: 16, textAlign: 'left' }}>{address.address_type}</Text>
-                                                <View style={{ width: WIDTH * 0.67, height: 50, marginTop: 5 }}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#676767', fontWeight: '400' }}>{address.full_name}, {address.house_no}, {address.area_village}, {address.city},{address.landmark}, {address.state}, {address.pincode}
-                                                    </Text>
-                                                    <Text style={{ marginTop: 5, textAlign: 'left', fontSize: 14, color: '#676767', fontWeight: '400' }}>
-                                                        {address.phone}
-                                                    </Text>
-                                                </View>
-                                            </View>)
+                                            <>
+                                                {
+                                                    address != null ?
+                                                        (<View style={{ width: WIDTH * 0.67, marginLeft: 20, justifyContent: 'center', alignItems: 'flex-start' }}>
+                                                            <Text style={{ color: '#000000', fontWeight: "500", fontSize: 16, textAlign: 'left' }}>{address?.address_type}</Text>
+                                                            <View style={{ width: WIDTH * 0.67, height: 50, marginTop: 5 }}>
+                                                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#676767', fontWeight: '400' }}>{address?.full_name}, {address?.house_no}, {address?.area_village}, {address?.city},{address?.landmark}, {address?.state}, {address?.pincode}
+                                                                </Text>
+                                                                <Text style={{ marginTop: 5, textAlign: 'left', fontSize: 14, color: '#676767', fontWeight: '400' }}>
+                                                                    {address?.phone}
+                                                                </Text>
+                                                            </View>
+                                                        </View>)
+                                                        : <View style={{justifyContent:"center",alignItems:"center", height: 100,}}>
+                                                            <Text style={{fontSize:15,textAlign:"center",color:"#455A64",fontWeight:"500"}}>Add a new address</Text>
+                                                        </View>
+                                                }
+                                            </>
                                             :
                                             (<View style={{ width: WIDTH * 0.67, marginLeft: 20, justifyContent: 'center', alignItems: 'flex-start' }}>
-                                                <Text style={{ color: '#000000', fontWeight: "500", fontSize: 16, textAlign: 'left' }}>{setselectaddress.address_type}</Text>
+                                                <Text style={{ color: '#000000', fontWeight: "500", fontSize: 16, textAlign: 'left' }}>{setselectaddress?.address_type}</Text>
                                                 <View style={{ width: WIDTH * 0.67, height: 40, marginTop: 5 }}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#676767', fontWeight: '400' }}>{setselectaddress.full_name}, {setselectaddress.house_no}, {setselectaddress.area_village}, {setselectaddress.city}, {setselectaddress.landmark}, {setselectaddress.state}, {setselectaddress.pincode}
+                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#676767', fontWeight: '400' }}>{setselectaddress?.full_name}, {setselectaddress?.house_no}, {setselectaddress?.area_village}, {setselectaddress?.city}, {setselectaddress?.landmark}, {setselectaddress?.state}, {setselectaddress?.pincode}
                                                     </Text>
                                                     <Text style={{ marginTop: 5, textAlign: 'left', fontSize: 14, color: '#676767', fontWeight: '400' }}>
-                                                        {address.phone}
+                                                        {setselectaddress?.phone}
                                                     </Text>
                                                 </View>
                                             </View>)
@@ -761,7 +768,7 @@ const ShippingDetail = (props) => {
                     }}>
                         <View style={{ marginTop: 10, height: 40, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.94 }}>
                             <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
-                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Total Amout:</Text>
+                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Total Amount:</Text>
                             </View>
                             <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
                                 {
@@ -775,15 +782,23 @@ const ShippingDetail = (props) => {
                     </View>
 
                     {/* footer button   */}
-                    <View style={{ justifyContent: "center", marginBottom: 30, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 20 }}>
-                        <TouchableOpacity onPress={() => { gotoCardPayment() }}>
-                            <View style={{ justifyContent: 'center', width: 200, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
-                                <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Total Payable Amount</Text>
+                
+                        <TouchableOpacity onPress={() => { gotoCardPayment() }}
+                        style={{ justifyContent: "center", marginBottom: 30, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 20,  marginHorizontal:120 }}
+                        >
+                            <View style={{ justifyContent: 'center',  flex: 1, backgroundColor: '#ffcc00', borderRadius: 50,width: 150,alignItems:"center"  }}>
+                                <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Proceed to Pay</Text>
                             </View>
+                            {/* <View style={{justifyContent:"flex-end",alignItems:"flex-end" ,    }}>
+                                {
+                                    Selectcoupons == null ? <>
+                                        <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 53, fontWeight: "500" }}>${ammont}</Text></>
+                                        :
+                                        <><Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 53, fontWeight: "500" }}>${total}</Text></>
+                                }
+                            </View> */}
                         </TouchableOpacity>
-
-
-                    </View>
+ 
 
                     {ShippingAddressPopUp ? (
                         <Modal
@@ -949,4 +964,4 @@ const styles = StyleSheet.create({
     },
     text: { textAlign: 'center', fontSize: 15, color: 'white', fontWeight: '500' }
 })
- 
+

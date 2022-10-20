@@ -73,9 +73,6 @@ const CustomDrawerrender = (props) => {
   }
 
   const GetProfile = async () => {
-
-    // console.log(".....usertoken.....ProfileIN...", userprofile);
-    // setIsLoading(true)
     if (userprofile != null) {
       setIsLoading(true)
       try {
@@ -87,12 +84,14 @@ const CustomDrawerrender = (props) => {
           // console.log("User_token_not_received+yet!!!>>>", response.data.data.first_name);
           setIsLoading(false);
         } else {
+          // Alert.alert('drawer', 'Something went wrong please exit the app and try again');
           setIsLoading(false);
         }
 
       }
       catch (error) {
-        console.log("GET User Profile in drawer error:", error.response.data.message);
+        // Alert.alert('drawer', 'Something went wrong please exit the app and try again');
+        // console.log("GET User Profile in drawer error:", error.response.data.message);
         setIsLoading(false)
       }
 
@@ -114,8 +113,9 @@ const CustomDrawerrender = (props) => {
       console.log("response_contactus ::::", response.data);
       if (response.data.status == 1) {
         setContactUs(false);
-        // Alert.alert('','')
+
         props.navigation.navigate("Home");
+        Alert.alert('', 'Your message has been sent successfully we will contact you shortly.')
         setUserName = "";
         setUseremail = "";
         setTypemessage = "";
@@ -123,12 +123,14 @@ const CustomDrawerrender = (props) => {
         setcheck(false)
       }
       else {
+        Alert.alert('', 'Something went wrong please exit the app and try again');
         setIsLoading(false);
         setcheck(false)
       }
 
     } catch (error) {
-      console.log("error_ContactUs:", error.response.data.message);
+      Alert.alert('', 'Something went wrong please exit the app and try again');
+      // console.log("error_ContactUs:", error.response.data.message);
       setIsLoading(false);
       setcheck(false)
     }
@@ -307,7 +309,7 @@ const CustomDrawerrender = (props) => {
                   </View>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => props.navigation.navigate("TermsAndCondition")}>
+              {/* <TouchableOpacity onPress={() => props.navigation.navigate("TermsAndCondition")}>
                 <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
                   <View style={{ width: 50, height: 50, marginLeft: 5 }} >
                     <Image source={require('../Screens/assets/menu5.png')}
@@ -318,12 +320,12 @@ const CustomDrawerrender = (props) => {
                   </View>
                   <View style={{ height: 50 }} >
                     <View style={{ height: 50, marginLeft: -10 }} >
-                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Terms & Condition</Text>
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Terms & Conditions</Text>
                     </View>
                   </View>
                 </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => props.navigation.navigate("CancellationPolicy")}>
+              </TouchableOpacity> */}
+              {/* <TouchableOpacity onPress={() => props.navigation.navigate("CancellationPolicy")}>
                 <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
                   <View style={{ width: 50, height: 50, marginLeft: 5, }} >
                     <Image source={require('../Screens/assets/menu6.png')}
@@ -334,11 +336,11 @@ const CustomDrawerrender = (props) => {
                   </View>
                   <View style={{ height: 50 }} >
                     <View style={{ height: 50, marginLeft: -10 }} >
-                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Cancellation Return Policy </Text>
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Cancellation & Return Policy </Text>
                     </View>
                   </View>
                 </View>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
               <TouchableOpacity onPress={() => props.navigation.navigate("RefundPolicy")}>
                 <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
                   <View style={{ width: 50, height: 50, marginLeft: 5 }} >
@@ -350,7 +352,7 @@ const CustomDrawerrender = (props) => {
                   </View>
                   <View style={{ height: 50 }} >
                     <View style={{ height: 50, marginLeft: -10 }} >
-                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Refund Policy</Text>
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Privacy Policy</Text>
                     </View>
                   </View>
                 </View>
@@ -445,14 +447,14 @@ const CustomDrawerrender = (props) => {
                     borderRadius: 20,
                     width: "100%",
                     justifyContent: "flex-end",
-                  
+
                   }}>
 
                   <View style={{
                     height: 460,
                     width: "100%",
                     borderRadius: 20,
-                    
+
                     alignItems: 'center',
                     // backgroundColor: 'pink',
                     justifyContent: "center",
@@ -591,7 +593,7 @@ const CustomDrawerrender = (props) => {
                         textAlignVertical='top'
                         style={{
                           width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 6, color: "black",
-                          fontSize: 14,  
+                          fontSize: 14,
                         }} />
                     </View>
 

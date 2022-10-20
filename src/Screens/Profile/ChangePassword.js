@@ -24,10 +24,19 @@ const ChangePassword = (props) => {
     const [ChangePasswordPopUp, setChangePasswordPopUp] = useState(false);
     const [AlertMsg, setAlertMsg] = useState("");
     const [Msg, setMsgAlert] = useState(false);
+    const[userphoneno,setUserPhoneno]=useState(props?.route?.params?.PhoneNo)
 
     // const openDrawer = () => props.navigation.dispatch(DrawerActions.openDrawer());
 
     const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        console.log('user Phone no.::',props?.route?.params?.PhoneNo)
+       
+        
+    
+    
+    }, []); 
 
     const buttonClickedHandler = () => {
         setChangePasswordPopUp(false)
@@ -45,7 +54,8 @@ const ChangePassword = (props) => {
         const data = {
             old_password: values.old_pswd,
             new_password: values.password,
-            confirm_new_password: values.cfm_password
+            confirm_new_password: values.cfm_password,
+            phone:userphoneno
         };
         console.log(".......userInputdata", data);
         setIsLoading(true);

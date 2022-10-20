@@ -91,7 +91,7 @@ const TrainingPersonaDetail = (props) => {
         console.log("karan_basicdetails...", data);
         try {
             const response = await axios.post(`${API.SET_TRAINING}`, data, { headers: { "Authorization": ` ${Usertoken1}` } });
-            // console.log("Response_SetTrainingPlan::::", response.data.data);
+            console.log("Response_SetTrainingPlan::::", response.data);
 
             // console.log("SetTrainingPlan_data!!!>>>", response.data.message);
             if (response.data.status == 1) {
@@ -99,7 +99,9 @@ const TrainingPersonaDetail = (props) => {
                 props.navigation.navigate("TrainingDetail")
                 // alert("Training update sucessfully")
 
-            } else if (response.data.status == 0) {
+            } else
+            //  if (response.data.status == 0) 
+             {
                 setFitnessData(response.data.data);
                 Usertrndata(response.data.data);
                 // alert("Training set allready");
@@ -161,7 +163,7 @@ const TrainingPersonaDetail = (props) => {
                 (< View style={{ paddingBottom: 80 }} >
                     <Divider color='#393939' width={1.2} />
                     <ScrollView>
-                        <View style={{ backgroundColor: '#262626', height: 180, borderBottomLeftRadius: 20, borderBottomRightRadius: 20, width: "100%" }}>
+                        {/* <View style={{ backgroundColor: '#262626', height: 180, borderBottomLeftRadius: 20, borderBottomRightRadius: 20, width: "100%" }}>
 
                             <Pages indicatorColor='#ffcc00' >
                                 <View style={{ marginTop: 20, height: 130, flexDirection: 'row', marginHorizontal: 20, borderRadius: 20 }}>
@@ -214,7 +216,7 @@ const TrainingPersonaDetail = (props) => {
                                 </View>
 
                             </Pages>
-                        </View>
+                        </View> */}
 
                         {/* Please Enter Your Basic Details */}
                         <View style={{ paddingBottom: 30, width: "99.9%", flex: 1, justifyContent: "flex-start", alignItems: "flex-start" }}>

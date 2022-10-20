@@ -18,75 +18,69 @@ const OutdoorTrainning = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [TrainingSUBCatgry, setTrainingSUBCatgry] = useState([]);
   const [checkplanid, setCheckPlanId] = useState(props?.route?.params?.TrainingData);
+  const [planstatus, setPlanstatus] = useState(JSON.stringify(props?.route?.params?.categoryId?.plan_id))
+  const[hometrainingid,setHomeTrainingid]=useState(props?.route?.params?.TrainingID?.id);
+  const [tokenuser, SetTokenUser] = useState("");
 
   useEffect(() => {
+    console.log("categoryId_item..plan_id.............:", props?.route?.params?.categoryId?.plan_id);
+     
+    console.log("TrainingID_item.from home..............:", props?.route?.params?.TrainingID?.id);
+    // const TrainingID = props?.route?.params?.TrainingID?.id
+    console.log("Trainingdata_From trainingscreen:", props?.route?.params?.TrainingData);
+    
     workoutSubCategoryAPI();
-    console.log("Traingplanstatus...:", props?.route?.params?.TrainingData);
-    //   const checklogin = async () => {
-    //     let Usertoken = await AsyncStorage.getItem("authToken");
-    //     console.log("token.......", Usertoken);
-    //     if (Usertoken == null) {
-    //         props.navigation.navigate('LoginMain', {
-    //             screen: 'LoginSignUp',
-    //           });
-    //           Alert.alert("Login Fist!")
-    //         console.log(".........Not Login......................");
+    // console.log("Traingplanstatus...:", props?.route?.params?.TrainingData);
+    const checklogin = async () => {
+      let Usertoken = await AsyncStorage.getItem("authToken");
+       
+      SetTokenUser(Usertoken);
 
-    //     }
-    //     else {
 
-    //         console.log(".......user login...................");
-    //     }
-    // };
-    // checklogin();
+    };
+    checklogin();
 
-    // getusertoken();
   }, []);
 
   const gotoOutdoorCycle = (item) => {
+    if (checkplanid?.plan_status == "Active" || checkplanid?.plan_id >= 2) {
+      if (tokenuser != null) {
+        console.log("ACTIVE plan::::::");
+        props.navigation.navigate("Training", {
+          Tainingcat_id: checkplanid != undefined ? checkplanid?.id : hometrainingid,
+          Trainingsubcat_data: item
+        })
+      }
+      else if (tokenuser == null) {
+        Alert.alert('Please login', '')
+        props.navigation.navigate('LoginMain', {
+          screen: 'LoginSignUp',
+        });
+      }
 
-    // Alert.alert(" status 0")
-    if (checkplanid?.plan_status == "Active") {
-      // switch (Active) {
-      //   case checkplanid.plan_id == "1":
-      //     console.log("plan 1 used");
-      //     break;
-      //   case checkplanid.plan_id == "2":
-      //     console.log("plan 2 used");
-      //     break;
-      //   case checkplanid.plan_id == "3":
-      //     console.log("plan 3 used");
-      //     break;
-      //     default:
-      //       console.log("plan 0 used ");
-      // }
-      // Alert.alert(" status Active")
-      props.navigation.navigate("Training", {
-        Tainingcat_id: categoryId ? categoryId : TrainingID,
-        Trainingsubcat_data: item
-      })
     }
-    else if (checkplanid?.plan_status == "Inactive") {
+    else if (checkplanid?.plan_status == "Inactive" || checkplanid?.plan_id == 1) {
+      console.log("ACTIVE plan::::::");
       props.navigation.navigate("Training", {
-        Tainingcat_id: categoryId ? categoryId : TrainingID,
+        Tainingcat_id: checkplanid != undefined ? checkplanid?.id : hometrainingid,
         Trainingsubcat_data: item
       })
       // Alert.alert("Please, Login First and Suscribe any plan!")
       // if(checkplanid?.plan_id > "0"){
-        // props.navigation.navigate('LoginMain', {
-        //   screen: 'LoginSignUp',
-        // });
+      // props.navigation.navigate('LoginMain', {
+      //   screen: 'LoginSignUp',
+      // });
       // }
       // else if(checkplanid?.plan_id == "0")
       // {
       //   return
       // }
-     
-    
+
+
     }
-    else if (checkplanid?.plan_status == null){
+    else if (checkplanid?.plan_status == null) {
       props.navigation.navigate("Training", {
-        Tainingcat_id: categoryId ? categoryId : TrainingID,
+        Tainingcat_id: checkplanid != undefined ? checkplanid?.id : hometrainingid,
         Trainingsubcat_data: item
       })
     }
@@ -98,27 +92,25 @@ const OutdoorTrainning = (props) => {
   }
 
 
-  // console.log("categoryId_item...............:", props?.route?.params?.categoryId?.id);
-  const categoryId = props?.route?.params?.categoryId?.id
-  console.log("TrainingID_item.from home..............:", props?.route?.params?.TrainingID?.id);
-  const TrainingID = props?.route?.params?.TrainingID?.id
 
-  // setCheckPlanId(props?.route?.params?.TrainingData);
+
 
   const workoutSubCategoryAPI = async () => {
     const usertkn = await AsyncStorage.getItem("authToken");
+    console.log("plain id :", checkplanid?.plan_id);
+    console.log("training home id::",hometrainingid);
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.TRAINING_SUB_CATERORY}`, { "category_id": categoryId ? categoryId : TrainingID },
-        //  { headers: { "Authorization": ` ${usertkn}` } }
+      const response = await axios.post(`${API.TRAINING_SUB_CATERORY}`, { "category_id": checkplanid != undefined ? checkplanid?.id : hometrainingid },
+        { headers: { "Authorization": ` ${usertkn}` } }
       );
-      // console.log(":::::::::workoutSubCategoryAPI_Response>>>", response.data.message);
+      console.log(":::::::::workoutSubCategoryAPI_Response>>>", response?.data?.message);
       // console.log("workoutSubCategoryAPI_data::::::", response.data.data);
       // alert("Get Sub-category data successfully");
-      if (response.data.status == '1') {
-        setTrainingSUBCatgry(response.data.data)
+      if (response?.data?.status == '1') {
+        setTrainingSUBCatgry(response?.data?.data)
         setIsLoading(false);
-      } else if (response.data.status == '0') {
+      } else {
 
         Alert.alert('Training Not Accessible', 'Login First !')
       }
@@ -126,7 +118,7 @@ const OutdoorTrainning = (props) => {
 
     }
     catch (error) {
-      console.log("......error.........", error.response.data.message);
+      console.log("..workoutSubCategoryAPI..Catch..error.........", error.response?.data?.message);
       setIsLoading(false);
 
     }
@@ -205,7 +197,7 @@ const OutdoorTrainning = (props) => {
           {
             TrainingSUBCatgry.length != 0 ?
               (<ScrollView>
-                <View style={{marginTop: 10, justifyContent: "center", alignItems: "center", width: WIDTH * 0.4, height: 50 }}>
+                <View style={{ marginTop: 10, justifyContent: "center", alignItems: "center", width: WIDTH * 0.4, height: 50 }}>
                   <Text style={{ textAlign: 'left', fontSize: 18, color: '#ffffff', fontWeight: "500" }}>Sub Categories</Text>
                 </View>
 
@@ -276,16 +268,31 @@ const OutdoorTrainning = (props) => {
                         <Text style={{ marginRight: 15, textAlign: 'right', fontSize: 12, color: 'black', }}>$ 99</Text>
                       </View>
                     </View>
-                  </View> */}
+                  </View> || planstatus != "Active"*/}
 
 
-                  <View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 20, flex: 1, }}>
-                    <TouchableOpacity onPress={() => { gotoSubsciption() }}>
-                      <View style={{ alignItems: 'center', width: 220, justifyContent: 'center', backgroundColor: '#ffcc00', borderRadius: 50, flex: 1 }}>
-                        <Text style={{ textAlign: 'center', fontSize: 14, color: 'white', fontWeight: "400" }}>SubscriptionPlan Buy Now</Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
+                  {
+                  checkplanid?.plan_id >= 2 ?
+                    <>
+
+                      {checkplanid.user_plan_status != "Active" ?
+                        (<View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 20, flex: 1, }}>
+                          <TouchableOpacity
+                            onPress={() => { gotoSubsciption() }}>
+                            <View style={{ alignItems: 'center', width: 160, justifyContent: 'center', backgroundColor: '#ffcc00', borderRadius: 50, flex: 1 }}>
+                              <Text style={{ textAlign: 'center', fontSize: 14, color: 'white', fontWeight: "400" }}>Subscribe Now</Text>
+                            </View>
+                          </TouchableOpacity>
+                        </View>)
+                        :
+                        null
+                      }
+
+
+                    </>
+                    :
+                    null
+                  }
 
                 </View>
               </ScrollView>)

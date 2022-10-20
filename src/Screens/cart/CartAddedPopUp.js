@@ -211,7 +211,7 @@ const CartAdded = (props) => {
             const response = await axios.post(`${API.PRODUCT_DETAILS_REMOVE_ITEM}`, { "cart_id": cartaddid }, {
                 'headers': { "Authorization": ` ${usertkn}` }
             },);
-            Alert.alert(' product successfully removed', '');
+            Alert.alert('','Removed item successfully');
             // console.log(":::::::::ProductRemovecart_Response>>>", response.data.message);
             // console.log("status _ProductRemovecart:", response.data.status);
             GetShippingProducts();
@@ -611,7 +611,7 @@ const CartAdded = (props) => {
 
                                             <View style={{ marginTop: 10, height: 40, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.94 }}>
                                                 <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Total Amout:</Text>
+                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Total Amount:</Text>
                                                 </View>
                                                 <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
                                                     <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 53, fontWeight: "500" }}>${total}</Text>

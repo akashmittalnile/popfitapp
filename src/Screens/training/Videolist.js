@@ -35,7 +35,7 @@ const Videolist = (props) => {
         setIsLoading(true);
         try {
             const response = await axios.post(`${API.TRAINING_LIST}`, { "category_id": Tainingcat_id, "subcategory_id": Trainingsubcat_data }, 
-            // { headers: { "Authorization": ` ${usertkn}` } }
+            { headers: { "Authorization": ` ${usertkn}` } }
             );
             // console.log(":::::::::TrainingCategoryListAPI_Response>>>", response.data.message);
 

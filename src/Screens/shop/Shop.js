@@ -76,14 +76,14 @@ const Shop = (props) => {
         setFilterPopUp(false)
 
       } else {
-        // Alert.alert(" If-else status 0 !");
-        setIsLoading(false)
+        setIsLoading(false);
+        Alert.alert('', 'Something went wrong please exit the app and try again');
       }
-      setIsLoading(false)
+      
     }
     catch (error) {
-      // console.log("......error.........", error.response.data.message);
-      Alert.alert("filter",error.response.data.message);
+      Alert.alert('', 'Something went wrong please exit the app and try again');
+      // Alert.alert("filter",error.response.data.message);
       setIsLoading(false);
     }
 
@@ -98,12 +98,18 @@ const Shop = (props) => {
       );
       // console.log(":::::::::Shop_Store_Response>>>", response.data.best_seller);
       // console.log("status _SHOP", response.data.status);
-      setshopitems(response.data.best_seller)
-      setIsLoading(false);
+      if(response.data.status == 1){
+        setshopitems(response.data.best_seller)
+        setIsLoading(false);
+      }
+      else{
+        setIsLoading(false);
+        Alert.alert('', 'Something went wrong please exit the app and try again');
+      }
+      
     }
     catch (error) {
-      // console.log("......error.........", error.response.data.message);
-      Alert.alert('Something went wrong !','Try again later')
+      Alert.alert('', 'Something went wrong please exit the app and try again');
       setIsLoading(false);
     }
 
@@ -502,11 +508,12 @@ const Shop = (props) => {
                   }}>
                   <View
                     style={{
-                      // backgroundColor: 'white',
-                      // height: 480,
-                      height: "100%",
-                      width: "99%",
+                      // backgroundColor: 'red',
+                      height: 220,
+                      // height: "100%",
+                      width: "100%",
                       // marginHorizontal: 20,
+                      // justifyContent: "center",
                       alignItems: 'center',
                       borderRadius: 20,
                       flexDirection: 'column',
@@ -555,6 +562,7 @@ const Shop = (props) => {
                         height: 60,
                         flexDirection: 'row',
                         marginTop: 30,
+                        justifyContent: 'center'
                       }}>
                       <View
                         style={{

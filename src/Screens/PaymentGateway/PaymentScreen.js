@@ -14,13 +14,16 @@ import { async } from 'regenerator-runtime';
 export default function PaymentScreen(props) {
 
   const [OrderPlacedPopUp, setOrderPlacedPopUp] = useState(false);
+  const [planPlacedPopUp, setPlanPlacedPopUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [username, setName] = useState('');
   const [carddata, setcardata] = useState("");
+  const [transid, setTransid] = useState('');
   const { confirmPayment, loading, createToken } = useStripe();
   const [adddrs, setAdddrs] = useState(props?.route?.params?.SetAddrs);
-  const [amout, setAmout] = useState(props?.route?.params?.SubscriptionPlan)
-  // console.log("Data Get from Subscription Plans::",amout);
+  const [amout, setAmout] = useState(props?.route?.params?.SubscriptionPlan);
+  const [orderprice, setOrderprice] = useState(props?.route?.params?.Totalprice);
+  console.log("Data Get from Subscription Plans::", amout);
 
   // const fetchPaymentIntentClientSecret = async () => {
   //   // console.log("user name::", username);
@@ -49,9 +52,7 @@ export default function PaymentScreen(props) {
   //   // }
   // };
 
-  // const gotoOrderDetail = () => {
-  //   OrderPlacedAfterpaymentdone();
-  // }
+
 
   const handlePayPress = async () => {
     // setIsLoading(true);
@@ -74,19 +75,34 @@ export default function PaymentScreen(props) {
       )
   };
 
-  console.log("Set_Order_Amount:", props?.route?.params?.Totalprice);
-  // console.log("ADDRESS seleted::", props?.route?.params?.SetAddrs);
-  const Totalprice = props?.route?.params?.Totalprice
+  useEffect(() => {
+    console.log('Plan data status::', props?.route?.params?.SubscriptionPlan)
+    console.log("Order_Amount:", props?.route?.params?.Totalprice);
+    console.log("ADDRESS seleted::", props?.route?.params?.SetAddrs);
+    // const Totalprice = props?.route?.params?.Totalprice
+    // const unsubscribe = props.navigation.addListener('focus', () => {
+
+    // });
+    // return unsubscribe;
+
+
+  }, []);
+  const planpaymentdone = () => {
+    console.log("subs...training plan:::");
+    setOrderPlacedPopUp(false);
+    setIsLoading(false);
+    props.navigation.navigate("TrainingDetail")
+
+  }
 
 
   const gotostipepayment = async (id) => {
-    const PlanId = await AsyncStorage.getItem("Planid");
+    // const PlanId = await AsyncStorage.getItem("Planid");
 
-    console.log("selected plain price:",
-      amout, id, PlanId);
+    console.log("selected plain price:", amout, id,);
     const Token = await AsyncStorage.getItem("authToken");
-    const Plan_amout = amout != undefined ? amout.price : Totalprice;
-    const plan_id = amout != undefined ? amout.id : PlanId;
+    const Plan_amout = amout != undefined ? amout.price : orderprice;
+    const plan_id = amout != undefined ? amout.id : null;
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.STRIPE_PAYMENT}`, { 'method_id': id, 'plan_amount': JSON.stringify(Plan_amout), 'plan_id': plan_id },
@@ -98,12 +114,28 @@ export default function PaymentScreen(props) {
             "Authorization": ` ${Token}`
           }
         })
+
       console.log("Response.Stripe:", response.data);
 
-
       if (response.data.status == 1) {
-        setIsLoading(false);
-        setOrderPlacedPopUp(true);
+        console.log("Response.Stripe:", response.data.tran_id);
+        if (amout == null) {
+          setTransid(response.data.tran_id)
+          setIsLoading(false);
+          setOrderPlacedPopUp(true);
+
+        } else if (amout != null) {
+          setTransid(response.data.tran_id)
+          setIsLoading(false);
+          setPlanPlacedPopUp(true);
+        }
+        else {
+          setIsLoading(false);
+             Alert.alert(' status ==1 stripe response::', 'Something went wrong  ')
+           }
+
+ 
+
         // Alert.alert("Payment Successfull", '',
         //   [
         //     {
@@ -115,7 +147,7 @@ export default function PaymentScreen(props) {
         //   ]
         // )
       } else {
-        Alert.alert("Please Enter Card Details!");
+        Alert.alert( '', 'Something went wrong please try again.');
         setIsLoading(false);
       }
       // Alert.alert("payment failed not valid status !");
@@ -123,33 +155,47 @@ export default function PaymentScreen(props) {
     catch (error) {
       // console.log("payment error:",error.response.data.message);
       setIsLoading(false)
-      Alert.alert("something went wrong", error);
+      Alert.alert("something went wrong", error.response.data.message);
     }
 
   };
 
   const OrderPlacedAfterpaymentdone = async () => {
-    console.log("afterplaced Address:", adddrs);
+    console.log("afterplaced Address::::", adddrs, transid);
     const Token = await AsyncStorage.getItem("authToken");
 
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.ORDER_PLACED}`, { 'shipping_address': adddrs }, {
+      const response = await axios.post(`${API.ORDER_PLACED}`, { 'shipping_address': adddrs, 'transaction_id': transid, 'amount': amout != undefined ? amout.price : orderprice }, {
         headers: { "Authorization": ` ${Token}` }
       })
       console.log("Orderplaced_response:", response.data);
       if (response.data.status == 1) {
-        setIsLoading(false);
-        props.navigation.navigate("MyOrder")
         console.log("status1:", response.data.message);
-      } else if (response.data.status == 1) {
+
+        setPlanPlacedPopUp(false);
         setIsLoading(false);
+        props.navigation.navigate("MyOrder");
+
+        // else if (planPlacedPopUp == "true") {
+        //   setOrderPlacedPopUp(false);
+        //   setIsLoading(false);
+        //   props.navigation.navigate("TrainingDetail")
+        // }
+        // else {
+        //   Alert.alert('status == 1', 'something went wrong!!!!')
+        // }
+
+      }
+      else if (response.data.status == 0) {
+        setIsLoading(false);
+        Alert.alert('', 'Something went wrong please exit the app and try again');
         console.log("status0:", response.data.message);
       }
     } catch (error) {
       setIsLoading(false);
-      console.log("order catch error:", error);
-      // Alert.alert(JSON.stringify("something went wrong Save order:", error));
+      Alert.alert('', 'Something went wrong please exit the app and try again');
+
     }
   }
 
@@ -315,15 +361,111 @@ export default function PaymentScreen(props) {
                       </View>
                     </View>
 
-                    <Text style={{ marginTop: 15, marginLeft: 10, textAlign: 'center', fontSize: 18, color: 'black', fontWeight: "500" }}>Order Placed Successfully</Text>
-                    <Text style={{ marginHorizontal: 20, marginTop: 10, textAlign: 'left', fontSize: 12, color: 'black', }}>It is a long established fact that a reader will be distracted by
-                      The readable of a page when looking its layout.
+                    <Text style={{ marginTop: 15, marginLeft: 10, textAlign: 'center', fontSize: 18, color: 'black', fontWeight: "500" }}>Order placed successfully</Text>
+                    <Text style={{ marginHorizontal: 20, marginTop: 10, textAlign: 'left', fontSize: 12, color: 'black', fontWeight: "400" }}>Your order has been placed successfully you can click on View Orders to track the status and delivery.
                     </Text>
                     <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 30, marginTop: 30 }}>
                       <TouchableOpacity onPress={() => { OrderPlacedAfterpaymentdone() }}>
-                        <View style={{ alignItems: 'center', justifyContent: 'center', width: 160, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
+                        <View style={{ alignItems: 'center', justifyContent: 'center', width: 130, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
 
-                          <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>View Order Detail</Text>
+                          <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>View Orders</Text>
+
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+
+
+
+                  </View>
+
+                </View>
+              </View>
+            </Modal>)
+            :
+            null
+          }
+
+          {planPlacedPopUp ?
+            (<Modal
+              animationType="fade"
+              transparent={true}
+              visible={planPlacedPopUp}
+              onRequestClose={() => {
+                setPlanPlacedPopUp(false);
+              }}
+            >
+              <View style={{
+                flex: 1,
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+                backgroundColor: 'rgba(140, 141, 142, 0.7)',
+              }}>
+                <View style={{
+                  // margin: 10,
+                  backgroundColor: "white",
+                  borderRadius: 20,
+                  width: "100%",
+                  // padding: 15,
+                  alignItems: "center",
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 2
+                  },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 4,
+                  elevation: 5
+                }}>
+
+                  <View style={{
+                    // backgroundColor: 'white',
+                    height: 250,
+                    marginHorizontal: 10,
+                    // marginTop: 10,
+                    width: "98%",
+                    borderRadius: 10,
+                    // marginBottom: 20,
+                    alignItems: 'center',
+                    flexDirection: 'column',
+
+                  }}>
+
+                    <View style={{
+                      justifyContent: "center", alignItems: 'center', flexDirection: 'row'
+                    }}>
+                      {/* <View style={{
+                        marginTop: -40, width: 90, height: 90, borderRadius: 90 / 2, backgroundColor: '#fceeb5'
+                      }}>
+
+                        <Image
+                          style={{
+                            width: 120, marginTop: 20,
+                            height: 110, alignSelf: 'center'
+                          }}
+                          source={require('../assets/dumble.png')}
+                          resizeMode="contain" />
+
+                      </View> */}
+                      <View style={{
+                        width: 60, height: 60, marginTop: 20
+                      }}>
+                        <Image source={require('../assets/yellowcheck.png')}
+                          style={{
+                            width: 60,
+                            height: 60, alignSelf: 'center'
+                          }} />
+
+                      </View>
+                    </View>
+
+                    <Text style={{ marginTop: 15, marginLeft: 10, textAlign: 'center', fontSize: 18, color: 'black', fontWeight: "500" }}>Subscription Purchased</Text>
+                    <Text style={{ marginHorizontal: 20, marginTop: 10, textAlign: 'left', fontSize: 12, color: 'black', fontWeight: "400" }}>You have successfully subscribed to the training please checkout the program.
+                    </Text>
+                    <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 30, marginTop: 30 }}>
+                      <TouchableOpacity onPress={() => { planpaymentdone() }}>
+                        <View style={{ alignItems: 'center', justifyContent: 'center', width: 130, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
+
+                          <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>View Trainings</Text>
 
                         </View>
                       </TouchableOpacity>

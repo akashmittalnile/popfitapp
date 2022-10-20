@@ -77,7 +77,7 @@ const MyOrder = (props) => {
         }
         catch (error) {
             // console.log("Countryerror:", error.response.data.message);
-            Alert.alert("something went wrong !", error.response.data.message);
+            Alert.alert("something went wrong !", '');
             setordermsg(response.data.message)
             setMsgAlert(true);
             setIsLoading(false);
@@ -119,7 +119,7 @@ const MyOrder = (props) => {
         else {
             return 'data not available'
         }
-    }
+    };
 
     return (
         <SafeAreaView style={{
@@ -156,7 +156,7 @@ const MyOrder = (props) => {
 
                     {
                         ordereditem?.length > 0 ?
-                            (<> <ScrollView>
+                            (<>
                                 <View style={{ height: 50, marginHorizontal: 10, marginVertical: 20 }}>
                                     <DropDownPicker
                                         items={[
@@ -238,6 +238,7 @@ const MyOrder = (props) => {
                                     />
 
                                 </View>
+                                <ScrollView>
                                 <FlatList
                                     vertical
                                     data={ordereditem}
@@ -413,14 +414,27 @@ const MyOrder = (props) => {
 
                                     }
                                     }
-                                />
-                            </ScrollView>  </>)
+                                /></ScrollView>
+                            </>)
                             :
                             (<View style={{
                                 justifyContent: "center",
                                 alignItems: "center",
                                 flex: 1,
-                                
+                                // marginHorizontal: 6,
+                                // height: HEIGHT,
+                                // width: WIDTH * 0.97,
+                                // borderRadius: 10,
+                                // // backgroundColor: 'white',
+                                // // width: 380,
+                                // // justifyContent: "center",
+                                // alignItems: "center",
+                                // flexDirection: "column",
+                                // marginTop: 160,
+                                // shadowColor: '#000000',
+                                // shadowRadius: 6,
+                                // shadowOpacity: 1.0,
+                                // elevation: 6,
 
                             }}>
                                 <Image resizeMode='contain'
@@ -435,6 +449,8 @@ const MyOrder = (props) => {
 
 
                 </>)
+
+
                 :
                 (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                     <ActivityIndicator size="large" color="#ffcc00" />

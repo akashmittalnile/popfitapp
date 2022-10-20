@@ -72,38 +72,42 @@ const Blog = (props) => {
 
 
 
-  const GetNewsletterApi = async (values) => {
+  const GetNewsletterApi = async () => {
     const usertkn = await AsyncStorage.getItem("authToken");
- 
+    const newsletteremail = await AsyncStorage.getItem('useremail');
     // const EnterEmail = UserEmail;
     const data = {
-      email: values.Checkemail,
+      email: newsletteremail
+      // email: values.Checkemail,
     }
-    if(usertkn != null){
-    // console.log("......userenteremail::", EnterEmail);
-    setIsLoading(true);
-    try {
+    // console.log("blog newsletter:",data);
+    if (usertkn != null) {
+      // console.log("......userenteremail::", EnterEmail);
+      setIsLoading(true);
+      try {
 
-      const response = await axios.post(`${API.NEWS_LETTER_SUBSCRIPTION}`, data, { headers: { "Authorization": ` ${usertkn}` } });
-      // console.log(":::::::::Traing_Workout_Response>>>", response.data);
-      // console.log("Traing_Workout_data::::::", response.data.status);
-      if (response.data.status == 1) {
-        props.navigation.goBack()
-        setIsLoading(false);
-      } else if (response.data.status == 0) {
-        Alert.alert('Not Accessible', 'Login First !')
+        const response = await axios.post(`${API.NEWS_LETTER_SUBSCRIPTION}`, data, { headers: { "Authorization": ` ${usertkn}` } });
+        console.log(":::::::::Traing_Workout_Response>>>", response.data);
+        console.log("Traing_Workout_data::::::", response.data.status);
+        if (response.data.status == 1) {
+          // props.navigation.goBack()
+          Alert.alert('', 'Already subscribed')
+          // setNewsletterPopup(false);
+          setIsLoading(false);
+        } else {
+          Alert.alert('', 'Something went wrong please exit the app and try again')
+        }
+
       }
+      catch (error) {
+        Alert.alert('', 'Something went wrong please exit the app and try again')
+        // console.log("......error.........", error.response.data.message);
+        setIsLoading(false);
 
+      }
+    } else {
+      Alert.alert('', 'User not found')
     }
-    catch (error) {
-      Alert.alert('Blog Data', ' Something went wrong, Try again later !')
-      // console.log("......error.........", error.response.data.message);
-      setIsLoading(false);
-
-    }
-  }else {
-    Alert.alert('','User not found')
-  }
   };
 
   const GetCategoryBlogApi = async () => {
@@ -122,7 +126,7 @@ const Blog = (props) => {
 
     }
     catch (error) {
-      Alert.alert('Blog Data', ' Something went wrong, Try again later !')
+      Alert.alert('', 'Something went wrong please exit the app and try again')
       // console.log("......error.........", error.response.data.message);
       setIsLoading(false);
 
@@ -172,7 +176,8 @@ const Blog = (props) => {
               }}>
               <TouchableOpacity
                 onPress={() => {
-                  setNewsletterPopup(true);
+                  GetNewsletterApi()
+                  // setNewsletterPopup(true);
                 }}>
                 <View
                   style={{
@@ -453,7 +458,7 @@ const Blog = (props) => {
                 )
               }}
             />
-
+{/* 
             {NewsletterPopup ? (
               <Modal
                 animationType="slide"
@@ -576,7 +581,7 @@ const Blog = (props) => {
                               onPress={() => { handleSubmit(values) }}>
                               <View style={{ alignItems: 'center', justifyContent: 'center', width: 150, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
 
-                                <Text style={{ textAlign: 'center', fontSize: 15, color: 'white'}}>Subscribe</Text>
+                                <Text style={{ textAlign: 'center', fontSize: 15, color: 'white' }}>Subscribe</Text>
 
                               </View>
                             </TouchableOpacity>
@@ -596,7 +601,7 @@ const Blog = (props) => {
                   </View>
                 </View>
               </Modal>
-            ) : null}
+            ) : null} */}
           </ScrollView>
         </View>)
         :

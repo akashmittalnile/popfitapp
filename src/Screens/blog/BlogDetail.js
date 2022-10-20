@@ -145,16 +145,19 @@ const BlogDetail = (props) => {
         setIsLoading(false);
       }
       else if (response.data.status == '0') {
-        // Alert.alert("Blog details Data not Found");
-        setApiStatus('0');
         setIsLoading(false);
-
+        Alert.alert('', 'Something went wrong please exit the app and try again');
+        setApiStatus('0');
+      } else {
+        setIsLoading(false);
+        Alert.alert('', 'Something went wrong please exit the app and try again');
       }
 
 
     }
     catch (error) {
-      console.log("......error.........", error.response.data.message);
+      Alert.alert('', 'Something went wrong please exit the app and try again');
+      // console.log("......error.........", error.response.data.message);
       setIsLoading(false);
 
     }
@@ -166,21 +169,27 @@ const BlogDetail = (props) => {
     console.log("User commented_STATUS:::::::::::::::::::::::", subscriptiontoken);
     const EnterComment = usercomment;
     setIsLoading(true);
-
-
     try {
       setIsLoading(false);
       const response = await axios.post(`${API.SEND_COMMENTS}`, { "blog_id": blogdetail_id ? blogdetail_id : Categoryblogid ? Categoryblogid : homeblogid ? homeblogid : null, "comment": EnterComment }, { headers: { "Authorization": ` ${subscriptiontoken}` } })
       console.log("User commented_STATUS::", response.data.status);
       console.log("User commented_Message::", response.data.message);
-      getCategoryblog_detail();
-      setComments(false);
-      setUserComment('');
+      if (response.data.status == 1) {
+        getCategoryblog_detail();
+        setComments(false);
+        Alert.alert('', 'Comment send successfully');
+        setUserComment('');
+      }
+      else {
+        setIsLoading(false);
+        Alert.alert('', 'Something went wrong please exit the app and try again');
+      }
 
 
     }
     catch (error) {
-      console.log("......error.........", error.response.data.message);
+      Alert.alert('', 'Something went wrong please exit the app and try again');
+      // console.log("......error.........", error.response.data.message);
       setIsLoading(false);
     }
 
@@ -272,11 +281,11 @@ const BlogDetail = (props) => {
 
 
                     <View>
-                      <View style={{ marginLeft: 20,marginTop: 6, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
+                      <View style={{ marginLeft: 20, marginTop: 6, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
                         <Text style={{ textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "500" }}>{subcategoryBlogdetailsitems?.blog_detail?.youtube_title}</Text>
                       </View>
                       <View style={{
-                        marginHorizontal: 20,marginTop: 6, height: 200, borderRadius: 20, marginVertical: 1, width: WIDTH * 0.9,
+                        marginHorizontal: 20, marginTop: 6, height: 200, borderRadius: 20, marginVertical: 1, width: WIDTH * 0.9,
                       }}>
                         <View style={{
                           height: '100%',
@@ -323,23 +332,23 @@ const BlogDetail = (props) => {
 
                   </TouchableOpacity> */}
                       </View>
-                      <View style={{marginHorizontal: 20,marginTop: 15, height: "auto", width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}>
-                        <Text style={{textAlign: 'left', fontSize: 12, color: '#000',fontWeight:"400"}}>{subcategoryBlogdetailsitems?.blog_detail?.youtube_description}</Text>
+                      <View style={{ marginHorizontal: 20, marginTop: 15, height: "auto", width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}>
+                        <Text style={{ textAlign: 'left', fontSize: 12, color: '#000', fontWeight: "400" }}>{subcategoryBlogdetailsitems?.blog_detail?.youtube_description}</Text>
                       </View>
 
-                      <View style={{ marginLeft: 20,marginTop: 5, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
-                      <Text style={{ textAlign: 'left',fontSize: 18, color: '#000',fontWeight: "500" }} >{subcategoryBlogdetailsitems?.blog_detail?.image_title}</Text>
+                      <View style={{ marginLeft: 20, marginTop: 5, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
+                        <Text style={{ textAlign: 'left', fontSize: 18, color: '#000', fontWeight: "500" }} >{subcategoryBlogdetailsitems?.blog_detail?.image_title}</Text>
                       </View>
 
                       <View style={{ backgroundColor: "white", borderRadius: 20, marginTop: 10, height: HEIGHT * 0.2, width: WIDTH * 0.9, marginHorizontal: 18, }}>
                         <Image resizeMode='contain'
-                          source={{ uri: `${subcategoryBlogdetailsitems?.blog_detail?.image}` }} 
-                          style={{ width: '100%', height: '100%', justifyContent: "center", alignItems: 'center', borderRadius: 20}}
+                          source={{ uri: `${subcategoryBlogdetailsitems?.blog_detail?.image}` }}
+                          style={{ width: '100%', height: '100%', justifyContent: "center", alignItems: 'center', borderRadius: 20 }}
                         />
                       </View>
 
-                      <View style={{marginHorizontal: 20,marginTop: 15, height: "auto", width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}>
-                      <Text style={{textAlign: 'left', fontSize: 12, color: '#000',fontWeight:"400"}}>{subcategoryBlogdetailsitems?.blog_detail?.image_description}</Text>
+                      <View style={{ marginHorizontal: 20, marginTop: 15, height: "auto", width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}>
+                        <Text style={{ textAlign: 'left', fontSize: 12, color: '#000', fontWeight: "400" }}>{subcategoryBlogdetailsitems?.blog_detail?.image_description}</Text>
                       </View>
                     </View>
 
@@ -429,10 +438,10 @@ const BlogDetail = (props) => {
                             </View>
                           </View>
 
-                          <View style={{  marginLeft: 60,flex: 3.2, justifyContent: "center", alignItems:"flex-start",marginTop: 10, marginVertical: -5,height:"auto"}}>
+                          <View style={{ marginLeft: 60, flex: 3.2, justifyContent: "center", alignItems: "flex-start", marginTop: 10, marginVertical: -5, height: "auto" }}>
                             <Text
                               style={{
-                               textAlign: 'left',
+                                textAlign: 'left',
                                 fontSize: 10,
                                 color: '#000000',
                               }}>{item.comment}
@@ -707,7 +716,7 @@ const BlogDetail = (props) => {
                     width: 200,
                     height: 120, alignSelf: 'center'
                   }} />
-                  <Text style={{ fontSize: 14, fontWeight: "500" ,color:'black'}}>Oops! No data found</Text>
+                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>Oops! No data found</Text>
               </View>)
           }
         </>)
