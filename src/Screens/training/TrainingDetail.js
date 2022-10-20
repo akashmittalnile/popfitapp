@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, Image, SafeAreaView, Dimensions, ActivityIndicator } from 'react-native';
+import { View, FlatList, Text, TouchableOpacity, Image, SafeAreaView, Dimensions, ActivityIndicator, Alert } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Pages } from 'react-native-pages';
 import { DrawerActions } from '@react-navigation/native';
@@ -23,8 +23,17 @@ const TrainingDetail = (props) => {
     // const [subscriptiontoken, setsubscriptiontoken] = useState("");
     const [planid, setPlanId] = useState("");
 
-    const gotoTrainingpersondetails = () => {
-        props.navigation.navigate("TrainingPersonaDetail")
+    const gotoTrainingpersondetails = async () => {
+        const usertkn = await AsyncStorage.getItem("authToken");
+        if (usertkn == null) {
+            props.navigation.navigate("LoginMain")
+            Alert.alert('', 'Please login first')
+        }
+        else if (usertkn != null) {
+            props.navigation.navigate("TrainingPersonaDetail")
+        }
+
+
     };
 
     const MycustomonShare = async () => {
@@ -227,118 +236,144 @@ const TrainingDetail = (props) => {
                             </Pages>
                         </View>
                         {/* Recommended category */}
-                        <Text style={{ marginTop: 20, marginLeft: 15, textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "500" }}>Recommended Categories</Text>
-                        <FlatList
-                            columnWrapperStyle={{
-                                flex: 1,
-                              
-                            }}
-                            keyExtractor={(item, index) => index}
-                            numColumns={2}
-                            data={recommendation}
-                            style={{ paddingBottom: 20 }}
-                            renderItem={({ item, index }) => (
-                                <TouchableOpacity onPress={() => { Checkedtoken(item) }}>
-                                    <View
-                                        style={{
-                                            marginTop: 20,
-                                            backgroundColor: 'white',
-                                            height: 180,
-                                            width: WIDTH * 0.45,
-                                            borderRadius: 25,
-                                            // marginBottom: 10,
-                                            marginHorizontal: 10,
-                                            justifyContent: "center",
-                                            alignItems: 'center',
-                                        }}>
+                        <View style={{ flexDirection: "column", marginTop: 20 }}>
+                            {
+                                recommendation != null ?
+                                    (<View style={{ marginTop: 1, marginLeft: 15, }}>
+                                        <Text numberOfLines={1} style={{ textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "500" }}>Recommended Categories</Text>
+                                    </View>)
+                                    :
+                                    null
+                            }
 
-                                        <View
-                                            style={{
-                                                width: WIDTH * 0.45, height: 150, borderTopRightRadius: 20,
-                                                borderTopLeftRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
-                                            }}>
-                                            <Image
-                                                source={{ uri: `${item.image}` }}
-                                                resizeMode="stretch"
+                            <FlatList
+                                columnWrapperStyle={{
+                                    flex: 1,
+
+                                }}
+                                keyExtractor={(item, index) => index}
+                                numColumns={2}
+                                data={recommendation}
+                                style={{ paddingBottom: 20 }}
+                                renderItem={({ item, index }) => {
+                                    return (
+
+                                        <TouchableOpacity onPress={() => { Checkedtoken(item) }}>
+                                            <View
                                                 style={{
-                                                    width: "100%",
-                                                    height: "100%",
-                                                    borderTopLeftRadius: 20,
-                                                    borderTopRightRadius: 20,
-                                                    alignSelf: 'center',
-                                                }}
-                                            />
-                                            <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
-                                                <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name}</Text>
+                                                    marginTop: 20,
+                                                    backgroundColor: 'white',
+                                                    height: 180,
+                                                    width: WIDTH * 0.45,
+                                                    borderRadius: 25,
+                                                    // marginBottom: 10,
+                                                    marginHorizontal: 10,
+                                                    justifyContent: "center",
+                                                    alignItems: 'center',
+                                                }}>
+
+                                                <View
+                                                    style={{
+                                                        width: WIDTH * 0.45, height: 150, borderTopRightRadius: 20,
+                                                        borderTopLeftRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
+                                                    }}>
+                                                    <Image
+                                                        source={{ uri: `${item.image}` }}
+                                                        resizeMode="stretch"
+                                                        style={{
+                                                            width: "100%",
+                                                            height: "100%",
+                                                            borderTopLeftRadius: 20,
+                                                            borderTopRightRadius: 20,
+                                                            alignSelf: 'center',
+                                                        }}
+                                                    />
+                                                    <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
+                                                        <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name}</Text>
+
+                                                    </View>
+
+                                                </View>
+                                                <View style={{ width: WIDTH * 0.45, height: 30, borderBottomRightRadius: 20, justifyContent: 'center', borderBottomLeftRadius: 20, backgroundColor: '#262626' }}>
+                                                    <Text style={{ textAlign: 'center', fontSize: 9, color: '#c9bca0' }}>Subscription {item?.plan_name} @ {item?.plan_price} {item.plan_type} </Text>
+                                                </View>
 
                                             </View>
-
-                                        </View>
-                                        <View style={{ width: WIDTH * 0.45, height: 30, borderBottomRightRadius: 20, justifyContent: 'center', borderBottomLeftRadius: 20, backgroundColor: '#262626' }}>
-                                            <Text style={{ textAlign: 'center', fontSize: 9, color: '#c9bca0' }}>Subscription {item?.plan_name} @ {item?.plan_price} {item.plan_type} </Text>
-                                        </View>
-
-                                    </View>
-                                </TouchableOpacity>
-                            )}
-                        />
+                                        </TouchableOpacity>
+                                    )
+                                }}
+                            />
+                        </View>
 
                         {/* Workout Category */}
-                        <Text style={{ marginTop: 1, marginLeft: 15, textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "500" }}>Workout Categories</Text>
-                        <FlatList
-                            columnWrapperStyle={{
-                                flex: 1,
-                                 
-                            }}
-                            keyExtractor={(item, index) => index}
-                            numColumns={2}
-                            data={TrainingWorkCatgry}
-                            style={{ paddingBottom: 20 }}
-                            renderItem={({ item, index }) => (
-                                <TouchableOpacity onPress={() => { Checkedtoken(item) }}>
-                                    <View
-                                        style={{
-                                            marginTop: 20,
-                                            backgroundColor: 'white',
-                                            height: 180,
-                                            width: WIDTH * 0.45,
-                                            borderRadius: 25,
-                                            // marginBottom: 10,
-                                            marginHorizontal: 10,
-                                            justifyContent: "center",
-                                            alignItems: 'center',
-                                        }}>
+                        <View style={{ flexDirection: "column" }}>
+                            {
+                                TrainingWorkCatgry != null ?
+                                    (<View style={{ marginTop: 1, marginLeft: 15, }}>
+                                        <Text numberOfLines={1} style={{ textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "500" }}>Workout Categories</Text>
+                                    </View>)
+                                    : null
+                            }
 
-                                        <View
-                                            style={{
-                                                width: WIDTH * 0.45, height: 150, borderTopRightRadius: 20,
-                                                borderTopLeftRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
-                                            }}>
-                                            <Image
-                                                source={{ uri: `${item.image}` }}
-                                                resizeMode="stretch"
+                            <FlatList
+                                columnWrapperStyle={{
+                                    flex: 1,
+
+                                }}
+                                keyExtractor={(item, index) => index}
+                                numColumns={2}
+                                data={TrainingWorkCatgry}
+                                style={{ paddingBottom: 20 }}
+                                renderItem={({ item, index }) => {
+                                    return (
+
+
+                                        <TouchableOpacity onPress={() => { Checkedtoken(item) }}>
+                                            <View
                                                 style={{
-                                                    width: "100%",
-                                                    height: "100%",
-                                                    borderTopLeftRadius: 20,
-                                                    borderTopRightRadius: 20,
-                                                    alignSelf: 'center',
-                                                }}
-                                            />
-                                            <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
-                                                <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name}</Text>
+                                                    marginTop: 20,
+                                                    backgroundColor: 'white',
+                                                    height: 180,
+                                                    width: WIDTH * 0.45,
+                                                    borderRadius: 25,
+                                                    // marginBottom: 10,
+                                                    marginHorizontal: 10,
+                                                    justifyContent: "center",
+                                                    alignItems: 'center',
+                                                }}>
+
+                                                <View
+                                                    style={{
+                                                        width: WIDTH * 0.45, height: 150, borderTopRightRadius: 20,
+                                                        borderTopLeftRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
+                                                    }}>
+                                                    <Image
+                                                        source={{ uri: `${item.image}` }}
+                                                        resizeMode="stretch"
+                                                        style={{
+                                                            width: "100%",
+                                                            height: "100%",
+                                                            borderTopLeftRadius: 20,
+                                                            borderTopRightRadius: 20,
+                                                            alignSelf: 'center',
+                                                        }}
+                                                    />
+                                                    <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
+                                                        <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name}</Text>
+
+                                                    </View>
+
+                                                </View>
+                                                <View style={{ width: WIDTH * 0.45, height: 30, borderBottomRightRadius: 20, justifyContent: 'center', borderBottomLeftRadius: 20, backgroundColor: '#262626' }}>
+                                                    <Text style={{ textAlign: 'center', fontSize: 9, color: '#c9bca0' }}>Subscription {item?.plan_name} @ {item?.plan_price} {item.plan_type} </Text>
+                                                </View>
 
                                             </View>
-
-                                        </View>
-                                        <View style={{ width: WIDTH * 0.45, height: 30, borderBottomRightRadius: 20, justifyContent: 'center', borderBottomLeftRadius: 20, backgroundColor: '#262626' }}>
-                                            <Text style={{ textAlign: 'center', fontSize: 9, color: '#c9bca0' }}>Subscription {item?.plan_name} @ {item?.plan_price} {item.plan_type} </Text>
-                                        </View>
-
-                                    </View>
-                                </TouchableOpacity>
-                            )}
-                        />
+                                        </TouchableOpacity>
+                                    )
+                                }}
+                            />
+                        </View>
                     </ScrollView>
                 </>)
                 :

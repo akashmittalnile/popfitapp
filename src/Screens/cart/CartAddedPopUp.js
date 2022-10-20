@@ -119,16 +119,16 @@ const CartAdded = (props) => {
                 // setSubtotal(response.data.sub_total);
                 setIsLoading(false);
             }
-            // else {
-            //     Alert.alert("Add to cart", 'please login first!')
-            //     // setSubtotal(response.data.sub_total);
-            //     setIsLoading(false);
-            // }
+            else {
+                Alert.alert("Add to cart", 'please login first!')
+                // setSubtotal(response.data.sub_total);
+                setIsLoading(false);
+            }
 
 
         }
         catch (error) {
-            console.log("......error ProductADD.........", error.response.data.message);
+            Alert.alert( '','Your message has been sent successfully we will contact you shortly.')
             setIsLoading(false);
 
         }
@@ -160,7 +160,7 @@ const CartAdded = (props) => {
             setIsLoading(false);
         }
         catch (error) {
-            console.log("ShippingProductserror:::", error.response.data.message);
+            Alert.alert( '','Your message has been sent successfully we will contact you shortly.');
             setIsLoading(false)
         }
 
@@ -220,7 +220,7 @@ const CartAdded = (props) => {
             setIsLoading(false);
         }
         catch (error) {
-            Alert.alert('Something went wrong !', 'Try again later')
+            Alert.alert( '','Your message has been sent successfully we will contact you shortly.')
             // console.log("....ProductRemovecart..error. cartscreen........", error.response.data.message);
             setIsLoading(false);
 

@@ -282,7 +282,7 @@ const BlogDetail = (props) => {
 
                     <View>
                       <View style={{ marginLeft: 20, marginTop: 6, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
-                        <Text style={{ textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "500" }}>{subcategoryBlogdetailsitems?.blog_detail?.youtube_title}</Text>
+                        <Text style={{ textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "500" }}>{subcategoryBlogdetailsitems?.blog_detail?.youtube_title.slice(0, 36) + '...'}</Text>
                       </View>
                       <View style={{
                         marginHorizontal: 20, marginTop: 6, height: 200, borderRadius: 20, marginVertical: 1, width: WIDTH * 0.9,

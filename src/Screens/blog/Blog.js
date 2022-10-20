@@ -106,7 +106,7 @@ const Blog = (props) => {
 
       }
     } else {
-      Alert.alert('', 'User not found')
+      Alert.alert('', 'Please login first')
     }
   };
 

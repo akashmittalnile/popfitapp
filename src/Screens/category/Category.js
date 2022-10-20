@@ -70,13 +70,13 @@ const Category = (props) => {
         setsubcategoryitems(response.data.blog_subcategory)
         setIsLoading(false);
       } else {
-        Alert.alert("data not found",'')
+        // Alert.alert("data not found",'')
         setIsLoading(false);
       }
 
     }
     catch (error) {
-      Alert.alert('Blog sub-category data',error.response.data.message)
+      Alert.alert('','Something went wrong please exit the app and try again')
       // console.log("......error.........", error.response.data.message);
       setIsLoading(false);
 

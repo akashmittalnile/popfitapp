@@ -184,7 +184,7 @@ const Notifications = (props) => {
                 (<View style={{
                     flex: 1,
                     width: "100%",
-                    height: "100%", backgroundColor: 'red'
+                    height: "100%", 
                 }}>
 
                     {
