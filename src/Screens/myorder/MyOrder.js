@@ -391,7 +391,7 @@ const MyOrder = (props) => {
                                                     (<View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}>
                                                         <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "400" }}>{Orderstatus(item.order_status)}</Text>
                                                         <View style={{ marginTop: 6, }}>
-                                                            <Text style={{ textAlign: 'left', fontSize: 9, color: '#455A64', fontWeight: "400" }}>on {item.created_at}</Text>
+                                                            <Text style={{ textAlign: 'left', fontSize: 9, color: '#455A64', fontWeight: "400" }}>on {item.updated_at}</Text>
                                                         </View>
                                                     </View>)
                                                     :

@@ -104,11 +104,11 @@ const OrderDetail = (props) => {
                                                     <View style={{ height: 40, flexDirection: "column", flex: 1, justifyContent: 'flex-start', alignItems: "flex-start", paddingLeft: 15 }}>
 
                                                         <View style={{ flex: 1, }}>
-                                                            <Text style={{ fontSize: 12, color: 'black', }}>{item?.order_updatedDate}</Text>
+                                                            <Text style={{ fontSize: 12, color: 'black', }}>{item?.order_createdDate}</Text>
                                                         </View>
                                                         <View style={{ flexDirection: 'row', flex: 1, }}>
 
-                                                            <Text style={{ fontSize: 14, color: 'black', fontWeight: "bold" }}>Order No. :</Text
+                                                            <Text style={{ fontSize: 14, color: 'black', fontWeight: "500" }}>Order No. :</Text
                                                             >
                                                             <Text style={{ fontSize: 14, color: '#FFCC00', }}> {item?.order_no}</Text>
 
@@ -203,7 +203,7 @@ const OrderDetail = (props) => {
                                                                     <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000' }}>Total Amount: <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#000000', }}>$ {item.total_price}</Text></Text>
                                                                 </View>
                                                                 <View>
-                                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000' }}>Quantity: <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#000000', }}>{item.gty}</Text></Text>
+                                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000' }}>Quantity: <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#000000', }}>{item.qty}</Text></Text>
                                                                 </View>
 
                                                             </View>

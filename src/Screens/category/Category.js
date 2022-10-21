@@ -41,22 +41,13 @@ const Category = (props) => {
     getusertoken();
 
   }, []);
+  
   const getusertoken = async () => {
     const usertoken = await AsyncStorage.getItem("authToken");
     console.log("check_roken in comment button:::>>>>>..", usertoken);
     setsubscriptiontoken(usertoken);
   }
-  const Checkedtoken = () => {
-
-    subscriptiontoken == "" ?
-      props.navigation.navigate('LoginMain', {
-        screen: 'LoginSignUp',
-      })
-      :
-      setComments(true);
-    // ShareCommentApi()
-
-  };
+  
   const getCategoryApi = async () => {
     const Token = await AsyncStorage.getItem("authToken");
     console.log("category_id get.....;;;;;", ITEMS);

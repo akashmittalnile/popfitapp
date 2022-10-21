@@ -23,6 +23,7 @@ export default function PaymentScreen(props) {
   const [adddrs, setAdddrs] = useState(props?.route?.params?.SetAddrs);
   const [amout, setAmout] = useState(props?.route?.params?.SubscriptionPlan);
   const [orderprice, setOrderprice] = useState(props?.route?.params?.Totalprice);
+  const[textline,settextline]=useState(props?.route?.params?.Instruction);
   console.log("Data Get from Subscription Plans::", amout);
 
   // const fetchPaymentIntentClientSecret = async () => {
@@ -76,9 +77,9 @@ export default function PaymentScreen(props) {
   };
 
   useEffect(() => {
-    console.log('Plan data status::', props?.route?.params?.SubscriptionPlan)
-    console.log("Order_Amount:", props?.route?.params?.Totalprice);
-    console.log("ADDRESS seleted::", props?.route?.params?.SetAddrs);
+    // console.log('Plan data status::', props?.route?.params?.SubscriptionPlan)
+    // console.log("Order_Amount:", props?.route?.params?.Totalprice);
+    // console.log("ADDRESS seleted::", props?.route?.params?.SetAddrs);
     // const Totalprice = props?.route?.params?.Totalprice
     // const unsubscribe = props.navigation.addListener('focus', () => {
 
@@ -131,10 +132,10 @@ export default function PaymentScreen(props) {
         }
         else {
           setIsLoading(false);
-             Alert.alert(' status ==1 stripe response::', 'Something went wrong  ')
-           }
+          Alert.alert(' status ==1 stripe response::', 'Something went wrong  ')
+        }
 
- 
+
 
         // Alert.alert("Payment Successfull", '',
         //   [
@@ -147,7 +148,7 @@ export default function PaymentScreen(props) {
         //   ]
         // )
       } else {
-        Alert.alert( '', 'Something went wrong please try again.');
+        Alert.alert('', 'Something went wrong please try again.');
         setIsLoading(false);
       }
       // Alert.alert("payment failed not valid status !");
@@ -161,12 +162,12 @@ export default function PaymentScreen(props) {
   };
 
   const OrderPlacedAfterpaymentdone = async () => {
-    console.log("afterplaced Address::::", adddrs, transid);
+    console.log("after_payment::::", adddrs, transid,textline);
     const Token = await AsyncStorage.getItem("authToken");
 
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.ORDER_PLACED}`, { 'shipping_address': adddrs, 'transaction_id': transid, 'amount': amout != undefined ? amout.price : orderprice }, {
+      const response = await axios.post(`${API.ORDER_PLACED}`, { 'shipping_address': adddrs, 'transaction_id': transid, 'amount': amout != undefined ? amout.price : orderprice,'delivery_inst':textline != null ? textline : null }, {
         headers: { "Authorization": ` ${Token}` }
       })
       console.log("Orderplaced_response:", response.data);

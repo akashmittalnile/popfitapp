@@ -400,6 +400,7 @@ const Signup = (props, navigation) => {
                     .string()
                     .required('Please enter password *')
                     .min(8, 'Your password is too short minimum 8 characters *'),
+                    // .max(16, 'Your password should not  be more then   *'),
                   cfm_password: yup
                     .string()
                     .required('Confirm password is required *')

@@ -22,16 +22,12 @@ const ClothesType = (props) => {
   const [imagepath, setimagepath] = useState("");
   const [FilterPopup, setFilterPopUp] = useState(false);
   
-  const gotoMensTshirts = async(item) => {
-    const Token = await AsyncStorage.getItem("authToken");
-    if (Token == null) {
-      Alert.alert('Clothing Store', 'Login First !')
-    } else if (Token != null) {
-      props.navigation.navigate('MenTshirts', {
+  const gotoMensTshirts =  (item) => {
+  props.navigation.navigate('MenTshirts', {
         categoryID: item.id,
         SHOPID: ClothID
       })
-    }
+   
    
   }
   
@@ -57,7 +53,7 @@ const ClothesType = (props) => {
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.SHOP_CATEGORY}`, { 'shop_id': ClothID }, 
-      // { headers: { "Authorization": ` ${Token}` } }
+      { headers: { "Authorization": ` ${Token}` } }
       );
       console.log(":::::::::FitnessEquipmentStore_Response>>>", response.data.shop_category);
       console.log("status _FitnessEquipment", response.data.status);

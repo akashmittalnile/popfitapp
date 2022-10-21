@@ -22,16 +22,13 @@ const FitnessEquipment = (props) => {
   const [FilterPopup, setFilterPopUp] = useState(false);
 
 
-  const gotoDumbleSet = async (item) => {
-    const Token = await AsyncStorage.getItem("authToken");
-    if (Token == null) {
-      Alert.alert('Fitness Store', 'Login First !')
-    } else if (Token != null) {
+  const gotoDumbleSet =  (item) => {
+    
       props.navigation.navigate("DumbleSet", {
         categoryID: item.id,
         SHOPID: FitnessID
       })
-    }
+    
 
   }
 
@@ -57,7 +54,7 @@ const FitnessEquipment = (props) => {
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.SHOP_CATEGORY}`, { 'shop_id': FitnessID },
-        // { headers: { "Authorization": ` ${Token}` } }
+        { headers: { "Authorization": ` ${Token}` } }
       );
       console.log(":::::::::FitnessEquipmentStore_Response>>>", response.data.shop_category);
       console.log("status _FitnessEquipment", response.data.status);

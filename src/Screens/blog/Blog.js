@@ -46,16 +46,15 @@ const Blog = (props) => {
   const [NewsletterPopup, setNewsletterPopup] = useState(false);
 
 
-  const gotoBlogDetail = async (item) => {
-    const usertkn = await AsyncStorage.getItem("authToken");
-    if (usertkn == null) {
-      Alert.alert('Blog details', 'Login first!')
-    }
-    else if (usertkn != null) {
-      props.navigation.navigate('BlogDetail', {
-        blogdetail_id: item
-      });
-    }
+  const gotoBlogDetail = (item) => {
+    // const usertkn = await AsyncStorage.getItem("authToken");
+    // if (usertkn != null) {
+    //   // Alert.alert('Blog details', 'Login first!')
+    // }
+    props.navigation.navigate('BlogDetail', {
+      blogdetail_id: item
+    });
+
 
   };
   const gotoCategory = (item) => {
@@ -95,12 +94,12 @@ const Blog = (props) => {
           // setNewsletterPopup(false);
           setIsLoading(false);
         } else {
-          Alert.alert('', 'Something went wrong please exit the app and try again')
+          Alert.alert('', 'Something went wrong please exit the app and try again');
         }
 
       }
       catch (error) {
-        Alert.alert('', 'Something went wrong please exit the app and try again')
+        Alert.alert('', 'Something went wrong please exit the app and try again');
         // console.log("......error.........", error.response.data.message);
         setIsLoading(false);
 
@@ -458,7 +457,7 @@ const Blog = (props) => {
                 )
               }}
             />
-{/* 
+            {/* 
             {NewsletterPopup ? (
               <Modal
                 animationType="slide"

@@ -34,17 +34,13 @@ const Home = (props) => {
   const gotoBlog = () => {
     props.navigation.navigate("BlogBottomTab")
   };
-  const gotoBlogDetail = async(item) => {
-    const usertkn = await AsyncStorage.getItem("authToken");
-    if (usertkn == null) {
-      Alert.alert('Blog details', 'Login first!')
-    }
-    else if (usertkn != null) {
-      props.navigation.navigate("BlogDetail", {
-        homeblogid: item
-      })
-    }
-   
+  const gotoBlogDetail = async (item) => {
+
+    props.navigation.navigate("BlogDetail", {
+      homeblogid: item
+    })
+
+
   }
   const gotoShop = () => {
     props.navigation.navigate("FitnessEquipment", {
@@ -74,11 +70,17 @@ const Home = (props) => {
       getHomeRecipelistID: item
     })
   }
-  const gotoTrainingsubcatgory = (item) => {
-// console.log("trainingdata:",item)
-    props.navigation.navigate("OutdoorTrainning", {
-      TrainingID: item
-    })
+  const gotoTrainingsubcatgory = async (item) => {
+    const usertkn = await AsyncStorage.getItem("authToken");
+    if (usertkn == null) {
+      Alert.alert('', 'Please login first')
+    }
+    else if (usertkn != null) {
+      props.navigation.navigate("OutdoorTrainning", {
+        TrainingID: item
+      })
+    }
+
   }
   // const gotoNotification = () => {
   //   props.navigation.navigate("Notifications")
@@ -94,7 +96,7 @@ const Home = (props) => {
 
   }, []);
 
-  
+
 
   const StoresProductget = async () => {
     setIsLoading(true);
@@ -124,7 +126,7 @@ const Home = (props) => {
 
   };
 
-return (
+  return (
     <SafeAreaView style={{
       flex: 1,
       width: '100%',
@@ -200,7 +202,7 @@ return (
       </View> */}
               <View style={{ height: 200, borderBottomLeftRadius: 20, borderBottomRightRadius: 20, backgroundColor: '#262626', justifyContent: "center", alignItems: "center", alignSelf: "center", width: "100%" }}>
 
-                <View style={{ height: 200, flexDirection: 'row', width: "100%", justifyContent: "center", alignItems: "center", paddingBottom: 3}}>
+                <View style={{ height: 200, flexDirection: 'row', width: "100%", justifyContent: "center", alignItems: "center", paddingBottom: 3 }}>
 
                   <Banner data={banneritem} />
 
@@ -215,7 +217,7 @@ return (
                 </View>
                 <View style={{ flex: 0.25, right: 10, }}>
                   <TouchableOpacity onPress={() => props.navigation.navigate("TrainingDetail")}>
-                    <View style={{ borderRadius: 50, height: 30, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center',  }}>
+                    <View style={{ borderRadius: 50, height: 30, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center', }}>
                       <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 10, color: 'white', fontWeight: "400" }}>Explore Trainings</Text>
                     </View>
                   </TouchableOpacity>
@@ -232,7 +234,7 @@ return (
                 //   justifyContent: "space-around"
                 // }}
                 data={trainingdata}
-                 
+
                 renderItem={({ item }) =>
                   <TouchableOpacity onPress={() => { gotoTrainingsubcatgory(item) }}>
                     <View style={{
@@ -394,11 +396,11 @@ return (
                     <View
 
                       style={{
-                        height: 30, 
+                        height: 30,
                         width: WIDTH * 0.45,
                         backgroundColor: '#fceeb5',
                         borderBottomLeftRadius: 16,
-                        borderBottomRightRadius: 16, justifyContent: "flex-start", alignItems: "center",paddingTop: 5,paddingLeft: 0,
+                        borderBottomRightRadius: 16, justifyContent: "flex-start", alignItems: "center", paddingTop: 5, paddingLeft: 0,
                       }}>
                       <Text numberOfLines={1} style={{ textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "500" }}>{item?.image_title?.slice(0, 15) + '...'}</Text>
 

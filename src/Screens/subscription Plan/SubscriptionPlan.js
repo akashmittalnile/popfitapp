@@ -41,11 +41,11 @@ const SubscriptionPlan = (props, navigation) => {
     console.log("token.......", Usertoken);
     setchecktoken(Usertoken);
     if (Usertoken == null) {
-      Alert.alert('Please login First ','')
-      props.navigation.navigate('LoginMain', {
-        screen: 'LoginSignUp',
+      Alert.alert('','Please login First ')
+      // props.navigation.navigate('LoginMain', {
+      //   screen: 'LoginSignUp',
 
-      });
+      // });
        
     }
     else {

@@ -56,18 +56,19 @@ const ProductDetail = (props) => {
   // };
 
 
-  // console.log("Store_item...............:", props?.route?.params?.ITEM?.id);
+  console.log("Store_item...............:", props?.route?.params?.ITEM?.id);
   const ITEM = props?.route?.params?.ITEM?.id
   // console.log("ClothITEM_item...............:", props?.route?.params?.CLOTHITEM?.id);
   const CLOTHITEM = props?.route?.params?.CLOTHITEM?.id
-  // console.log("FitnessItem.........:",props?.route?.params?.FitnessItem?.product_id);
-  const FitnessItem = props?.route?.params?.FitnessItem?.product_id
-  // console.log("MENSITEM.........:",props?.route?.params?.MENSITEM?.product_id);
-  const MENSITEM = props?.route?.params?.MENSITEM?.product_id
+  // console.log("FitnessItem.........:",props?.route?.params?.FitnessItem?.id);
+  const FitnessItem = props?.route?.params?.FitnessItem?.id
+  // console.log("MENSITEM.........:",props?.route?.params?.MENSITEM?.id);
+  const MENSITEM = props?.route?.params?.MENSITEM?.id
   // console.log("Cart item view.........:", props?.route?.params?.Cartaddedview?.product_id);
-  let Cartaddedview = props?.route?.params?.Cartaddedview?.product_id;
+  let Cartaddedview = props?.route?.params?.Cartaddedview?.id;
   // console.log("Shipping item view.........:", props?.route?.params?.Isshippingview?.product_id);
-  let Isshippingview = props?.route?.params?.Isshippingview?.product_id;
+  let Isshippingview = props?.route?.params?.Isshippingview?.id;
+
   let productids = ITEM ? ITEM : CLOTHITEM ? CLOTHITEM : FitnessItem ? FitnessItem : MENSITEM ? MENSITEM : Cartaddedview ? Cartaddedview : Isshippingview;
 
   useEffect(() => {
@@ -622,7 +623,7 @@ const ProductDetail = (props) => {
 
               <TouchableOpacity onPress={() => {
                 if (usertoken == null) {
-                  Alert.alert('User not found', 'Login first !')
+                  Alert.alert('', 'Please login first')
                 } else if (usertoken != null) {
                   ProductADDcart()
                 }

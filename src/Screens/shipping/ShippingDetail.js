@@ -139,6 +139,7 @@ const ShippingDetail = (props) => {
         // console.log("Selected address:", selected_address);
 
         props.navigation.navigate("PaymentScreen", {
+            Instruction:optComment,
             Totalprice: Selectcoupons == null ? ammont : total,
             SetAddrs: setselectaddress == null ?
 

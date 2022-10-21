@@ -19,6 +19,7 @@ const TrainingDetail = (props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [TrainingWorkCatgry, setTrainingWorkCatgry] = useState([]);
     const [recommendation, setRecommendation] = useState([]);
+    const [userToken, setUserToken] = useState("");
 
     // const [subscriptiontoken, setsubscriptiontoken] = useState("");
     const [planid, setPlanId] = useState("");
@@ -26,7 +27,7 @@ const TrainingDetail = (props) => {
     const gotoTrainingpersondetails = async () => {
         const usertkn = await AsyncStorage.getItem("authToken");
         if (usertkn == null) {
-            props.navigation.navigate("LoginMain")
+
             Alert.alert('', 'Please login first')
         }
         else if (usertkn != null) {
@@ -58,18 +59,25 @@ const TrainingDetail = (props) => {
         workoutCategoryAPI();
         const checktoken = async () => {
             const usertkn = await AsyncStorage.getItem("authToken");
-
+            setUserToken(usertkn);
         }
+        checktoken();
     }, []);
     const gotoSubscriptionPlan = () => {
         props.navigation.navigate("SubscriptionPlan")
     }
 
-    const Checkedtoken = (item) => {
-        props.navigation.navigate("OutdoorTrainning", {
-            TrainingData: item,
-            categoryId: planid
-        })
+    const Checkedtoken = async (item) => {
+        const usertkn = await AsyncStorage.getItem("authToken");
+        if (usertkn == null) {
+            Alert.alert('', 'Please login first')
+        }
+        else if (usertkn != null) {
+            props.navigation.navigate("OutdoorTrainning", {
+                TrainingData: item,
+                categoryId: planid
+            })
+        }
 
     }
 
@@ -236,10 +244,10 @@ const TrainingDetail = (props) => {
                             </Pages>
                         </View>
                         {/* Recommended category */}
-                        <View style={{ flexDirection: "column", marginTop: 20 }}>
+                        <View style={{ flexDirection: "column" }}>
                             {
-                                recommendation != null ?
-                                    (<View style={{ marginTop: 1, marginLeft: 15, }}>
+                                userToken != null ?
+                                    (<View style={{ marginTop: 20, marginLeft: 15, }}>
                                         <Text numberOfLines={1} style={{ textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "500" }}>Recommended Categories</Text>
                                     </View>)
                                     :

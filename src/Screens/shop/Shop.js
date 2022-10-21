@@ -34,15 +34,16 @@ const Shop = (props) => {
 
   // const openDrawer = () => props.navigation.dispatch(DrawerActions.openDrawer());
 
-  const gotoShippingDetail = async (item) => {
-    const Token = await AsyncStorage.getItem("authToken")
-    if (Token == null) {
-      Alert.alert('Shop', 'Login First!')
-    } else if (Token != null) {
+  const gotoShippingDetail =(item) => {
+    console.log("filter product id:",item);
+    // const Token = await AsyncStorage.getItem("authToken")
+    // if (Token == null) {
+    //   Alert.alert('Shop', 'Login First!')
+    // } else if (Token != null) {
       props.navigation.navigate('ProductDetail', {
         ITEM: item
       })
-    }
+    // }
 
   };
   // const gotoshippingdetails = () => {
@@ -65,8 +66,8 @@ const Shop = (props) => {
     console.log("SHOP filter...........>>>", ischecked);
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.SHOP_FILTER}`, { "search": ischecked, "shop_id": '' },
-        // { headers: { "Authorization": ` ${Token}` } }
+      const response = await axios.post(`${API.SHOP_FILTER}`, { "search": ischecked, "shop_id": '' ,"category_id": '' },
+        { headers: { "Authorization": ` ${Token}` } }
       );
       console.log(":::::::::Shop_FIlter>>>", response.data.data);
       console.log("SHOP_Status", response.data.status);
@@ -76,6 +77,7 @@ const Shop = (props) => {
         setFilterPopUp(false)
 
       } else {
+        setFilterPopUp(false);
         setIsLoading(false);
         Alert.alert('', 'Something went wrong please exit the app and try again');
       }
@@ -94,7 +96,7 @@ const Shop = (props) => {
     setIsLoading(true);
     try {
       const response = await axios.get(`${API.SHOP_MAIN}`,
-        // { headers: { "Authorization": ` ${Token}` } }
+        { headers: { "Authorization": ` ${Token}` } }
       );
       // console.log(":::::::::Shop_Store_Response>>>", response.data.best_seller);
       // console.log("status _SHOP", response.data.status);

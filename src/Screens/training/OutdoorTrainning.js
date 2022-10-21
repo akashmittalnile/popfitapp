@@ -18,22 +18,22 @@ const OutdoorTrainning = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [TrainingSUBCatgry, setTrainingSUBCatgry] = useState([]);
   const [checkplanid, setCheckPlanId] = useState(props?.route?.params?.TrainingData);
-  const [planstatus, setPlanstatus] = useState(JSON.stringify(props?.route?.params?.categoryId?.plan_id))
-  const[hometrainingid,setHomeTrainingid]=useState(props?.route?.params?.TrainingID?.id);
+  const [planstatus, setPlanstatus] = useState(JSON.stringify(props?.route?.params?.categoryId?.plan_id));
+  const [hometrainingid, setHomeTrainingid] = useState(props?.route?.params?.TrainingID);
   const [tokenuser, SetTokenUser] = useState("");
 
   useEffect(() => {
     console.log("categoryId_item..plan_id.............:", props?.route?.params?.categoryId?.plan_id);
-     
+
     console.log("TrainingID_item.from home..............:", props?.route?.params?.TrainingID?.id);
     // const TrainingID = props?.route?.params?.TrainingID?.id
     console.log("Trainingdata_From trainingscreen:", props?.route?.params?.TrainingData);
-    
+
     workoutSubCategoryAPI();
     // console.log("Traingplanstatus...:", props?.route?.params?.TrainingData);
     const checklogin = async () => {
       let Usertoken = await AsyncStorage.getItem("authToken");
-       
+
       SetTokenUser(Usertoken);
 
 
@@ -47,22 +47,22 @@ const OutdoorTrainning = (props) => {
       if (tokenuser != null) {
         console.log("ACTIVE plan::::::");
         props.navigation.navigate("Training", {
-          Tainingcat_id: checkplanid != undefined ? checkplanid?.id : hometrainingid,
+          Tainingcat_id: checkplanid != undefined ? checkplanid?.id : hometrainingid?.id,
           Trainingsubcat_data: item
         })
       }
       else if (tokenuser == null) {
-        Alert.alert('Please login', '')
-        props.navigation.navigate('LoginMain', {
-          screen: 'LoginSignUp',
-        });
+        Alert.alert('', 'Please login first')
+        // props.navigation.navigate('LoginMain', {
+        //   screen: 'LoginSignUp',
+        // });
       }
 
     }
     else if (checkplanid?.plan_status == "Inactive" || checkplanid?.plan_id == 1) {
       console.log("ACTIVE plan::::::");
       props.navigation.navigate("Training", {
-        Tainingcat_id: checkplanid != undefined ? checkplanid?.id : hometrainingid,
+        Tainingcat_id: checkplanid != undefined ? checkplanid?.id : hometrainingid?.id,
         Trainingsubcat_data: item
       })
       // Alert.alert("Please, Login First and Suscribe any plan!")
@@ -80,7 +80,7 @@ const OutdoorTrainning = (props) => {
     }
     else if (checkplanid?.plan_status == null) {
       props.navigation.navigate("Training", {
-        Tainingcat_id: checkplanid != undefined ? checkplanid?.id : hometrainingid,
+        Tainingcat_id: checkplanid != undefined ? checkplanid?.id : hometrainingid?.id,
         Trainingsubcat_data: item
       })
     }
@@ -98,10 +98,10 @@ const OutdoorTrainning = (props) => {
   const workoutSubCategoryAPI = async () => {
     const usertkn = await AsyncStorage.getItem("authToken");
     console.log("plain id :", checkplanid?.plan_id);
-    console.log("training home id::",hometrainingid);
+    console.log("training home id::", hometrainingid?.id);
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.TRAINING_SUB_CATERORY}`, { "category_id": checkplanid != undefined ? checkplanid?.id : hometrainingid },
+      const response = await axios.post(`${API.TRAINING_SUB_CATERORY}`, { "category_id": checkplanid != undefined ? checkplanid?.id : hometrainingid?.id },
         { headers: { "Authorization": ` ${usertkn}` } }
       );
       console.log(":::::::::workoutSubCategoryAPI_Response>>>", response?.data?.message);
@@ -272,26 +272,26 @@ const OutdoorTrainning = (props) => {
 
 
                   {
-                  checkplanid?.plan_id >= 2 ?
-                    <>
+                    hometrainingid?.plan_id || checkplanid?.plan_id >= 2 ?
+                      <>
 
-                      {checkplanid.user_plan_status != "Active" ?
-                        (<View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 20, flex: 1, }}>
-                          <TouchableOpacity
-                            onPress={() => { gotoSubsciption() }}>
-                            <View style={{ alignItems: 'center', width: 160, justifyContent: 'center', backgroundColor: '#ffcc00', borderRadius: 50, flex: 1 }}>
-                              <Text style={{ textAlign: 'center', fontSize: 14, color: 'white', fontWeight: "400" }}>Subscribe Now</Text>
-                            </View>
-                          </TouchableOpacity>
-                        </View>)
-                        :
-                        null
-                      }
+                        {checkplanid?.user_plan_status || hometrainingid?.user_plan_status != "Active" ?
+                          (<View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 20, flex: 1, }}>
+                            <TouchableOpacity
+                              onPress={() => { gotoSubsciption() }}>
+                              <View style={{ alignItems: 'center', width: 160, justifyContent: 'center', backgroundColor: '#ffcc00', borderRadius: 50, flex: 1 }}>
+                                <Text style={{ textAlign: 'center', fontSize: 14, color: 'white', fontWeight: "400" }}>Subscribe Now</Text>
+                              </View>
+                            </TouchableOpacity>
+                          </View>)
+                          :
+                          null
+                        }
 
 
-                    </>
-                    :
-                    null
+                      </>
+                      :
+                      null
                   }
 
                 </View>

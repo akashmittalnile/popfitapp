@@ -37,6 +37,7 @@ const MenTshirts = props => {
   const [shopitems, setshopitems] = useState([]);
 
   const gotoShippingDetail = (item) => {
+    console.log("product filter api:", item);
     props.navigation.navigate('ProductDetail', {
       MENSITEM: item
     });
@@ -48,13 +49,13 @@ const MenTshirts = props => {
   const categoryID = props?.route?.params?.categoryID;
 
   useEffect(() => {
-    CLOTHStoresProduct();
+     
 
-    // const unsubscribe = props.navigation.addListener('focus', () => {
-    //   FitnessStoresProduct();
+    const unsubscribe = props.navigation.addListener('focus', () => {
+      CLOTHStoresProduct();
 
-    // });
-    // return unsubscribe;
+    });
+    return unsubscribe;
 
   }, []);
 
@@ -65,41 +66,46 @@ const MenTshirts = props => {
       const response = await axios.post(`${API.SHOP_PRODUCTLIST}`, { 'shop_id': FitnessID, "category_id": categoryID }, { headers: { "Authorization": ` ${Token}` } });
       // console.log(":::::::::SHOP_PRODUCTLISTStore_Response>>>", response.data.products);
       // console.log("status _SHOP_PRODUCTLIST", response.data.status);
-
-      setshopitems(response.data.products)
-      setIsLoading(false);
+      if (response.data.status == 1) {
+        setshopitems(response.data.products)
+        setIsLoading(false);
+      }
+      else {
+        setIsLoading(false);
+        Alert.alert('', 'Something went wrong please exit the app and try again');
+      }
 
     }
     catch (error) {
       console.log("CLOTHStores_Producterror.........", error.response.data.message);
-      Alert.alert("Catch error msg FitnessEquipment !!!!")
+      Alert.alert('', 'Something went wrong please exit the app and try again');
       setIsLoading(false);
     }
 
   };
+
   const ShopFilter = async () => {
     const Token = await AsyncStorage.getItem("authToken");
-    // console.log("SHOP filter...........>>>", ischecked);
+    console.log("SHOP filter...........>>>", ischecked, FitnessID);
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.SHOP_FILTER}`, { "search": ischecked, "shop_id": FitnessID }, { headers: { "Authorization": ` ${Token}` } });
+      const response = await axios.post(`${API.SHOP_FILTER}`, { "search": ischecked, "shop_id": FitnessID, "category_id": categoryID }, { headers: { "Authorization": ` ${Token}` } });
       // console.log(":::::Shop_FIlter>>>", response.data.data);
       // console.log("SHOP_Status", response.data.status);
       if (response.data.status == 1) {
-        setFilterPopUp(false)
+        setFilterPopUp(false);
         setshopitems(response.data.data)
         setIsLoading(false);
-
-
       } else {
-        Alert.alert(" If-else status 0 !");
+        setFilterPopUp(false);
+        Alert.alert('!', 'Something went wrong please exit the app and try again');
         setIsLoading(false);
       }
 
     }
     catch (error) {
       // console.log(".....ShopFilter.error.........", error.response.data.message);
-      Alert.alert(" Error in filter api catch part!");
+      Alert.alert('', 'Something went wrong please exit the app and try again');
       setIsLoading(false);
     }
 
@@ -183,7 +189,7 @@ const MenTshirts = props => {
                   }}
                   data={shopitems}
                   keyExtractor={(item, index) => String(index)}
-                  renderItem={({ item ,index}) => {
+                  renderItem={({ item, index }) => {
                     return (
 
                       <TouchableOpacity
@@ -324,11 +330,12 @@ const MenTshirts = props => {
                       }}>
                       <View
                         style={{
-                          // backgroundColor: 'white',
-                          // height: 480,
-                          height: "100%",
-                          width: "99%",
+                          // backgroundColor: 'red',
+                          height: 220,
+                          // height: "100%",
+                          width: "100%",
                           // marginHorizontal: 20,
+                          // justifyContent: "center",
                           alignItems: 'center',
                           borderRadius: 20,
                           flexDirection: 'column',
@@ -377,6 +384,7 @@ const MenTshirts = props => {
                             height: 60,
                             flexDirection: 'row',
                             marginTop: 30,
+                            justifyContent: 'center'
                           }}>
                           <View
                             style={{
@@ -473,6 +481,211 @@ const MenTshirts = props => {
                           </View>
                         </View>
 
+                        {/* <Text
+                      style={{
+                        marginTop: 20,
+                        marginHorizontal: 20,
+                        textAlign: 'left',
+                        fontSize: 14,
+                        color: 'black',
+
+                      }}>
+                      Select From Category & Sub-Category
+                    </Text> */}
+
+                        {/* <View
+                      style={{
+                        width: '90%',
+                        marginTop: 20,
+                        height: 50,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'flex-start',
+                        alignItems: 'center',
+                      }}>
+                      <TouchableOpacity>
+                        <View
+                          style={{
+                            borderColor: '#8F93A0',
+                            borderWidth: 1,
+                            borderRadius: 25,
+                            width: 120,
+                            height: 40,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                          <Text
+                            style={{
+                              textAlign: 'left',
+                              fontSize: 9,
+                              color: '#bbbaba',
+
+                            }}>
+                            Fitness Dumble
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                      <TouchableOpacity>
+                        <View
+                          style={{
+                            marginLeft: 10,
+                            borderColor: '#8F93A0',
+                            borderWidth: 1,
+                            borderRadius: 25,
+                            width: 120,
+                            height: 40,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                          <Text
+                            style={{
+                              textAlign: 'left',
+                              fontSize: 9,
+                              color: '#bbbaba',
+
+                            }}>
+                            Workout Equipment
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View> */}
+
+                        {/* <View
+                      style={{
+                        marginTop: 10,
+                        height: 50,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}>
+                      <TouchableOpacity>
+                        <View
+                          style={{
+                            borderColor: '#8F93A0',
+                            borderWidth: 1,
+                            borderRadius: 25,
+                            width: 100,
+                            height: 40,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                          <Text
+                            style={{
+                              textAlign: 'left',
+                              fontSize: 9,
+                              color: '#bbbaba',
+
+                            }}>
+                            Clothes
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                      <TouchableOpacity>
+                        <View
+                          style={{
+                            marginLeft: 10,
+                            borderColor: '#8F93A0',
+                            borderWidth: 1,
+                            borderRadius: 25,
+                            width: 100,
+                            height: 40,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                          <Text
+                            style={{
+                              textAlign: 'left',
+                              fontSize: 9,
+                              color: '#bbbaba',
+
+                            }}>
+                            Barbel Set
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                      <TouchableOpacity>
+                        <View
+                          style={{
+                            marginLeft: 10,
+                            borderColor: '#8F93A0',
+                            borderWidth: 1,
+                            borderRadius: 25,
+                            width: 100,
+                            height: 40,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                          <Text
+                            style={{
+                              textAlign: 'left',
+                              fontSize: 9,
+                              color: '#bbbaba',
+
+                            }}>
+                            Training Bench
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View> */}
+
+                        {/* <View
+                      style={{
+                        width: '90%',
+                        marginTop: 10,
+                        height: 50,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'flex-start',
+                        alignItems: 'center',
+                      }}>
+                      <TouchableOpacity>
+                        <View
+                          style={{
+                            borderColor: '#8F93A0',
+                            borderWidth: 1,
+                            borderRadius: 25,
+                            width: 120,
+                            height: 40,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                          <Text
+                            style={{
+                              textAlign: 'left',
+                              fontSize: 9,
+                              color: '#bbbaba',
+
+                            }}>
+                            Pull-Up Frame & Bar
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                      <TouchableOpacity>
+                        <View
+                          style={{
+                            marginLeft: 10,
+                            borderColor: '#8F93A0',
+                            borderWidth: 1,
+                            borderRadius: 25,
+                            width: 120,
+                            height: 40,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                          <Text
+                            style={{
+                              textAlign: 'left',
+                              fontSize: 9,
+                              color: '#bbbaba',
+
+                            }}>
+                            Kettlebell Set
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View> */}
 
                         <View
                           style={{

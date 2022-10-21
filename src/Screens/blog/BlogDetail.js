@@ -72,7 +72,8 @@ const BlogDetail = (props) => {
       let Usertoken = await AsyncStorage.getItem("authToken");
       setsubscriptiontoken(Usertoken);
       console.log("token.......", Usertoken);
-      if (Usertoken == null) {
+      if (Usertoken != null) {
+        getCategoryblog_detail();
         props.navigation.navigate('LoginMain', {
           screen: 'LoginSignUp',
         });
@@ -93,33 +94,38 @@ const BlogDetail = (props) => {
 
   // }
   const Checkedtoken = () => {
-
-    subscriptiontoken == "" ?
-      props.navigation.navigate('LoginMain', {
-        screen: 'LoginSignUp',
-      })
+    console.log("Checkedtoken status::", subscriptiontoken);
+    subscriptiontoken == null ?
+      Alert.alert('', 'Please login first')
       :
       setComments(true);
 
 
   };
   const MycustomonShare = async () => {
-    const shareOptions = {
-      title: 'Popfiit Blog Contents',
-      icon: 'data:<data_type>/<file_extension>;base64,<base64_data>',
-      // type: 'data:image/png;base64,<imageInBase64>',
-      message: "Popfiit Blog Post !!!",
-      url: 'https://www.youtube.com/embed/ml6cT4AZdqI',
+    let Usertoken = await AsyncStorage.getItem("authToken");
+    if (Usertoken == null) {
+      Alert.alert('', 'Please login first')
+    } else if (Usertoken != null) {
+      const shareOptions = {
+        title: 'Popfiit Blog Contents',
+        icon: 'data:<data_type>/<file_extension>;base64,<base64_data>',
+        // type: 'data:image/png;base64,<imageInBase64>',
+        message: "Popfiit Blog Post !!!",
+        url: 'https://www.youtube.com/embed/ml6cT4AZdqI',
+      }
+      try {
+        const shareResponse = await Share.open(shareOptions);
+        console.log('====================================');
+        console.log(JSON.stringify(shareResponse));
+        console.log('====================================');
+      }
+      catch (error) {
+        console.log('ERROR=>', error);
+      }
     }
-    try {
-      const shareResponse = await Share.open(shareOptions);
-      console.log('====================================');
-      console.log(JSON.stringify(shareResponse));
-      console.log('====================================');
-    }
-    catch (error) {
-      console.log('ERROR=>', error);
-    }
+
+
   };
 
   const getCategoryblog_detail = async () => {
