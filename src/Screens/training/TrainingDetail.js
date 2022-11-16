@@ -10,6 +10,7 @@ import axios from 'axios';
 import Headers from '../../Routes/Headers';
 import Share from 'react-native-share';
 import { async } from 'regenerator-runtime';
+import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -63,8 +64,15 @@ const TrainingDetail = (props) => {
         }
         checktoken();
     }, []);
-    const gotoSubscriptionPlan = () => {
-        props.navigation.navigate("SubscriptionPlan")
+    const gotoSubscriptionPlan = async() => {
+        const usertkn = await AsyncStorage.getItem("authToken");
+        if (usertkn == null) {
+            Alert.alert('', 'Please login first')
+        }
+        else if (usertkn != null) {
+            props.navigation.navigate("SubscriptionPlan")
+        }
+         
     }
 
     const Checkedtoken = async (item) => {
@@ -87,7 +95,7 @@ const TrainingDetail = (props) => {
         try {
 
             const response = await axios.get(`${API.TRAINING_WORKOUT_CATEGORY}`,
-                { headers: { "Authorization": ` ${usertkn}` } }
+                { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } }
             );
             console.log("::::Traing_Workout_Response>>>::", response.data);
             // console.log("Traing_Workout_data:::>:::", response.data.data);
@@ -97,13 +105,14 @@ const TrainingDetail = (props) => {
             // console.log("storeplanid:", Selectplainid);
             setTrainingWorkCatgry(response.data.data)
             setRecommendation(response.data.recommendation_category)
-            setIsLoading(false);
+            
         }
         catch (error) {
-            console.log(".....TrainingDetails.error.........", error.response.data.message);
-            setIsLoading(false);
+            // console.log(".....TrainingDetails.error.........", error.response.data.message);
+            Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
 
         }
+        setIsLoading(false);
     };
 
     return (
@@ -113,6 +122,7 @@ const TrainingDetail = (props) => {
             height: HEIGHT, flexGrow: 1, backgroundColor: 'black'
         }} >
             <Headers
+            navigation={props.navigation}
                 Drawericon={{
                     visible: true,
                 }}
@@ -127,7 +137,9 @@ const TrainingDetail = (props) => {
                     visible: true,
 
                 }}
-                BelliconononClick={() => { props.navigation.navigate('Notifications') }}
+                BelliconononClick={() => {
+                    //  props.navigation.navigate('Notifications')
+                     }}
             />
             {!isLoading ?
                 (<>
@@ -194,7 +206,7 @@ const TrainingDetail = (props) => {
             </View>
             </View> */}
                     <Divider color='#393939' width={1.2} />
-                    <ScrollView>
+                    <ScrollView  nestedscrollenabled={true}>
                         <View style={{ backgroundColor: '#262626', height: 180, borderBottomLeftRadius: 25, borderBottomRightRadius: 25 }}>
                             <Pages indicatorColor='#ffcc00' >
                                 <View style={{ marginTop: 20, height: 130, flexDirection: 'row', marginHorizontal: 20, borderRadius: 20 }}>
@@ -246,7 +258,7 @@ const TrainingDetail = (props) => {
                         {/* Recommended category */}
                         <View style={{ flexDirection: "column" }}>
                             {
-                                userToken != null ?
+                                recommendation.length > 0   ?
                                     (<View style={{ marginTop: 20, marginLeft: 15, }}>
                                         <Text numberOfLines={1} style={{ textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "500" }}>Recommended Categories</Text>
                                     </View>)
@@ -259,7 +271,7 @@ const TrainingDetail = (props) => {
                                     flex: 1,
 
                                 }}
-                                keyExtractor={(item, index) => index}
+                                keyExtractor={(item, index) => String(index)}
                                 numColumns={2}
                                 data={recommendation}
                                 style={{ paddingBottom: 20 }}
@@ -316,7 +328,7 @@ const TrainingDetail = (props) => {
                         {/* Workout Category */}
                         <View style={{ flexDirection: "column" }}>
                             {
-                                TrainingWorkCatgry != null ?
+                                TrainingWorkCatgry.length > 0  ?
                                     (<View style={{ marginTop: 1, marginLeft: 15, }}>
                                         <Text numberOfLines={1} style={{ textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "500" }}>Workout Categories</Text>
                                     </View>)
@@ -328,7 +340,7 @@ const TrainingDetail = (props) => {
                                     flex: 1,
 
                                 }}
-                                keyExtractor={(item, index) => index}
+                                keyExtractor={(item, index) => String(index)}
                                 numColumns={2}
                                 data={TrainingWorkCatgry}
                                 style={{ paddingBottom: 20 }}
@@ -385,9 +397,7 @@ const TrainingDetail = (props) => {
                     </ScrollView>
                 </>)
                 :
-                (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                    <ActivityIndicator size="large" color="#ffcc00" />
-                </View>)}
+                ( <CustomLoader showLoader={isLoading}/>)}
         </SafeAreaView>
 
     );

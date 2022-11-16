@@ -9,6 +9,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
+import CustomLoader from '../../Routes/CustomLoader';
+import { red100 } from 'react-native-paper/lib/typescript/styles/colors';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -25,7 +27,7 @@ const OutdoorTrainning = (props) => {
   useEffect(() => {
     console.log("categoryId_item..plan_id.............:", props?.route?.params?.categoryId?.plan_id);
 
-    console.log("TrainingID_item.from home..............:", props?.route?.params?.TrainingID?.id);
+    console.log("TrainingID_item.from home..............:", props?.route?.params?.TrainingID);
     // const TrainingID = props?.route?.params?.TrainingID?.id
     console.log("Trainingdata_From trainingscreen:", props?.route?.params?.TrainingData);
 
@@ -43,6 +45,7 @@ const OutdoorTrainning = (props) => {
   }, []);
 
   const gotoOutdoorCycle = (item) => {
+    console.log("checkdataa:::::", item)
     if (checkplanid?.plan_status == "Active" || checkplanid?.plan_id >= 2) {
       if (tokenuser != null) {
         console.log("ACTIVE plan::::::");
@@ -97,31 +100,31 @@ const OutdoorTrainning = (props) => {
 
   const workoutSubCategoryAPI = async () => {
     const usertkn = await AsyncStorage.getItem("authToken");
-    console.log("plain id :", checkplanid?.plan_id);
+    console.log("plain id :", checkplanid?.id);
     console.log("training home id::", hometrainingid?.id);
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.TRAINING_SUB_CATERORY}`, { "category_id": checkplanid != undefined ? checkplanid?.id : hometrainingid?.id },
-        { headers: { "Authorization": ` ${usertkn}` } }
+        { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } }
       );
       console.log(":::::::::workoutSubCategoryAPI_Response>>>", response?.data?.message);
       // console.log("workoutSubCategoryAPI_data::::::", response.data.data);
       // alert("Get Sub-category data successfully");
       if (response?.data?.status == '1') {
         setTrainingSUBCatgry(response?.data?.data)
-        setIsLoading(false);
-      } else {
 
-        Alert.alert('Training Not Accessible', 'Login First !')
-      }
+      } 
+      // else {
+
+      //   Alert.alert('Training Not Accessible', 'Login First !')
+      // }
 
 
     }
     catch (error) {
-      console.log("..workoutSubCategoryAPI..Catch..error.........", error.response?.data?.message);
-      setIsLoading(false);
-
-    }
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      // console.log("..workoutSubCategoryAPI..Catch..error.........", error.response?.data?.message);
+    } setIsLoading(false);
   };
   return (
     <SafeAreaView style={{
@@ -272,13 +275,16 @@ const OutdoorTrainning = (props) => {
 
 
                   {
-                    hometrainingid?.plan_id || checkplanid?.plan_id >= 2 ?
+                    (checkplanid?.plan_id != undefined ? checkplanid?.plan_id : undefined) >= 2 || (hometrainingid?.plan_id != undefined ? hometrainingid?.plan_id : undefined) >= 2 ?
                       <>
 
-                        {checkplanid?.user_plan_status || hometrainingid?.user_plan_status != "Active" ?
+                        {(hometrainingid?.user_plan_status != undefined ? hometrainingid?.user_plan_status != "Active" : undefined )  || (checkplanid?.user_plan_status  != undefined ? checkplanid?.user_plan_status != "Active" : undefined)  ?
                           (<View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 20, flex: 1, }}>
                             <TouchableOpacity
-                              onPress={() => { gotoSubsciption() }}>
+                              onPress={() => {
+                                gotoSubsciption()
+                                console.log('hhhhh', (hometrainingid?.user_plan_status != undefined ? hometrainingid?.user_plan_status : undefined ) != "Active" || (checkplanid?.user_plan_status  != undefined ? checkplanid?.user_plan_status : undefined) != "Active");
+                              }}>
                               <View style={{ alignItems: 'center', width: 160, justifyContent: 'center', backgroundColor: '#ffcc00', borderRadius: 50, flex: 1 }}>
                                 <Text style={{ textAlign: 'center', fontSize: 14, color: 'white', fontWeight: "400" }}>Subscribe Now</Text>
                               </View>
@@ -286,6 +292,7 @@ const OutdoorTrainning = (props) => {
                           </View>)
                           :
                           null
+
                         }
 
 
@@ -312,9 +319,7 @@ const OutdoorTrainning = (props) => {
           }
         </>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        (<CustomLoader showLoader={isLoading} />)}
     </SafeAreaView>
   );
 }

@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { API } from '../../Routes/Urls';
 import { log } from 'react-native-reanimated';
+import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -60,42 +61,44 @@ const DumbleSet = (props) => {
       // console.log("status _SHOP_PRODUCTLIST", response.data.status);
 
       setshopitems(response.data.products)
-      setIsLoading(false);
+      // setIsLoading(false);
 
     }
     catch (error) {
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
       // console.log("......error.........", error.response.data.message);
-      Alert.alert("Catch error msg FitnessEquipment !!!!")
-      setIsLoading(false);
+      // Alert.alert("Catch error msg FitnessEquipment !!!!")
+      // setIsLoading(false);
     }
-
+    setIsLoading(false);
   };
   const ShopFilter = async () => {
     const Token = await AsyncStorage.getItem("authToken");
     // console.log("SHOP filter...........>>>", ischecked);
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.SHOP_FILTER}`, { "search": ischecked, "shop_id": FitnessID ,"category_id": categoryID }, { headers: { "Authorization": ` ${Token}` } });
+      const response = await axios.post(`${API.SHOP_FILTER}`, { "search": ischecked, "shop_id": FitnessID, "category_id": categoryID }, { headers: { "Authorization": ` ${Token}` } });
       // console.log(":::::::::Shop_FIlter>>>", response.data.data);
       // console.log("SHOP_Status", response.data.status);
       if (response.data.status == 1) {
         setshopitems(response.data.data)
-        setIsLoading(false);
+        // setIsLoading(false);
         setFilterPopUp(false)
 
       } else {
         setFilterPopUp(false);
         Alert.alert('!', 'Something went wrong please exit the app and try again');
-        setIsLoading(false);
+        // setIsLoading(false);
       }
 
     }
     catch (error) {
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
       // console.log("......error.........", error.response.data.message);
-      Alert.alert('', 'Something went wrong please exit the app and try again');
-      setIsLoading(false);
+      //Alert.alert('', 'Something went wrong please exit the app and try again');
+      // setIsLoading(false);
     }
-
+    setIsLoading(false);
   };
   return (
     <SafeAreaView style={{
@@ -125,7 +128,7 @@ const DumbleSet = (props) => {
           {
             shopitems.length != 0 ?
               (<ScrollView>
-                <View style={{  height: 50, flexDirection: 'row', flex: 1, justifyContent: "flex-start", alignItems: "flex-start", width: "100%" }}>
+                <View style={{ height: 50, flexDirection: 'row', flex: 1, justifyContent: "flex-start", alignItems: "flex-start", width: "100%" }}>
                   <View style={{ justifyContent: "flex-start", alignItems: "flex-start", flex: 0.45, }}>
                     <Text
                       style={{
@@ -277,194 +280,199 @@ const DumbleSet = (props) => {
 
 
 
-<Modal
-              animationType="fade"
-              transparent={true}
-              visible={FilterPopup}
-              onRequestClose={() => {
-                setFilterPopUp(false);
-              }}>
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: 'flex-end',
-                  alignItems: 'center',
-                  backgroundColor: 'rgba(140, 141, 142, 0.7)',
-                }}>
-                <View
-                  style={{
-                    // margin: 10,
-                    backgroundColor: 'white',
-                    borderRadius: 20,
-                    // paddingTop: 20,
-                    width: "100%",
-                    height: 220,
-                    // height: "60%",
-                    justifyContent: "center",
-                    alignItems: 'center',
-                    shadowColor: '#000',
-                    shadowOffset: {
-                      width: 0,
-                      height: 2,
-                    },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 4,
-                    elevation: 5,
+                <Modal
+                  animationType="fade"
+                  transparent={true}
+                  visible={FilterPopup}
+                  onRequestClose={() => {
+                    setFilterPopUp(false);
                   }}>
                   <View
                     style={{
-                      // backgroundColor: 'red',
-                      height: 220,
-                      // height: "100%",
-                      width: "100%",
-                      // marginHorizontal: 20,
-                      // justifyContent: "center",
-                      alignItems: 'center',
-                      borderRadius: 20,
-                      flexDirection: 'column',
+                      flex: 1,
+                      // justifyContent: 'flex-end',
+                      // alignItems: 'center',
+                      backgroundColor: 'rgba(140, 141, 142, 0.7)',
                     }}>
+                    <TouchableOpacity onPress={() => setFilterPopUp(false)}
+                      style={{ flex: 1, }}
+                    />
                     <View
                       style={{
-                        marginTop: 20,
-                        // marginHorizontal: 20,
-                        height: 25,
-                        flexDirection: 'row',
-                        // backgroundColor: 'red',
+                        // margin: 10,
+                        backgroundColor: 'white',
+                        borderRadius: 20,
+                        // paddingTop: 20,
+                        width: "100%",
+                        height: 220,
+                        // height: "60%",
+                        justifyContent: "center",
+                        alignItems: 'center',
+                        shadowColor: '#000',
+                        shadowOffset: {
+                          width: 0,
+                          height: 2,
+                        },
+                        shadowOpacity: 0.25,
+                        shadowRadius: 4,
+                        elevation: 5,
                       }}>
                       <View
                         style={{
-                          width: 25,
-                          height: 25,
-                          justifyContent: 'center',
+                          // backgroundColor: 'red',
+                          height: 220,
+                          // height: "100%",
+                          width: "100%",
+                          // marginHorizontal: 20,
+                          // justifyContent: "center",
                           alignItems: 'center',
-                          borderRadius: 40 / 2,
+                          borderRadius: 20,
+                          flexDirection: 'column',
                         }}>
-                        <Image
-                          source={require('../assets/filterBlack.png')}
+                        <View
                           style={{
-                            width: 20,
-                            height: 15,
-                            alignSelf: 'center',
-                          }}
-                        />
-                      </View>
-                      <Text
-                        style={{
-                          marginLeft: 10,
-                          textAlign: 'center',
-                          fontSize: 16,
-                          color: 'black',
-
-                          marginTop: 2,
-                        }}>
-                        Filter
-                      </Text>
-                    </View>
-
-                    <View
-                      style={{
-                        width: '90%',
-                        height: 60,
-                        flexDirection: 'row',
-                        marginTop: 30,
-                        justifyContent: 'center'
-                      }}>
-                      <View
-                        style={{
-                          justifyContent: 'center',
-                          flexDirection: 'row',
-                          height: 40,
-                        }}>
-                        <TouchableOpacity onPress={() => { setChecked('high_to_low') }}>
+                            marginTop: 20,
+                            // marginHorizontal: 20,
+                            height: 25,
+                            flexDirection: 'row',
+                            // backgroundColor: 'red',
+                          }}>
                           <View
                             style={{
-                              width: 160,
-                              flex: 1,
-                              borderRadius: 35,
-                              // borderColor: '#ffcc00',
-                              borderWidth: 1,
-                              borderColor: ischecked == 'high_to_low' ? '#ffcc00' : '#8F93A0'
+                              width: 25,
+                              height: 25,
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              borderRadius: 40 / 2,
                             }}>
-                            <View
+                            <Image
+                              source={require('../assets/filterBlack.png')}
                               style={{
-                                flex: 1,
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                              }}>
-                              <Image
-                                source={ischecked == 'high_to_low' ? require('../assets/updownYellow.png') : require('../assets/updownGrey.png')}
-                                style={{
-                                  width: 15,
-                                  height: 15,
-                                  alignSelf: 'center',
-                                  marginRight: 10,
-                                }}
-                              />
-
-                              <Text
-                                style={{
-                                  textAlign: 'left',
-                                  fontSize: 9,
-                                  color: ischecked == 'high_to_low' ? '#ffcc00' : '#8F93A0'
-
-                                }}>
-                                Higher to Lower Price
-                              </Text>
-                            </View>
+                                width: 20,
+                                height: 15,
+                                alignSelf: 'center',
+                              }}
+                            />
                           </View>
-                        </TouchableOpacity>
-                      </View>
-                      <View
-                        style={{
-                          marginLeft: 10,
-                          justifyContent: 'center',
-                          flexDirection: 'row',
-                          height: 40,
-                        }}>
-                        <TouchableOpacity onPress={() => { setChecked('low_to_high') }}>
+                          <Text
+                            style={{
+                              marginLeft: 10,
+                              textAlign: 'center',
+                              fontSize: 16,
+                              color: 'black',
+                              fontWeight: "400",
+                              marginTop: 2,
+                            }}>
+                            Filter
+                          </Text>
+                        </View>
+
+                        <View
+                          style={{
+                            width: '90%',
+                            height: 60,
+                            flexDirection: 'row',
+                            marginTop: 30,
+                            justifyContent: 'center'
+                          }}>
                           <View
                             style={{
-                              width: 160,
-                              flex: 1,
-                              borderRadius: 35,
-                              // borderColor: '#bbbaba',
-                              borderWidth: 1,
-                              borderColor: ischecked == 'low_to_high' ? '#ffcc00' : '#8F93A0'
+                              justifyContent: 'center',
+                              flexDirection: 'row',
+                              height: 40,
                             }}>
-                            <View
-                              style={{
-                                flex: 1,
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                              }}>
-                              <Image
-                                source={ischecked == 'low_to_high' ? require('../assets/updownYellow.png') : require('../assets/updownGrey.png')}
+                            <TouchableOpacity onPress={() => { setChecked('high_to_low') }}>
+                              <View
                                 style={{
-                                  width: 15,
-                                  height: 15,
-                                  alignSelf: 'center',
-                                  marginRight: 10,
-                                }}
-                              />
-
-                              <Text
-                                style={{
-                                  textAlign: 'left',
-                                  fontSize: 9,
-                                  color: ischecked == 'low_to_high' ? '#ffcc00' : '#8F93A0'
-
+                                  width: 160,
+                                  flex: 1,
+                                  borderRadius: 35,
+                                  // borderColor: '#ffcc00',
+                                  borderWidth: 1,
+                                  borderColor: ischecked == 'high_to_low' ? '#ffcc00' : '#8F93A0'
                                 }}>
-                                Lower to Higher Price
-                              </Text>
-                            </View>
-                          </View>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
+                                <View
+                                  style={{
+                                    flex: 1,
+                                    flexDirection: 'row',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                  }}>
+                                  <Image
+                                    source={ischecked == 'high_to_low' ? require('../assets/updownYellow.png') : require('../assets/updownGrey.png')}
+                                    style={{
+                                      width: 15,
+                                      height: 15,
+                                      alignSelf: 'center',
+                                      marginRight: 10,
+                                    }}
+                                  />
 
-                    {/* <Text
+                                  <Text
+                                    style={{
+                                      fontWeight: "500",
+                                      textAlign: 'left',
+                                      fontSize: 11,
+                                      color: ischecked == 'high_to_low' ? '#ffcc00' : '#8F93A0'
+
+                                    }}>
+                                    Higher to Lower Price
+                                  </Text>
+                                </View>
+                              </View>
+                            </TouchableOpacity>
+                          </View>
+                          <View
+                            style={{
+                              marginLeft: 10,
+                              justifyContent: 'center',
+                              flexDirection: 'row',
+                              height: 40,
+                            }}>
+                            <TouchableOpacity onPress={() => { setChecked('low_to_high') }}>
+                              <View
+                                style={{
+                                  width: 160,
+                                  flex: 1,
+                                  borderRadius: 35,
+                                  // borderColor: '#bbbaba',
+                                  borderWidth: 1,
+                                  borderColor: ischecked == 'low_to_high' ? '#ffcc00' : '#8F93A0'
+                                }}>
+                                <View
+                                  style={{
+                                    flex: 1,
+                                    flexDirection: 'row',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                  }}>
+                                  <Image
+                                    source={ischecked == 'low_to_high' ? require('../assets/updownYellow.png') : require('../assets/updownGrey.png')}
+                                    style={{
+                                      width: 15,
+                                      height: 15,
+                                      alignSelf: 'center',
+                                      marginRight: 10,
+                                    }}
+                                  />
+
+                                  <Text
+                                    style={{
+                                      fontWeight: "500",
+                                      textAlign: 'left',
+                                      fontSize: 11,
+                                      color: ischecked == 'low_to_high' ? '#ffcc00' : '#8F93A0'
+
+                                    }}>
+                                    Lower to Higher Price
+                                  </Text>
+                                </View>
+                              </View>
+                            </TouchableOpacity>
+                          </View>
+                        </View>
+
+                        {/* <Text
                       style={{
                         marginTop: 20,
                         marginHorizontal: 20,
@@ -476,7 +484,7 @@ const DumbleSet = (props) => {
                       Select From Category & Sub-Category
                     </Text> */}
 
-                    {/* <View
+                        {/* <View
                       style={{
                         width: '90%',
                         marginTop: 20,
@@ -533,7 +541,7 @@ const DumbleSet = (props) => {
                       </TouchableOpacity>
                     </View> */}
 
-                    {/* <View
+                        {/* <View
                       style={{
                         marginTop: 10,
                         height: 50,
@@ -613,7 +621,7 @@ const DumbleSet = (props) => {
                       </TouchableOpacity>
                     </View> */}
 
-                    {/* <View
+                        {/* <View
                       style={{
                         width: '90%',
                         marginTop: 10,
@@ -670,50 +678,50 @@ const DumbleSet = (props) => {
                       </TouchableOpacity>
                     </View> */}
 
-                    <View
-                      style={{
-                        height: 200,
-                        marginTop: 2,
-                      }}>
-                      <View
-                        style={{
-                          flex: 1,
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                        }}>
-                        <TouchableOpacity
-                          onPress={() => {
-                            ShopFilter();
-
+                        <View
+                          style={{
+                            height: 200,
+                            marginTop: 2,
                           }}>
                           <View
                             style={{
-                              marginTop: 20,
-                              borderRadius: 50,
-                              width: 150,
-                              height: 34,
-                              backgroundColor: '#ffcc00',
+                              flex: 1,
+                              flexDirection: 'column',
                               alignItems: 'center',
-                              justifyContent: 'center',
                             }}>
-                            <Text
-                              style={{
-                                alignSelf: 'center',
-                                textAlign: 'center',
-                                fontSize: 14,
-                                color: 'white',
+                            <TouchableOpacity
+                              onPress={() => {
+                                ShopFilter();
 
                               }}>
-                              Apply
-                            </Text>
+                              <View
+                                style={{
+                                  marginTop: 20,
+                                  borderRadius: 50,
+                                  width: 150,
+                                  height: 34,
+                                  backgroundColor: '#ffcc00',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}>
+                                <Text
+                                  style={{
+                                    alignSelf: 'center',
+                                    textAlign: 'center',
+                                    fontSize: 14,
+                                    color: 'white',
+
+                                  }}>
+                                  Apply
+                                </Text>
+                              </View>
+                            </TouchableOpacity>
                           </View>
-                        </TouchableOpacity>
+                        </View>
                       </View>
                     </View>
                   </View>
-                </View>
-              </View>
-            </Modal>
+                </Modal>
 
 
 
@@ -736,9 +744,7 @@ const DumbleSet = (props) => {
 
         </>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        (<CustomLoader showLoader={isLoading} />)}
     </SafeAreaView>
   );
 }

@@ -5,6 +5,7 @@ import { BackgroundImage } from 'react-native-elements/dist/config';
 import LinearGradient from 'react-native-linear-gradient';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
+import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -54,17 +55,14 @@ const VerificationCode = (props) => {
 
         const country_code = countrycod;
         setIsLoading(true);
-        // console.log("country_code.................", country_code);
-        // if (phone_number == "") {
-
-
-        //     return;
-        // }
+        console.log('====================================');
+        console.log("on");
+        console.log('====================================');
         try {
             const response = await axios.post(`${API.MOBILE_NO_VERIFY}`, { phone_number, country_code });
             // console.log("Mobile_Response>>>", response.data);
             setPin(response.data.code);
-            setIsLoading(false);
+            // setIsLoading(false);
             //   Alert.alert("Your OTP is ",response.data.country_code);
             // props.navigation.navigate("VerificationCode", {
             //     Countrycode: response.data.country_code,
@@ -72,15 +70,13 @@ const VerificationCode = (props) => {
             //     phone: phone_number,
             // })
 
-
+            console.log("off");
         }
         catch (error) {
-
-            console.log("......error.........", error.response.data);
-            setIsLoading(false);
-
-        }
-
+            Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+//  console.log("......error.........", error.response.data);
+           }
+        setIsLoading(false);
     };
     const VerifyOtp = async () => {
 
@@ -106,12 +102,12 @@ const VerificationCode = (props) => {
                             //alert("otp matched!!");
                             props.navigation.navigate("SignUp");
 
-                            setIsLoading(false);
+                            // setIsLoading(false);
                         }
                         else if(response.data.status == 0) {
                             setAlertMsg(response.data.message);
                             setMsgAlert(true);
-                            setIsLoading(false);
+                            // setIsLoading(false);
                         }
                     })
                 //  setIsLoading(false);
@@ -119,21 +115,19 @@ const VerificationCode = (props) => {
 
             }
             catch (error) {
-
-                console.log("error_verify:", error.response?.data?.message);
-                setIsLoading(false);
-
-            }
-
-        };
+                Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+                }
+            setIsLoading(false);
+        } setIsLoading(false);
     };
 
 
     return (
         <SafeAreaView style={{
             flex: 1,
-            width: WIDTH,
-            height: HEIGHT, flexGrow: 1
+            // width: WIDTH,
+            // height: HEIGHT,
+             flexGrow: 1
           }} >
         <ScrollView style={{ backgroundColor: '#272727' }} >
             {!isLoading ?
@@ -171,7 +165,7 @@ const VerificationCode = (props) => {
 
                         <View style={{ alignItems: 'center', flexDirection: 'row', marginHorizontal: 20, height: 60 }}>
                             <Text style={{ textAlign: 'left', fontSize: 12, color: 'white', }}>Enter the code sent to</Text>
-                            <Text style={{ marginLeft: 5, textAlign: 'left', fontSize: 14, color: 'white' }}>{countrycod + "-" + phoneNumber + "  " + pin}</Text>
+                            <Text style={{ marginLeft: 5, textAlign: 'left', fontSize: 14, color: 'white' }}>{'('+countrycod + ") -" + phoneNumber + "  " + pin}</Text>
                         </View>
 
                         <View style={{
@@ -337,9 +331,11 @@ const VerificationCode = (props) => {
                     </View>
                 </View>)
                 :
-                (<View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 400 }}>
-                    <ActivityIndicator size="large" color="#ffcc00" />
-                </View>)}
+                (<CustomLoader showLoader={isLoading}/>
+                // <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 400 }}>
+                //     <ActivityIndicator size="large" color="#ffcc00" />
+                // </View>
+                )}
 
         </ScrollView>
         </SafeAreaView>

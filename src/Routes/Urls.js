@@ -57,5 +57,6 @@ export const API = {
     NOTIFICATION_DELETE: BaseUrl + '/api/delete_notification',
     STRIPE_PAYMENT: BaseUrl + '/api/stripePost',
     ORDER_PLACED: BaseUrl + '/api/save_order',
+    INVOICE:BaseUrl + '/api/download_invoice'
 
 }

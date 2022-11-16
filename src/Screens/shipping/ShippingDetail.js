@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 //import { StyleSheet } from 'react-native';
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, Modal, SafeAreaView, Dimensions, ActivityIndicator } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, Modal, SafeAreaView, Dimensions, ActivityIndicator, KeyboardAvoidingView } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -12,6 +12,7 @@ import Headers from '../../Routes/Headers';
 import Address from './Address';
 import { useReducer } from 'react';
 import { parse } from '@babel/core';
+import CustomLoader from '../../Routes/CustomLoader';
 
 // let unsubscribe;
 var WIDTH = Dimensions.get('window').width;
@@ -81,7 +82,7 @@ const ShippingDetail = (props) => {
         }
     }
 
-    const gotocurrentpage = async e => {
+    const gotocurrentpage = async (e) => {
         const usertkn = await AsyncStorage.getItem("authToken");
         if (landmark && area_village && address_type && city && full_name && house_no && phone && pincode && state) {
             validate();
@@ -104,26 +105,23 @@ const ShippingDetail = (props) => {
                     'headers': { "Authorization": ` ${usertkn}` }
                 })
                     .then(function (response) {
-                        setIsLoading(false)
-                        //   console.log('res----->', response)
+                        GetShippingProducts()
+                          console.log('res----->', response)
                     })
                     .catch(function (error) {
-                        setIsLoading(false)
-                        alert("gotocurrentpage...error", error)
-                        //  console.log(error)
+                        Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+                        // alert("gotocurrentpage...error", error)
+                         console.log("select-address",error)
 
                     })
             } catch (error) {
-                setIsLoading(false)
-                alert("An error has occurred");
-                //  console.log({ ...error })
-
-            }
+                Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+            } setIsLoading(false)
         }
         else {
-            setIsLoading(false)
+
             alert("All the fields are required!")
-        }
+        } setIsLoading(false)
     }
 
 
@@ -135,18 +133,23 @@ const ShippingDetail = (props) => {
 
     const gotoCardPayment = () => {
 
-        // console.log(",,as,f,asfa,f,a,fa,,fa,f,:", Default_address);
+        // console.log(",,as,f,asfa,f,a,fa,,fa,f,:", setselectaddress);
         // console.log("Selected address:", selected_address);
+if(setselectaddress != undefined){
+    props.navigation.navigate("PaymentScreen", {
+        Instruction: optComment,
+        Totalprice: Selectcoupons == null ? ammont : total,
+        SetAddrs: setselectaddress == null ?
 
-        props.navigation.navigate("PaymentScreen", {
-            Instruction:optComment,
-            Totalprice: Selectcoupons == null ? ammont : total,
-            SetAddrs: setselectaddress == null ?
-
-                (address?.address_type + "," + address?.full_name + "," + address?.house_no + "," + address?.area_village + "," + address?.city + "," + address?.landmark + "," + address?.state + "," + address?.pincode + "," + address?.phone)
-                :
-                (setselectaddress?.address_type + "," + setselectaddress?.full_name + "," + setselectaddress?.house_no + "," + setselectaddress?.area_village + "," + setselectaddress?.city + "," + setselectaddress?.landmark + "," + setselectaddress?.state + "," + setselectaddress?.pincode + "," + setselectaddress?.phone)
-        });
+            (address?.address_type + "," + address?.full_name + "," + address?.house_no + "," + address?.area_village + "," + address?.city + "," + address?.landmark + "," + address?.state + "," + address?.pincode + "," + address?.phone)
+            :
+            (setselectaddress?.address_type + "," + setselectaddress?.full_name + "," + setselectaddress?.house_no + "," + setselectaddress?.area_village + "," + setselectaddress?.city + "," + setselectaddress?.landmark + "," + setselectaddress?.state + "," + setselectaddress?.pincode + "," + setselectaddress?.phone)
+    })
+    
+}else{
+    Alert.alert("",'Choose Shipping Address')
+}
+       
     }
     const gotoApplyCoupon = () => {
         props.navigation.navigate("ApplyCoupon", {
@@ -208,7 +211,7 @@ const ShippingDetail = (props) => {
             });
 
             if (response.data.status == '1') {
-                setIsLoading(false);
+
                 var address0 = response.data.address_lists[0];
                 // console.log('adreeesss----------->', address)
                 setuseraddress(response.data.address_lists);
@@ -224,11 +227,11 @@ const ShippingDetail = (props) => {
             }
         }
         catch (error) {
+            Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
 
-            setIsLoading(false);
-            Alert.alert("something went wrong",'');
+
         }
-
+        setIsLoading(false);
     };
 
     const ProductRemovecart = async (item) => {
@@ -242,14 +245,14 @@ const ShippingDetail = (props) => {
                 'headers': { "Authorization": ` ${usertkn}` }
             });
             GetShippingProducts();
-            setIsLoading(false);
+
         }
         catch (error) {
             console.log(".ProductRemovecart.....error.........", error.response.data.message);
-            setIsLoading(false);
+            Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
 
         }
-
+        setIsLoading(false);
     };
 
     const onChangeLandmarkHandler = landmark => {
@@ -310,7 +313,7 @@ const ShippingDetail = (props) => {
                         productdata.map((item, index) => {
                             return (
                                 <TouchableOpacity onPress={() => { gotoProductDetailsview(item) }}>
-                                    <View style={{
+                                    <View key={String(index)} style={{
                                         marginHorizontal: 10,
                                         marginTop: 6,
                                         height: 140,
@@ -476,8 +479,8 @@ const ShippingDetail = (props) => {
                                                                 </Text>
                                                             </View>
                                                         </View>)
-                                                        : <View style={{justifyContent:"center",alignItems:"center", height: 100,}}>
-                                                            <Text style={{fontSize:15,textAlign:"center",color:"#455A64",fontWeight:"500"}}>Add a new address</Text>
+                                                        : <View style={{ justifyContent: "center", alignItems: "center", height: 100, }}>
+                                                            <Text style={{ fontSize: 15, textAlign: "center", color: "#455A64", fontWeight: "500" }}>Add a new address</Text>
                                                         </View>
                                                 }
                                             </>
@@ -513,7 +516,7 @@ const ShippingDetail = (props) => {
 
                             <TouchableOpacity onPress={() => { props.navigation.navigate('Address', { address, setAddress }) }}
                                 disabled={Selectcoupons == null ? false : true}
-                                style={{ height: 100, width: 60, justifyContent: "center", alignItems: 'center', right: 0, borderRadius: 25 / 2, position: 'absolute' }}>
+                                style={{ height: 100, width: 60, justifyContent: "center", alignItems: 'center', right: 0, borderRadius: 25 / 2, position: 'absolute'}}>
 
                                 <View style={{ width: 25, height: 25, justifyContent: "center", alignItems: 'center' }}>
                                     <Image
@@ -774,23 +777,23 @@ const ShippingDetail = (props) => {
                             <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
                                 {
                                     Selectcoupons == null ? <>
-                                        <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 53, fontWeight: "500" }}>${ammont}</Text></>
+                                        <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 54, fontWeight: "500" }}>${ammont}</Text></>
                                         :
-                                        <><Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 53, fontWeight: "500" }}>${total}</Text></>
+                                        <><Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 54, fontWeight: "500" }}>${total}</Text></>
                                 }
                             </View>
                         </View>
                     </View>
 
                     {/* footer button   */}
-                
-                        <TouchableOpacity onPress={() => { gotoCardPayment() }}
-                        style={{ justifyContent: "center", marginBottom: 30, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 20,  marginHorizontal:120 }}
-                        >
-                            <View style={{ justifyContent: 'center',  flex: 1, backgroundColor: '#ffcc00', borderRadius: 50,width: 150,alignItems:"center"  }}>
-                                <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Proceed to Pay</Text>
-                            </View>
-                            {/* <View style={{justifyContent:"flex-end",alignItems:"flex-end" ,    }}>
+
+                    <TouchableOpacity onPress={() => { gotoCardPayment() }}
+                        style={{ justifyContent: "center", marginBottom: 30, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 20, marginHorizontal: 120 }}
+                    >
+                        <View style={{ justifyContent: 'center', flex: 1, backgroundColor: '#ffcc00', borderRadius: 50, width: 150, alignItems: "center" }}>
+                            <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Proceed to Pay</Text>
+                        </View>
+                        {/* <View style={{justifyContent:"flex-end",alignItems:"flex-end" ,    }}>
                                 {
                                     Selectcoupons == null ? <>
                                         <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 53, fontWeight: "500" }}>${ammont}</Text></>
@@ -798,8 +801,8 @@ const ShippingDetail = (props) => {
                                         <><Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 53, fontWeight: "500" }}>${total}</Text></>
                                 }
                             </View> */}
-                        </TouchableOpacity>
- 
+                    </TouchableOpacity>
+
 
                     {ShippingAddressPopUp ? (
                         <Modal
@@ -809,139 +812,159 @@ const ShippingDetail = (props) => {
                             onRequestClose={() => {
                                 setShippingAddressPopUp(false);
                             }}>
-                            <View
-                                style={{
-                                    flex: 1,
-                                    justifyContent: 'flex-end',
-                                    alignItems: 'center',
-                                    backgroundColor: 'rgba(140, 141, 142, 0.7)'
-                                }}>
-                                <ScrollView>
-                                    <View
-                                        style={{
-                                            //margin: 10,
-                                            width: "98%",
-                                            // height: HEIGHT*0.76,
-                                            backgroundColor: '#FFFFFF',
-                                            borderRadius: 20,
+                            <KeyboardAvoidingView
+                                style={{ flex: 1 }}
+                                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+                                <View
+                                    style={{
+                                        flex: 1,
+                                        // justifyContent: 'flex-end',
+                                        // alignItems: 'center',
+                                        backgroundColor: 'rgba(140, 141, 142, 0.7)'
+                                        // backgroundColor: 'red',
+                                    }}>
 
-                                            marginTop: 111,
-                                            alignItems: "center",
-                                            shadowColor: '#000',
-                                            shadowOffset: {
-                                                width: 0,
-                                                height: 2,
-                                            },
-                                            shadowOpacity: 0.25,
-                                            shadowRadius: 4,
-                                            elevation: 6,
+                                    <ScrollView nestedScrollEnabled={true}>
 
-                                        }}>
+                                        <View
+                                            style={{
+                                                //margin: 10,
+                                                width: "99.9%",
+                                                height: HEIGHT * 0.88,
+                                                backgroundColor: '#FFFFFF',
+                                                borderRadius: 20,
 
-                                        <View style={{
-                                            // backgroundColor: '#FFFFFF',
-                                            // height: 670,
-                                            height: "100%",
-                                            width: WIDTH * 0.97,
-                                            // paddingTop: 20,
-                                            // padding: 10,
-                                            // marginHorizontal: 10,
-                                            // justifyContent: "center",
-                                            marginHorizontal: 10,
-                                            borderRadius: 20,
-                                            //marginBottom: 10,
-                                            alignItems: 'center',
-                                            flexDirection: 'column'
-                                        }}>
+                                                marginTop: 62,
+                                                justifyContent: "flex-end",
+                                                alignItems: "flex-end",
+                                                // shadowColor: '#000',
+                                                // shadowOffset: {
+                                                //     width: 0,
+                                                //     height: 2,
+                                                // },
+                                                // shadowOpacity: 0.25,
+                                                // shadowRadius: 4,
+                                                // elevation: 6,
 
-                                            <View style={{ marginTop: 15, marginHorizontal: 20, height: 30, flexDirection: "row", justifyContent: "center", alignItems: 'center' }}>
-                                                <Text style={{ marginTop: 2, marginLeft: 10, textAlign: 'center', fontSize: 20, color: '#000000', fontWeight: '500' }}>Add Address</Text>
+                                            }}>
+
+                                            <View style={{
+                                                // backgroundColor: '#FFFFFF',
+                                                // height: 670,
+                                                height: "100%",
+                                                width: WIDTH * 0.97,
+                                                // paddingTop: 20,
+                                                // padding: 10,
+                                                // marginHorizontal: 10,
+                                                // justifyContent: "center",
+                                                marginHorizontal: 10,
+                                                borderRadius: 20,
+                                                //marginBottom: 10,
+                                                alignItems: 'center',
+                                                flexDirection: 'column'
+                                            }}>
+
+                                                <View style={{ marginTop: 15, marginHorizontal: 20, height: 30, flexDirection: "row", justifyContent: "center", alignItems: 'center' }}>
+                                                    <Text style={{ marginTop: 2, marginLeft: 10, textAlign: 'center', fontSize: 20, color: '#000000', fontWeight: '500' }}>Add Address</Text>
 
 
-                                            </View>
-                                            <TextInput style={styles.textInput}
-                                                placeholder='Full Name(Required)*'
-                                                placeholderTextColor="#8F93A0"
-                                                label="full_name"
-                                                value={full_name}
-                                                onChangeText={e => onChangeNameHandler(e)}
-                                            />
-                                            <TextInput style={styles.textInput}
-                                                placeholder='Phone number(Required)*'
-                                                placeholderTextColor="#8F93A0"
-                                                label="phone"
-                                                value={phone}
-                                                onChangeText={e => onChangePhoneHandler(e)}
-                                            />
-                                            <TextInput style={styles.textInput}
-                                                placeholder='Pincode(Required)*'
-                                                placeholderTextColor="#8F93A0"
-                                                label="pincode"
-                                                value={pincode}
-                                                onChangeText={e => onChangePinHandler(e)}
-                                            />
-                                            <TextInput style={styles.textInput}
-                                                placeholder='State(Required)*'
-                                                placeholderTextColor="#8F93A0"
-                                                label="state"
-                                                value={state}
-                                                onChangeText={e => onChangeStateHandler(e)}
-                                            />
-                                            <TextInput style={styles.textInput}
-                                                placeholder='City(Required)*'
-                                                placeholderTextColor="#8F93A0"
-                                                label="ity"
-                                                value={city}
-                                                onChangeText={e => onChangeCityHandler(e)}
-                                            />
-                                            <TextInput style={styles.textInput}
-                                                placeholder='House number(Required)*'
-                                                placeholderTextColor="#8F93A0"
-                                                label="house_no"
-                                                value={house_no}
-                                                onChangeText={e => onChangeHouseHandler(e)}
-                                            />
-                                            <TextInput style={styles.textInput}
-                                                placeholder='Roard name,Area,Colony(Required)*'
-                                                placeholderTextColor="#8F93A0"
-                                                label="area_village"
-                                                value={area_village}
-                                                onChangeText={e => onChangeAreaHandler(e)}
-                                            />
-                                            <TextInput style={styles.textInput}
-                                                placeholder='Landmark(Required)*'
-                                                placeholderTextColor="#8F93A0"
-                                                label="landmark"
-                                                value={landmark}
-                                                onChangeText={e => onChangeLandmarkHandler(e)}
-                                            />
-                                            <TextInput style={styles.textInput}
-                                                placeholder='Type of address'
-                                                placeholderTextColor="#8F93A0"
-                                                label="address_type"
-                                                value={address_type}
-                                                onChangeText={e => onChangeAddressHandler(e)}
-                                            />
+                                                </View>
+                                                <TouchableOpacity onPress={() => { setShippingAddressPopUp(false) }}
+                                                    style={{ position: "absolute", width: 30, backgroundColor: 'red', borderRadius: 35, height: 35, right: 10, top: 10 }}>
+                                                    <Image
+                                                        source={require('../assets/cancelWhite.png')}
+                                                        style={{
+                                                            width: 35,
+                                                            height: 35, alignSelf: 'center'
+                                                        }}
 
-                                            <View style={{ justifyContent: "center", alignItems: "center", marginBottom: 20, flexDirection: 'row', height: 38, marginHorizontal: 20, marginTop: 30 }}>
-                                                <TouchableOpacity
-                                                    onPress={() => { gotocurrentpage() }} >
-                                                    <View style={{ justifyContent: 'center', width: 110, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
-                                                        <Text style={styles.text}>Save</Text>
-                                                    </View>
+                                                    />
                                                 </TouchableOpacity>
+                                                <TextInput style={styles.textInput}
+                                                    placeholder='Full Name(Required)*'
+                                                    placeholderTextColor="#8F93A0"
+                                                    label="full_name"
+                                                    value={full_name}
+                                                    onChangeText={e => onChangeNameHandler(e)}
+                                                />
+                                                <TextInput style={styles.textInput}
+                                                    placeholder='Phone number(Required)*'
+                                                    placeholderTextColor="#8F93A0"
+                                                    maxLength={10}
+                                                    label="phone"
+                                                    value={phone}
+                                                    onChangeText={e => onChangePhoneHandler(e)}
+                                                />
+                                                <TextInput style={styles.textInput}
+                                                    placeholder='Pincode(Required)*'
+                                                    placeholderTextColor="#8F93A0"
+                                                    label="pincode"
+                                                    
+                                                    maxLength={9}
+                                                    value={pincode}
+                                                    onChangeText={e => onChangePinHandler(e)}
+                                                />
+                                                <TextInput style={styles.textInput}
+                                                    placeholder='State(Required)*'
+                                                    placeholderTextColor="#8F93A0"
+                                                    label="state"
+                                                    value={state}
+                                                    onChangeText={e => onChangeStateHandler(e)}
+                                                />
+                                                <TextInput style={styles.textInput}
+                                                    placeholder='City(Required)*'
+                                                    placeholderTextColor="#8F93A0"
+                                                    label="ity"
+                                                    value={city}
+                                                    onChangeText={e => onChangeCityHandler(e)}
+                                                />
+                                                <TextInput style={styles.textInput}
+                                                    placeholder='House number(Required)*'
+                                                    placeholderTextColor="#8F93A0"
+                                                    label="house_no"
+                                                    value={house_no}
+                                                    onChangeText={e => onChangeHouseHandler(e)}
+                                                />
+                                                <TextInput style={styles.textInput}
+                                                    placeholder='Road name,Area,Colony(Required)*'
+                                                    placeholderTextColor="#8F93A0"
+                                                    label="area_village"
+                                                    value={area_village}
+                                                    onChangeText={e => onChangeAreaHandler(e)}
+                                                />
+                                                <TextInput style={styles.textInput}
+                                                    placeholder='Landmark(Required)*'
+                                                    placeholderTextColor="#8F93A0"
+                                                    label="landmark"
+                                                    value={landmark}
+                                                    onChangeText={e => onChangeLandmarkHandler(e)}
+                                                />
+                                                <TextInput style={styles.textInput}
+                                                    placeholder='Type of address'
+                                                    placeholderTextColor="#8F93A0"
+                                                    label="address_type"
+                                                    value={address_type}
+                                                    onChangeText={e => onChangeAddressHandler(e)}
+                                                />
+
+                                                <View style={{ justifyContent: "center", alignItems: "center", marginBottom: 20, flexDirection: 'row', height: 38, marginHorizontal: 20, marginTop: 30 }}>
+                                                    <TouchableOpacity
+                                                        onPress={() => { gotocurrentpage() }} >
+                                                        <View style={{ justifyContent: 'center', width: 110, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
+                                                            <Text style={styles.text}>Save</Text>
+                                                        </View>
+                                                    </TouchableOpacity>
+                                                </View>
                                             </View>
                                         </View>
-                                    </View>
-                                </ScrollView>
-                            </View>
+                                    </ScrollView>
+                                </View>
+                            </KeyboardAvoidingView>
                         </Modal>
                     ) : null}
                 </ScrollView>)
                 :
-                (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                    <ActivityIndicator size="large" color="#ffcc00" />
-                </View>)}
+                (<CustomLoader showLoader={isLoading} />)}
         </SafeAreaView >
     )
 };

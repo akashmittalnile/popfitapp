@@ -6,6 +6,7 @@ import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import { WebView } from 'react-native-webview';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomLoader from '../../Routes/CustomLoader';
 // import TrackPlayer, { State } from 'react-native-track-player';
 
 
@@ -34,11 +35,11 @@ const Audiolist = (props) => {
         const usertkn = await AsyncStorage.getItem("authToken");
         setIsLoading(true);
         try {
-            const response = await axios.post(`${API.TRAINING_LIST}`, { "category_id": Tainingcat_id, "subcategory_id": Trainingsubcat_data }, { headers: { "Authorization": ` ${usertkn}` } });
+            const response = await axios.post(`${API.TRAINING_LIST}`, { "category_id": Tainingcat_id, "subcategory_id": Trainingsubcat_data }, { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } });
             console.log(":::::::::TrainingCategoryListAPI_Response>>>", response.data.message);
 
             console.log("TrainingCategoryListAPI_data::::::", response.data.blog_list);
-            setIsLoading(false);
+            
             
             console.log("AUDIO_url::", response.data.training_audio);
             
@@ -53,10 +54,10 @@ const Audiolist = (props) => {
         }
         catch (error) {
             console.log("......error.........", error.response.data.message);
-            Alert.alert("Something went wrong!", error.response.data.message);
-            setIsLoading(false);
+            //Alert.alert("Something went wrong!", error.response.data.message);
+            Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
 
-        }
+        } setIsLoading(false);
     };
     return (
         <SafeAreaView style={{
@@ -151,9 +152,7 @@ const Audiolist = (props) => {
                     }
                 </>)
                 :
-                (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                    <ActivityIndicator size="large" color="#ffcc00" />
-                </View>)}
+                ( <CustomLoader showLoader={isLoading}/>)}
         </SafeAreaView >
 
     );

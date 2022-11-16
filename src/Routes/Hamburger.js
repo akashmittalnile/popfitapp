@@ -893,9 +893,9 @@
 <ScrollView>
 {
 orderitemdata.length > 0 ?
-    orderitemdata.map((item) => {
+    orderitemdata.map((item,index) => {
         return (
-        <View style={{ paddingBottom: 30, backgroundColor: 'red' }} >
+        <View key = {String(index)} style={{ paddingBottom: 30, backgroundColor: 'red' }} >
             {/* order no deisgn*/}
             <View style={{
                 // backgroundColor: '#fffcee',

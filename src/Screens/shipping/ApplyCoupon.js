@@ -60,6 +60,7 @@ const ApplyCoupon = (props) => {
             // setIsLoading(false)
         }
         catch (error) {
+            Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
             // console.log("ShippingProductserror:::", error.response.data.message);
             // setIsLoading(false)
         }
@@ -92,12 +93,11 @@ const ApplyCoupon = (props) => {
                 setVisible(false);
                 alert("your order is below 2000")
             }
-
-
             setProductitems(response.data.data)
-            setIsLoading(false);
+            // setIsLoading(false);
         }
         catch (error) {
+            Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
             // console.log("......error.........", error.response.data.message);
             // setIsLoading(false);
 
@@ -134,7 +134,8 @@ const ApplyCoupon = (props) => {
 
                     <FlatList
                         data={coupondata}
-                        renderItem={({ item }) =>
+                        keyExtractor={(item, index) => String(index)}
+                        renderItem={({ item, index }) =>
                             <TouchableOpacity
                                 style={{
                                     marginHorizontal: 10,

@@ -5,6 +5,7 @@ import { BackgroundImage } from 'react-native-elements/dist/config';
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
 import { API } from '../../../Routes/Urls';
+import CustomLoader from '../../../Routes/CustomLoader';
 
 const EmailVerification = (props) => {
 
@@ -285,9 +286,7 @@ const EmailVerification = (props) => {
                     </View>
                 </View>)
                 :
-                (<View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 400 }}>
-                    <ActivityIndicator size="large" color="#ffcc00" />
-                </View>)}
+                ( <CustomLoader showLoader={isLoading}/>)}
 
         </ScrollView>
     );

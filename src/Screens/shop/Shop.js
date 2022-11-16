@@ -3,6 +3,8 @@ import {
   View,
   FlatList,
   Text,
+  KeyboardAvoidingView,
+  Platform,
   TouchableOpacity,
   StyleSheet,
   TextInput,
@@ -19,6 +21,7 @@ import axios from 'axios';
 import Headers from '../../Routes/Headers';
 import { Divider } from 'react-native-elements';
 import { async } from 'regenerator-runtime';
+import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -34,15 +37,15 @@ const Shop = (props) => {
 
   // const openDrawer = () => props.navigation.dispatch(DrawerActions.openDrawer());
 
-  const gotoShippingDetail =(item) => {
-    console.log("filter product id:",item);
+  const gotoShippingDetail = (item) => {
+    console.log("filter product id:", item);
     // const Token = await AsyncStorage.getItem("authToken")
     // if (Token == null) {
     //   Alert.alert('Shop', 'Login First!')
     // } else if (Token != null) {
-      props.navigation.navigate('ProductDetail', {
-        ITEM: item
-      })
+    props.navigation.navigate('ProductDetail', {
+      ITEM: item
+    })
     // }
 
   };
@@ -51,12 +54,12 @@ const Shop = (props) => {
   // };
 
   useEffect(() => {
+    StoresProductget();
+    // const unsubscribe = props.navigation.addListener('focus', () => {
 
-    const unsubscribe = props.navigation.addListener('focus', () => {
-      StoresProductget();
 
-    });
-    return unsubscribe;
+    // });
+    // return unsubscribe;
 
   }, []);
 
@@ -66,55 +69,55 @@ const Shop = (props) => {
     console.log("SHOP filter...........>>>", ischecked);
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.SHOP_FILTER}`, { "search": ischecked, "shop_id": '' ,"category_id": '' },
+      const response = await axios.post(`${API.SHOP_FILTER}`, { "search": ischecked, "shop_id": '', "category_id": '' },
         { headers: { "Authorization": ` ${Token}` } }
       );
       console.log(":::::::::Shop_FIlter>>>", response.data.data);
       console.log("SHOP_Status", response.data.status);
       if (response.data.status == 1) {
         setshopitems(response.data.data)
-        setIsLoading(false);
+
         setFilterPopUp(false)
 
       } else {
         setFilterPopUp(false);
-        setIsLoading(false);
         Alert.alert('', 'Something went wrong please exit the app and try again');
       }
-      
+
     }
     catch (error) {
-      Alert.alert('', 'Something went wrong please exit the app and try again');
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      // Alert.alert('', 'Something went wrong please exit the app and try again');
       // Alert.alert("filter",error.response.data.message);
-      setIsLoading(false);
     }
-
+    setIsLoading(false)
   };
   const StoresProductget = async () => {
     const Token = await AsyncStorage.getItem("authToken");
+    console.log("in SHOP Check token:", Token);
 
     setIsLoading(true);
     try {
       const response = await axios.get(`${API.SHOP_MAIN}`,
-        { headers: { "Authorization": ` ${Token}` } }
+        { headers: { "Authorization": ` ${Token != null ? Token : null}` } }
       );
       // console.log(":::::::::Shop_Store_Response>>>", response.data.best_seller);
       // console.log("status _SHOP", response.data.status);
-      if(response.data.status == 1){
+      if (response.data.status == 1) {
         setshopitems(response.data.best_seller)
-        setIsLoading(false);
+
       }
-      else{
-        setIsLoading(false);
+      else {
+
         Alert.alert('', 'Something went wrong please exit the app and try again');
       }
-      
+
     }
     catch (error) {
-      Alert.alert('', 'Something went wrong please exit the app and try again');
-      setIsLoading(false);
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+       
     }
-
+    setIsLoading(false)
   };
   return (
     <SafeAreaView style={{
@@ -479,15 +482,19 @@ const Shop = (props) => {
               transparent={true}
               visible={FilterPopup}
               onRequestClose={() => {
-                setFilterPopUp(false);
+                setFilterPopUp(false)
               }}>
+
               <View
                 style={{
                   flex: 1,
-                  justifyContent: 'flex-end',
-                  alignItems: 'center',
+                  // justifyContent: 'flex-end',
+                  // alignItems: 'center',
                   backgroundColor: 'rgba(140, 141, 142, 0.7)',
                 }}>
+                <TouchableOpacity onPress={() => setFilterPopUp(false)}
+                  style={{ flex: 1,  }}
+                />
                 <View
                   style={{
                     // margin: 10,
@@ -601,8 +608,9 @@ const Shop = (props) => {
 
                               <Text
                                 style={{
+                                  fontWeight: "500",
                                   textAlign: 'left',
-                                  fontSize: 9,
+                                  fontSize: 11,
                                   color: ischecked == 'high_to_low' ? '#ffcc00' : '#8F93A0'
 
                                 }}>
@@ -648,8 +656,9 @@ const Shop = (props) => {
 
                               <Text
                                 style={{
+                                  fontWeight: "500",
                                   textAlign: 'left',
-                                  fontSize: 9,
+                                  fontSize: 11,
                                   color: ischecked == 'low_to_high' ? '#ffcc00' : '#8F93A0'
 
                                 }}>
@@ -910,6 +919,7 @@ const Shop = (props) => {
                   </View>
                 </View>
               </View>
+
             </Modal>
           ) : null}
 
@@ -1185,9 +1195,11 @@ const Shop = (props) => {
           ) : null} */}
         </ScrollView>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        (<CustomLoader showLoader={isLoading} />
+          // <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
+          //   <ActivityIndicator size="large" color="#ffcc00" />
+          // </View>
+        )}
     </SafeAreaView >
   );
 };

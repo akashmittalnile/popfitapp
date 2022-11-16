@@ -11,6 +11,7 @@ import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -41,38 +42,37 @@ const Category = (props) => {
     getusertoken();
 
   }, []);
-  
+
   const getusertoken = async () => {
     const usertoken = await AsyncStorage.getItem("authToken");
     console.log("check_roken in comment button:::>>>>>..", usertoken);
     setsubscriptiontoken(usertoken);
   }
-  
+
   const getCategoryApi = async () => {
     const Token = await AsyncStorage.getItem("authToken");
     console.log("category_id get.....;;;;;", ITEMS);
     // const categoryitem = ITEMS;
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.BLOG_SUBCATEGORY}`, { "category_id": ITEMS }, { headers: { "Authorization": ` ${Token}` } });
+      const response = await axios.post(`${API.BLOG_SUBCATEGORY}`, { "category_id": ITEMS }, { headers: { "Authorization": ` ${Token != null ? Token : null}` } });
       console.log(":::::::::category_Response>>>", response.data.blog_subcategory);
       console.log("status category:", response.data.status);
       if (response.data.status == 1) {
         setsubcategoryitems(response.data.blog_subcategory)
-        setIsLoading(false);
+        // setIsLoading(false);
       } else {
         // Alert.alert("data not found",'')
-        setIsLoading(false);
+        // setIsLoading(false);
       }
 
     }
     catch (error) {
-      Alert.alert('','Something went wrong please exit the app and try again')
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      // Alert.alert('', 'Something went wrong please exit the app and try again')
       // console.log("......error.........", error.response.data.message);
-      setIsLoading(false);
-
     }
-
+    setIsLoading(false);
   };
 
   return (
@@ -105,8 +105,8 @@ const Category = (props) => {
             subcategoryitems.length != 0 ?
               (<ScrollView >
                 <View style={{ height: 50, flexDirection: 'row' }}>
-                  <View style={{ flex: 1,marginLeft: 15, marginTop: 20, }}>
-                    <Text style={{  textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "500" }}>Sub-Category Blogs</Text>
+                  <View style={{ flex: 1, marginLeft: 15, marginTop: 20, }}>
+                    <Text style={{ textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "500" }}>Sub-Category Blogs</Text>
                   </View>
 
                 </View>
@@ -118,7 +118,7 @@ const Category = (props) => {
                   data={subcategoryitems}
                   keyExtractor={(item, index) => String(index)}
                   renderItem={({ item, index }) => {
-                   return( <TouchableOpacity onPress={() => { gotoCategoryListBlog(item) }}>
+                    return (<TouchableOpacity onPress={() => { gotoCategoryListBlog(item) }}>
                       <View
                         style={{
                           marginTop: 10,
@@ -151,12 +151,12 @@ const Category = (props) => {
                             <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "500" }}>{item?.subcat_name?.slice(0, 15) + '...'}</Text>
 
                           </View>
- 
+
                         </View>
                         <View style={{
                           justifyContent: "flex-end",
-                          alignItems: 'flex-end', 
-                          position: "absolute", width: 40, height: 30, 
+                          alignItems: 'flex-end',
+                          position: "absolute", width: 40, height: 30,
                           bottom: -1, right: 0
                         }}>
                           <Image resizeMode='contain'
@@ -220,15 +220,17 @@ const Category = (props) => {
                     width: 200,
                     height: 120, alignSelf: 'center'
                   }} />
-                <Text style={{  fontSize: 14, fontWeight: "500", color: 'black'  }}>No data found!</Text>
+                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>No data found!</Text>
               </View>)
           }
 
         </>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        (<CustomLoader showLoader={isLoading} />
+          // <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          //   <ActivityIndicator size="large" color="#ffcc00" />
+          // </View>
+        )}
     </SafeAreaView>
   );
 }

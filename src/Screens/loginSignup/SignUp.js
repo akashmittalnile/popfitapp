@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef} from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, SafeAreaView, Modal, Button, ActivityIndicator, Dimensions } from 'react-native'
+import React, { useState, useEffect, useRef } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, SafeAreaView, Modal, Button, ActivityIndicator, Dimensions, KeyboardAvoidingView, Platform } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';
@@ -16,6 +16,7 @@ import Textinput from '../CommonTextInput/TextInput/Index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CalendarModal from './CalendarModal';
 import moment from 'moment';
+import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -33,7 +34,9 @@ const Signup = (props, navigation) => {
   const [Countryitems, setCountryitems] = useState([]);
   const [opencountry, setopencountry] = useState(false);
   const [valuecountry, setvaluecountry] = useState('');
-
+  const [Countrycode, setCountrycode] = useState('');
+  // console.log("....COUNTRY CODE::", valuecountry); 
+  // console.log("COUNTRY-codename::", Countrycode);
   const [openstate, setOpenstate] = useState(false);
   const [valuestate, setValuestate] = useState();
   const [Stateitems, setStateitems] = useState([]);
@@ -56,6 +59,35 @@ const Signup = (props, navigation) => {
   const [ischecked, setChecked] = React.useState("");
   const emailInput = useRef(null);
 
+
+
+
+  const [isToggle, setToggle] = useState(false)
+  const [secureText, setSecureText] = useState(true)
+
+  // console.log("passs", isToggle)
+
+  const showPass = () => {
+    setToggle(true)
+    setSecureText(false)
+  }
+  const hidePass = () => {
+    setToggle(false)
+    setSecureText(true)
+  }
+  const [isToggle1, setToggle1] = useState(false)
+  const [secureText1, setSecureText1] = useState(true)
+
+  // console.log("passs", isToggle)
+
+  const showPass1 = () => {
+    setToggle1(true)
+    setSecureText1(false)
+  }
+  const hidePass1 = () => {
+    setToggle1(false)
+    setSecureText1(true)
+  }
   //routefrom Email verification
   // console.log("props.route.params.signup", props.route.params);
   // const { emailreturn } = props.route.params;
@@ -143,7 +175,7 @@ const Signup = (props, navigation) => {
   //   };
   // };
   const FormUpdate = async (values) => {
-
+    // console.log("....COUNTRY CODE::", valuecountry);
     // Alert.alert('Hi')
     // console.log('====================================');
     // console.log('FormUpdate', userbirthday);
@@ -166,17 +198,17 @@ const Signup = (props, navigation) => {
       phone: phoneNumber,
       address_1: values?.address1,
       address_2: values?.address2,
-      country_code: valuecountry,
+      country_code: Countrycode,
       state: valuestate,
       city: valuecity,
       // address: values?.address_type,
       address: "",
       zipcode: values?.zip_code,
       about_us: ischecked,
-      password: values?.password,
+      password: values?.passwords,
       c_password: values?.cfm_password,
     };
-    // console.log(".......userInputdata", data);
+    console.log(".......userInputdata", data);
     setIsLoading(true);
     axios({
       url: API.SIGN_UP,
@@ -191,13 +223,14 @@ const Signup = (props, navigation) => {
           setIsLoading(false);
         }
         else {
-          // setIsLoading(false);
-          Alert.alert('All the fields are required *','Fill correctly')
+          setIsLoading(false);
+          Alert.alert('All the fields are required *', 'Fill correctly')
         }
 
       })
       .catch(function (error) {
-        Alert.alert('Try again later', error.response.data.message)
+        Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+        // Alert.alert('', 'Something went wrong please exit the app and try again');
         // console.log("Signup_error:", error);
         setIsLoading(false);
       })
@@ -209,35 +242,40 @@ const Signup = (props, navigation) => {
 
     // console.log("valuecountryInner..........", valuecountry);
     // const country_code = valuecountry;
-    setLoading(true)
+    setLoading(true);
+    // setIsLoading(true);
     try {
       const response = await axios.get(`${API.GET_COUNTRY}`);
-      // console.log("Countryresponse ::::", response.data.data);
+      console.log("Countryresponse ::::", response.data.data);
       setCountryitems(response.data.data)
       // console.log(setCountryitems);
       // setIsLoading(false)
       // setLoading(false)
       if (response.data.status == 1) {
-        // console.log(".......statsus", response.data.status);
-
-        setIsLoading(false);
-        setLoading(false)
+        console.log(".......statsus", response.data.status);
+        // if (response.data.data.id == valuecountry) {
+        //   setSelectedcountrycode(response.data.data.code)
+        // } else {
+        //   Alert.alert('', 'Something went wrong please exit the app and try again');
+        // }
+        // setIsLoading(false);
+        // setLoading(false)
         setAlertVisibility(false);
       }
       else if (response.data.status == 0) {
         setAlertMsg(response.data.data.Message);
         setMsgAlert(true);
-        setIsLoading(false);
-        setLoading(false)
+        // setIsLoading(false);
+        // setLoading(false)
       }
     }
     catch (error) {
-      Alert.alert('Country not found','Something went wrong !')
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
       // console.log("Countryerror:", error.response.data.message);
-      setIsLoading(false);
       setAlertVisibility(false);
-      setLoading(false)
+      // setLoading(false)
     }
+    setLoading(false)
   };
 
   const SelectState = async () => {
@@ -245,7 +283,8 @@ const Signup = (props, navigation) => {
     // console.log("valuestate_id>:::", valuecountry);
     const country_id = valuecountry;
     // console.log("state.....", country_id);
-    setLoading(true)
+    setLoading(true);
+    // setIsLoading(true);
     try {
       const response = await axios.post(`${API.SIGIN_SELECT_STATE}`, { country_id });
       // console.log("responseState:::::", response.data.data);
@@ -255,21 +294,22 @@ const Signup = (props, navigation) => {
       if (response.data.status == 1) {
         // console.log(".......Response_State_status", response.data.status);
         setStateitems(response.data.data)
-        setIsLoading(false);
+        // setIsLoading(false);
         setAlertVisibility(false);
       }
       else if (response.data.status == 0) {
         setAlertMsg(response.data.data.Message);
         setMsgAlert(true);
-        setIsLoading(false);
+        // setIsLoading(false);
       }
     }
     catch (error) {
-      Alert.alert('State not found','Something went wrong !')
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
       // console.log("emailerror:", error.response.data.message);
-      setIsLoading(false);
+      // setIsLoading(false);
       setAlertVisibility(false);
     }
+    setLoading(false)
   };
 
   const SelectCity = async () => {
@@ -277,7 +317,8 @@ const Signup = (props, navigation) => {
     // console.log("valuestate_id>>>>", valuestate);
     const state_id = valuestate;
     // console.log("state.....", state_id);
-    setLoading(true)
+    setLoading(true);
+    // setIsLoading(true)
     try {
       const response = await axios.post(`${API.SELECT_CITY}`, { state_id });
       // console.log("responseCity ::::", response.data.data);
@@ -287,25 +328,28 @@ const Signup = (props, navigation) => {
       if (response.data.status == 1) {
         // console.log(".......Response_State_status", response.data.status);
         setCityitems(response.data.data)
-        setIsLoading(false);
+        // setIsLoading(false);
         setAlertVisibility(false);
       }
       else if (response.data.status == 0) {
         setAlertMsg(response.data.data.Message);
         setMsgAlert(true);
-        setIsLoading(false);
+        // setIsLoading(false);
       }
     }
     catch (error) {
-      Alert.alert('City not found','Something went wrong !')
+      Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+      // Alert.alert('', 'Something went wrong please exit the app and try again');
       // console.log("emailerror:", error.response.data.message);
-      setIsLoading(false);
+
       setAlertVisibility(false);
     }
+    setLoading(false)
   };
 
   const gotologin_signuppage = () => {
-    props.navigation.navigate("LoginSignUp")
+    props.navigation.navigate("MobileNo")
+    // props.navigation.goBack()
   }
 
   return (
@@ -318,6 +362,8 @@ const Signup = (props, navigation) => {
         style={{ backgroundColor: '#383838' }} >
         {!isLoading ?
           (
+            // <KeyboardAvoidingView style={{ flex: 1 }}
+            // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <View>
               <View style={style.navigationBarColor1}>
                 <View style={{
@@ -356,7 +402,7 @@ const Signup = (props, navigation) => {
                   state: '',
                   city: '',
                   address_type: '',
-                  password: '',
+                  passwords: '',
                   cfm_password: '',
 
                 }}
@@ -396,15 +442,15 @@ const Signup = (props, navigation) => {
                     .string(),
                   address_type: yup
                     .string(),
-                  password: yup
+                  passwords: yup
                     .string()
-                    .required('Please enter password *')
+                    .required('Password length must be greater than 8 characters*')
                     .min(8, 'Your password is too short minimum 8 characters *'),
-                    // .max(16, 'Your password should not  be more then   *'),
+                  // .max(16, 'Your password should not  be more then   *'),
                   cfm_password: yup
                     .string()
                     .required('Confirm password is required *')
-                    .oneOf([yup.ref('password')], 'Your passwords do not match.')
+                    .oneOf([yup.ref('passwords')], 'Password & confirm password does not match')
                 })}
               >
                 {({ values, handleChange, errors, setFieldTouched, touched, isValid, handleSubmit }) => (
@@ -534,7 +580,7 @@ const Signup = (props, navigation) => {
                             fontSize: 12, color: 'red',
                             // color: '#FF0D10', 
                             paddingLeft: 30,
-                          }}>Please select D.O.B *</Text>
+                          }}>Select D.O.B *</Text>
                           : <></>}
 
                       </View>
@@ -632,7 +678,7 @@ const Signup = (props, navigation) => {
                           placeholderTextColor='#8F93A0'
                           fontWeight='normal'
                           keyboardType='number-pad'
-
+                          maxLength={9}
                           value={values.zip_code}
                           onChangeText={handleChange('zip_code')}
                           onBlur={() => setFieldTouched('zip_code')}
@@ -646,7 +692,8 @@ const Signup = (props, navigation) => {
                           <DropDownPicker
                             loading={loading}
                             onPress={() => SelectCountry()}
-                            items={Countryitems.map(item => ({ label: item?.name, value: item?.id }))}
+                            itemKey="value"
+                            items={Countryitems.map((item, id) => ({ label: item?.name, value: item?.id, id: item?.code }))}
                             setItems={setCountryitems}
                             maxHeight={240}
                             dropDownDirection="BOTTOM"
@@ -655,6 +702,7 @@ const Signup = (props, navigation) => {
                             textStyle={{
                               fontSize: 16
                             }}
+                            on
                             containerStyle={{ height: 40, }}
                             placeholderTextColor='#8F93A0'
                             open={opencountry}
@@ -675,7 +723,15 @@ const Signup = (props, navigation) => {
                             value={valuecountry}
                             setValue={setvaluecountry}
                             listMode="MODAL"
-                            onChangeText={(item) => { setvaluecountry(item), setMsgCountry(false) }}
+                            // onChangeValue={(value) => {
+                            //   console.log("yoyo value:",value,);
+                            // }}
+                            onSelectItem={(itm) => {
+                              setCountrycode(itm.id)
+                              setMsgCountry(false)
+                              console.log("yoyo item:", itm);
+                            }}
+                            // onChangeText={(item) => { setvaluecountry(item), setMsgCountry(false) ,console.log('item',item)}}
                             defaultValue={null}
                             dropDownContainerStyle={{
                               borderColor: '#8F93A0',
@@ -704,7 +760,7 @@ const Signup = (props, navigation) => {
                                 fontSize: 12,
                                 color: '#FF0D10',
 
-                              }}>Please select Country *</Text>
+                              }}>Select Country *</Text>
                             </View>
                             : <></>}
                       </View>
@@ -838,47 +894,129 @@ const Signup = (props, navigation) => {
                         }
                       </View> */}
 
-                      <View style={{ flexDirection: 'column', marginTop: 10 }}>
-                        <Textinput
-                          style={{
-                            width: '88.5%', justifyContent: 'center', alignItems: 'center', paddingLeft: 15, color: "red",
-                            fontSize: 18
-                          }}
-                          //InputColor="red"
-                          placeholder='Create Password'
-                          autoCapitalize="none"
-                          onBlur={() => setFieldTouched('password')}
-                          placeholderTextColor='#8F93A0'
+                      <View style={{
+                        marginTop: 29, justifyContent: 'flex-start', alignItems: 'flex-start', height: 70,
+                      }}>
+                        <View style={{
+                          flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 50,
+                        }}>
+                          <TextInput
+                            style={{
+                              width: 350,
+                              height: 50,
+                              backgroundColor: 'white',
+                              // marginTop: 15,
+                              // padding: 8,
+                              color: 'black',
+                              borderRadius: 25,
+                              borderColor: '#DFDDDD0D',
+                              borderWidth: 1,
+                              fontSize: 18,
+                              fontSize: 16,
+                              paddingHorizontal: 20,
+                              justifyContent: "center",
+                              alignItems: "center"
+                            }}
+                            // style={{
+                            //   width: '88.5%',
 
-                          secureTextEntry={true}
-                          isPass={false}
-                          value={values.password}
-                          onChangeText={handleChange('password')}
-                        />
-                        {touched.password && errors.password &&
-                          <Text style={{ fontSize: 12, color: '#FF0D10', paddingLeft: 40, marginTop: 8 }}>{errors.password}</Text>
+                            //   justifyContent: 'center',
+                            //   // alignItems: 'center', 
+                            //   paddingLeft: 15,
+                            //    color: "red",
+                            //   fontSize: 18
+                            // }}
+                            //InputColor="red"
+                            placeholder='Create Password'
+                            autoCapitalize="none"
+                            onBlur={() => setFieldTouched('passwords')}
+                            placeholderTextColor='#8F93A0'
+
+                            secureTextEntry={secureText}
+                            isPass={false}
+                            value={values.passwords}
+                            onChangeText={handleChange('passwords')}
+                          />
+
+                          <View style={{ position: "absolute", right: 0, height: 50, justifyContent: "center", alignItems: "center", width: 30, }}>
+                            {
+                              isToggle == false ?
+                                <TouchableOpacity onPress={() => showPass()}>
+                                  <Image style={{ width: 25, height: 20, marginRight: 20 }} source={require('../assets/hide_eye.png')} />
+                                </TouchableOpacity>
+                                :
+                                <TouchableOpacity onPress={() => hidePass()}>
+                                  <Image resizeMode='contain' style={{ width: 30, height: 25, marginRight: 20 }} source={require('../assets/show_eye.png')} />
+                                </TouchableOpacity>
+                            }
+                          </View>
+                        </View>
+
+                        {
+                          touched.passwords && errors.passwords &&
+                          <Text style={{ fontSize: 12, color: '#FF0D10', paddingLeft: 24, marginTop: 4 }}>{errors.passwords}</Text>
                         }
+
                       </View>
 
-                      <View style={{ flexDirection: 'column', marginTop: 10 }}>
-                        <Textinput
-                          style={{
-                            width: '88.5%', justifyContent: 'center', alignItems: 'center', paddingLeft: 15, color: "red",
-                            fontSize: 18, marginTop: 15,
-                          }}
-                          // InputColor="red"
-                          placeholder='Confirm Password'
-                          autoCapitalize="none"
-                          onBlur={() => setFieldTouched('cfm_password')}
-                          placeholderTextColor='#8F93A0'
 
-                          secureTextEntry={true}
-                          isPass={false}
-                          value={values.cfm_password}
-                          onChangeText={handleChange('cfm_password')}
-                        />
-                        {touched.cfm_password && errors.cfm_password &&
-                          <Text style={{ fontSize: 12, color: '#FF0D10', paddingLeft: 40, marginTop: 8 }}>{errors.cfm_password}</Text>
+                      <View style={{
+                        marginTop: 10, justifyContent: 'flex-start', alignItems: 'flex-start', height: 60,
+                      }}>
+                        <View style={{
+                          flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 50,
+                        }}>
+                          <TextInput
+                            style={{
+                              width: 350,
+                              height: 50,
+                              backgroundColor: 'white',
+                              // marginTop: 15,
+                              // padding: 8,
+                              color: 'black',
+                              borderRadius: 25,
+                              borderColor: '#DFDDDD0D',
+                              borderWidth: 1,
+                              fontSize: 18,
+                              fontSize: 16,
+                              paddingHorizontal: 20,
+                              justifyContent: "center",
+                              // alignItems:"center"
+                            }}
+                            // style={{
+                            //   width: '88.5%',
+                            //   justifyContent: 'center',
+                            //   //  alignItems: 'center', 
+                            //   paddingLeft: 15, color: "red",
+                            //   fontSize: 18, marginTop: 15,
+                            // }}
+                            // InputColor="red"
+                            placeholder='Confirm Password'
+                            autoCapitalize="none"
+                            onBlur={() => setFieldTouched('cfm_password')}
+                            placeholderTextColor='#8F93A0'
+
+                            secureTextEntry={secureText1}
+                            isPass={false}
+                            value={values.cfm_password}
+                            onChangeText={handleChange('cfm_password')}
+                          />
+                          <View style={{ position: "absolute", right: 0, height: 50, justifyContent: "center", alignItems: "center", width: 30, }}>
+                            {
+                              isToggle1 == false ?
+                                <TouchableOpacity onPress={() => showPass1()}>
+                                  <Image style={{ width: 25, height: 20, marginRight: 20 }} source={require('../assets/hide_eye.png')} />
+                                </TouchableOpacity>
+                                :
+                                <TouchableOpacity onPress={() => hidePass1()}>
+                                  <Image resizeMode='contain' style={{ width: 30, height: 25, marginRight: 20 }} source={require('../assets/show_eye.png')} />
+                                </TouchableOpacity>
+                            }
+                          </View>
+                        </View>
+                        {
+                          touched.cfm_password && errors.cfm_password &&
+                          <Text style={{ fontSize: 12, color: '#FF0D10', paddingLeft: 24, marginTop: 8 }}>{errors.cfm_password}</Text>
                         }
                       </View>
 
@@ -927,7 +1065,7 @@ const Signup = (props, navigation) => {
 
                     <View style={{ flex: 0.8, flexDirection: 'column', alignItems: 'center' }}>
                       <TouchableOpacity onPress={() => {
-
+                        handleSubmit(values)
                         if (userbirthday == '') {
                           setMsg(true)
                         }
@@ -940,7 +1078,7 @@ const Signup = (props, navigation) => {
                         }
                         else if (valuecountry != "") { setMsgCountry(false) }
 
-                        handleSubmit(values);
+
 
 
                       }}
@@ -1052,11 +1190,15 @@ const Signup = (props, navigation) => {
                 :
                 null
               }
-            </View>)
+            </View>
+
+          )
           :
-          (<View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 400 }}>
-            <ActivityIndicator size="large" color="#ffcc00" />
-          </View>)}
+          (<CustomLoader showLoader={isLoading} />
+            // <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 400 }}>
+            //   <ActivityIndicator size="large" color="#ffcc00" />
+            // </View>
+          )}
 
       </ScrollView>
     </SafeAreaView>

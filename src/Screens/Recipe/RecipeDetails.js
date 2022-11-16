@@ -8,6 +8,7 @@ import styles from '../../Routes/style'
 import axios from 'axios';
 import { API } from '../../Routes/Urls';
 import { WebView } from 'react-native-webview';
+import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -32,13 +33,14 @@ const RecipeDetails = (props) => {
       console.log("::::Recipe_List_Response:::::", response.data.recipe_details);
       console.log("Recipe_List....", response.data.recipe_details)
       setRecipeDetails(response.data.recipe_details)
-      setIsLoading(false);
+     
     }
     catch (error) {
-      console.log("......error.........", error.response.data.message);
-      Alert.alert("Something went wrong!", error.response.data.message);
-      setIsLoading(false);
+      // console.log("......error.........", error.response.data.message);
+      // Alert.alert("Something went wrong!", error.response.data.message);
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
     }
+    setIsLoading(false);
   };
 
   return (
@@ -109,9 +111,7 @@ const RecipeDetails = (props) => {
           </ScrollView>
         </View>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        ( <CustomLoader showLoader={isLoading}/>)}
     </SafeAreaView>
   );
 }

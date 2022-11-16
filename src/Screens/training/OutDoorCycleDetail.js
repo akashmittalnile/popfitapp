@@ -7,6 +7,7 @@ import { WebView } from 'react-native-webview';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -46,20 +47,18 @@ const OutDoorCycleDetails = (props) => {
     const usertkn = await AsyncStorage.getItem("authToken");
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.TRAINING_LIST_DETAILS}`, { "training_id": TrainingDATA }, { headers: { "Authorization": ` ${usertkn}` } });
+      const response = await axios.post(`${API.TRAINING_LIST_DETAILS}`, { "training_id": TrainingDATA }, { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } });
       console.log(":::::::::TrainingDetails_ResponseMessage>>>", response.data.message);
       console.log("TrainingDetails__data::::::", response.data.training_detail);
       ;
       setTrainingDetails(response.data.training_detail)
-      setIsLoading(false);
+   
 
     }
     catch (error) {
       console.log("......error.........", error.response.data.message);
-      Alert.alert("Something went wrong!", error.response.data.message);
-      setIsLoading(false);
-
-    }
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      } setIsLoading(false);
   };
   return (
     <SafeAreaView style={{
@@ -261,9 +260,7 @@ const OutDoorCycleDetails = (props) => {
           </View> */}
         </>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        ( <CustomLoader showLoader={isLoading}/>)}
     </SafeAreaView>
   );
 }

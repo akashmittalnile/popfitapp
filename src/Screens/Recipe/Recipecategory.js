@@ -26,6 +26,7 @@ import { Divider } from 'react-native-elements';
 import Headers from '../../Routes/Headers';
 import axios from 'axios';
 import { API } from '../../Routes/Urls';
+import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -51,13 +52,14 @@ const Recipecategory = props => {
       console.log(":::::::::Recipe_Category_Response>>>", response.data.recipeData);
       console.log(".....Recipe_category....", response.data.recipeData)
       setRecipecategory(response.data.recipeData)
-      setIsLoading(false);
+     
     }
     catch (error) {
-      console.log("......error.........", error.response.data.message);
-      Alert.alert("Something went wrong!", error.response.data.message);
-      setIsLoading(false);
+      // console.log("......error.........", error.response.data.message);
+      //Alert.alert("Something went wrong!", error.response.data.message);
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
     }
+    setIsLoading(false);
   };
 
   return (
@@ -106,8 +108,9 @@ const Recipecategory = props => {
               vertical
               numColumns={2}
               // style={{ margin: 0 }}
+              keyExtractor={(item, index) => String(index)}
               data={recipecategory}
-              renderItem={({ item }) => (
+              renderItem={({ item,index }) => (
                 <TouchableOpacity
                   onPress={() => {
                     gotoRecipeDetails(item);
@@ -215,9 +218,7 @@ const Recipecategory = props => {
           </ScrollView>
         </View>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        ( <CustomLoader showLoader={isLoading}/>)}
 
     </SafeAreaView>
   );

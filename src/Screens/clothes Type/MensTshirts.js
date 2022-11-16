@@ -24,6 +24,7 @@ import Headers from '../../Routes/Headers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { API } from '../../Routes/Urls';
+import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -49,7 +50,7 @@ const MenTshirts = props => {
   const categoryID = props?.route?.params?.categoryID;
 
   useEffect(() => {
-     
+
 
     const unsubscribe = props.navigation.addListener('focus', () => {
       CLOTHStoresProduct();
@@ -68,20 +69,21 @@ const MenTshirts = props => {
       // console.log("status _SHOP_PRODUCTLIST", response.data.status);
       if (response.data.status == 1) {
         setshopitems(response.data.products)
-        setIsLoading(false);
+        // setIsLoading(false);
       }
       else {
-        setIsLoading(false);
+        // setIsLoading(false);
         Alert.alert('', 'Something went wrong please exit the app and try again');
       }
 
     }
     catch (error) {
-      console.log("CLOTHStores_Producterror.........", error.response.data.message);
-      Alert.alert('', 'Something went wrong please exit the app and try again');
-      setIsLoading(false);
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      // console.log("CLOTHStores_Producterror.........", error.response.data.message);
+      // Alert.alert('', 'Something went wrong please exit the app and try again');
+      // setIsLoading(false);
     }
-
+    setIsLoading(false);
   };
 
   const ShopFilter = async () => {
@@ -95,20 +97,21 @@ const MenTshirts = props => {
       if (response.data.status == 1) {
         setFilterPopUp(false);
         setshopitems(response.data.data)
-        setIsLoading(false);
+        // setIsLoading(false);
       } else {
         setFilterPopUp(false);
         Alert.alert('!', 'Something went wrong please exit the app and try again');
-        setIsLoading(false);
+        // setIsLoading(false);
       }
 
     }
     catch (error) {
       // console.log(".....ShopFilter.error.........", error.response.data.message);
-      Alert.alert('', 'Something went wrong please exit the app and try again');
-      setIsLoading(false);
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      // Alert.alert('', 'Something went wrong please exit the app and try again');
+      // setIsLoading(false);
     }
-
+    setIsLoading(false);
   };
   return (
     <SafeAreaView style={{
@@ -304,10 +307,13 @@ const MenTshirts = props => {
                   <View
                     style={{
                       flex: 1,
-                      justifyContent: 'flex-end',
-                      alignItems: 'center',
+                      // justifyContent: 'flex-end',
+                      // alignItems: 'center',
                       backgroundColor: 'rgba(140, 141, 142, 0.7)',
                     }}>
+                    <TouchableOpacity onPress={() => setFilterPopUp(false)}
+                      style={{ flex: 1, }}
+                    />
                     <View
                       style={{
                         // margin: 10,
@@ -371,7 +377,7 @@ const MenTshirts = props => {
                               textAlign: 'center',
                               fontSize: 16,
                               color: 'black',
-
+                              fontWeight: "400",
                               marginTop: 2,
                             }}>
                             Filter
@@ -421,8 +427,9 @@ const MenTshirts = props => {
 
                                   <Text
                                     style={{
+                                      fontWeight: "500",
                                       textAlign: 'left',
-                                      fontSize: 9,
+                                      fontSize: 11,
                                       color: ischecked == 'high_to_low' ? '#ffcc00' : '#8F93A0'
 
                                     }}>
@@ -468,8 +475,9 @@ const MenTshirts = props => {
 
                                   <Text
                                     style={{
+                                      fontWeight: "500",
                                       textAlign: 'left',
-                                      fontSize: 9,
+                                      fontSize: 11,
                                       color: ischecked == 'low_to_high' ? '#ffcc00' : '#8F93A0'
 
                                     }}>
@@ -753,9 +761,7 @@ const MenTshirts = props => {
 
         </>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        (<CustomLoader showLoader={isLoading} />)}
     </SafeAreaView>
   );
 };

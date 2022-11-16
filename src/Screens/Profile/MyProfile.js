@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, ActivityIndicator, Dimensions } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, ActivityIndicator, Dimensions,PermissionsAndroid,Platform  } from 'react-native'
 // import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, ActivityIndicator } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -13,6 +13,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
+import RNFetchBlob from 'rn-fetch-blob';
+import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -49,18 +51,136 @@ const MyProfile = (props) => {
             return 'Order dispatched'
         }
         else if (status == '3') {
-            return 'Order for delivery'
+            return 'Out for delivery'
         } else if (status == '4') {
             return 'Order delivered'
+        }
+        else if (status == '5') {
+            return 'Order Cancel'
         }
         else {
             return 'data not available'
         }
     }
+    function OrderDATE(data) {
+
+        if (data.order_status == '1') {
+            return data.order_placed
+        }
+        else if (data.order_status == '2') {
+            return data.odis_date
+        }
+        else if (data.order_status == '3') {
+            return data.ofd_date
+        } else if (data.order_status == '4') {
+            return data.odeliv_date
+        }
+        else {
+            return ''
+        }
+    };
 
     // console.log("props.route.params::", props.route.params)
     // const { UserProfile } = props.route.params
-
+ const checkPermission = async (download_url) => {
+        if (Platform.OS === 'ios') {
+        } else {
+          try {
+            const granted = await PermissionsAndroid.request(
+              PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+              {
+                title: 'Storage Permission Required',
+                message:
+                  'Application needs access to your storage to download File',
+              },
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+              downloadFile(download_url);
+              console.log('Storage Permission Granted.');
+            } else {
+              Alert.alert('Error', 'Storage Permission Not Granted');
+            }
+          } catch (err) {
+            // To handle permission related exception
+            console.log('ERROR' + err);
+          }
+        }
+      };
+    const getInvoiceUrl = async (item)=>{
+        console.log("item in profile",item.order_id);
+        // console.log("GetInvoiceUrl:In-api:",InvoiceMyorderid);
+        const ordertoken = await AsyncStorage.getItem("authToken");
+        try {
+            
+          const res = await axios.post(`${API.INVOICE}`, { "order_id":item?.order_id }, { headers: { "Authorization": ` ${ordertoken}` } });
+        
+          console.log('res', res.data)  
+          if(res.data.status == 1){
+            // checkPermission(res.data.url)
+            console.log('res status == 1', res.data.download_url)
+            checkPermission(res.data.download_url)
+          }
+        } catch (error) {
+          console.log('errorinvoiceAPI', error)
+       }
+      }
+ 
+const downloadFile = async (url) => {
+    let pdfUrl = url;
+    let DownloadDir =
+      Platform.OS == 'ios'
+        ? RNFetchBlob.fs.dirs.DocumentDir
+        : RNFetchBlob.fs.dirs.DownloadDir;
+    const {dirs} = RNFetchBlob.fs;
+    const dirToSave =
+      Platform.OS == 'ios' ? dirs.DocumentDir : dirs.DownloadDir;
+    const configfb = {
+      fileCache: true,
+      useDownloadManager: true,
+      notification: true,
+      mediaScannable: true,
+      title: 'Cosmologo',
+      path: `${dirToSave}.pdf`,
+    };
+    const configOptions = Platform.select({
+      ios: {
+        fileCache: configfb.fileCache,
+        title: configfb.title,
+        path: configfb.path,
+        appendExt: 'pdf',
+      },
+      android: configfb,
+    });
+    Platform.OS == 'android'
+      ? RNFetchBlob.config({
+          fileCache: true,
+          addAndroidDownloads: {
+            useDownloadManager: true,
+            notification: true,
+            path: `${DownloadDir}/.pdf`,
+            description: 'Cosmologo',
+            title: `invoice.pdf`,
+            mime: 'application/pdf',
+            mediaScannable: true,
+          },
+        })
+          .fetch('GET', `${pdfUrl}`)
+          .catch(error => {
+            console.warn(error.message);
+          })
+      : RNFetchBlob.config(configOptions)
+          .fetch('GET', `${pdfUrl}`, {})
+          .then(res => {
+            if (Platform.OS === 'ios') {
+              RNFetchBlob.fs.writeFile(configfb.path, res.data, 'base64');
+              RNFetchBlob.ios.previewDocument(configfb.path);
+            }
+            console.log('The file saved to ', res);
+          })
+          .catch(e => {
+            console.log('The file saved to ERROR', e.message);
+          });
+  };
     useEffect(() => {
         GetProfile();
     }, []);
@@ -68,29 +188,28 @@ const MyProfile = (props) => {
     const GetProfile = async () => {
         const usertkn = await AsyncStorage.getItem("authToken");
         console.log(usertkn);
-        setIsLoading(true)
+        setIsLoading(true);
         try {
             const response = await axios.get(`${API.GET_PROFILE}`, { headers: { "Authorization": ` ${usertkn}` } });
             // console.log("", response);
             console.log("ResponseProfile ::::", response.data.status);
             if (response.data.status == 1) {
-                setIsLoading(false);
+                
                 setUserprofile(response.data.data)
                 setorderdata(response.data.orders)
-                const Emaiil = response.data.data.email;
-                console.log(".......e,mail:",Emaiil);
-                await AsyncStorage.setItem('useremail',Emaiil);
+                
                 console.log("User_ordersdetails>>>", response.data.orders);
             } else {
                 Alert.alert('','Something went wrong please exit the app and try again.');
-                setIsLoading(false);
+                
             }
         }
         catch (error) {
             // console.log("Countryerror:", error.response.data.message);
-            Alert.alert('','Something went wrong please exit the app and try again.');
-            setIsLoading(false)
+            //Alert.alert('','Something went wrong please exit the app and try again.');
+            Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
         }
+        setIsLoading(false);
     };
 
     return (
@@ -228,7 +347,7 @@ const MyProfile = (props) => {
                             {orderdata.length > 0 ?
                                 orderdata.map((item, index) => {
                                     return (
-                                        <View style={{
+                                        <View key = {String(index)} style={{
                                             marginHorizontal: 6,
                                             height: 240,
                                             width: WIDTH * 0.97,
@@ -254,7 +373,8 @@ const MyProfile = (props) => {
 
                                                 </View>
 
-                                                <View style={{ backgroundColor: '#ffcc00', borderRadius: 20, height: 30, width: 140, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
+                                                <TouchableOpacity onPress={()=>{getInvoiceUrl(item)}}
+                                                style={{ backgroundColor: '#ffcc00', borderRadius: 20, height: 30, width: 140, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
                                                     <View style={{ width: 30, marginLeft: 6 }}>
                                                         <Image source={require('../assets/download1.png')}
                                                             style={{
@@ -263,11 +383,11 @@ const MyProfile = (props) => {
                                                             }} />
                                                     </View>
                                                     <View>
-                                                        <TouchableOpacity style={{ marginLeft: -10 }}>
+                                                        <View style={{ marginLeft: -10 }}>
                                                             <Text style={{ textAlign: 'left', fontSize: 10, color: 'white', }}>Download Invoice</Text>
-                                                        </TouchableOpacity>
+                                                        </View>
                                                     </View>
-                                                </View>
+                                                </TouchableOpacity>
 
 
                                             </View>
@@ -301,7 +421,7 @@ const MyProfile = (props) => {
                                                 <View style={{
                                                     justifyContent: "flex-start", alignItems: "flex-start", width: WIDTH * 0.97, marginLeft: 15,
                                                 }}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 15, color: '#455A64', fontWeight: "600" }}>{item.product_name.slice(0, 25) + '...'}</Text>
+                                                    <Text style={{ textAlign: 'left', fontSize: 15, color: '#455A64', fontWeight: "600" }}>{item.product_name.slice(0, 25)}</Text>
 
                                                     <View style={{ marginTop: 6, flexDirection: 'row', justifyContent: "flex-start", alignItems: "flex-start", height: 60, width: WIDTH * 0.97 }}>
 
@@ -371,7 +491,7 @@ const MyProfile = (props) => {
                                                     (<View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}>
                                                         <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "400" }}>{Orderstatus(item.order_status)}</Text>
                                                         <View style={{ marginTop: 6, }}>
-                                                            <Text style={{ textAlign: 'left', fontSize: 9, color: '#455A64', fontWeight: "400" }}>on {item.created_at}</Text>
+                                                            <Text style={{ textAlign: 'left', fontSize: 9, color: '#455A64', fontWeight: "400" }}>{OrderDATE(item)}</Text>
                                                         </View>
                                                     </View>)
                                                     :
@@ -479,9 +599,11 @@ const MyProfile = (props) => {
 
 
                 :
-                (<View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
-                    <ActivityIndicator size="large" color="#ffcc00" />
-                </View>)}
+                (<CustomLoader showLoader={isLoading}/>
+                // <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
+                //     <ActivityIndicator size="large" color="#ffcc00" />
+                // </View>
+                )}
         </SafeAreaView>
     );
 }

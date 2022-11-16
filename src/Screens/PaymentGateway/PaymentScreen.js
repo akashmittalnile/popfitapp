@@ -7,6 +7,7 @@ import axios from 'axios';
 import { API } from '../../Routes/Urls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { async } from 'regenerator-runtime';
+import CustomLoader from '../../Routes/CustomLoader';
 
 
 
@@ -77,7 +78,26 @@ export default function PaymentScreen(props) {
   };
 
   useEffect(() => {
-    // console.log('Plan data status::', props?.route?.params?.SubscriptionPlan)
+   
+    const checklogin = async () => {
+      let Usertoken = await AsyncStorage.getItem("authToken");
+      console.log("token.......", Usertoken);
+      setchecktoken(Usertoken);
+      if (Usertoken == null) {
+        Alert.alert('', 'Please login First ')
+        // props.navigation.navigate('LoginMain', {
+        //   screen: 'LoginSignUp',
+  
+        // });
+  
+      }
+      else {
+        // GetSubscriptionPlan(item.id);
+       
+        console.log("??????????????error",);
+      }
+    };
+    console.log('Plan data status::', props?.route?.params?.SubscriptionPlan)
     // console.log("Order_Amount:", props?.route?.params?.Totalprice);
     // console.log("ADDRESS seleted::", props?.route?.params?.SetAddrs);
     // const Totalprice = props?.route?.params?.Totalprice
@@ -85,13 +105,14 @@ export default function PaymentScreen(props) {
 
     // });
     // return unsubscribe;
-
+    checklogin()
 
   }, []);
+  
   const planpaymentdone = () => {
     console.log("subs...training plan:::");
     setOrderPlacedPopUp(false);
-    setIsLoading(false);
+    // setIsLoading(false);
     props.navigation.navigate("TrainingDetail")
 
   }
@@ -100,34 +121,38 @@ export default function PaymentScreen(props) {
   const gotostipepayment = async (id) => {
     // const PlanId = await AsyncStorage.getItem("Planid");
 
-    console.log("selected plain price:", amout, id,);
+    console.log("selected plain price:", amout.price_id, id);
     const Token = await AsyncStorage.getItem("authToken");
     const Plan_amout = amout != undefined ? amout.price : orderprice;
-    const plan_id = amout != undefined ? amout.id : null;
+    const plan_id = amout != undefined ? amout.price_id : null;
+  console.log('====================================');
+  console.log(amout.price_id, id,Token);
+  console.log('====================================');
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.STRIPE_PAYMENT}`, { 'method_id': id, 'plan_amount': JSON.stringify(Plan_amout), 'plan_id': plan_id },
+      const response = await axios.post(`${API.STRIPE_PAYMENT}`, { 'method_id': id, 'plan_amount': JSON.stringify(Plan_amout), 'plan_id': plan_id },   { headers: { "Authorization": ` ${Token != null ? Token : null}` } }
 
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "Authorization": ` ${Token}`
-          }
-        })
+        // {
+        //   headers: {
+        //     Accept: "application/json",
+        //     "Content-Type": "application/json",
+        //     "Authorization": ` ${Token}`
+        //   }}
+        
+        )
 
       console.log("Response.Stripe:", response.data);
 
       if (response.data.status == 1) {
-        console.log("Response.Stripe:", response.data.tran_id);
+        // console.log("Response.Stripe:", response.data.tran_id);
         if (amout == null) {
           setTransid(response.data.tran_id)
-          setIsLoading(false);
+         
           setOrderPlacedPopUp(true);
 
         } else if (amout != null) {
           setTransid(response.data.tran_id)
-          setIsLoading(false);
+        
           setPlanPlacedPopUp(true);
         }
         else {
@@ -154,11 +179,11 @@ export default function PaymentScreen(props) {
       // Alert.alert("payment failed not valid status !");
     }
     catch (error) {
-      // console.log("payment error:",error.response.data.message);
-      setIsLoading(false)
-      Alert.alert("something went wrong", error.response.data.message);
+      console.log("payment error:",error.response.data);
+      Alert.alert("","Please check your internet connection and try again.")
+      // Alert.alert('','Something went wrong please exit the app and try again')
     }
-
+    setIsLoading(false);
   };
 
   const OrderPlacedAfterpaymentdone = async () => {
@@ -175,7 +200,7 @@ export default function PaymentScreen(props) {
         console.log("status1:", response.data.message);
 
         setPlanPlacedPopUp(false);
-        setIsLoading(false);
+       
         props.navigation.navigate("MyOrder");
 
         // else if (planPlacedPopUp == "true") {
@@ -189,15 +214,16 @@ export default function PaymentScreen(props) {
 
       }
       else if (response.data.status == 0) {
-        setIsLoading(false);
-        Alert.alert('', 'Something went wrong please exit the app and try again');
+     
+        // Alert.alert('', 'Something went wrong please exit the app and try again');
         console.log("status0:", response.data.message);
       }
     } catch (error) {
-      setIsLoading(false);
-      Alert.alert('', 'Something went wrong please exit the app and try again');
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      // Alert.alert('', 'Something went wrong please exit the app and try again');
 
     }
+    setIsLoading(false);
   }
 
   return (
@@ -485,9 +511,7 @@ export default function PaymentScreen(props) {
         </ScrollView>)
         :
 
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        (<CustomLoader showLoader={isLoading}/>)}
     </SafeAreaView>
   );
 }

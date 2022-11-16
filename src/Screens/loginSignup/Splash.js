@@ -22,7 +22,7 @@ const Splash = (props) => {
       const usertkn = await AsyncStorage.getItem("authToken");
       //  setIsLoading(true)
       try {
-        const response = await axios.get(`${API.NOTIFICATION}`, { headers: { "Authorization": ` ${usertkn}` } });
+        const response = await axios.get(`${API.NOTIFICATION}`, { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } });
         let data = response?.data?.data?.length;
         console.log('incrementCounter _Splash', data);
         dispatch(incrementCounter(parseInt(data)));
@@ -33,6 +33,7 @@ const Splash = (props) => {
         // }
       }
       catch (error) {
+        Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
         // alert("SPLASH error", error);
         // setIsLoading(false)
         console.log("Splash_error:::", error);
@@ -47,7 +48,7 @@ const Splash = (props) => {
       // setIsLoading(true)
       try {
         const response = await axios.get(`${API.SHIPPING_DETAILS}`, {
-          'headers': { "Authorization": ` ${usertkn}` }
+          'headers': { "Authorization": ` ${usertkn != null ? usertkn : null}` }
         },
         );
         // console.log("", response);
@@ -65,6 +66,7 @@ const Splash = (props) => {
         // setIsLoading(false);
       }
       catch (error) {
+        Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
         console.log("Cartproducts_splash:::", error.response.data.message);
         // setIsLoading(false)
       }

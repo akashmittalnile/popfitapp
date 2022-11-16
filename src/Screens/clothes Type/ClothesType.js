@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { API } from '../../Routes/Urls';
 import { async } from 'regenerator-runtime';
+import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -61,19 +62,17 @@ const ClothesType = (props) => {
       if (response.data.shop_category.length != 0) {
         setshopitems(response.data.shop_category)
 
-        setIsLoading(false);
-      } else {
-        // Alert.alert("Clothing product status ==0 found from backend side");
-        setIsLoading(false);
-      }
+        // setIsLoading(false);
+      }  
 
     }
     catch (error) {
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
       // console.log("......error.........", error.response.data.message);
-      Alert.alert("Clothing Store!", error.response.data.message)
-      setIsLoading(false);
+      // Alert.alert("Clothing Store!", error.response.data.message)
+      
     }
-
+    setIsLoading(false);
   };
   return (
     <SafeAreaView style={{
@@ -155,7 +154,7 @@ const ClothesType = (props) => {
               // style={{ margin: 10 }}
               keyExtractor={(item, index) => String(index)} 
               data={shopitems}
-              renderItem={({ item }) => (
+              renderItem={({ item ,index}) => (
                 <TouchableOpacity onPress={() => {
                   gotoMensTshirts(item)
                 }}>
@@ -442,9 +441,11 @@ const ClothesType = (props) => {
           </ScrollView>
         </View>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        (<CustomLoader showLoader={isLoading}/>
+        // <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        //   <ActivityIndicator size="large" color="#ffcc00" />
+        // </View>
+        )}
     </SafeAreaView>
   );
 };

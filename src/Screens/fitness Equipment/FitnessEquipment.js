@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ActivityIndicator } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';
@@ -9,6 +9,7 @@ import { API } from '../../Routes/Urls';
 import Headers from '../../Routes/Headers';
 import { useSafeAreaFrame } from 'react-native-safe-area-context';
 import { async } from 'regenerator-runtime';
+import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -19,16 +20,16 @@ const FitnessEquipment = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [shopitems, setshopitems] = useState([]);
   const [imagepath, setimagepath] = useState("");
-  const [FilterPopup, setFilterPopUp] = useState(false);
+  // const [FilterPopup, setFilterPopUp] = useState(false);
 
 
-  const gotoDumbleSet =  (item) => {
-    
-      props.navigation.navigate("DumbleSet", {
-        categoryID: item.id,
-        SHOPID: FitnessID
-      })
-    
+  const gotoDumbleSet = (item) => {
+
+    props.navigation.navigate("DumbleSet", {
+      categoryID: item.id,
+      SHOPID: FitnessID
+    })
+
 
   }
 
@@ -62,19 +63,20 @@ const FitnessEquipment = (props) => {
       if (response.data.shop_category.length != 0) {
         setshopitems(response.data.shop_category)
 
-        setIsLoading(false);
+        // setIsLoading(false);
       } else {
         // Alert.alert("Fitness product status==0 found from backend side");
-        setIsLoading(false);
+        // setIsLoading(false);
       }
 
     }
     catch (error) {
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
       // console.log("......error.........", error.response.data.message);
-      Alert.alert("FitnessEquipment Store!", error.response.data.message)
-      setIsLoading(false);
+      // Alert.alert("FitnessEquipment Store!", error.response.data.message)
+    
     }
-
+    setIsLoading(false);
   };
   return (
     <SafeAreaView style={{
@@ -236,245 +238,11 @@ const FitnessEquipment = (props) => {
             />
 
 
-            {FilterPopup ? (
-              <Modal
-                animationType="fade"
-                transparent={true}
-                visible={FilterPopup}
-                onRequestClose={() => {
-                  setFilterPopUp(false);
-                }}>
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: 'flex-end',
-                    alignItems: 'center',
-                    backgroundColor: 'rgba(140, 141, 142, 0.7)',
-                  }}>
-                  <View
-                    style={{
-                      // margin: 10,
-                      backgroundColor: 'white',
-                      borderRadius: 20,
-                      // paddingTop: 20,
-                      width: "100%",
-                      height: "35%",
-                      // height: "60%",
-                      justifyContent: "center",
-                      alignItems: 'center',
-                      shadowColor: '#000',
-                      shadowOffset: {
-                        width: 0,
-                        height: 2,
-                      },
-                      shadowOpacity: 0.25,
-                      shadowRadius: 4,
-                      elevation: 5,
-                    }}>
-                    <View
-                      style={{
-                        backgroundColor: 'white',
-                        // height: 480,
-                        height: "100%",
-                        width: "99%",
-                        // marginHorizontal: 20,
-                        alignItems: 'center',
-                        borderRadius: 20,
-                        flexDirection: 'column',
-                      }}>
-                      <View
-                        style={{
-                          marginTop: 20,
-                          // marginHorizontal: 20,
-                          height: 25,
-                          flexDirection: 'row',
-                          // backgroundColor: 'red',
-                        }}>
-                        <View
-                          style={{
-                            width: 25,
-                            height: 25,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            borderRadius: 40 / 2,
-                          }}>
-                          <Image
-                            source={require('../assets/filterBlack.png')}
-                            style={{
-                              width: 20,
-                              height: 15,
-                              alignSelf: 'center',
-                            }}
-                          />
-                        </View>
-                        <Text
-                          style={{
-                            marginLeft: 10,
-                            textAlign: 'center',
-                            fontSize: 16,
-                            color: 'black',
-
-                            marginTop: 2,
-                          }}>
-                          Filter
-                        </Text>
-                      </View>
-
-                      <View
-                        style={{
-                          width: '90%',
-                          height: 60,
-                          flexDirection: 'row',
-                          marginTop: 30,
-                        }}>
-                        <View
-                          style={{
-                            justifyContent: 'center',
-                            flexDirection: 'row',
-                            height: 40,
-                          }}>
-                          <TouchableOpacity onPress={() => { setChecked('high_to_low') }}>
-                            <View
-                              style={{
-                                width: 160,
-                                flex: 1,
-                                borderRadius: 35,
-                                // borderColor: '#ffcc00',
-                                borderWidth: 1,
-                                borderColor: ischecked == 'high_to_low' ? '#ffcc00' : '#8F93A0'
-                              }}>
-                              <View
-                                style={{
-                                  flex: 1,
-                                  flexDirection: 'row',
-                                  justifyContent: 'center',
-                                  alignItems: 'center',
-                                }}>
-                                <Image
-                                  source={ischecked == 'high_to_low' ? require('../assets/updownYellow.png') : require('../assets/updownGrey.png')}
-                                  style={{
-                                    width: 15,
-                                    height: 15,
-                                    alignSelf: 'center',
-                                    marginRight: 10,
-                                  }}
-                                />
-
-                                <Text
-                                  style={{
-                                    textAlign: 'left',
-                                    fontSize: 9,
-                                    color: ischecked == 'high_to_low' ? '#ffcc00' : '#8F93A0'
-
-                                  }}>
-                                  Higher to Lower Price
-                                </Text>
-                              </View>
-                            </View>
-                          </TouchableOpacity>
-                        </View>
-                        <View
-                          style={{
-                            marginLeft: 10,
-                            justifyContent: 'center',
-                            flexDirection: 'row',
-                            height: 40,
-                          }}>
-                          <TouchableOpacity onPress={() => { setChecked('low_to_high') }}>
-                            <View
-                              style={{
-                                width: 160,
-                                flex: 1,
-                                borderRadius: 35,
-                                // borderColor: '#bbbaba',
-                                borderWidth: 1,
-                                borderColor: ischecked == 'low_to_high' ? '#ffcc00' : '#8F93A0'
-                              }}>
-                              <View
-                                style={{
-                                  flex: 1,
-                                  flexDirection: 'row',
-                                  justifyContent: 'center',
-                                  alignItems: 'center',
-                                }}>
-                                <Image
-                                  source={ischecked == 'low_to_high' ? require('../assets/updownYellow.png') : require('../assets/updownGrey.png')}
-                                  style={{
-                                    width: 15,
-                                    height: 15,
-                                    alignSelf: 'center',
-                                    marginRight: 10,
-                                  }}
-                                />
-
-                                <Text
-                                  style={{
-                                    textAlign: 'left',
-                                    fontSize: 9,
-                                    color: ischecked == 'low_to_high' ? '#ffcc00' : '#8F93A0'
-
-                                  }}>
-                                  Lower to Higher Price
-                                </Text>
-                              </View>
-                            </View>
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-
-
-
-                      <View
-                        style={{
-                          height: 200,
-                          marginTop: 20,
-                        }}>
-                        <View
-                          style={{
-                            flex: 1,
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                          }}>
-                          <TouchableOpacity
-                            onPress={() => {
-                              ShopFilter();
-
-                            }}>
-                            <View
-                              style={{
-                                marginTop: 30,
-                                borderRadius: 25,
-                                width: 200,
-                                height: 45,
-                                backgroundColor: '#ffcc00',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                              }}>
-                              <Text
-                                style={{
-                                  alignSelf: 'center',
-                                  textAlign: 'center',
-                                  fontSize: 14,
-                                  color: 'white',
-
-                                }}>
-                                Apply
-                              </Text>
-                            </View>
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    </View>
-                  </View>
-                </View>
-              </Modal>
-            ) : null}
+            
           </ScrollView>
         </View>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        ( <CustomLoader showLoader={isLoading}/>)}
     </SafeAreaView>
   );
 };

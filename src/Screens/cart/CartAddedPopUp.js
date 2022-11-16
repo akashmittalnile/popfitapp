@@ -14,6 +14,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
 import { CartCounter } from '../../Redux/actions/UpdateCounter';
 import { async } from 'regenerator-runtime';
+import CustomLoader from '../../Routes/CustomLoader';
+import { CommonActions } from '@react-navigation/native';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -46,7 +48,9 @@ const CartAdded = (props) => {
 
     }
     const gotoProductDetailsview = (item) => {
-
+        console.log('====================================');
+        console.log("gotoProductDetailsview", item);
+        console.log('====================================');
         props.navigation.navigate("ProductDetail", {
             Cartaddedview: item
         });
@@ -117,53 +121,56 @@ const CartAdded = (props) => {
                 GetShippingProducts();
                 // Alert.alert("Added to cart")
                 // setSubtotal(response.data.sub_total);
-                setIsLoading(false);
+                // setIsLoading(false);
             }
             else {
                 Alert.alert("Add to cart", 'please login first!')
                 // setSubtotal(response.data.sub_total);
-                setIsLoading(false);
+                // setIsLoading(false);
             }
 
 
         }
         catch (error) {
-            Alert.alert( '','Your message has been sent successfully we will contact you shortly.')
-            setIsLoading(false);
+            Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+            // Alert.alert( '','Your message has been sent successfully we will contact you shortly.')
+
 
         }
-
+        setIsLoading(false);
     };
     const GetShippingProducts = async () => {
-
+        const usertkn = await AsyncStorage.getItem("authToken");
         // console.log(".....usertoken.....GetShippingProducts...", producttoken);
+        if (usertkn != null) {
+            setIsLoading(true)
+            try {
 
-        setIsLoading(true)
-        try {
-            const usertkn = await AsyncStorage.getItem("authToken");
-            const response = await axios.get(`${API.SHIPPING_DETAILS}`, {
-                'headers': { "Authorization": ` ${usertkn}` }
-            },
-            );
-            // console.log("", response);
-            // console.log("ResponseShippingProducts(product) ::::", response.data.data);
-            setproductdata(response.data.data);
-            let cartdata = response.data.data.length;
-            console.log("cartdataReducer.....:", cartdata);
-            dispatch(CartCounter(parseInt(cartdata)));
-            setuseraddress(response.data.address_lists);
-            setSubtotal(response.data.sub_total);
-            setTax(response.data.tax);
-            setcoupon(response.data.coupon_price);
-            setshipping_cost(response.data.shipping_cost);
-            setTotal(response.data.amount);
-            setIsLoading(false);
+                const response = await axios.get(`${API.SHIPPING_DETAILS}`, {
+                    'headers': { "Authorization": ` ${usertkn != null ? usertkn : null}` }
+                },
+                );
+                // console.log("", response);
+                // console.log("ResponseShippingProducts(product) ::::", response.data.data);
+                setproductdata(response.data.data);
+                let cartdata = response.data.data.length;
+                console.log("cartdataReducer.....:", cartdata);
+                dispatch(CartCounter(parseInt(cartdata)));
+                setuseraddress(response.data.address_lists);
+                setSubtotal(response.data.sub_total);
+                setTax(response.data.tax);
+                setcoupon(response.data.coupon_price);
+                setshipping_cost(response.data.shipping_cost);
+                setTotal(response.data.amount);
+                // setIsLoading(false);
+            }
+            catch (error) {
+                Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+                // Alert.alert( '','Your message has been sent successfully we will contact you shortly.');
+                // setIsLoading(false)
+            }
         }
-        catch (error) {
-            Alert.alert( '','Your message has been sent successfully we will contact you shortly.');
-            setIsLoading(false)
-        }
-
+        setIsLoading(false);
     };
 
 
@@ -203,29 +210,31 @@ const CartAdded = (props) => {
     // };
 
     const ProductRemovecart = async (item) => {
+        const usertkn = await AsyncStorage.getItem("authToken");
         const cartaddid = item.cart_id;
         // console.log("Remove_productin cart.....", cartaddid);
         setIsLoading(true);
         try {
-            const usertkn = await AsyncStorage.getItem("authToken");
+
             const response = await axios.post(`${API.PRODUCT_DETAILS_REMOVE_ITEM}`, { "cart_id": cartaddid }, {
-                'headers': { "Authorization": ` ${usertkn}` }
+                'headers': { "Authorization": ` ${usertkn != null ? usertkn : null}` }
             },);
-            Alert.alert('','Removed item successfully');
+            Alert.alert('', 'Removed item successfully');
             // console.log(":::::::::ProductRemovecart_Response>>>", response.data.message);
             // console.log("status _ProductRemovecart:", response.data.status);
             GetShippingProducts();
             // props.navigation.goBack();
             // setProductitems(response.data.data)
-            setIsLoading(false);
+            // setIsLoading(false);
         }
         catch (error) {
-            Alert.alert( '','Your message has been sent successfully we will contact you shortly.')
+            Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+            // Alert.alert( '','Your message has been sent successfully we will contact you shortly.')
             // console.log("....ProductRemovecart..error. cartscreen........", error.response.data.message);
-            setIsLoading(false);
+            // setIsLoading(false);
 
         }
-
+        setIsLoading(false);
     };
 
 
@@ -240,7 +249,7 @@ const CartAdded = (props) => {
                 Backicon={{
                     visible: true,
                 }}
-                BackicononClick={() => { props.navigation.goBack() }}
+                BackicononClick={() => { props.navigation.dispatch(CommonActions.goBack()); }}
 
                 CartIcon={{
                     visible: true,
@@ -342,8 +351,9 @@ const CartAdded = (props) => {
                                                 vertical
                                                 data={productdata}
                                                 keyExtractor={(item, index) => String(index)}
-                                                renderItem={({ item }) => {
-                                                    return (<TouchableOpacity onPress={() => { gotoProductDetailsview(item) }}>
+                                                renderItem={({ item, index }) => {
+                                                    return (<TouchableOpacity
+                                                        onPress={() => { gotoProductDetailsview(item) }}>
                                                         <View style={{
                                                             marginHorizontal: 10,
                                                             marginTop: 6,
@@ -355,16 +365,8 @@ const CartAdded = (props) => {
                                                             justifyContent: "center",
                                                             alignItems: "center",
                                                             borderWidth: 1,
-                                                            borderColor: "#FFFFFF",
-                                                            shadowColor: '#000000',
-                                                            shadowOffset: {
-                                                                width: 0,
-                                                                height: 3
-                                                            },
-                                                            shadowRadius: 1,
-                                                            shadowOpacity: 1.0,
-                                                            elevation: 6,
-                                                            // zIndex: 999,
+                                                            borderColor: "#d6d6d6",
+
                                                             // flex: 1
                                                         }}>
                                                             <TouchableOpacity onPress={() => ProductRemovecart(item)}
@@ -706,9 +708,11 @@ const CartAdded = (props) => {
                     }
                 </>
                 :
-                (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                    <ActivityIndicator size="large" color="#ffcc00" />
-                </View>)}
+                (<CustomLoader showLoader={isLoading} />
+                    // <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                    //     <ActivityIndicator size="large" color="#ffcc00" />
+                    // </View>
+                )}
         </SafeAreaView >
     )
 }

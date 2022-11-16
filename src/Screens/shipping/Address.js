@@ -13,6 +13,7 @@ import axios from 'axios';
 import * as yup from 'yup'
 import { Formik } from 'formik'
 import Headers from '../../Routes/Headers';
+import CustomLoader from '../../Routes/CustomLoader';
 
 // let unsubscribe;
 var WIDTH = Dimensions.get('window').width;
@@ -126,28 +127,29 @@ const Address = (props) => {
                     'headers': { "Authorization": ` ${usertkn}` }
                 })
                     .then(function (response) {
-                        setIsLoading(false);
+                        // setIsLoading(false);
                         console.log('res----->', response.data)
                         GetShippingProducts()
                         setData(false)
                     })
                     .catch(function (error) {
-                        setIsLoading(false)
+                        // setIsLoading(false)
                         alert("Please enter valid email or password")
                         console.log(error)
 
                     })
             } catch (error) {
-                setIsLoading(false)
-                alert("An error has occurred");
+                // setIsLoading(false)
+                Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+
                 console.log("gotocurrentpage_error in address ...", error)
 
             }
         }
         else {
-            setIsLoading(false)
+            // setIsLoading(false)
             alert("Please enter both fields")
-        }
+        } setIsLoading(false);
 
     }
     console.log('item check-->>>>>', checkedItem);
@@ -188,13 +190,14 @@ const Address = (props) => {
             setproductdata(response.data.data);
             setuseraddress(response.data.address_lists);
             setCheckedItem(props?.route?.params?.address)
-            setIsLoading(false);
+            // setIsLoading(false);
         }
         catch (error) {
+            Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
             console.log("ShippingProductserror::Address_screen:", error.response.data.message);
-            setIsLoading(false);
+            // setIsLoading(false);
         }
-
+        setIsLoading(false);
     };
 
 
@@ -208,17 +211,19 @@ const Address = (props) => {
             console.log(":::::::::ItemRemove_Response>>>", response.data);
             if (response.data.status == "1") {
                 GetShippingProducts();
-                setIsLoading(false);
+                // setIsLoading(false);
             }
             else if (response.data.status == "0") {
                 alert("something went wrong");
-                setIsLoading(false);
+                // setIsLoading(false);
             }
         }
         catch (error) {
+            Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
             console.log("..ItemRemove....error.........", error.response.data.message);
-            setIsLoading(false);
+            // setIsLoading(false);
         }
+        setIsLoading(false);
     };
     const ItemUpdate = async () => {
         const usertkn = await AsyncStorage.getItem("authToken");
@@ -243,12 +248,14 @@ const Address = (props) => {
             clearState();
             setData(false)
             GetShippingProducts();
-            setIsLoading(false);
+            // setIsLoading(false);
         }
 
         catch (error) {
+            Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
             console.log("..ItemUpdate....error.........", error);
-        } setIsLoading(false);
+        }
+        setIsLoading(false);
     };
     const onChangeLandmarkHandler = landmark => {
         setlandmark(landmark);
@@ -303,309 +310,324 @@ const Address = (props) => {
             />
             {!isLoading ?
                 (<>
-                    <Text style={{ marginLeft: 15, marginTop: 15, textAlign: 'left', fontSize: 20, color: '#000000', fontWeight: "500" }}>Select a Delivery Address</Text>
-                    <View
-                        style={{
-                            justifyContent: "center",
-                            alignItems: "flex-start",
-                            flexDirection: "row",
-                            height: '74%',
-                            marginHorizontal: 10,
-                            marginTop: 10,
-                        }}>
-                        {/* Please Enter Your Shipping Address */}
-                        <ScrollView nestedScrollEnabled={true}>
-                            <FlatList
-                                vertical
-                                data={useraddress}
-                                // keyExtractor={item => item.id}
-                                renderItem={({ item, index }) => {
-                                    // console.warn('checked ----------->', item, props?.route?.params?.address)
-                                    return <View style={{
-                                        width: '95%',
-                                        height: 150,
+                    {
+                        useraddress.length > 0 ?
+                            (<View style={{flex:1}}>
+                                <Text style={{ marginLeft: 15, marginTop: 15, textAlign: 'left', fontSize: 18, color: '#000000', fontWeight: "500" }}>Select a Delivery Address</Text>
+                                <View
+                                    style={{
+                                        justifyContent: "center",
+                                        alignItems: "flex-start",
+                                        flexDirection: "row",
+                                        height: '74%',
                                         marginHorizontal: 10,
-                                        // marginLeft: 10,
-                                        // marginRight: 15,
-                                        shadowColor: '#000000',
-                                        // shadowOffset: { width: 0, height: 4 },
-                                        shadowRadius: 6,
-                                        shadowOpacity: 0.2,
-                                        //elevation: 3,
-                                        borderRadius: 20,
-                                        borderColor: "#ffcc00",
-                                        borderWidth: 1,
-                                        // backgroundColor: 'red'
                                         marginTop: 10,
-                                        marginBottom: 10
                                     }}>
-                                        <View style={{ flexDirection: 'column' }}>
-                                            <View style={{ height: 30, flexDirection: 'row', marginLeft: 15 }}>
-                                                <View style={{ width: 25, height: 50, justifyContent: "center", alignItems: 'center', marginTop: 15, left: 6 }} >
-                                                    <TouchableOpacity onPress={() => {
-                                                        (isSecureEntry => !isSecureEntry);
-                                                        props?.route?.params?.setAddress(item)
-                                                        setCheckedItem(item)
+                                    {/* Please Enter Your Shipping Address */}
+                                    <ScrollView nestedScrollEnabled={true}>
+                                        <FlatList
+                                            vertical
+                                            data={useraddress}
+                                            keyExtractor={(item, index) => String(index)}
+
+                                            renderItem={({ item, index }) => {
+                                                // console.warn('checked ----------->', item, props?.route?.params?.address)
+                                                return <View style={{
+                                                    width: '95%',
+                                                    height: 150,
+                                                    marginHorizontal: 10,
+                                                    // marginLeft: 10,
+                                                    // marginRight: 15,
+                                                    shadowColor: '#000000',
+                                                    // shadowOffset: { width: 0, height: 4 },
+                                                    shadowRadius: 6,
+                                                    shadowOpacity: 0.2,
+                                                    //elevation: 3,
+                                                    borderRadius: 20,
+                                                    borderColor: "#ffcc00",
+                                                    borderWidth: 1,
+                                                    // backgroundColor: 'red'
+                                                    marginTop: 10,
+                                                    marginBottom: 10
+                                                }}>
+                                                    <View style={{ flexDirection: 'column' }}>
+                                                        <View style={{ height: 30, flexDirection: 'row', marginLeft: 15 }}>
+                                                            <View style={{ width: 25, height: 50, justifyContent: "center", alignItems: 'center', marginTop: 15, left: 6 }} >
+                                                                <TouchableOpacity onPress={() => {
+                                                                    (isSecureEntry => !isSecureEntry);
+                                                                    props?.route?.params?.setAddress(item)
+                                                                    setCheckedItem(item)
+
+                                                                }}>
+
+                                                                    <Image source={
+                                                                        checkedItem.id != item.id
+                                                                            ? require('../assets/unchecked.png')
+                                                                            : require('../assets/checked.png')}
+                                                                    />
+                                                                </TouchableOpacity>
+                                                            </View>
+                                                            <View style={{ flex: 1, marginTop: 10, left: 20, }}>
+                                                                <Text style={{ textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "500", fontSize: 16 }}>{item.address_type}</Text>
+                                                            </View>
+
+                                                        </View>
+                                                    </View>
+
+                                                    <View style={{ marginHorizontal: 10, marginLeft: 50, width: "80%", right: -9, height: 65, marginTop: 5, paddingVertical: 4 }}>
+                                                        <ScrollView>
+                                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#676767', fontWeight: '400' }}>{item.full_name}, {item.house_no}, {item.area_village},  {item.city}, {item.landmark}, {item.state}, {item.pincode}, {item.phone}
+                                                            </Text>
+                                                        </ScrollView>
+                                                    </View>
+
+
+                                                    <View style={{ flexDirection: 'row', left: 30, marginTop: 10, position: "absolute", bottom: 10 }}>
+
+                                                        <View style={{ width: 25, height: 25, justifyContent: "center", alignItems: 'center', marginTop: 10, left: 27 }}>
+                                                            <TouchableOpacity onPress={() => { aa(item) }}>
+                                                                <Image source={require('../assets/Pen.png')}
+                                                                />
+                                                            </TouchableOpacity>
+
+                                                        </View>
+
+
+
+                                                        <View style={{ width: 29, height: 29, justifyContent: "center", alignItems: 'center', borderRadius: 20 / 2, marginTop: 10, left: 57, }}>
+                                                            <TouchableOpacity onPress={() => { ItemRemove(item) }}>
+                                                                <Image source={require('../assets/dustbin.png')}
+                                                                />
+                                                            </TouchableOpacity>
+                                                        </View>
+
+                                                        <TouchableOpacity style={{ width: 170, height: 30, justifyContent: "center", alignItems: 'center', borderRadius: 20, marginTop: 9, left: 80, backgroundColor: "#FFCC00" }}
+                                                            onPress={() => {
+                                                                setisSecureEntry(true)
+                                                                setCheckedItem(item),
+                                                                    props.navigation.navigate("ShippingDetail", {
+                                                                        setselectaddress: item
+                                                                    })
+                                                            }}>
+                                                            <View style={{}}>
+                                                                {/* <Image source={require('../assets/buttonSave.png')}
+                                                    /> */}
+                                                                <Text style={{ color: '#FFFFFF', fontWeight: "400", fontSize: 12, textAlign: 'left' }}>Select this Address</Text>
+                                                            </View>
+                                                        </TouchableOpacity>
+                                                    </View>
+                                                </View>
+                                            }
+                                            }
+                                        /></ScrollView>
+                                </View>
+
+                                <TouchableOpacity onPress={() => { setShippingAddressPopUp(true) }} style={{ height: 70, backgroundColor: 'white', position: "absolute", bottom: 0 }}>
+                                    <View
+                                        style={{
+                                            // padding:10,
+                                            marginHorizontal: 18,
+                                            height: 60,
+                                            width: "89%",
+                                            // backgroundColor:"transparent",
+                                            // paddingVertical:6,
+                                            backgroundColor: 'white',
+                                            borderWidth: 1,
+                                            borderColor: '#FFCC00',
+                                            borderRadius: 20,
+                                            flexDirection: 'row',
+                                            alignItems: "center",
+                                            justifyContent: "center",
+
+                                            // marginTop:10
+                                        }}>
+                                        <View style={{
+
+                                            height: 40,
+                                            justifyContent: 'center',
+                                            alignItems: "center",
+                                            width: 40,
+
+                                        }}>
+
+                                            <View style={{ width: 25, height: 25, justifyContent: "center", alignItems: 'center', borderRadius: 25 / 2 }}>
+                                                <Image
+                                                    style={{
+                                                        width: 25,
+                                                        height: 35, alignSelf: 'center', left: 27
+                                                    }}
+
+
+                                                    source={require('../assets/MapPin.png')}
+                                                />
+                                            </View>
+
+                                        </View>
+
+                                        <View style={{ flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', width: WIDTH * 0.85, marginLeft: 10, height: 60 }}>
+
+                                            <View style={{
+                                                flexDirection: 'column', justifyContent: 'center',
+                                                alignItems: "center", marginTop: 12
+                                            }}>
+                                                < View style={{ justifyContent: "flex-start", alignItems: 'flex-start' }}>
+                                                    <Text style={{ textAlign: 'left', fontSize: 17, color: 'black', fontWeight: '500', left: 34, marginTop: 5 }}>Create a new address</Text>
+                                                </View>
+                                            </View>
+                                        </View>
+                                    </View>
+                                </TouchableOpacity>
+
+
+
+                                {ShippingAddressPopUp ? (
+                                    <Modal
+                                        animationType="fade"
+                                        transparent={true}
+                                        visible={ShippingAddressPopUp}
+                                        onShow={() => {
+                                            console.warn('re------>', pincode);
+                                        }}
+                                        onRequestClose={() => {
+                                            setShippingAddressPopUp(false);
+                                        }}>
+                                        <View
+                                            style={{
+                                                flex: 1,
+                                                justifyContent: 'flex-end',
+                                                alignItems: 'center',
+                                                backgroundColor: 'rgba(140, 141, 142, 0.7)',
+                                            }}>
+                                            <ScrollView>
+                                                <View
+                                                    style={{
+                                                        //margin: 10,
+                                                        width: "100%",
+                                                        // height: "50%",
+                                                        backgroundColor: '#FFFFFF',
+                                                        borderRadius: 20,
+                                                        marginTop: 111,
+                                                        // justifyContent: "center",
+                                                        alignItems: 'center',
+                                                        shadowColor: '#000',
+                                                        shadowOffset: {
+                                                            width: 0,
+                                                            height: 2,
+                                                        },
+                                                        shadowOpacity: 0.25,
+                                                        shadowRadius: 4,
+                                                        elevation: 6,
 
                                                     }}>
 
-                                                        <Image source={
-                                                            checkedItem.id != item.id
-                                                                ? require('../assets/unchecked.png')
-                                                                : require('../assets/checked.png')}
+                                                    <View style={{
+
+                                                        height: "100%",
+                                                        width: WIDTH * 0.95,
+                                                        // paddingTop: 20,
+                                                        // padding: 10,
+                                                        marginHorizontal: 10,
+                                                        // justifyContent: "center",
+                                                        // marginHorizontal: 15,
+                                                        borderRadius: 20,
+                                                        //marginBottom: 10,
+                                                        alignItems: 'center',
+                                                        flexDirection: 'column'
+                                                    }}>
+
+                                                        <View style={{ marginTop: 15, marginHorizontal: 20, height: 30, flexDirection: "row", justifyContent: "center", alignItems: 'center' }}>
+                                                            <Text style={{ marginTop: 2, marginLeft: 10, textAlign: 'center', fontSize: 20, color: '#000000', fontWeight: '500' }}>Add Address</Text>
+
+
+                                                        </View>
+                                                        <TextInput style={styl.textInput}
+                                                            placeholder='Full Name(Required)*'
+                                                            label="Full Name"
+                                                            value={full_name}
+                                                            onChangeText={e => onChangeNameHandler(e)}
                                                         />
-                                                    </TouchableOpacity>
-                                                </View>
-                                                <View style={{ flex: 1, marginTop: 10, left: 20, }}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "500", fontSize: 16 }}>{item.address_type}</Text>
-                                                </View>
+                                                        <TextInput style={styl.textInput}
+                                                            placeholder='Phone number(Required)*'
+                                                            label="phone"
+                                                            value={phone}
+                                                            onChangeText={e => onChangePhoneHandler(e)}
+                                                        />
+                                                        <TextInput style={styl.textInput}
+                                                            placeholder='Pincode(Required)*'
+                                                            label="pin code"
+                                                            value={pincode.toString()}
+                                                            onChangeText={e => onChangePinHandler(e)}
+                                                        />
+                                                        <TextInput style={styl.textInput}
+                                                            placeholder='State(Required)*'
+                                                            label="State"
+                                                            value={state}
+                                                            onChangeText={e => onChangeStateHandler(e)}
+                                                        />
+                                                        <TextInput style={styl.textInput}
+                                                            placeholder='City(Required)*'
+                                                            label="city"
+                                                            value={city}
+                                                            onChangeText={e => onChangeCityHandler(e)}
+                                                        />
 
-                                            </View>
-                                        </View>
+                                                        <TextInput style={styl.textInput}
+                                                            placeholder='House number(Required)*'
+                                                            label="house no"
+                                                            value={house_no}
+                                                            onChangeText={e => onChangeHouseHandler(e)}
+                                                        />
 
-                                        <View style={{ marginHorizontal: 10, marginLeft: 50, width: "80%", right: -9, height: 65, marginTop: 5, paddingVertical: 4 }}>
-                                            <ScrollView>
-                                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#676767', fontWeight: '400' }}>{item.full_name}, {item.house_no}, {item.area_village},  {item.city}, {item.landmark}, {item.state}, {item.pincode}, {item.phone}
-                                                </Text>
+                                                        <TextInput style={styl.textInput}
+                                                            placeholder='Roard name,Area,Colony(Required)*'
+                                                            label="area village"
+                                                            value={area_village}
+                                                            onChangeText={e => onChangeAreaHandler(e)}
+                                                        />
+                                                        <TextInput style={styl.textInput}
+                                                            placeholder='Landmark(Required)*'
+                                                            label="landmark"
+                                                            value={landmark}
+                                                            onChangeText={e => onChangeLandmarkHandler(e)}
+                                                        />
+
+                                                        <TextInput style={styl.textInput}
+                                                            placeholder='Type of address'
+                                                            label="Address type"
+                                                            value={address_type}
+                                                            onChangeText={e => onChangeAddressHandler(e)}
+                                                        />
+                                                        <View style={{ justifyContent: "center", alignItems: "center", marginBottom: 20, flexDirection: 'row', height: 38, marginHorizontal: 20, marginTop: 30 }}>
+                                                            <TouchableOpacity
+                                                                onPress={() => { data == true ? ItemUpdate() : gotocurrentpage() }} >
+                                                                <View style={{ justifyContent: 'center', width: 110, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
+                                                                    <Text style={styl.text}>Save </Text>
+                                                                </View>
+                                                            </TouchableOpacity>
+                                                        </View>
+                                                    </View>
+                                                </View>
                                             </ScrollView>
                                         </View>
-
-
-                                        <View style={{ flexDirection: 'row', left: 30, marginTop: 10, position: "absolute", bottom: 10 }}>
-
-                                            <View style={{ width: 25, height: 25, justifyContent: "center", alignItems: 'center', marginTop: 10, left: 27 }}>
-                                                <TouchableOpacity onPress={() => { aa(item) }}>
-                                                    <Image source={require('../assets/Pen.png')}
-                                                    />
-                                                </TouchableOpacity>
-
-                                            </View>
-
-
-
-                                            <View style={{ width: 29, height: 29, justifyContent: "center", alignItems: 'center', borderRadius: 20 / 2, marginTop: 10, left: 57, }}>
-                                                <TouchableOpacity onPress={() => { ItemRemove(item) }}>
-                                                    <Image source={require('../assets/dustbin.png')}
-                                                    />
-                                                </TouchableOpacity>
-                                            </View>
-
-                                            <TouchableOpacity style={{ width: 170, height: 30, justifyContent: "center", alignItems: 'center', borderRadius: 20, marginTop: 9, left: 80, backgroundColor: "#FFCC00" }}
-                                                onPress={() => {
-                                                    setisSecureEntry(true)
-                                                    setCheckedItem(item),
-                                                        props.navigation.navigate("ShippingDetail", {
-                                                            setselectaddress: item
-                                                        })
-                                                }}>
-                                                <View style={{}}>
-                                                    {/* <Image source={require('../assets/buttonSave.png')}
-                                                    /> */}
-                                                    <Text style={{ color: '#FFFFFF', fontWeight: "400", fontSize: 12, textAlign: 'left' }}>Select this Address</Text>
-                                                </View>
-                                            </TouchableOpacity>
-                                        </View>
-                                    </View>
-                                }
-                                }
-                            /></ScrollView>
-                    </View>
-
-                    <TouchableOpacity onPress={() => { setShippingAddressPopUp(true) }} style={{ height: 70, backgroundColor: 'white', position: "absolute", bottom: 0 }}>
-                        <View
-                            style={{
-                                // padding:10,
-                                marginHorizontal: 18,
-                                height: 60,
-                                width: "89%",
-                                // backgroundColor:"transparent",
-                                // paddingVertical:6,
-                                backgroundColor: 'white',
-                                borderWidth: 1,
-                                borderColor: '#FFCC00',
-                                borderRadius: 20,
-                                flexDirection: 'row',
-                                alignItems: "center",
-                                justifyContent: "center",
-
-                                // marginTop:10
+                                    </Modal>
+                                ) : null}
+                            </View>)
+                            :
+                            (<View style={{
+                                justifyContent: "center", alignItems: "center", width: WIDTH,
+                                height: 200, backgroundColor: "white", flex: 1,
                             }}>
-                            <View style={{
-
-                                height: 40,
-                                justifyContent: 'center',
-                                alignItems: "center",
-                                width: 40,
-
-                            }}>
-
-                                <View style={{ width: 25, height: 25, justifyContent: "center", alignItems: 'center', borderRadius: 25 / 2 }}>
-                                    <Image
-                                        style={{
-                                            width: 25,
-                                            height: 35, alignSelf: 'center', left: 27
-                                        }}
-
-
-                                        source={require('../assets/MapPin.png')}
-                                    />
-                                </View>
-
-                            </View>
-
-                            <View style={{ flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', width: WIDTH * 0.85, marginLeft: 10, height: 60 }}>
-
-                                <View style={{
-                                    flexDirection: 'column', justifyContent: 'center',
-                                    alignItems: "center", marginTop: 12
-                                }}>
-                                    < View style={{ justifyContent: "flex-start", alignItems: 'flex-start' }}>
-                                        <Text style={{ textAlign: 'left', fontSize: 17, color: 'black', fontWeight: '500', left: 34, marginTop: 5 }}>Add Address</Text>
-                                    </View>
-                                </View>
-                            </View>
-                        </View>
-                    </TouchableOpacity>
-
-
-
-                    {ShippingAddressPopUp ? (
-                        <Modal
-                            animationType="fade"
-                            transparent={true}
-                            visible={ShippingAddressPopUp}
-                            onShow={() => {
-                                console.warn('re------>', pincode);
-                            }}
-                            onRequestClose={() => {
-                                setShippingAddressPopUp(false);
-                            }}>
-                            <View
-                                style={{
-                                    flex: 1,
-                                    justifyContent: 'flex-end',
-                                    alignItems: 'center',
-                                    backgroundColor: 'rgba(140, 141, 142, 0.7)',
-                                }}>
-                                <ScrollView>
-                                    <View
-                                        style={{
-                                            //margin: 10,
-                                            width: "100%",
-                                            // height: "50%",
-                                            backgroundColor: '#FFFFFF',
-                                            borderRadius: 20,
-                                            marginTop: 111,
-                                            // justifyContent: "center",
-                                            alignItems: 'center',
-                                            shadowColor: '#000',
-                                            shadowOffset: {
-                                                width: 0,
-                                                height: 2,
-                                            },
-                                            shadowOpacity: 0.25,
-                                            shadowRadius: 4,
-                                            elevation: 6,
-
-                                        }}>
-
-                                        <View style={{
-
-                                            height: "100%",
-                                            width: WIDTH * 0.95,
-                                            // paddingTop: 20,
-                                            // padding: 10,
-                                            marginHorizontal: 10,
-                                            // justifyContent: "center",
-                                            // marginHorizontal: 15,
-                                            borderRadius: 20,
-                                            //marginBottom: 10,
-                                            alignItems: 'center',
-                                            flexDirection: 'column'
-                                        }}>
-
-                                            <View style={{ marginTop: 15, marginHorizontal: 20, height: 30, flexDirection: "row", justifyContent: "center", alignItems: 'center' }}>
-                                                <Text style={{ marginTop: 2, marginLeft: 10, textAlign: 'center', fontSize: 20, color: '#000000', fontWeight: '500' }}>Add Address</Text>
-
-
-                                            </View>
-                                            <TextInput style={styl.textInput}
-                                                placeholder='Full Name(Required)*'
-                                                label="Full Name"
-                                                value={full_name}
-                                                onChangeText={e => onChangeNameHandler(e)}
-                                            />
-                                            <TextInput style={styl.textInput}
-                                                placeholder='Phone number(Required)*'
-                                                label="phone"
-                                                value={phone}
-                                                onChangeText={e => onChangePhoneHandler(e)}
-                                            />
-                                            <TextInput style={styl.textInput}
-                                                placeholder='Pincode(Required)*'
-                                                label="pin code"
-                                                value={pincode.toString()}
-                                                onChangeText={e => onChangePinHandler(e)}
-                                            />
-                                            <TextInput style={styl.textInput}
-                                                placeholder='State(Required)*'
-                                                label="State"
-                                                value={state}
-                                                onChangeText={e => onChangeStateHandler(e)}
-                                            />
-                                            <TextInput style={styl.textInput}
-                                                placeholder='City(Required)*'
-                                                label="city"
-                                                value={city}
-                                                onChangeText={e => onChangeCityHandler(e)}
-                                            />
-
-                                            <TextInput style={styl.textInput}
-                                                placeholder='House number(Required)*'
-                                                label="house no"
-                                                value={house_no}
-                                                onChangeText={e => onChangeHouseHandler(e)}
-                                            />
-
-                                            <TextInput style={styl.textInput}
-                                                placeholder='Roard name,Area,Colony(Required)*'
-                                                label="area village"
-                                                value={area_village}
-                                                onChangeText={e => onChangeAreaHandler(e)}
-                                            />
-                                            <TextInput style={styl.textInput}
-                                                placeholder='Landmark(Required)*'
-                                                label="landmark"
-                                                value={landmark}
-                                                onChangeText={e => onChangeLandmarkHandler(e)}
-                                            />
-
-                                            <TextInput style={styl.textInput}
-                                                placeholder='Type of address'
-                                                label="Address type"
-                                                value={address_type}
-                                                onChangeText={e => onChangeAddressHandler(e)}
-                                            />
-                                            <View style={{ justifyContent: "center", alignItems: "center", marginBottom: 20, flexDirection: 'row', height: 38, marginHorizontal: 20, marginTop: 30 }}>
-                                                <TouchableOpacity
-                                                    onPress={() => { data == true ? ItemUpdate() : gotocurrentpage() }} >
-                                                    <View style={{ justifyContent: 'center', width: 110, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
-                                                        <Text style={styl.text}>Save </Text>
-                                                    </View>
-                                                </TouchableOpacity>
-                                            </View>
-                                        </View>
-                                    </View>
-                                </ScrollView>
-                            </View>
-                        </Modal>
-                    ) : null}
-
+                                <Image resizeMode='contain'
+                                    source={require('../assets/Nodatafound.png')}
+                                    style={{
+                                        width: 200,
+                                        height: 120, alignSelf: 'center'
+                                    }} />
+                                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>Oops! No data found</Text>
+                            </View>)}
                 </>)
                 :
-                (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                    <ActivityIndicator size="large" color="#ffcc00" />
-                </View>)}
+                (<CustomLoader showLoader={isLoading} />)}
         </SafeAreaView >
     )
 };

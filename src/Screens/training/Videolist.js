@@ -6,6 +6,7 @@ import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import { WebView } from 'react-native-webview';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomLoader from '../../Routes/CustomLoader';
 // import TrackPlayer, { State } from 'react-native-track-player';
 
 
@@ -51,8 +52,9 @@ const Videolist = (props) => {
 
         }
         catch (error) {
+            Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
             // console.log("......error.........", error.response.data.message);
-            Alert.alert('Video list',"Something went wrong!");
+            // Alert.alert('Video list',"Something went wrong!");
             setIsLoading(false);
 
         }
@@ -149,9 +151,7 @@ const Videolist = (props) => {
                     }
                 </>)
                 :
-                (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                    <ActivityIndicator size="large" color="#ffcc00" />
-                </View>)}
+                ( <CustomLoader showLoader={isLoading}/>)}
         </SafeAreaView >
 
     );

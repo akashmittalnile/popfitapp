@@ -6,6 +6,7 @@ import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -54,19 +55,21 @@ const SubCategoryBlog = (props) => {
     const subcategoryid = subcategoryITEM;
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.BLOG_LISTBLOG}`, { "category_id": categoryitem, "subcategory_id": subcategoryid }, { headers: { "Authorization": ` ${Token}` } });
+      const response = await axios.post(`${API.BLOG_LISTBLOG}`, { "category_id": categoryitem, "subcategory_id": subcategoryid }, { headers: { "Authorization": ` ${Token != null ? Token : null}` } });
       console.log(":::::::::listBLog_Response>>>", response.data.blog_list);
       console.log("status _listBLog:", response.data.status);
       if (response.data.status == 1) {
         setsubcategorylistBlogitems(response.data.blog_list);
-        setIsLoading(false);
+        // setIsLoading(false);
       }
     }
     catch (error) {
-      console.log("......error.........", error.response.data.message);
-      setIsLoading(false);
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      // console.log("......error.........", error.response.data.message);
+      // setIsLoading(false);
 
     }
+    setIsLoading(false);
 
   };
 
@@ -275,9 +278,11 @@ const SubCategoryBlog = (props) => {
 
         </>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        (<CustomLoader showLoader={isLoading}/>
+        // <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        //   <ActivityIndicator size="large" color="#ffcc00" />
+        // </View>
+        )}
     </SafeAreaView>
   )
 }

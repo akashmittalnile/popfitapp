@@ -4,6 +4,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomLoader from '../../Routes/CustomLoader';
 
 
 
@@ -12,8 +13,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const LoginSignUp = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
-  setIsLoading(true);
-  setIsLoading(false);
+  setIsLoading(true)
+  setIsLoading(false)
   }, [])
   
  
@@ -79,9 +80,7 @@ const LoginSignUp = (props) => {
 
           </View>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        ( <CustomLoader showLoader={isLoading}/> )}
     </ScrollView>
     </SafeAreaView>
   )

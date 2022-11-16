@@ -13,6 +13,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
+import CustomLoader from '../../Routes/CustomLoader';
 
 const EditMyProfile = (props) => {
 
@@ -75,17 +76,18 @@ const EditMyProfile = (props) => {
       if (response.data.status == 1) {
         setUserprofile(response.data.data);
         Setuserdetails(response.data.data);
-        setIsLoading(false);
+       
         // console.log("User_ordersdetails>>>", response.data.orders);
       } else {
         Alert.alert("something went wrong user Profile!")
-        setIsLoading(false);
+       
       }
     }
     catch (error) {
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
       console.log("GetUserProfile _Catch_error:", error.response.data.message);
-      setIsLoading(false)
-    }
+    
+    } setIsLoading(false);
   };
 
   const GetProfile = async () => {
@@ -126,7 +128,7 @@ const EditMyProfile = (props) => {
       }
     }
     catch (error) {
-      Alert.alert("something went wrong user Update Profile catch!")
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
       // console.log("Profile_Update _error:", error.response.data.message);
       setIsLoading(false);
     }
@@ -272,6 +274,7 @@ const EditMyProfile = (props) => {
                 onChangeText={(text) => setMobileno(text)}
                 fontWeight='normal'
                 keyboardType='number-pad'
+                maxLength={10}
                 placeholderTextColor='#D7D7D7'
                 style={{ width: '70%', justifyContent: 'center', alignItems: 'center', paddingLeft: 15, color: "black", fontSize: 11 }} />
 
@@ -437,9 +440,11 @@ const EditMyProfile = (props) => {
           ) : null}
         </ScrollView>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        (<CustomLoader showLoader={isLoading}/>
+        // <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
+        //   <ActivityIndicator size="large" color="#ffcc00" />
+        // </View>
+        )}
     </SafeAreaView>
   );
 }

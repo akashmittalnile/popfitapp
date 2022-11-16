@@ -16,6 +16,7 @@ import Headers from '../../Routes/Headers';
 import { async } from 'regenerator-runtime';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { WebView } from 'react-native-webview';
+import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -39,8 +40,6 @@ const Home = (props) => {
     props.navigation.navigate("BlogDetail", {
       homeblogid: item
     })
-
-
   }
   const gotoShop = () => {
     props.navigation.navigate("FitnessEquipment", {
@@ -99,9 +98,10 @@ const Home = (props) => {
 
 
   const StoresProductget = async () => {
+    const usertkn = await AsyncStorage.getItem("authToken");
     setIsLoading(true);
     try {
-      const response = await axios.get(`${API.HOME_PRODUCT_list}`);
+      const response = await axios.get(`${API.HOME_PRODUCT_list}`, { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } });
       // console.log(":::::::::Home_Store_Response>>>", response.data.fitnes_product);
 
       setbanneritem(response.data.banner)
@@ -116,14 +116,15 @@ const Home = (props) => {
       setNewblogitem(response.data.blog)
       setNewrecipeitem(response.data.recipe_category_list)
 
-      setIsLoading(false);
+
     }
     catch (error) {
-      console.log(".....Home.error.........", error.response.data.message);
-      setIsLoading(false);
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      // console.log(".....Home.error.........", error.response.data.message);
+      // Alert.alert('', 'Something went wrong please exit the app and try again')
 
     }
-
+    setIsLoading(false);
   };
 
   return (
@@ -134,6 +135,7 @@ const Home = (props) => {
       backgroundColor: 'black'
     }} >
       <Headers
+        navigation={props.navigation}
         Drawericon={{
           visible: true,
         }}
@@ -148,7 +150,10 @@ const Home = (props) => {
           visible: true,
 
         }}
-        BelliconononClick={() => { props.navigation.navigate('Notifications') }}
+        BelliconononClick={() => {
+          // props.navigation.navigate("Notifications")
+
+        }}
       />
       {!isLoading ?
         (<View style={{
@@ -233,9 +238,10 @@ const Home = (props) => {
                 //   flex: 1,
                 //   justifyContent: "space-around"
                 // }}
+                keyExtractor={(item, index) => String(index)}
                 data={trainingdata}
 
-                renderItem={({ item }) =>
+                renderItem={({ item, index }) =>
                   <TouchableOpacity onPress={() => { gotoTrainingsubcatgory(item) }}>
                     <View style={{
                       // backgroundColor: '#262626',
@@ -288,7 +294,7 @@ const Home = (props) => {
                         />
 
                         <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
-                          <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name?.slice(0, 13) + '...'}</Text>
+                          <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name?.slice(0, 15) + '...'}</Text>
 
                         </View>
                       </View>
@@ -348,9 +354,10 @@ const Home = (props) => {
               <FlatList
                 horizontal
                 showsHorizontalScrollIndicator={false}
+                keyExtractor={(item, index) => String(index)}
                 style={{ margin: 10 }}
                 data={Newblogitem}
-                renderItem={({ item }) =>
+                renderItem={({ item, index }) =>
                   <TouchableOpacity
                     onPress={() => {
                       gotoBlogDetail(item)
@@ -431,10 +438,11 @@ const Home = (props) => {
               <FlatList
                 horizontal
                 showsHorizontalScrollIndicator={false}
+                keyExtractor={(item, index) => String(index)}
                 // numColumns={2}
                 style={{ margin: 10 }}
                 data={Newrecipeitem}
-                renderItem={({ item }) => (
+                renderItem={({ item, index }) => (
                   <TouchableOpacity onPress={() => {
                     gotoRecipeDetails(item)
                   }}>
@@ -522,9 +530,10 @@ const Home = (props) => {
               <FlatList
                 horizontal
                 showsHorizontalScrollIndicator={false}
+                keyExtractor={(item, index) => String(index)}
                 data={Storeitem}
                 style={{ margin: 10 }}
-                renderItem={({ item }) =>
+                renderItem={({ item, index }) =>
                   <TouchableOpacity onPress={() => { gotoproductshop(item) }}>
                     <View style={{
                       backgroundColor: 'white',
@@ -613,9 +622,10 @@ const Home = (props) => {
               <FlatList
                 horizontal
                 style={{ margin: 10 }}
+                keyExtractor={(item, index) => String(index)}
                 showsHorizontalScrollIndicator={false}
                 data={Clothingitem}
-                renderItem={({ item }) =>
+                renderItem={({ item, index }) =>
                   <TouchableOpacity onPress={() => { gototshirtproduct(item) }}>
                     <View style={{
                       backgroundColor: 'white',
@@ -680,9 +690,13 @@ const Home = (props) => {
 
         </View>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        (<CustomLoader showLoader={isLoading} />
+          // <View style={{ flex: 1, justifyContent: "center", alignItems: "center",position: 'absolute',
+          // height: HEIGHT,
+          // width: WIDTH, }}>
+          //   <ActivityIndicator size="large" color="#ffcc00" />
+          // </View>
+        )}
     </SafeAreaView>
   )
 }

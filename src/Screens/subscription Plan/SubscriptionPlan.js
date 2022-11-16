@@ -21,6 +21,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
+import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -41,17 +42,17 @@ const SubscriptionPlan = (props, navigation) => {
     console.log("token.......", Usertoken);
     setchecktoken(Usertoken);
     if (Usertoken == null) {
-      Alert.alert('','Please login First ')
+      Alert.alert('', 'Please login First ')
       // props.navigation.navigate('LoginMain', {
       //   screen: 'LoginSignUp',
 
       // });
-       
+
     }
     else {
       // GetSubscriptionPlan(item.id);
-      props.navigation.navigate("PaymentScreen",{
-        SubscriptionPlan:item
+      props.navigation.navigate("PaymentScreen", {
+        SubscriptionPlan: item
       });
       // console.log("??????????????error", item.id);
     }
@@ -59,28 +60,28 @@ const SubscriptionPlan = (props, navigation) => {
 
   const GetSubscriptionPlan = async () => {
 
-    let Usertoken1 = await AsyncStorage.getItem("authToken");
-    console.log(".....usertoken..PLAN_IN...", Usertoken1);
+    let usertkn = await AsyncStorage.getItem("authToken");
+    console.log(".....usertoken..PLAN_IN...", usertkn);
 
     setIsLoading(true)
     try {
-      const response = await axios.get(`${API.SUBSCRIPTION_PLAN}`, 
-      // { headers: { "Authorization": ` ${Usertoken1}` } }
+      const response = await axios.get(`${API.SUBSCRIPTION_PLAN}`,
+        { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } }
       );
-      
+
       // console.log("ResponseSUBscribtion_plan ::::", response.data);
       if (response.data.status == 1) {
         setSubscriptionsId(response.data.data)
         // console.log("SUBSCRIPTION_plan_data!!!>>>", response.data.data);
-        setIsLoading(false)
 
       }
     }
     catch (error) {
+      Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
       console.log("SUBSCRIPTION_error:", error.response.data.message);
-      setIsLoading(false)
-    }
 
+    }
+    setIsLoading(false)
   };
 
   return (
@@ -160,7 +161,7 @@ const SubscriptionPlan = (props, navigation) => {
             </View>
           </View> */}
 
-          <ScrollView style={{}}>
+         
             <View style={{
               paddingBottom: 80, alignItems: "center",
               justifyContent: "center",
@@ -168,49 +169,52 @@ const SubscriptionPlan = (props, navigation) => {
               <FlatList
                 data={SubscriptionsId}
                 numColumns={2}
-                renderItem={({ item }) => (
-                  <View
-                    style={{
-                      // backgroundColor: '#2147b3',
-                      backgroundColor: "#ffcc00",
-                      marginTop: 10,
-                      marginHorizontal: 5,
-                      borderRadius: 20,
-                      width: "47%",
-                      height: 200,
-                      //  paddingBottom:100
-                      // alignItems:"center",
-                      justifyContent: "center",
+                keyExtractor={(item, index) => String(index)}
+                renderItem={({ item, index }) => {
+                  return (
+                    <View
+                      style={{
+                        backgroundColor: '#2147b3',
+                        // backgroundColor: "#ffcc00",
+                        marginTop: 10,
+                        marginHorizontal: 5,
+                        borderRadius: 20,
+                        width: "47%",
+                        height: 200,
+                        //  paddingBottom:100
+                        // alignItems:"center",
+                        // justifyContent: "center",
 
 
-                    }}>
-                    <View style={{
-                      height: 45, borderRadius: 20, flexDirection: 'row', alignItems: "center",
-                      justifyContent: "center", flex: 1, width: "95%",
-                    }}>
-                      <View
-                        style={{
-                          flex: 0.6,
-                          height: 50,
-                          flexDirection: 'row',
-                          borderTopLeftRadius: 20,
-                          justifyContent: "center"
-                        }}>
-                        <Text
+                      }}>
+                      <View style={{
+                        height: 30, borderRadius: 20, flexDirection: 'row', alignItems: "center",
+                        justifyContent: "center", flex: 1, width: "100%",
+                      }}>
+                        <View
                           style={{
-                            width: 90,
-                            marginLeft: 10,
-                            marginTop: 10,
-                            textAlign: 'left',
-                            fontSize: 16,
-                            color: 'white',
-                            fontWeight: "500"
-
+                            flex: 0.6,
+                            height: 45,
+                            flexDirection: 'row',
+                            borderTopLeftRadius: 20,
+                            justifyContent: "center",
+                            alignItems: "center",
                           }}>
-                          {item.name}
-                        </Text>
-                      </View>
-                      <View
+                          <Text
+                            style={{
+                              width: 90,
+                              // marginLeft: 10,
+                              // marginTop: 10,
+                              textAlign: 'center',
+                              fontSize: 16,
+                              color: 'white',
+                              fontWeight: "500"
+
+                            }}>
+                            {item.name}
+                          </Text>
+                        </View>
+                        {/* <View
                         style={{
                           flex: 0.4, height: 60, borderTopRightRadius: 20, alignItems: "center",
                           justifyContent: "center"
@@ -239,79 +243,98 @@ const SubscriptionPlan = (props, navigation) => {
                               justifyContent: "center"
                             }}></View>
                         </BackgroundImage>
+                      </View> */}
                       </View>
-                    </View>
-
-                    <View style={{
-                      height: 100, width: "100%", flexDirection: 'column', alignItems: "flex-start",
-                      justifyContent: "flex-start", flex: 2
-                    }}>
+                      {/* // plan price */}
                       <View style={{
-                        height: 30, flexDirection: 'row', flex: 1, alignItems: "center",
-                        justifyContent: "center",
+                        height: 30, width: "100%", flexDirection: 'column', alignItems: "center",
+                        justifyContent: "center",  
                       }}>
-                        <Text
-                          style={{
-                            marginLeft: 10,
-                            // marginTop: 10,
-                            textAlign: 'left',
-                            fontSize: 14,
-                            color: 'white',
-                            flex: 0.07,
-                            fontWeight: "500"
-                          }}>$</Text><Text
+                        <View style={{
+                          flexDirection: 'row',
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}>
+                          <Text
+                            style={{
+                              // marginLeft: 10,
+                              // marginTop: 10,
+                              textAlign: 'center',
+                              fontSize: 20,
+                              color: 'white',
+
+                              fontWeight: "500"
+                            }}>${item.price}/<Text style={{
+                              // backgroundColor:"red",
+                              textAlign: 'left',
+                              fontSize: 12,
+                              color: 'white',
+
+                              fontWeight: "500"
+                            }}>{item.type}</Text></Text>
+                          {/* <Text
                             style={{
                               // backgroundColor:"red",
                               marginLeft: 2,
-                              textAlign: 'left',
+                              textAlign: 'center',
                               fontSize: 14,
                               color: 'white',
                               flex: 0.3,
                               fontWeight: "500"
                               // marginTop: 10,
-                            }}>{item.price}</Text>
-                        <Text
-                          style={{
+                            }}>{item.price}/</Text>
+                        <Text */}
+                          {/* style={{
                             // backgroundColor:"red",
                             textAlign: 'left',
-                            fontSize: 14,
+                            fontSize: 10,
                             color: 'white',
                             flex: 0.5,
                             fontWeight: "500"
                           }}>
                           {item.type}
-                        </Text>
+                        </Text> */}
+                        </View>
                       </View>
 
+                      {/* description */}
                       <View style={{
-                        width: "100%", alignItems: "flex-start",
-                        justifyContent: "flex-start", flex: 1, paddingVertical: 6
+                        width: "100%",
+                        alignItems: "flex-start",
+                        // justifyContent: "center",
+                        paddingVertical: 2, height: 100
                       }}>
                         <View
                           style={{
                             marginHorizontal: 10,
-                            height: 15,
+                            height: 30,
                             flexDirection: 'row',
-                            flex: 0.3,
-                            marginBottom: 6
+
+                            // marginBottom: 6,
+                            // backgroundColor: "pink",
+                            justifyContent: "center",
+                            alignItems: "center"
                           }}>
                           <View
                             style={{
+                              marginTop: -10,
+                              // alignItems: "flex-start",
+                              // justifyContent: "flex-start",
                               backgroundColor: 'white',
                               borderRadius: 20,
                               height: 5,
                               width: 5,
                             }}></View>
-                          <View style={{ marginLeft: 5, height: 10, alignItems: 'center' }}>
-                            <Text
+                          <View style={{ marginLeft: 5, alignItems: 'center' }}>
+                            <Text numberOfLines={2}
                               style={{
-                                marginTop: -4,
+                                // 
                                 textAlign: 'left',
                                 fontSize: 10,
                                 color: 'white',
                                 fontWeight: "500"
 
-                              }}>Yearly price: {item.yearly_price}
+                              }}>{item.title_1}
                             </Text>
                           </View>
                         </View>
@@ -319,8 +342,79 @@ const SubscriptionPlan = (props, navigation) => {
                         <View
                           style={{
                             marginHorizontal: 10,
+                            height: 30,
+                            flexDirection: 'row',
+
+                            // marginBottom: 6,
+                            // backgroundColor: "pink",
+                            justifyContent: "center",
+                            alignItems: "center"
+                          }}>
+                          <View
+                            style={{
+                              marginTop: -10,
+                              // alignItems: "flex-start",
+                              // justifyContent: "flex-start",
+                              backgroundColor: 'white',
+                              borderRadius: 20,
+                              height: 5,
+                              width: 5,
+                            }}></View>
+                          <View style={{ marginLeft: 5, alignItems: 'center' }}>
+                            <Text numberOfLines={2}
+                              style={{
+                                // 
+                                textAlign: 'left',
+                                fontSize: 10,
+                                color: 'white',
+                                fontWeight: "500"
+
+                              }}>{item.title_2}
+                            </Text>
+                          </View>
+                        </View>
+
+                        <View
+                          style={{
+                            marginHorizontal: 10,
+                            height: 30,
+                            flexDirection: 'row',
+
+                            // marginBottom: 6,
+                            // backgroundColor: "pink",
+                            justifyContent: "center",
+                            alignItems: "center"
+                          }}>
+                          <View
+                            style={{
+                              marginTop: -10,
+                              // alignItems: "flex-start",
+                              // justifyContent: "flex-start",
+                              backgroundColor: 'white',
+                              borderRadius: 20,
+                              height: 5,
+                              width: 5,
+                            }}></View>
+                          <View style={{ marginLeft: 5, alignItems: 'center' }}>
+                            <Text numberOfLines={2}
+                              style={{
+                                // 
+                                textAlign: 'left',
+                                fontSize: 10,
+                                color: 'white',
+                                fontWeight: "500"
+
+                              }}>{item.title_3}
+                            </Text>
+                          </View>
+                        </View>
+                        {/* <View
+                          style={{
+                            marginHorizontal: 10,
                             height: 15,
-                            flexDirection: 'row', flex: 0.3, marginBottom: 6
+                            flexDirection: 'row', flex: 0.3, 
+                            marginBottom: 6,
+                            justifyContent:"center",alignItems:"center"
                           }}>
                           <View
                             style={{
@@ -332,14 +426,14 @@ const SubscriptionPlan = (props, navigation) => {
                           <View style={{ marginLeft: 5, height: 10, alignItems: 'center' }}>
                             <Text
                               style={{
-                                marginTop: -4,
+                                // marginTop: -4,
                                 textAlign: 'left',
                                 fontSize: 10,
                                 color: 'white',
                                 fontWeight: "500"
 
                               }}>
-                              Half yearly price: {item.half_yearly_price}
+                              {item.title_2}
                             </Text>
                           </View>
                         </View>
@@ -349,6 +443,7 @@ const SubscriptionPlan = (props, navigation) => {
                             marginHorizontal: 10,
                             height: 15,
                             flexDirection: 'row', flex: 0.4
+                            , justifyContent:"center",alignItems:"center"
                           }}>
                           <View
                             style={{
@@ -360,73 +455,102 @@ const SubscriptionPlan = (props, navigation) => {
                           <View style={{ marginLeft: 5, height: 10, alignItems: 'center' }}>
                             <Text
                               style={{
-                                marginTop: -4,
+                                // marginTop: -4,
                                 textAlign: 'left',
                                 fontSize: 10,
                                 color: 'white',
                                 fontWeight: "500"
                               }}>
-                              Quarterly price: {item.quarterly_price}
+                               {item.title_3}
                             </Text>
                           </View>
+                        </View> */}
+                      </View>
+
+                      <View style={{
+                        flex: 1, flexDirection: 'row', width: "100%", alignItems: "flex-start",
+                        justifyContent: "flex-start", height: 50,
+                      }}>
+                        <View
+                          style={{ flex: 0.4, height: 40, borderBottomLeftRadius: 20, }}>
+                          <BackgroundImage
+                            source={require('../assets/leftCurve.png')}
+                            style={{ height: 90, alignItems: "center", justifyContent: 'center', }}></BackgroundImage>
+                        </View>
+                        <View
+                          style={{
+                            flex: 0.2,
+                            justifyContent: 'center',
+                            // flexDirection: 'row',
+                            alignItems: "center",
+                            height: 30,
+                            // marginTop: 6,
+
+                          }}>
+                          {item.name === "Free" ?
+                            (<TouchableOpacity 
+                            onPress={() =>  props.navigation.goBack() } 
+                            style={{   borderRadius: 50, }}>
+                              <View
+                                style={{
+                                  // marginLeft: 10,
+                                  justifyContent: 'center',
+                                  backgroundColor: 'white',
+                                  width: 120,
+                                  height: 30,
+                                  borderRadius: 50,
+                                }}>
+                                <Text
+                                  style={{
+                                    textAlign: 'center',
+                                    fontSize: 12,
+                                    color: '#c79d3a',
+                                    fontWeight: "500"
+
+                                  }}>
+                                  Free
+                                </Text>
+                              </View>
+                            </TouchableOpacity>)
+                            :
+                            (<TouchableOpacity onPress={() => { checklogin(item) }} style={{ borderRadius: 50, }}>
+                              <View
+                                style={{
+                                  // marginLeft: 10,
+                                  justifyContent: 'center',
+                                  backgroundColor: 'white',
+                                  width: 120,
+                                  height: 30,
+                                  borderRadius: 50,
+                                }}>
+                                <Text
+                                  style={{
+                                    textAlign: 'center',
+                                    fontSize: 12,
+                                    color: '#c79d3a',
+                                    fontWeight: "500"
+
+                                  }}>
+                                  Subscribe Now
+                                </Text>
+                              </View>
+                            </TouchableOpacity>)
+
+                          }
+
                         </View>
                       </View>
                     </View>
 
-                    <View style={{
-                      flex: 1, flexDirection: 'row', width: "100%", alignItems: "flex-start",
-                      justifyContent: "flex-start", paddingTop: 4,
-                    }}>
-                      <View
-                        style={{ flex: 0.4, height: 50, borderBottomLeftRadius: 20, }}>
-                        <BackgroundImage
-                          source={require('../assets/leftCurve.png')}
-                          style={{ height: 70, alignItems: "center", justifyContent: 'center', }}></BackgroundImage>
-                      </View>
-                      <View
-                        style={{
-                          flex: 0.2,
-                          justifyContent: 'center',
-                          // flexDirection: 'row',
-                          alignItems: "center",
-                          height: 30,
-                          marginTop: 6,
-                        }}>
-                        <TouchableOpacity onPress={() => { checklogin(item) }}>
-                          <View
-                            style={{
-                              // marginLeft: 10,
-                              justifyContent: 'center',
-                              backgroundColor: 'white',
-                              width: 120,
-                              height: 30,
-                              borderRadius: 50,
-                            }}>
-                            <Text
-                              style={{
-                                textAlign: 'center',
-                                fontSize: 10,
-                                color: '#c79d3a',
-                                fontWeight: "500"
-
-                              }}>
-                              Subscribe Now
-                            </Text>
-                          </View>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </View>
-
-                )}
+                  )
+                }
+                }
               />
             </View>
-          </ScrollView>
+         
         </View>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        (<CustomLoader showLoader={isLoading} />)}
     </SafeAreaView>
   );
 }

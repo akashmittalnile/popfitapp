@@ -1,12 +1,15 @@
 import 'react-native-gesture-handler';
 import React, { useState } from "react";
-import { ScrollView, View, Text, TouchableOpacity, StyleSheet, TextInput, Image, Dimensions, Modal, ActivityIndicator, BackHandler, SafeAreaView, Alert } from 'react-native'
+import {
+  ScrollView, View, Text, TouchableOpacity, TextInput, Image, Dimensions, Modal, ActivityIndicator, BackHandler, SafeAreaView, Alert, KeyboardAvoidingView,
+  Platform,
+} from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useEffect } from 'react';
 import { API } from '../Routes/Urls';
 import axios from 'axios';
-import { resolvePlugin } from '@babel/core';
+
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -26,7 +29,8 @@ const CustomDrawerrender = (props) => {
   const [profiledata, setprofiledata] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [check, setcheck] = useState(false);
-
+  const [emailerrormsg, setemailerrormsg] = useState("");
+  const [emailalert, setEmailAlert] = useState(false);
   useEffect(() => {
 
     if (!check) {
@@ -34,7 +38,14 @@ const CustomDrawerrender = (props) => {
 
     }
     const backAction = () => {
-      BackHandler.exitApp()
+      Alert.alert("Hold on!", "Are you sure you want to go back?", [
+        {
+          text: "Cancel",
+          onPress: () => null,
+          style: "cancel"
+        },
+        { text: "YES", onPress: () => BackHandler.exitApp() }
+      ]);
       return true;
     };
 
@@ -55,12 +66,13 @@ const CustomDrawerrender = (props) => {
     // });
     // return unsubscribe;
 
-  }, [props]);
+  }, []);
 
   const getusertoken = async () => {
     const usertoken = await AsyncStorage.getItem("authToken");
     // console.log(".....drawer profiletoken get::", usertoken);
     setuserprofile(usertoken);
+   
     setloginbtn(usertoken);
     GetProfile();
   }
@@ -73,75 +85,105 @@ const CustomDrawerrender = (props) => {
   }
 
   const GetProfile = async () => {
-    if (userprofile != null) {
+    const Token = await AsyncStorage.getItem("authToken");
       setIsLoading(true)
       try {
-        const response = await axios.get(`${API.GET_PROFILE}`, { headers: { "Authorization": ` ${userprofile}` } });
+        const response = await axios.get(`${API.GET_PROFILE}`, { headers: { "Authorization": ` ${Token != null ? Token : null}` } });
         // console.log("", response);
         // console.log("ResponseProfile ::::", response.data.status);
-        if (response.data.status == 1) {
+        if (response.data.status == '1') {
           setprofiledata(response.data.data)
           // console.log("User_token_not_received+yet!!!>>>", response.data.data.first_name);
-          setIsLoading(false);
-        } else {
+          // setIsLoading(false);
+        } 
+        // else {
           // Alert.alert('drawer', 'Something went wrong please exit the app and try again');
-          setIsLoading(false);
-        }
+          // setIsLoading(false);
+        // }
 
       }
       catch (error) {
+        Alert.alert("profile","Internet connection appears to be offline. Please check your internet connection and try again.")
         // Alert.alert('drawer', 'Something went wrong please exit the app and try again');
         // console.log("GET User Profile in drawer error:", error.response.data.message);
-        setIsLoading(false)
+        
       }
-
-    };
+      setIsLoading(false)
+ 
   };
 
+  const Emailvalidaton = (text) => {
+    console.log(text);
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+    if (reg.test(text) === false) {
+      setemailerrormsg("Email is Not Correct")
+      console.log("Email is Not Correct");
+      setEmailAlert(true)
+      setUseremail(text)
+      return false;
+    }
+    else {
+      setUseremail(text)
+      setEmailAlert(false)
+      console.log("Email is Correct");
+    }
+  }
   const GetContactUs = async () => {
 
-    const data = {
-      name: UserName,
-      email: Useremail,
-      message: Typemessage
-    }
-    console.log("........contactus", data);
-    // setIsLoading(true);
-    // setContactUs(true);
-    try {
-      const response = await axios.post(`${API.CONTACT_US}`, data)
-      console.log("response_contactus ::::", response.data);
-      if (response.data.status == 1) {
-        setContactUs(false);
 
-        props.navigation.navigate("Home");
-        Alert.alert('', 'Your message has been sent successfully we will contact you shortly.')
-        setUserName = "";
-        setUseremail = "";
-        setTypemessage = "";
+    if (UserName && Useremail != null) {
+
+      const data = {
+        name: UserName,
+        email: Useremail,
+        message: Typemessage
+      }
+      console.log("........contactus", data);
+      // setIsLoading(true);
+      // setContactUs(true);
+      try {
+        const response = await axios.post(`${API.CONTACT_US}`, data)
+        // console.log("response_contactus ::::", response.data);
+        // console.log("contactus-Status ::::", response.data.status);
+        if (response.data.status == '1') {
+          Alert.alert('', 'Your message has been sent successfully we will contact you shortly.')
+          console.log("response_contactus ::::", response.data);
+          setContactUs(false);
+          setIsLoading(false);
+          setUserName("")
+          setUseremail("")
+          setTypemessage("")
+          setcheck(false);
+
+          // props.navigation.navigate("Home");
+        }
+        else if (response.data.status == '0') {
+          setUserName("")
+          setUseremail("")
+          setTypemessage("")
+          setIsLoading(false);
+          setcheck(false);
+          Alert.alert('', 'Something went wrong please exit the app and try again');
+        }
+        else {
+          setIsLoading(false);
+        }
+
+      } catch (error) {
+        Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+        // Alert.alert('', 'Something went wrong please exit the app and try again');
+        // console.log("error_ContactUs:", error.response.data.message);
         setIsLoading(false);
         setcheck(false)
       }
-      else {
-        Alert.alert('', 'Something went wrong please exit the app and try again');
-        setIsLoading(false);
-        setcheck(false)
-      }
-
-    } catch (error) {
-      Alert.alert('', 'Something went wrong please exit the app and try again');
-      // console.log("error_ContactUs:", error.response.data.message);
-      setIsLoading(false);
-      setcheck(false)
-    }
-
+    } else return Alert.alert('', 'All the fields are required!');
   };
 
   return (
     <SafeAreaView style={{
       flex: 1,
-      height: "100%",
-      width: "100%",
+      // height: "100%",
+      // width: "100%",
       flexGrow: 1,
       backgroundColor: '#000000',
     }} >
@@ -198,7 +240,7 @@ const CustomDrawerrender = (props) => {
                 <View style={{ borderRadius: 20, backgroundColor: 'white', marginHorizontal: 20, height: 100, flexDirection: 'row', marginTop: 30 }}>
                   <View style={{ justifyContent: 'center', width: 100, height: 100 }} >
                     <Image
-                      source={{ uri: profiledata.user_profile }}
+                      source={{ uri: `${profiledata.user_profile}` }}
                       resizeMode="contain"
                       style={{
                         width: 80,
@@ -207,7 +249,7 @@ const CustomDrawerrender = (props) => {
                       }} />
                   </View>
                   <View style={{ justifyContent: 'center', flex: 1.1, height: 100, }} >
-                    <Text style={{ fontSize: 15, color: 'black', textAlign: 'left' }}>{profiledata.first_name + " " + profiledata.last_name}</Text>
+                    <Text numberOfLines={2} style={{ fontSize: 15, color: 'black', textAlign: 'left' }}>{profiledata.first_name + " " + profiledata.last_name}</Text>
                   </View>
                   <View style={{ justifyContent: 'flex-end', flex: 1 / 2, width: 50, borderBottomRightRadius: 20, }}>
                     <Image source={require('../Screens/assets/arrowWhiteBack.png')}
@@ -423,24 +465,33 @@ const CustomDrawerrender = (props) => {
               }
             </View>
           </ScrollView>
-          {ContactUs ? (
-            <Modal
-              animationType="fade"
-              transparent={true}
-              visible={ContactUs}
-              onRequestClose={() => {
-                setContactUs(false);
-                setcheck(false)
-              }}>
+
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={ContactUs}
+            onRequestClose={() => {
+              setContactUs(false);
+              setcheck(false)
+            }}>
+            <KeyboardAvoidingView
+              style={{ flex: 1 }}
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
               <View
                 style={{
                   flex: 1,
-                  justifyContent: 'flex-end',
-                  alignItems: 'center',
+                  // justifyContent: 'flex-end',
+                  // alignItems: 'center',
                   backgroundColor: 'rgba(140, 141, 142, 0.7)',
 
                 }}>
-
+                <TouchableOpacity
+                  onPress={() => {
+                    setContactUs(false),
+                      setcheck(false)
+                  }}
+                  style={{ flex: 1 }}
+                />
                 <View
                   style={{
                     backgroundColor: 'white',
@@ -451,7 +502,7 @@ const CustomDrawerrender = (props) => {
                   }}>
 
                   <View style={{
-                    height: 460,
+                    height: 485,
                     width: "100%",
                     borderRadius: 20,
 
@@ -459,17 +510,17 @@ const CustomDrawerrender = (props) => {
                     // backgroundColor: 'pink',
                     justifyContent: "center",
                   }}>
-                    <TouchableOpacity onPress={() => { setContactUs(false) }}
-                      style={{ position: "absolute", width: 30, backgroundColor: 'red', borderRadius: 35, height: 35, right: 10, top: 10 }}>
-                      <Image
-                        source={require('../Screens/assets/cancelWhite.png')}
-                        style={{
-                          width: 35,
-                          height: 35, alignSelf: 'center'
-                        }}
+                    {/* <TouchableOpacity onPress={() => { setContactUs(false) }}
+                        style={{ position: "absolute", width: 30, backgroundColor: 'red', borderRadius: 35, height: 35, right: 10, top: 10 }}>
+                        <Image
+                          source={require('../Screens/assets/cancelWhite.png')}
+                          style={{
+                            width: 35,
+                            height: 35, alignSelf: 'center'
+                          }}
 
-                      />
-                    </TouchableOpacity>
+                        />
+                      </TouchableOpacity> */}
                     <View style={{ marginTop: 15, marginHorizontal: 20, height: 30, flexDirection: "row", justifyContent: "center", alignItems: 'center' }}>
 
 
@@ -511,7 +562,7 @@ const CustomDrawerrender = (props) => {
                         placeholderTextColor='#D7D7D7'
                         style={{
                           width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 15, color: "black",
-                          fontSize: 14
+                          fontSize: 14,height:"100%"
                         }} />
                     </View>
                     {/* <View style={{ height: 50, marginHorizontal: 25, marginTop: 15 }}>
@@ -541,38 +592,48 @@ const CustomDrawerrender = (props) => {
                             // shadowOpacity: 0.2,
                             // elevation: 2,
                           }}
-                        />
+                        /
                       </View> */}
-                    <View style={{
-                      marginTop: 25, borderRadius: 25, marginHorizontal: 20, flexDirection: 'row',
-                      height: 45,
-                      shadowColor: '#11032586',
-                      // backgroundColor: 'white',
-                      alignItems: 'center',
-                      borderColor: "#D7D7D7",
-                      borderWidth: 1,
-                      justifyContent: "center", alignItems: 'center'
-                    }}
-                    ><TextInput
-                        placeholder="Please Enter Your Email ID"
-                        value={Useremail}
-                        //editable={!isLoading}
-                        onChangeText={(text) => setUseremail(text)}
-                        keyboardType="email-address"
-                        fontWeight='normal'
-                        autoCorrect={false}
-                        placeholderTextColor='#D7D7D7'
-                        style={{
-                          width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 15, color: "black",
-                          fontSize: 14
-                        }} />
+                    <View style={{    marginTop: 25,flexDirection: 'column', height: 65,
+                    justifyContent: "flex-start", alignItems: 'flex-start'}}>
+                      <View style={{
+                      borderRadius: 25, marginHorizontal: 20, flexDirection: 'row',
+                        height: 45,
+                        shadowColor: '#11032586',
+                        // backgroundColor: 'red',s
+                        alignItems: 'center',
+                        borderColor: "#D7D7D7",
+                        borderWidth: 1,
+                        // justifyContent: "center", 
+                        // alignItems: 'center'
+                      }}
+                      ><TextInput
+                          placeholder="Please Enter Your Email ID"
+                          value={Useremail}
+                          //editable={!isLoading}
+                          onChangeText={(text) => Emailvalidaton(text)}
+                          keyboardType="email-address"
+                          fontWeight='normal'
+                          autoCorrect={false}
+                          placeholderTextColor='#D7D7D7'
+                          style={{
+                            width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 8, color: "black",
+                            fontSize: 14,height:"100%"
+                          }} />
 
 
+                      </View>
+                      {
+                        emailalert ?
+                          (<View style={{ justifyContent: "center", marginHorizontal: 30, }}><Text style={{ color: "red", fontSize: 12, }}>{emailerrormsg}</Text></View>)
+                          :
+                          (null)
+                      }
                     </View>
                     <View style={{
                       borderRadius: 20,
                       // backgroundColor: 'white',
-                      marginTop: 20,
+                      marginTop: 10,
                       borderColor: "#D7D7D7",
                       borderWidth: 1,
                       height: 160,
@@ -593,7 +654,7 @@ const CustomDrawerrender = (props) => {
                         textAlignVertical='top'
                         style={{
                           width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 6, color: "black",
-                          fontSize: 14,
+                          fontSize: 14,height:"100%"
                         }} />
                     </View>
 
@@ -615,8 +676,9 @@ const CustomDrawerrender = (props) => {
                 </View>
 
               </View>
-            </Modal>
-          ) : <></>}
+            </KeyboardAvoidingView>
+          </Modal>
+
         </>)
         :
         (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>

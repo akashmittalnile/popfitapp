@@ -22,6 +22,7 @@ import Headers from '../../Routes/Headers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Share from 'react-native-share';
 import { WebView } from 'react-native-webview';
+import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -66,22 +67,20 @@ const BlogDetail = (props) => {
   // let BLOGId = blogdetail_id ? blogdetail_id : Categoryblogid ? Categoryblogid : homeblogid ? homeblogid : null;
 
   useEffect(() => {
-    // getusertoken();
-
     const checklogin = async () => {
       let Usertoken = await AsyncStorage.getItem("authToken");
       setsubscriptiontoken(Usertoken);
       console.log("token.......", Usertoken);
       if (Usertoken != null) {
         getCategoryblog_detail();
-        props.navigation.navigate('LoginMain', {
-          screen: 'LoginSignUp',
-        });
-        console.log("...............................");
+        // props.navigation.navigate('LoginMain', {
+        //   screen: 'LoginSignUp',
+        // });
+        console.log(".....usertoken ..........................");
       }
       else {
         getCategoryblog_detail();
-        console.log("??????????????error");
+        console.log("..........usertoken_null/////:");
       }
     };
     checklogin();
@@ -138,7 +137,8 @@ const BlogDetail = (props) => {
     setIsLoading(true);
     try {
 
-      const response = await axios.post(`${API.BLOG_DETAILS}`, { "blog_id": blogdetail_id ? blogdetail_id : Categoryblogid ? Categoryblogid : homeblogid }, { headers: { "Authorization": ` ${Token}` } });
+      const response = await axios.post(`${API.BLOG_DETAILS}`, { "blog_id": blogdetail_id ? blogdetail_id : Categoryblogid ? Categoryblogid : homeblogid },
+        { headers: { "Authorization": ` ${Token != null ? Token : null}` } });
       console.log(":::::::::DetailsBLog_Response>>>", response.data.blog_detail);
       console.log("status _DetailsBLog:", response.data.status);
       console.log("status _comment_count:", response.data.comment_count);
@@ -148,26 +148,28 @@ const BlogDetail = (props) => {
         setsubcategoryBlogdetailsitems(response.data);
         // setcomment_count(response.data.comment_count);
         // setblog_comment(response.data.blog_comment);
-        setIsLoading(false);
+        // setIsLoading(false);
       }
       else if (response.data.status == '0') {
-        setIsLoading(false);
+        // setIsLoading(false);
         Alert.alert('', 'Something went wrong please exit the app and try again');
         setApiStatus('0');
-      } else {
-        setIsLoading(false);
-        Alert.alert('', 'Something went wrong please exit the app and try again');
-      }
+      } 
+      // else {
+      //   // setIsLoading(false);
+      //   Alert.alert('', 'Something went wrong please exit the app and try again');
+      // }
 
 
     }
     catch (error) {
-      Alert.alert('', 'Something went wrong please exit the app and try again');
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      // Alert.alert('', 'Something went wrong please exit the app and try again');
       // console.log("......error.........", error.response.data.message);
-      setIsLoading(false);
+      // setIsLoading(false);
 
     }
-
+    setIsLoading(false);
   };
 
   const ShareCommentApi = async () => {
@@ -176,7 +178,7 @@ const BlogDetail = (props) => {
     const EnterComment = usercomment;
     setIsLoading(true);
     try {
-      setIsLoading(false);
+      // setIsLoading(false);
       const response = await axios.post(`${API.SEND_COMMENTS}`, { "blog_id": blogdetail_id ? blogdetail_id : Categoryblogid ? Categoryblogid : homeblogid ? homeblogid : null, "comment": EnterComment }, { headers: { "Authorization": ` ${subscriptiontoken}` } })
       console.log("User commented_STATUS::", response.data.status);
       console.log("User commented_Message::", response.data.message);
@@ -186,19 +188,20 @@ const BlogDetail = (props) => {
         Alert.alert('', 'Comment send successfully');
         setUserComment('');
       }
-      else {
-        setIsLoading(false);
-        Alert.alert('', 'Something went wrong please exit the app and try again');
-      }
+      // else {
+      //   // setIsLoading(false);
+      //   Alert.alert('', 'Something went wrong please exit the app and try again');
+      // }
 
 
     }
     catch (error) {
-      Alert.alert('', 'Something went wrong please exit the app and try again');
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      // Alert.alert('', 'Something went wrong please exit the app and try again');
       // console.log("......error.........", error.response.data.message);
-      setIsLoading(false);
+      // setIsLoading(false);
     }
-
+    setIsLoading(false);
   };
   return (
     <SafeAreaView style={{
@@ -373,8 +376,9 @@ const BlogDetail = (props) => {
 
                     <FlatList
                       vertical
+                      keyExtractor={(item, index) => String(index)}
                       data={subcategoryBlogdetailsitems?.blog_comment}
-                      renderItem={({ item }) => (
+                      renderItem={({ item ,index}) => (
                         <View style={{
                           // backgroundColor: "red",
                           padding: 15,
@@ -727,10 +731,9 @@ const BlogDetail = (props) => {
           }
         </>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          {/* <Text style={{color:"black",textAlign: 'center',fontSize: 15,marginBottom:4,fontWeight:"bold"}}>Loading.....</Text> */}
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        (
+         <CustomLoader showLoader={isLoading}/>
+        )}
     </SafeAreaView>
   );
 };

@@ -16,6 +16,7 @@ import { useProgress } from 'react-native-track-player';
 
 //styles
 import { styles } from "./styles";
+import CustomLoader from '../../Routes/CustomLoader';
 //svg
 // import PauseSvg from "../../Screens/assets/pause-button.png";
 // import PlaySvg from "../../Screens/assets/play-button.png";
@@ -138,7 +139,7 @@ const Training = (props) => {
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.TRAINING_LIST}`, { "category_id": Tainingcat_id, "subcategory_id": Trainingsubcat_data },
-        { headers: { "Authorization": ` ${usertkn}` } }
+      { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } }
       );
       console.log(":::::::::TrainingCategoryListAPI_Response>>>", response.data);
 
@@ -161,11 +162,11 @@ const Training = (props) => {
         // }
         // console.log('addAudio(musicData)',musicData);
         setyoutubelinks(response?.data?.blog_list[0].youtube_link)
-        setIsLoading(false);
+        
       }
       else {
         console.log(".WorkoutSubCategorytraininglist.....error.........", error.response.data.message);
-        setIsLoading(false);
+        
         // Alert.alert('Technical Issue', '')
       }
 
@@ -173,11 +174,10 @@ const Training = (props) => {
 
     }
     catch (error) {
-      console.log(".WorkoutSubCategorytraininglist.....error.........", error?.response?.data?.message);
-      // Alert.alert(error);
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      //console.log(".WorkoutSubCategorytraininglist.....error.........", error?.response?.data?.message);
+      }
       setIsLoading(false);
-
-    }
   };
   return (
     <SafeAreaView style={{
@@ -226,7 +226,7 @@ const Training = (props) => {
                       {
                         trainingBlog_list[0]?.training_image.map((itm, index) => {
                           return (
-                            <View
+                            <View key = {String(index)}
                               style={{
                                 height: 190, width: WIDTH * 0.96, borderRadius: 20
                               }}>
@@ -481,9 +481,7 @@ const Training = (props) => {
 
         </>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        ( <CustomLoader showLoader={isLoading}/>)}
     </SafeAreaView >
 
   );

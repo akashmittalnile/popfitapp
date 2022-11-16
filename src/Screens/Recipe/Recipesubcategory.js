@@ -22,6 +22,7 @@ import { Divider } from 'react-native-elements';
 import Headers from '../../Routes/Headers';
 import axios from 'axios';
 import { API } from '../../Routes/Urls';
+import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -54,13 +55,14 @@ const Recipesubcategory = props => {
       console.log("::::Recipe_List_Response:::::", response.data.blog_list);
       console.log("Recipe_List....", response.data.blog_list)
       setRecipeData(response.data.blog_list)
-      setIsLoading(false);
+     
     }
     catch (error) {
-      console.log("......error.........", error.response.data.message);
-      Alert.alert("Something went wrong!", error.response.data.message);
-      setIsLoading(false);
-    }
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      // console.log("......error.........", error.response.data.message);
+      // Alert.alert("Something went wrong!", error.response.data.message);
+       }
+    setIsLoading(false);
   };
 
   return (
@@ -111,8 +113,9 @@ const Recipesubcategory = props => {
                   vertical
                   numColumns={2}
                   // style={{ margin: 6 }}
+                  keyExtractor={(item, index) => String(index)}
                   data={recipedata}
-                  renderItem={({ item }) => (
+                  renderItem={({ item ,index}) => (
                     <TouchableOpacity
                       onPress={() => {
                         gotoRecipeDetails(item);
@@ -235,9 +238,7 @@ const Recipesubcategory = props => {
           }
         </>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        ( <CustomLoader showLoader={isLoading}/>)}
 
     </SafeAreaView>
   );

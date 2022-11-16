@@ -32,6 +32,7 @@ import { Formik } from 'formik';
 import Headers from '../../Routes/Headers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { async } from 'regenerator-runtime';
+import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -41,7 +42,7 @@ const Blog = (props) => {
   // const [UserEmail, setUserEmail] = useState("");
   const [Blogvideolist, setBlogvideolist] = useState([]);
   const [Blogcategorylist, setBlogcategorylist] = useState([]);
-
+const[blogbanner,setBlogbanner]=useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [NewsletterPopup, setNewsletterPopup] = useState(false);
 
@@ -67,7 +68,7 @@ const Blog = (props) => {
   useEffect(() => {
     GetCategoryBlogApi();
 
-  }, [props]);
+  }, []);
 
 
 
@@ -79,7 +80,7 @@ const Blog = (props) => {
       email: newsletteremail
       // email: values.Checkemail,
     }
-    // console.log("blog newsletter:",data);
+    console.log("blog newsletter:",data);
     if (usertkn != null) {
       // console.log("......userenteremail::", EnterEmail);
       setIsLoading(true);
@@ -92,44 +93,45 @@ const Blog = (props) => {
           // props.navigation.goBack()
           Alert.alert('', 'Already subscribed')
           // setNewsletterPopup(false);
-          setIsLoading(false);
-        } else {
-          Alert.alert('', 'Something went wrong please exit the app and try again');
-        }
+          // setIsLoading(false);
+        } 
+         
 
       }
       catch (error) {
-        Alert.alert('', 'Something went wrong please exit the app and try again');
+        Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+        // Alert.alert('', 'Something went wrong please exit the app and try again');
         // console.log("......error.........", error.response.data.message);
-        setIsLoading(false);
-
-      }
+     }
     } else {
       Alert.alert('', 'Please login first')
-    }
+    } setIsLoading(false);
   };
 
   const GetCategoryBlogApi = async () => {
     const usertkn = await AsyncStorage.getItem("authToken");
+    console.log('token::::::',usertkn);
     setIsLoading(true);
     try {
 
       const response = await axios.get(`${API.BLOG_MAIN_SCREEN}`,
-        // { headers: { "Authorization": ` ${usertkn}` } }
+        { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } }
       );
-      // console.log(":::::::::Traing_Workout_Response>>>", response.data);
+      console.log(":::::::::Traing_Workout_Response>>>", response.data);
       // console.log("Traing_Workout_data::::::", response.data.status);
       setBlogvideolist(response.data.blog)
       setBlogcategorylist(response.data.blogcategory)
-      setIsLoading(false);
+     setBlogbanner(response.data.banner_blog)
 
     }
     catch (error) {
-      Alert.alert('', 'Something went wrong please exit the app and try again')
+      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      // Alert.alert('', 'Something went wrong please exit the app and try again')
       // console.log("......error.........", error.response.data.message);
-      setIsLoading(false);
+      // setIsLoading(false);
 
     }
+    setIsLoading(false);
   };
   return (
     <SafeAreaView style={{
@@ -138,6 +140,7 @@ const Blog = (props) => {
       height: HEIGHT, backgroundColor: 'black', flexGrow: 1
     }} >
       <Headers
+      navigation={props.navigation}
         Drawericon={{
           visible: true,
         }}
@@ -152,7 +155,9 @@ const Blog = (props) => {
           visible: true,
 
         }}
-        BelliconononClick={() => { props.navigation.navigate('Notifications') }}
+        BelliconononClick={() => { 
+          // props.navigation.navigate('Notifications') 
+        }}
       />
       {!isLoading ?
         (<View style={{ width: WIDTH, height: HEIGHT, flex: 1 }}>
@@ -163,35 +168,48 @@ const Blog = (props) => {
             {/*// btn navigate Newsletterpopup/// */}
             <View
               style={{
-                height: 185,
+                height: 140,
                 width: "100%",
                 borderBottomLeftRadius: 20,
                 borderBottomRightRadius: 20,
                 backgroundColor: '#262626',
-                paddingBottom: 15,
+                paddingBottom: 10,
                 justifyContent: "center",
                 alignItems: "center",
 
               }}>
-              <TouchableOpacity
+              <TouchableOpacity style={{
+                    height: 140,
+                    width: "95%",
+                    // flexDirection: 'row',
+                    // backgroundColor: 'white',
+                    borderRadius: 20,
+                    // marginHorizontal: 25,
+                    marginTop: 10,
+                    // flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
                 onPress={() => {
                   GetNewsletterApi()
                   // setNewsletterPopup(true);
                 }}>
-                <View
-                  style={{
-                    height: 120,
-                    width: "90%",
-                    flexDirection: 'row',
-                    backgroundColor: 'white',
-                    borderRadius: 20,
-                    // marginHorizontal: 25,
-                    marginTop: 20,
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}>
-                  <View
+                 
+               
+                    <Image
+                      resizeMode='contain'
+                      source={{uri:`${blogbanner}`}}
+                      style={{
+                       
+                        alignSelf: 'center',
+                        width: "100%",
+                        height: "100%",
+                        // borderBottomLeftRadius: 20,
+                        // borderTopLeftRadius: 20,
+                      }}
+                    />
+                 
+                  {/* <View
                     style={{
                       // width:120,
                       height: 140,
@@ -258,8 +276,8 @@ const Blog = (props) => {
                         />
                       </View>
                     </View>
-                  </View>
-                </View>
+                  </View> */}
+                 
               </TouchableOpacity>
             </View>
 
@@ -604,10 +622,12 @@ const Blog = (props) => {
           </ScrollView>
         </View>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          {/* <Text style={{color:"white",textAlign: 'center',fontSize: 15,marginBottom:4,fontWeight:"bold"}}>Loading.....</Text> */}
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        (<CustomLoader showLoader={isLoading}/>
+        // <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+           
+        //   <ActivityIndicator size="large" color="#ffcc00" />
+        // </View>
+        )}
     </SafeAreaView>
   );
 };

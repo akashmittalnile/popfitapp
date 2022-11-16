@@ -11,26 +11,22 @@ import { DrawerActions } from '@react-navigation/native';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
+import CustomLoader from '../../Routes/CustomLoader';
 
 const AboutsUs = (props) => {
     const [aboutus, setAboutus] = useState([]);
     const [About_usimage, setAbout_usimage] = useState("");
-
+    const [isLoading, setIsLoading] = useState(false);
     // const openDrawer = () => props.navigation.dispatch(DrawerActions.openDrawer());
-    const gotoNotification = () => {
-        props.navigation.navigate("Notifications")
-    }
-    const gotobackscreen = () => {
-        props.navigation.goBack();
-    }
+
     useEffect(() => {
         About_USApi();
 
-    }, [props]);
+    }, []);
 
     const About_USApi = async () => {
 
-        // setIsLoading(true)
+        setIsLoading(true)
         try {
             const response = await axios.get(`${API.ABOUT_US}`);
             // console.log("", response);
@@ -41,10 +37,11 @@ const AboutsUs = (props) => {
             // setIsLoading(false)
         }
         catch (error) {
-            console.log("Terms_condition_error:", error.response.data.message);
+            Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+            //console.log("Terms_condition_error:", error.response.data.message);
             // setIsLoading(false)
         }
-
+        setIsLoading(false)
 
     };
     return (
@@ -105,38 +102,41 @@ const AboutsUs = (props) => {
                 </View>
             </View> */}
             <ScrollView>
-                <View style={{ justifyContent: "center", padding: 10, height: "100%", width: "99.8%", }}>
+                {!isLoading ?
+                    (<View style={{ justifyContent: "center", padding: 10, height: "100%", width: "99.8%", }}>
 
-                    <View style={{ marginLeft: 15, marginTop: 10, }}>
-                        <Text style={{ textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "500" }}>{aboutus.title}</Text>
-                    </View>
-                    <View style={{
-                        marginHorizontal: 10, marginTop: 10, height: 190, borderRadius: 20,
-                    }}>
+                        <View style={{ marginLeft: 15, marginTop: 10, }}>
+                            <Text style={{ textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "500" }}>{aboutus.title}</Text>
+                        </View>
+                        <View style={{
+                            marginHorizontal: 10, marginTop: 10, height: 190, borderRadius: 20,
+                        }}>
 
-                        <Image resizeMode='stretch'
-                            source={{ uri: About_usimage }}
-                            style={{
-                                width: '100%',
-                                height: '100%',
-                                justifyContent: "center",
-                                alignItems: 'center', borderRadius: 20
-                            }}>
+                            <Image resizeMode='stretch'
+                                source={{ uri: About_usimage }}
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    justifyContent: "center",
+                                    alignItems: 'center', borderRadius: 20
+                                }}>
 
-                        </Image>
+                            </Image>
 
-                    </View>
-
-
-
-                    <View style={{ marginLeft: 20, marginTop: 20, height: "auto" }}>
-                        <Text style={{ textAlign: 'left', fontSize: 11, color: 'black', fontWeight: "400" }}>{aboutus.description}</Text>
-                    </View>
+                        </View>
 
 
 
+                        <View style={{ marginLeft: 20, marginTop: 20, height: "auto" }}>
+                            <Text style={{ textAlign: 'left', fontSize: 11, color: 'black', fontWeight: "400" }}>{aboutus.description}</Text>
+                        </View>
 
-                </View>
+
+
+
+                    </View>)
+                    :
+                    (<CustomLoader showLoader={isLoading} />)}
             </ScrollView>
         </SafeAreaView>
     );

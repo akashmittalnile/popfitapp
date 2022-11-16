@@ -11,6 +11,7 @@ import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { async } from 'regenerator-runtime';
+import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -65,7 +66,7 @@ const ProductDetail = (props) => {
   // console.log("MENSITEM.........:",props?.route?.params?.MENSITEM?.id);
   const MENSITEM = props?.route?.params?.MENSITEM?.id
   // console.log("Cart item view.........:", props?.route?.params?.Cartaddedview?.product_id);
-  let Cartaddedview = props?.route?.params?.Cartaddedview?.id;
+  let Cartaddedview = props?.route?.params?.Cartaddedview?.product_id;
   // console.log("Shipping item view.........:", props?.route?.params?.Isshippingview?.product_id);
   let Isshippingview = props?.route?.params?.Isshippingview?.id;
 
@@ -96,20 +97,19 @@ const ProductDetail = (props) => {
 
       setProductitems(response.data.data);
       setImageBaseUrl(response.data.product_url);
-      setIsLoading(false);
+
     }
     catch (error) {
+      Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
       console.log("......StoresProductDetails_error.........", error.response.data.message);
-      setIsLoading(false);
-
     }
-
+    setIsLoading(false);
   };
   const GetShippingProducts = async () => {
 
     // console.log(".....usertoken.....GetShippingProducts...", producttoken);
 
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const response = await axios.get(`${API.SHIPPING_DETAILS}`);
       // console.log("", response);
@@ -118,17 +118,18 @@ const ProductDetail = (props) => {
       setuseraddress(response.data.address_lists);
       // console.log("User_token_not_received+yet!!!>>>", response.data.message);
 
-      setIsLoading(false)
+
     }
     catch (error) {
+      Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
       console.log("ShippingProductserror:::", error.response.data.message);
-      setIsLoading(false)
-    }
 
+    }
+    setIsLoading(false)
   };
   const UserToken = async () => {
     const usertkn = await AsyncStorage.getItem("authToken");
-    console.log("TOKEN:",usertkn);
+    console.log("TOKEN:", usertkn);
     setUsertoken(usertkn)
   }
   const ProductADDcart = async () => {
@@ -147,20 +148,19 @@ const ProductDetail = (props) => {
         props.navigation.navigate("CartAdded")
         // GetShippingProducts();
         // Alert.alert("Added to cart")
-        setIsLoading(false);
+
       }
       else {
         Alert.alert('Something went wrong !', 'Data not found')
-        setIsLoading(false);
+
       }
 
     }
     catch (error) {
+      Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
       console.log("......error ProductADD.........", error.response.data.message);
-      setIsLoading(false);
-
     }
-
+    setIsLoading(false);
   };
 
   // const ProductRemovecart = async (item) => {
@@ -214,29 +214,31 @@ const ProductDetail = (props) => {
             // width: WIDTH,
             // height: HEIGHT, 
             flexGrow: 1,
+
             backgroundColor: 'transparent',
           }}>
 
             <ScrollView>
-              {/* productitem _image */}
-              <View style={{
-                width: "95%",
-                height: 200,
-                marginTop: 10,
-                // marginLeft: 15,
-                marginHorizontal: 10,
-                shadowColor: '#000',
-                // shadowOffset: { width: 0, height: 4 },
-                shadowRadius: 6,
-                shadowOpacity: 0.2,
-                elevation: 3,
-                borderRadius: 15,
-                backgroundColor: '#F7F7F7',
-                marginTop: 20,
-                borderRadius: 20,
-                justifyContent: "center", alignItems: 'center',
-              }}>
-                {/* <View style={{
+              <View style={{ paddingBottom: 44 }}>
+                {/* productitem _image */}
+                <View style={{
+                  width: "95%",
+                  height: 200,
+                  marginTop: 10,
+                  // marginLeft: 15,
+                  marginHorizontal: 10,
+                  shadowColor: '#000',
+                  // shadowOffset: { width: 0, height: 4 },
+                  shadowRadius: 6,
+                  shadowOpacity: 0.2,
+                  elevation: 3,
+                  borderRadius: 15,
+                  backgroundColor: '#F7F7F7',
+                  marginTop: 20,
+                  borderRadius: 20,
+                  justifyContent: "center", alignItems: 'center',
+                }}>
+                  {/* <View style={{
                         marginHorizontal: 0, height: 30, alignItems: 'flex-end',backgroundColor: 'yellow',
                     }}>
                         <View style={{
@@ -250,93 +252,95 @@ const ProductDetail = (props) => {
                             </TouchableOpacity>
                         </View>
                     </View> */}
-                <View style={{
-                  width: "100%",
-                  height: 200, justifyContent: "center", alignItems: 'center',
-                  //  backgroundColor: '#F7F7F7',
-                  // backgroundColor: 'pink'
-                }}>
-
-                  <Image resizeMode='contain'
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      alignSelf: 'center',
-                      borderRadius: 20
-                    }}
-                    source={{ uri: Productitems ? ImageBaseUrl + Productitems?.image[0] : null }} />
-
-                </View>
-
-              </View>
-
-              <FlatList
-                horizontal
-                // style={{padding:5}}
-                data={Productitems?.image}
-                renderItem={({ item, index }) =>
                   <View style={{
-                    width: 110,
-                    height: 100,
-                    // marginLeft: 15,
-                    marginHorizontal: 10,
-
-                    shadowColor: '#000000',
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowRadius: 6,
-                    shadowOpacity: 0.2,
-                    elevation: 3,
-                    borderRadius: 10,
-                    borderColor: '#ffcc00',
-                    borderWidth: 1,
-                    backgroundColor: '#F7F7F7',
-                    marginTop: 20,
-                    marginBottom: 5,
-                    justifyContent: "center",
-                    alignItems: 'center',
-
+                    width: "100%",
+                    height: 200, justifyContent: "center", alignItems: 'center',
+                    //  backgroundColor: '#F7F7F7',
+                    // backgroundColor: 'pink'
                   }}>
 
-                    <View style={{
-                      width: 109,
-                      height: 99, justifyContent: "center", alignItems: 'center',
-                    }}>
-                      <Image
-                        source={{ uri: ImageBaseUrl + item }}
-                        resizeMode="contain"
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          alignSelf: 'center',
-                          borderRadius: 10
-                        }}
-                      />
-
-
-                    </View>
+                    <Image resizeMode='contain'
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        alignSelf: 'center',
+                        borderRadius: 20
+                      }}
+                      source={{ uri: Productitems ? ImageBaseUrl + Productitems?.image[0] : null }} />
 
                   </View>
-                }
-              />
 
-              <Text style={{ marginLeft: 25, marginTop: 20, textAlign: 'left', fontSize: 18, color: '#000000', fontWeight: "500" }}>{Productitems?.name?.slice(0, 35) + '...'}</Text>
-
-              <View style={{ marginTop: 10, flex: 1, flexDirection: 'row', width: "95%", height: 50, justifyContent: "center", alignItems: "center" }}>
-
-                <View style={{ flex: 1, marginLeft: 25, height: 30, width: 100, justifyContent: "center", alignItems: "flex-start" }}>
-                  <Text style={{ textAlign: 'left', fontSize: 14, color: '#77869E', fontWeight: "500" }}>$ <Text style={{ textAlign: 'left', fontSize: 14, color: '#77869E', fontWeight: "500" }}>{Productitems?.price}</Text></Text>
                 </View>
 
-              </View>
+                <FlatList
+                  horizontal
+                  // style={{padding:5}}
+                  keyExtractor={(item, index) => String(index)}
+                  data={Productitems?.image}
+                  renderItem={({ item, index }) =>
+                    <View style={{
+                      width: 110,
+                      height: 100,
+                      // marginLeft: 15,
+                      marginHorizontal: 10,
 
-              <View style={{ justifyContent: "flex-start", alignItems: "flex-start", width: "90%", marginLeft: 20, height: "auto", marginBottom: 20 }}>
-                <Text style={{ marginTop: 20, textAlign: 'left', fontSize: 14, color: '#000000', }}>{Productitems?.description}</Text>
-              </View>
+                      shadowColor: '#000000',
+                      shadowOffset: { width: 0, height: 4 },
+                      shadowRadius: 6,
+                      shadowOpacity: 0.2,
+                      elevation: 3,
+                      borderRadius: 10,
+                      borderColor: '#ffcc00',
+                      borderWidth: 1,
+                      backgroundColor: '#F7F7F7',
+                      marginTop: 20,
+                      marginBottom: 5,
+                      justifyContent: "center",
+                      alignItems: 'center',
+
+                    }}>
+
+                      <View style={{
+                        width: 109,
+                        height: 99, justifyContent: "center", alignItems: 'center',
+                      }}>
+                        <Image
+                          source={{ uri: ImageBaseUrl + item }}
+                          resizeMode="contain"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            alignSelf: 'center',
+                            borderRadius: 10
+                          }}
+                        />
+
+
+                      </View>
+
+                    </View>
+                  }
+                />
+
+                <Text style={{ marginLeft: 20, marginTop: 20, textAlign: 'left', fontSize: 18, color: '#000000', fontWeight: "500" }}>{Productitems?.name?.slice(0, 40)}</Text>
+
+                <View style={{ marginTop: 10, flex: 1, flexDirection: 'row', width: "95%", height: 50, justifyContent: "center", alignItems: "center" }}>
+
+                  <View style={{ flex: 1, marginLeft: 20, height: 30, width: 100, justifyContent: "center", alignItems: "flex-start" }}>
+                    <Text style={{ textAlign: 'left', fontSize: 15, color: '#000000', fontWeight: "500" }}>Price: <Text style={{ textAlign: 'left', fontSize: 14, color: '#77869E', fontWeight: "500" }}>${Productitems?.price}</Text></Text>
+                  </View>
+
+                </View>
+
+                <View style={{ justifyContent: "flex-start", alignItems: "flex-start", width: "90%", marginLeft: 20, height: "auto", marginBottom: 20, marginTop: 4, }}>
+                  <Text style={{ textAlign: 'left', fontSize: 15, color: '#000000', fontWeight: "500" }}>Product Details</Text>
+                  <Text style={{ marginTop: 8, textAlign: 'left', fontSize: 14, color: '#000000', }}>{Productitems?.description}</Text>
+                </View>
 
 
 
-              {/* product view in modal  */}
-              {/* {CartAddedPopUp ? (
+                {/* product view in modal  */}
+                {/* {CartAddedPopUp ? (
                 <Modal
                   animationType="fade"
                   transparent={true}
@@ -608,12 +612,12 @@ const ProductDetail = (props) => {
                   </View>
                 </Modal>
               ) : null} */}
-
+              </View>
             </ScrollView>
             {/* bottom Buttons   */}
             <View style={{ marginBottom: 10, flexDirection: 'row', justifyContent: "center", alignItems: "center", height: 36, width: "100%", position: "absolute", bottom: 0, }}>
 
-              <TouchableOpacity onPress={() => { props.navigation.goBack() }}
+              <TouchableOpacity onPress={() => { props.navigation.navigate("Home") }}
                 style={{ justifyContent: 'center', backgroundColor: '#ffcc00', borderRadius: 50, alignItems: "center", height: 34, width: 170 }}>
 
 
@@ -643,9 +647,11 @@ Cartaddedview && Isshippingview == "" ?
             </View>
           </View>)
         :
-        (<View style={{ flex: 1, flexGrow: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        (<CustomLoader showLoader={isLoading} />
+          // <View style={{ flex: 1, flexGrow: 1, justifyContent: "center", alignItems: "center" }}>
+          //   <ActivityIndicator size="large" color="#ffcc00" />
+          // </View>
+        )}
     </SafeAreaView>
   )
 }
