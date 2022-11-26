@@ -8,7 +8,8 @@ import { RadioButton } from 'react-native-paper';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Pages } from 'react-native-pages';
 import styles from '../../Routes/style'
-import { DrawerActions } from '@react-navigation/native';
+import { DrawerActions,CommonActions } from '@react-navigation/native';
+ 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
@@ -29,6 +30,7 @@ const MyProfile = (props) => {
         props.navigation.navigate("EditMyProfile")
     }
     const gotoChangePassword = () => {
+      
         props.navigation.navigate("ChangePassword", {
             PhoneNo: Userprofile.phone
         })
@@ -64,15 +66,15 @@ const MyProfile = (props) => {
     }
     function OrderDATE(data) {
 
-        if (data.order_status == '1') {
+        if (data.order_status_id == '1') {
             return data.order_placed
         }
-        else if (data.order_status == '2') {
+        else if (data.order_status_id == '2') {
             return data.odis_date
         }
-        else if (data.order_status == '3') {
+        else if (data.order_status_id == '3') {
             return data.ofd_date
-        } else if (data.order_status == '4') {
+        } else if (data.order_status_id == '4') {
             return data.odeliv_date
         }
         else {
@@ -223,12 +225,18 @@ const downloadFile = async (url) => {
                     visible: true,
                 }}
                 BackicononClick={() => {
-                    props.navigation.reset({
-                        index: 0,
-                        routes: [{ name: 'Home' }]
-                    })
+                    props.navigation.dispatch(
+                        CommonActions.reset({
+                            index: 0,
+                            routes: [{ name: 'Home' }]
+                          })
+                        
+                    )
                 }}
-
+                // Drawericon={{
+                //     visible: true,
+                //   }}
+                //   DrawericononClick={() => { props.navigation.dispatch(DrawerActions.openDrawer()) }}
                 CartIcon={{
                     visible: true,
                 }}
@@ -307,8 +315,8 @@ const downloadFile = async (url) => {
                                             </View>
                                         </TouchableOpacity>
 
-                                        <TouchableOpacity style={{ flex: 1.1 / 2 }} onPress={() => { gotoChangePassword() }}>
-                                            <View style={{ marginLeft: 6, borderWidth: 1, borderColor: '#ffcc00', borderRadius: 20, backgroundColor: 'white', height: 30, flexDirection: 'row', alignItems: 'center' }}>
+                                        <TouchableOpacity style={{ flex: 1.1 / 2, }} onPress={() => { gotoChangePassword() }}>
+                                            <View style={{ marginLeft: 6, borderWidth: 1, borderColor: '#ffcc00', borderRadius: 20, backgroundColor: 'white', height: 30, flexDirection: 'row', alignItems: 'center', }}>
                                                 <View style={{ width: 30, marginLeft: 14 }}>
                                                     <Image source={require('../assets/lock2.png')}
                                                         style={{
@@ -428,7 +436,7 @@ const downloadFile = async (url) => {
 
                                                         <View style={{ marginTop: 1, flexDirection: 'row', marginLeft: 0 }}>
                                                             <View>
-                                                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Price : <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#77869E', }}>${item.order_price}</Text></Text>
+                                                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Price: <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#77869E', }}>${item.order_price}</Text></Text>
                                                             </View>
 
                                                         </View>
@@ -487,9 +495,9 @@ const downloadFile = async (url) => {
                                                     <Text style={{ textAlign: 'left', fontSize: 14, color: '#353535', fontWeight: "500" }}>Order Status :</Text>
                                                 </View>
 
-                                                {item.order_status >= "1" ?
+                                                {item.order_status_id >= "1" ?
                                                     (<View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}>
-                                                        <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "400" }}>{Orderstatus(item.order_status)}</Text>
+                                                        <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "400" }}>{Orderstatus(item.order_status_id)}</Text>
                                                         <View style={{ marginTop: 6, }}>
                                                             <Text style={{ textAlign: 'left', fontSize: 9, color: '#455A64', fontWeight: "400" }}>{OrderDATE(item)}</Text>
                                                         </View>

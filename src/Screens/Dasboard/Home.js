@@ -36,10 +36,16 @@ const Home = (props) => {
     props.navigation.navigate("BlogBottomTab")
   };
   const gotoBlogDetail = async (item) => {
-
-    props.navigation.navigate("BlogDetail", {
-      homeblogid: item
-    })
+    const usertkn = await AsyncStorage.getItem("authToken");
+    if (usertkn == null) {
+      Alert.alert('', 'Please login first')
+    }
+    else if (usertkn != null) {
+      props.navigation.navigate("BlogDetail", {
+        homeblogid: item
+      })
+    }
+   
   }
   const gotoShop = () => {
     props.navigation.navigate("FitnessEquipment", {
@@ -50,7 +56,7 @@ const Home = (props) => {
     props.navigation.navigate('ProductDetail', {
       ITEM: item
     });
-  }
+  }  
   const gototshirtproduct = (item) => {
     props.navigation.navigate("ProductDetail", {
       CLOTHITEM: item
@@ -64,10 +70,17 @@ const Home = (props) => {
   const gotoRecipecategory = () => {
     props.navigation.navigate("Recipecategory")
   }
-  const gotoRecipeDetails = (item) => {
-    props.navigation.navigate("Recipesubcategory", {
-      getHomeRecipelistID: item
-    })
+  const gotoRecipeDetails = async(item) => {
+    const usertkn = await AsyncStorage.getItem("authToken");
+    if (usertkn == null) {
+      Alert.alert('', 'Please login first')
+    }
+    else if (usertkn != null) {
+      props.navigation.navigate("Recipesubcategory", {
+        getHomeRecipelistID: item
+      })
+    }
+   
   }
   const gotoTrainingsubcatgory = async (item) => {
     const usertkn = await AsyncStorage.getItem("authToken");
@@ -91,8 +104,11 @@ const Home = (props) => {
   // const openDrawer = () => props.navigation.dispatch(DrawerActions.openDrawer())
 
   useEffect(() => {
-    StoresProductget()
-
+    // StoresProductget()
+    const unsubscribe = props.navigation.addListener('focus', () => {
+      StoresProductget();
+    })
+    return unsubscribe;
   }, []);
 
 
@@ -119,7 +135,7 @@ const Home = (props) => {
 
     }
     catch (error) {
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      // Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
       // console.log(".....Home.error.........", error.response.data.message);
       // Alert.alert('', 'Something went wrong please exit the app and try again')
 
@@ -135,7 +151,7 @@ const Home = (props) => {
       backgroundColor: 'black'
     }} >
       <Headers
-        navigation={props.navigation}
+        // navigation={props.navigation}
         Drawericon={{
           visible: true,
         }}
@@ -151,7 +167,7 @@ const Home = (props) => {
 
         }}
         BelliconononClick={() => {
-          // props.navigation.navigate("Notifications")
+          props.navigation.navigate("Notifications")
 
         }}
       />

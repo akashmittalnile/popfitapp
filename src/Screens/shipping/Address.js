@@ -471,7 +471,7 @@ const Address = (props) => {
                                                 alignItems: "center", marginTop: 12
                                             }}>
                                                 < View style={{ justifyContent: "flex-start", alignItems: 'flex-start' }}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 17, color: 'black', fontWeight: '500', left: 34, marginTop: 5 }}>Create a new address</Text>
+                                                    <Text style={{ textAlign: 'left', fontSize: 17, color: 'black', fontWeight: '500', left: 34, marginTop: 5 }}>Add a new address</Text>
                                                 </View>
                                             </View>
                                         </View>

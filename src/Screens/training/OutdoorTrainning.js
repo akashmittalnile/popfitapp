@@ -10,7 +10,7 @@ import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
 import CustomLoader from '../../Routes/CustomLoader';
-import { red100 } from 'react-native-paper/lib/typescript/styles/colors';
+ 
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -274,8 +274,8 @@ const OutdoorTrainning = (props) => {
                   </View> || planstatus != "Active"*/}
 
 
-                  {
-                    (checkplanid?.plan_id != undefined ? checkplanid?.plan_id : undefined) >= 2 || (hometrainingid?.plan_id != undefined ? hometrainingid?.plan_id : undefined) >= 2 ?
+                  {/* {
+                    (checkplanid?.plan_id.includes('1') != undefined ? checkplanid?.plan_id.includes('1') : undefined) >= 2  || (hometrainingid?.plan_id != undefined ? hometrainingid?.plan_id : undefined) >= 2 ?
                       <>
 
                         {(hometrainingid?.user_plan_status != undefined ? hometrainingid?.user_plan_status != "Active" : undefined )  || (checkplanid?.user_plan_status  != undefined ? checkplanid?.user_plan_status != "Active" : undefined)  ?
@@ -299,7 +299,7 @@ const OutdoorTrainning = (props) => {
                       </>
                       :
                       null
-                  }
+                  } */}
 
                 </View>
               </ScrollView>)

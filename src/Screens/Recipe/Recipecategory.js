@@ -27,6 +27,8 @@ import Headers from '../../Routes/Headers';
 import axios from 'axios';
 import { API } from '../../Routes/Urls';
 import CustomLoader from '../../Routes/CustomLoader';
+import { async } from 'regenerator-runtime';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -35,10 +37,18 @@ const Recipecategory = props => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [recipecategory, setRecipecategory] = useState([]);
-  const gotoRecipeDetails = (item) => {
-    props.navigation.navigate('Recipesubcategory', {
-      RecipecategoryID: item
-    });
+
+  const gotoRecipeDetails = async(item) => {
+    const usertkn = await AsyncStorage.getItem("authToken");
+    if (usertkn == null) {
+      Alert.alert('', 'Please login first')
+    }
+    else if (usertkn != null) {
+      props.navigation.navigate('Recipesubcategory', {
+        RecipecategoryID: item
+      });
+    }
+   
   };
 
   useEffect(() => {

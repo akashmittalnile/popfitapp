@@ -68,8 +68,8 @@ const Category = (props) => {
 
     }
     catch (error) {
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
-      // Alert.alert('', 'Something went wrong please exit the app and try again')
+      // Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert('', 'Something went wrong please exit the app and try again')
       // console.log("......error.........", error.response.data.message);
     }
     setIsLoading(false);

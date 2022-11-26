@@ -7,62 +7,29 @@ import { NavigationContainer } from '@react-navigation/native';
 import 'react-native-reanimated'
 import Home from './src/Screens/Dasboard/Home';
 import LoginSignUp from './src/Screens/loginSignup/LoginSignUp';
-//import { requestUserPermission, notificationListner, createChannel, notificationListne } from './src/Screens/notificationServices';
+import { requestUserPermission, notificationListner, createChannel, notificationListne } from './src/Screens/notificationServices';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NotificationManagerAndroid } from './NotificationManagerAndroid';
 import { NotificationManagerIOS } from './NotificationManagerIOS';
 import { Alert } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
-// import ForegroundHandler from './src/Screens/ForegroundHandler';
-// import { createStore, combineReducers } from "redux";
+ 
 import { Provider } from 'react-redux';
 import modifyCounterReducer from './src/Redux/reducers/modifyCounter';
 import store from "./src/store";
 import { StripeProvider } from '@stripe/stripe-react-native';
  
 
+
 const App = (props) => {
 
-   
-
-  // const fetchPublishableKey = async () => {
-  //   const key = await fetchKey('pk_test_51LogMKSI9r7oyTnGwG3IdAXSeadXKDKkwWBixJRfQEIqSC3bl2p7mGWz3q9APkpZoFf0uQcC3ZTPrjOz7GKmWGzQ00YSHiUXTR'); // fetch key from your server here
-  //   setPublishableKey(key);
-  // };
-  // LogBox.ignoreLogs([
-  //   "ViewPropTypes will be removed",
-  //   "ColorPropType will be removed",
-  //   ])
   LogBox.ignoreAllLogs()
-  // useEffect(() => {
-  //   const unsubscribe = messaging().onMessage(async remoteMessage => {
-  //     console.log('foreground message', JSON.stringify(remoteMessage));
-  //     Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage.notification)
-  //     );
-  //   });
-
-  //   return unsubscribe;
-  // }, []);
-  async function requestUserPermission() {
-    const authorizationStatus = await messaging().requestPermission({
-      sound: false,
-      announcement: true,
-    });
-  }
-  async function requestUserPermissionIos() {
-    const authStatus = await messaging().requestPermission();
-    const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-    if (enabled) {
-      console.log('Authorization status:', authStatus);
-    }
-  }
+   
   useEffect(() => {
     
      
     // requestUserPermission();
-    // notificationListner()
+    notificationListner()
     NotificationManagerAndroid.createChannel();
     NotificationManagerAndroid.configure();
     try {

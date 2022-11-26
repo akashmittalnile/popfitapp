@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, TouchableOpacity, Image, Alert, SafeAreaView, ActivityIndicator, Dimensions, PermissionsAndroid, Platform } from 'react-native'
+import { View, Text, TouchableOpacity, Image, Alert, SafeAreaView, ActivityIndicator, Dimensions, PermissionsAndroid, Platform, Modal, KeyboardAvoidingView, TextInput } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
@@ -13,20 +13,50 @@ var HEIGHT = Dimensions.get('window').height;
 
 
 const OrderDetail = (props) => {
-
+    const [ContactUs, setContactUs] = useState(false);
+    const [UserName, setUserName] = useState("");
+    const [Useremail, setUseremail] = useState("");
+    const [Typemessage, setTypemessage] = useState("");
     const [orderitemdata, setOrderitemdata] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [check, setcheck] = useState(false);
+    const [emailerrormsg, setemailerrormsg] = useState("");
+    const [emailalert, setEmailAlert] = useState(false);
 
     useEffect(() => {
+        if (!check) {
+            getusertoken();
+
+        }
         MyOrderDetails();
 
     }, []);
+    const getusertoken = async () => {
+        const Token = await AsyncStorage.getItem("authToken");
+        // console.log(".....drawer profiletoken get::", usertoken);
+    }
 
-    console.log("MY order list...............:", props?.route?.params?.Gotoorderdetails?.order_id);
-    const Gotoorderdetails = props?.route?.params?.Gotoorderdetails?.order_id;
-    console.log("From profileorder list...............:", props?.route?.params?.gotoprofileOrderdetails?.order_id);
-    const gotoprofileOrderdetails = props?.route?.params?.gotoprofileOrderdetails?.order_id;
+    console.log("MY order list...............:", props?.route?.params?.Gotoorderdetails?.item_no);
+    const Gotoorderdetails = props?.route?.params?.Gotoorderdetails?.item_no;
+    console.log("From profileorder list...............:", props?.route?.params?.gotoprofileOrderdetails?.order_number);
+    const gotoprofileOrderdetails = props?.route?.params?.gotoprofileOrderdetails?.order_number;
 
+    const Emailvalidaton = (text) => {
+        console.log(text);
+        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+        if (reg.test(text) === false) {
+            setemailerrormsg("Email is Not Correct")
+            console.log("Email is Not Correct");
+            setEmailAlert(true)
+            setUseremail(text)
+            return false;
+        }
+        else {
+            setUseremail(text)
+            setEmailAlert(false)
+            console.log("Email is Correct");
+        }
+    }
     const checkPermission = async (download_url) => {
         if (Platform.OS === 'ios') {
         } else {
@@ -57,7 +87,7 @@ const OrderDetail = (props) => {
         const ordertoken = await AsyncStorage.getItem("authToken");
         try {
 
-            const res = await axios.post(`${API.INVOICE}`, { "order_id": Gotoorderdetails ? Gotoorderdetails : gotoprofileOrderdetails }, { headers: { "Authorization": ` ${ordertoken}` } });
+            const res = await axios.post(`${API.INVOICE}`, { "order_id": Gotoorderdetails != undefined ? Gotoorderdetails : gotoprofileOrderdetails }, { headers: { "Authorization": ` ${ordertoken}` } });
 
             console.log('res', res.data)
             if (res.data.status == 1) {
@@ -131,19 +161,102 @@ const OrderDetail = (props) => {
         const usertkn = await AsyncStorage.getItem("authToken");
         setIsLoading(true);
         try {
-            const response = await axios.post(`${API.ORDER_DETAIL}`, { "order_id": Gotoorderdetails ? Gotoorderdetails : gotoprofileOrderdetails }, { headers: { "Authorization": ` ${usertkn}` } });
+            const response = await axios.post(`${API.ORDER_DETAIL}`, { "item_no": Gotoorderdetails != undefined ? Gotoorderdetails : gotoprofileOrderdetails }, { headers: { "Authorization": ` ${usertkn}` } });
             console.log(":::::::::MyOrderDetailst_Response>>>", response.data.order);
             console.log("status _OrderDetails:", response.data.status);
             if (response.data.status == 1) {
                 setOrderitemdata(response.data.order)
 
-            }  
+            }
 
         }
         catch (error) {
-            Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+            Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
             // console.log("......error.........", error.response.data.message);
             // Alert.alert('', 'Something went wrong please exit the app and try again');
+
+        }
+        setIsLoading(false);
+    };
+
+    const GetContactUs = async () => {
+
+
+        if (UserName && Useremail != null) {
+
+            const data = {
+                name: UserName,
+                email: Useremail,
+                message: Typemessage
+            }
+            console.log("........contactus", data);
+            // setIsLoading(true);
+            // setContactUs(true);
+            try {
+                const response = await axios.post(`${API.CONTACT_US}`, data)
+                // console.log("response_contactus ::::", response.data);
+                // console.log("contactus-Status ::::", response.data.status);
+                if (response.data.status == '1') {
+                    Alert.alert('', 'Your message has been sent successfully we will contact you shortly.')
+                    console.log("response_contactus ::::", response.data);
+                    setContactUs(false);
+                    setIsLoading(false);
+                    setUserName("")
+                    setUseremail("")
+                    setTypemessage("")
+                    setcheck(false);
+
+                    // props.navigation.navigate("Home");
+                }
+                else if (response.data.status == '0') {
+                    setUserName("")
+                    setUseremail("")
+                    setTypemessage("")
+                    setIsLoading(false);
+                    setcheck(false);
+                    Alert.alert('', 'Something went wrong please exit the app and try again');
+                }
+                else {
+                    setIsLoading(false);
+                }
+
+            } catch (error) {
+                Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+                // Alert.alert('', 'Something went wrong please exit the app and try again');
+                // console.log("error_ContactUs:", error.response.data.message);
+                setIsLoading(false);
+                setcheck(false)
+            }
+        } else return Alert.alert('', 'All the fields are required!');
+    };
+
+    const CancelOrder = async () => {
+        const usertkn = await AsyncStorage.getItem("authToken");
+        setIsLoading(true);
+        try {
+            const response = await axios.post(`${API.CANCEL_ORDER}`, { "item_no": Gotoorderdetails != undefined ? Gotoorderdetails : gotoprofileOrderdetails }, { headers: { "Authorization": ` ${usertkn}` } });
+
+
+            if (response.data.status == 1) {
+                console.log("status _OrderCancel:", response.data);
+                Alert.alert("", response.data.message, [
+                    {
+                        text: "ok",
+                        onPress: () => { props.navigation.goBack() },
+                        style: "cancel"
+                    },
+
+                ])
+            } else if (response.data.status == 0) {
+                Alert.alert("", "Something went wrong! try again!")
+            }
+
+        }
+        catch (error) {
+            // Alert.alert('', 'error.response.data.message');
+            Alert.alert("", "Please check your internet connection and try again.")
+            console.log("......error.........", error.response.data.message);
+
 
         }
         setIsLoading(false);
@@ -177,9 +290,9 @@ const OrderDetail = (props) => {
                     <ScrollView>
                         {
                             orderitemdata.length > 0 ?
-                                orderitemdata.map((item,index) => {
+                                orderitemdata.map((item, index) => {
                                     return (
-                                        <View key = {String(index)} style={{ paddingBottom: 30 }} >
+                                        <View key={String(index)} style={{ paddingBottom: 30 }} >
                                             {/* order no deisgn*/}
                                             <View style={{
                                                 // backgroundColor: '#fffcee',
@@ -260,8 +373,8 @@ const OrderDetail = (props) => {
                                                 alignItems: "center",
                                                 shadowColor: '#000000',
                                                 shadowRadius: 6,
-                                                shadowOpacity: 1.0,
-                                                elevation: 6,
+                                                shadowOpacity: 0.2,
+                                                elevation: 4,
                                             }}>
 
                                                 <View style={{
@@ -299,7 +412,7 @@ const OrderDetail = (props) => {
 
                                                             <View style={{ flexDirection: 'column', }}>
                                                                 <View>
-                                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000' }}>Price: <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#000000', }}>$ {item.total_price}</Text></Text>
+                                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000' }}>Total Amount: <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#455A64', }}>${item.total_price}</Text></Text>
                                                                 </View>
                                                                 <View>
                                                                     <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000' }}>Quantity: <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#000000', }}>{item.qty}</Text></Text>
@@ -314,6 +427,9 @@ const OrderDetail = (props) => {
 
                                                 </View>
                                             </View>
+
+                                            {/* Your Shipping Address */}
+
                                             <Text style={{ marginLeft: 15, marginTop: 20, textAlign: 'left', fontSize: 17, color: '#000000', fontWeight: "500" }}>Your Shipping Address</Text>
 
                                             <View style={{
@@ -354,9 +470,9 @@ const OrderDetail = (props) => {
 
                                                     <Text numberOfLines={3} style={{ textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "400" }}>{item?.shipping_address}</Text>
                                                 </View> */}
-                                                <View style={{ width: WIDTH * 0.70, marginLeft: 14, justifyContent: 'center', alignItems: 'flex-start',height: 90 ,}}>
+                                                <View style={{ width: WIDTH * 0.70, marginLeft: 14, justifyContent: 'center', alignItems: 'flex-start', height: 90, }}>
                                                     <Text style={{ color: '#000000', fontWeight: "500", fontSize: 14, textAlign: 'left' }}>{item?.address_type}</Text>
-                                                    <View style={{ width: WIDTH * 0.67, height: 50, marginTop: 5,paddingBottom: 6, }}>
+                                                    <View style={{ width: WIDTH * 0.67, height: 50, marginTop: 5, paddingBottom: 6, }}>
                                                         <Text style={{ textAlign: 'left', fontSize: 12, color: '#676767', fontWeight: '400' }}>{item?.address_fullName}, {item?.address_house_no}, {item?.address_area_village}, {item?.address_city},{item?.address_landmark}, {item?.address_state}, {item?.address_pincode}
                                                         </Text>
                                                         <Text style={{ marginTop: 5, textAlign: 'left', fontSize: 12, color: '#676767', fontWeight: '400' }}>
@@ -366,15 +482,51 @@ const OrderDetail = (props) => {
                                                 </View>
                                             </View>
 
+                                            {/* Describtion */}
+                                            {
+                                                item?.delivery_inst != "" ?
+                                                    (<View style={{
+                                                        height: 95,
+                                                        width: "92%",
+                                                        marginHorizontal: 15,
+                                                        borderRadius: 15,
+                                                        backgroundColor: 'white',
+                                                        marginTop: 10,
+                                                        marginBottom: 10,
+                                                        justifyContent: "center",
+                                                        borderWidth: 1,
+                                                        borderColor: "#8F93A0",
+                                                        padding: 6
+
+                                                    }}><View style={{ width: "95%", marginLeft: 8, justifyContent: 'center', alignItems: 'flex-start', height: 20, marginVertical: 6 }}>
+                                                            <Text style={{ textAlign: 'left', fontSize: 15, color: '#000000', fontWeight: '400' }}>Delivery Instructions</Text>
+                                                        </View>
+
+                                                        <View style={{ width: "95%", marginLeft: 8, justifyContent: 'center', alignItems: 'flex-start', height: 60, paddingBottom: 6 }}>
+                                                            <Text numberOfLines={3} style={{ textAlign: 'left', fontSize: 12, color: '#676767', fontWeight: '400' }}>{item?.delivery_inst}</Text>
+                                                        </View>
+
+
+                                                    </View>)
+                                                    :
+                                                    null
+                                            }
+
                                             {/* Order status , Order dispatched,Order for delivery,Order delivered*/}
                                             <Text style={{ marginLeft: 15, marginTop: 10, textAlign: 'left', fontSize: 17, color: '#000000', fontWeight: "500" }}>Order status</Text>
 
-                                            <View style={{ justifyContent: "flex-start", alignItems: "flex-start", flexDirection: "column", height: 300, width: WIDTH * 0.9, marginTop: 20, marginHorizontal: 20, }}>
+                                            <View style={{
+                                                justifyContent: "flex-start", alignItems: "flex-start", flexDirection: "column", height: 350, width: WIDTH * 0.9, marginVertical: 20, marginHorizontal: 20,
+                                                //  shadowColor: '#000000',borderRadius:10,
+                                                // shadowRadius: 6,
+                                                // shadowOpacity: 1.0,
+                                                // elevation: 6,
+                                            }}>
 
                                                 {
-                                                    item.order_status >= "1" ?
+                                                    item.order_status_id >= "1" ?
 
-                                                        (<View style={{ backgroundColor: "white", justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", width: WIDTH * 0.63, height: 45, paddingBottom: 5 }}>
+                                                        (<View style={{ justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", width: WIDTH * 0.68, height: 45, paddingBottom: 5 }}>
 
                                                             <View style={{ position: "absolute", left: 10, justifyContent: "center", alignItems: "center", top: 15 }}>
 
@@ -421,7 +573,7 @@ const OrderDetail = (props) => {
 
                                                 <View style={{ backgroundColor: "white", justifyContent: "space-between", alignItems: "flex-start", width: WIDTH * 0.5, height: 30, }}>
                                                     {
-                                                        item.order_status >= "1" ?
+                                                        item.order_status_id >= "1" ?
                                                             (<View style={{ position: "absolute", left: 18, justifyContent: "center", alignItems: "center" }}>
                                                                 <Image source={require('../assets/Ellipse_183.png')}
                                                                     style={{
@@ -463,7 +615,7 @@ const OrderDetail = (props) => {
                                                 </View>
 
                                                 {
-                                                    item.order_status >= "2" ?
+                                                    item.order_status_id >= "2" ?
 
                                                         (<View style={{ backgroundColor: "white", justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", width: WIDTH * 0.63, height: 45, paddingBottom: 5 }}>
 
@@ -485,7 +637,7 @@ const OrderDetail = (props) => {
                                                             </View>
                                                         </View>)
                                                         :
-                                                        (<View style={{ backgroundColor: "white", justifyContent: "center", alignItems: "center", flexDirection: "row", width: WIDTH * 0.54, height: 45, paddingBottom: 5 }}>
+                                                        (<View style={{ backgroundColor: "white", justifyContent: "center", alignItems: "center", flexDirection: "row", width: WIDTH * 0.54, height: 45, paddingBottom: 5, }}>
 
                                                             <View style={{ position: "absolute", left: 10, justifyContent: "center", alignItems: "center", top: 15 }}>
 
@@ -505,7 +657,7 @@ const OrderDetail = (props) => {
 
                                                 <View style={{ backgroundColor: "white", justifyContent: "space-between", alignItems: "flex-start", width: WIDTH * 0.5, height: 30, }}>
                                                     {
-                                                        item.order_status >= "2" ?
+                                                        item.order_status_id >= "2" ?
                                                             (<View style={{ position: "absolute", left: 18, justifyContent: "center", alignItems: "center" }}>
                                                                 <Image source={require('../assets/Ellipse_183.png')}
                                                                     style={{
@@ -545,7 +697,7 @@ const OrderDetail = (props) => {
                                                 </View>
 
                                                 {
-                                                    item.order_status >= "3" ?
+                                                    item.order_status_id >= "3" ?
 
                                                         (<View style={{ backgroundColor: "white", justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", width: WIDTH * 0.63, height: 45, paddingBottom: 5 }}>
 
@@ -593,7 +745,7 @@ const OrderDetail = (props) => {
 
                                                 <View style={{ backgroundColor: "white", justifyContent: "space-between", alignItems: "flex-start", width: WIDTH * 0.5, height: 30, }}>
                                                     {
-                                                        item.order_status >= "3" ?
+                                                        item.order_status_id >= "3" ?
                                                             (<View style={{ position: "absolute", left: 18, justifyContent: "center", alignItems: "center" }}>
                                                                 <Image source={require('../assets/Ellipse_183.png')}
                                                                     style={{
@@ -632,55 +784,390 @@ const OrderDetail = (props) => {
                                                     }
                                                 </View>
 
-                                                {
-                                                    item.order_status >= "4" ?
+                                                <View>
+                                                    {item.order_status_id == 5 ?
+                                                        <View>
+                                                            {
+                                                                item.order_status_id == "5" ?
 
-                                                        (<View style={{ backgroundColor: "white", justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", width: WIDTH * 0.63, height: 45, paddingBottom: 5 }}>
+                                                                    (<View style={{ backgroundColor: "white", justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", width: WIDTH * 0.63, height: 45, paddingBottom: 5 }}>
 
-                                                            <View style={{ position: "absolute", left: 10, justifyContent: "center", alignItems: "center", top: 15 }}>
+                                                                        <View style={{ position: "absolute", left: 10, justifyContent: "center", alignItems: "center", top: 15 }}>
 
-                                                                <Image source={require('../assets/Vector.png')}
-                                                                    style={{
-                                                                        width: 22,
-                                                                        height: 22, alignSelf: 'center',
-                                                                    }} />
+                                                                            <Image source={require('../assets/Vector.png')}
+                                                                                style={{
+                                                                                    width: 22,
+                                                                                    height: 22, alignSelf: 'center',
+                                                                                }} />
 
-                                                                {/* <Image source={require('../assets/Ellipse_187.png')}
+                                                                        </View>
+
+                                                                        <View style={{ justifyContent: "center", alignItems: "flex-start", top: 10, marginLeft: 10 }}>
+                                                                            <View style={{ justifyContent: "center", alignItems: "flex-start", width: WIDTH * 0.36 }}>
+                                                                                <Text style={{ marginTop: 1, textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>Cancelled</Text></View>
+                                                                            <Text style={{ marginTop: 2, textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "400" }}>{item?.cancel_date != null ? item?.cancel_date : null}</Text>
+                                                                        </View>
+                                                                    </View>)
+                                                                    :
+                                                                    null
+                                                            }
+                                                        </View>
+                                                        :
+                                                        <View>
+
+                                                            {
+                                                                item.order_status_id >= "4" ?
+
+                                                                    (<View style={{ backgroundColor: "white", justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", width: WIDTH * 0.63, height: 45, paddingBottom: 5 }}>
+
+                                                                        <View style={{ position: "absolute", left: 10, justifyContent: "center", alignItems: "center", top: 15 }}>
+
+                                                                            <Image source={require('../assets/Vector.png')}
+                                                                                style={{
+                                                                                    width: 22,
+                                                                                    height: 22, alignSelf: 'center',
+                                                                                }} />
+
+                                                                            {/* <Image source={require('../assets/Ellipse_187.png')}
                                                                 style={{
                                                                     width: 20,
                                                                     height: 20, alignSelf: 'center',
                                                                 }} /> */}
 
-                                                            </View>
+                                                                        </View>
 
-                                                            <View style={{ justifyContent: "center", alignItems: "flex-start", top: 10 }}>
-                                                                <View style={{ justifyContent: "center", alignItems: "flex-start", width: WIDTH * 0.36 }}>
-                                                                    <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>Order delivered</Text></View>
-                                                                <Text style={{ marginTop: 2, textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "400" }}>{item?.odeliv_date != null ? item?.odeliv_date : null}</Text>
-                                                            </View>
-                                                        </View>)
-                                                        :
-                                                        (<View style={{ backgroundColor: "white", justifyContent: "center", alignItems: "center", flexDirection: "row", width: WIDTH * 0.51, height: 45, paddingBottom: 5 }}>
+                                                                        <View style={{ justifyContent: "center", alignItems: "flex-start", top: 10 }}>
+                                                                            <View style={{ justifyContent: "center", alignItems: "flex-start", width: WIDTH * 0.36 }}>
+                                                                                <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>Order delivered</Text></View>
+                                                                            <Text style={{ marginTop: 2, textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "400" }}>{item?.odeliv_date != null ? item?.odeliv_date : null}</Text>
+                                                                        </View>
+                                                                    </View>)
+                                                                    :
+                                                                    (<View style={{ backgroundColor: "white", justifyContent: "center", alignItems: "center", flexDirection: "row", width: WIDTH * 0.51, height: 45, paddingBottom: 5 }}>
 
-                                                            <View style={{ position: "absolute", left: 10, justifyContent: "center", alignItems: "center", top: 15 }}>
+                                                                        <View style={{ position: "absolute", left: 10, justifyContent: "center", alignItems: "center", top: 15 }}>
 
-                                                                <Image source={require('../assets/Ellipse_187.png')}
-                                                                    style={{
-                                                                        width: 20,
-                                                                        height: 20, alignSelf: 'center',
-                                                                    }} />
-                                                            </View>
+                                                                            <Image source={require('../assets/Ellipse_187.png')}
+                                                                                style={{
+                                                                                    width: 20,
+                                                                                    height: 20, alignSelf: 'center',
+                                                                                }} />
+                                                                        </View>
 
-                                                            <View style={{ justifyContent: "flex-start", alignItems: "flex-start" }}>
-                                                                <Text style={{ marginTop: 4, textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>Order delivered</Text>
-                                                                {/* <Text style={{ marginTop: 2, textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "400" }}>Data not available</Text> */}
-                                                            </View>
-                                                        </View>)
-                                                }
+                                                                        <View style={{ justifyContent: "flex-start", alignItems: "flex-start" }}>
+                                                                            <Text style={{ marginTop: 4, textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>Order delivered</Text>
+                                                                            {/* <Text style={{ marginTop: 2, textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "400" }}>Data not available</Text> */}
+                                                                        </View>
+                                                                    </View>)
+                                                            }
+                                                        </View>
+                                                    }
+                                                </View>
+
+
+
 
                                             </View>
+                                            {/* Forter button */}
+                                            <View
+                                                style={{
 
+                                                    position: "absolute",
+                                                    bottom: 6,
+                                                    marginBottom: 15,
+                                                    flexDirection: 'row',
+                                                    height: 34,
+                                                    marginHorizontal: 20,
+                                                    backgroundColor: "transparent",
+                                                    justifyContent: "center",
+                                                    alignSelf: "center"
+                                                }}>
+                                                {
+                                                    item?.order_status == "Order cancelled" ?
+                                                       <></>
+                                                        :
+                                                        <TouchableOpacity
+                                                            onPress={() => { CancelOrder() }}>
+                                                            <View
+                                                                style={{
+                                                                    width: 160,
+                                                                    flex: 1,
+                                                                    backgroundColor: '#ffcc00',
+                                                                    borderRadius: 50,
+                                                                    justifyContent: "center",
+                                                                    alignSelf: "center"
+                                                                }}>
+                                                                <View
+                                                                    style={{
+                                                                        flex: 1,
+                                                                        flexDirection: 'row',
+                                                                        justifyContent: 'center',
+                                                                        alignItems: 'center',
+                                                                    }}>
+                                                                    <Image
+                                                                        source={require('../assets/cart.png')}
+                                                                        style={{
+                                                                            width: 18,
+                                                                            height: 18,
+                                                                            alignSelf: 'center',
+                                                                            marginRight: 10,
+                                                                        }}
+                                                                    />
+
+                                                                    <Text
+                                                                        style={{
+                                                                            textAlign: 'center',
+                                                                            fontSize: 15,
+                                                                            color: 'white',
+
+                                                                        }}>
+                                                                        Cancel Order
+                                                                    </Text>
+                                                                </View>
+                                                            </View>
+                                                        </TouchableOpacity>
+                                                }
+
+
+                                                <TouchableOpacity
+                                                    onPress={() => {
+                                                        setContactUs(true)
+                                                        setcheck(true)
+
+                                                    }}>
+                                                    <View
+                                                        style={{
+                                                            width: 150,
+                                                            flex: 1,
+                                                            backgroundColor: '#ffcc00',
+                                                            borderRadius: 50,
+                                                            marginLeft: 20,
+                                                            justifyContent: "center",
+                                                            alignSelf: "center"
+                                                        }}>
+                                                        <View
+                                                            style={{
+                                                                flex: 1,
+                                                                flexDirection: 'row',
+                                                                justifyContent: 'center',
+                                                                alignItems: 'center',
+                                                            }}>
+                                                            <Image
+                                                                source={require('../assets/menu8.png')}
+                                                                style={{
+                                                                    width: 17,
+                                                                    height: 18,
+                                                                    alignSelf: 'center',
+                                                                    marginRight: 10,
+                                                                }}
+                                                            />
+
+                                                            <Text
+                                                                style={{
+                                                                    textAlign: 'center',
+                                                                    fontSize: 15,
+                                                                    color: 'white',
+
+                                                                }}>
+                                                                Contact Us
+                                                            </Text>
+                                                        </View>
+                                                    </View>
+                                                </TouchableOpacity>
+                                            </View>
+
+
+                                            {/* Contact Modal */}
+                                            <Modal
+                                                animationType="fade"
+                                                transparent={true}
+                                                visible={ContactUs}
+                                                onRequestClose={() => {
+                                                    setContactUs(false);
+                                                    setcheck(false)
+                                                }}>
+                                                <KeyboardAvoidingView
+                                                    style={{ flex: 1 }}
+                                                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+                                                    <View
+                                                        style={{
+                                                            flex: 1,
+                                                            // justifyContent: 'flex-end',
+                                                            // alignItems: 'center',
+                                                            backgroundColor: 'rgba(140, 141, 142, 0.7)',
+
+                                                        }}>
+                                                        <TouchableOpacity
+                                                            onPress={() => {
+                                                                setContactUs(false),
+                                                                    setcheck(false)
+                                                            }}
+                                                            style={{ flex: 1 }}
+                                                        />
+                                                        <View
+                                                            style={{
+                                                                backgroundColor: 'white',
+                                                                borderRadius: 20,
+                                                                width: "100%",
+                                                                justifyContent: "flex-end",
+
+                                                            }}>
+
+                                                            <View style={{
+                                                                height: 485,
+                                                                width: "100%",
+                                                                borderRadius: 20,
+
+                                                                alignItems: 'center',
+                                                                // backgroundColor: 'pink',
+                                                                justifyContent: "center",
+                                                            }}>
+                                                                {/* <TouchableOpacity onPress={() => { setContactUs(false) }}
+                        style={{ position: "absolute", width: 30, backgroundColor: 'red', borderRadius: 35, height: 35, right: 10, top: 10 }}>
+                        <Image
+                          source={require('../Screens/assets/cancelWhite.png')}
+                          style={{
+                            width: 35,
+                            height: 35, alignSelf: 'center'
+                          }}
+
+                        />
+                      </TouchableOpacity> */}
+                                                                <View style={{ marginTop: 15, marginHorizontal: 20, height: 30, flexDirection: "row", justifyContent: "center", alignItems: 'center' }}>
+
+
+                                                                    <View style={{ width: 25, height: 25, justifyContent: "center", alignItems: 'center', borderRadius: 40 / 2 }}>
+                                                                        <Image source={require('../assets/contactUs.png')}
+                                                                            style={{
+                                                                                width: 20,
+                                                                                height: 20, alignSelf: 'center'
+                                                                            }} />
+
+                                                                    </View>
+                                                                    <View style={{ marginLeft: 10, }}>
+                                                                        <Text style={{ textAlign: 'center', fontSize: 18, color: 'black', fontWeight: "500" }}>Contact Us</Text>
+                                                                    </View>
+
+
+                                                                </View>
+
+
+
+                                                                <View style={{
+                                                                    marginTop: 30, borderRadius: 25, marginHorizontal: 20,
+                                                                    flexDirection: 'row',
+                                                                    height: 45,
+                                                                    shadowColor: '#11032586',
+                                                                    // backgroundColor: 'white',
+                                                                    alignItems: 'center',
+                                                                    borderColor: "#D7D7D7",
+                                                                    borderWidth: 1,
+                                                                    // backgroundColor: 'red', 
+                                                                    justifyContent: "center",
+                                                                }}
+                                                                >
+                                                                    <TextInput
+                                                                        placeholder="Name"
+                                                                        value={UserName}
+                                                                        onChangeText={(text) => setUserName(text)}
+                                                                        fontWeight='normal'
+                                                                        placeholderTextColor='#D7D7D7'
+                                                                        style={{
+                                                                            width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 15, color: "black",
+                                                                            fontSize: 14, height: "100%"
+                                                                        }} />
+                                                                </View>
+
+                                                                <View style={{
+                                                                    marginTop: 25, flexDirection: 'column', height: 65,
+                                                                    justifyContent: "flex-start", alignItems: 'flex-start'
+                                                                }}>
+                                                                    <View style={{
+                                                                        borderRadius: 25, marginHorizontal: 20, flexDirection: 'row',
+                                                                        height: 45,
+                                                                        shadowColor: '#11032586',
+                                                                        // backgroundColor: 'red',s
+                                                                        alignItems: 'center',
+                                                                        borderColor: "#D7D7D7",
+                                                                        borderWidth: 1,
+                                                                        // justifyContent: "center", 
+                                                                        // alignItems: 'center'
+                                                                    }}
+                                                                    ><TextInput
+                                                                            placeholder="Please Enter Your Email ID"
+                                                                            value={Useremail}
+                                                                            //editable={!isLoading}
+                                                                            onChangeText={(text) => Emailvalidaton(text)}
+                                                                            keyboardType="email-address"
+                                                                            fontWeight='normal'
+                                                                            autoCorrect={false}
+                                                                            placeholderTextColor='#D7D7D7'
+                                                                            style={{
+                                                                                width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 8, color: "black",
+                                                                                fontSize: 14, height: "100%"
+                                                                            }} />
+
+
+                                                                    </View>
+                                                                    {
+                                                                        emailalert ?
+                                                                            (<View style={{ justifyContent: "center", marginHorizontal: 30, }}><Text style={{ color: "red", fontSize: 12, }}>{emailerrormsg}</Text></View>)
+                                                                            :
+                                                                            (null)
+                                                                    }
+                                                                </View>
+                                                                <View style={{
+                                                                    borderRadius: 20,
+                                                                    // backgroundColor: 'white',
+                                                                    marginTop: 10,
+                                                                    borderColor: "#D7D7D7",
+                                                                    borderWidth: 1,
+                                                                    height: 160,
+                                                                    width: '85%',
+                                                                    marginHorizontal: 20,
+                                                                    justifyContent: "center",
+                                                                    alignItems: 'center'
+                                                                }}>
+                                                                    <TextInput
+                                                                        placeholder="Type Message here"
+                                                                        value={Typemessage}
+                                                                        //editable={!isLoading}
+                                                                        onChangeText={(text) => setTypemessage(text)}
+                                                                        fontWeight='normal'
+                                                                        placeholderTextColor='#D7D7D7'
+                                                                        numberOfLines={7}
+                                                                        multiline={true}
+                                                                        textAlignVertical='top'
+                                                                        style={{
+                                                                            width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 6, color: "black",
+                                                                            fontSize: 14, height: "100%"
+                                                                        }} />
+                                                                </View>
+
+                                                                <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 30 }}>
+                                                                    <TouchableOpacity onPress={() => {
+                                                                        GetContactUs()
+
+                                                                    }}>
+                                                                        <View style={{ alignItems: 'center', justifyContent: 'center', width: 120, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
+
+                                                                            <Text style={{ textAlign: 'center', fontSize: 15, color: 'white' }}>Send</Text>
+
+                                                                        </View>
+                                                                    </TouchableOpacity>
+                                                                </View>
+
+                                                            </View>
+
+                                                        </View>
+
+                                                    </View>
+                                                </KeyboardAvoidingView>
+                                            </Modal>
                                         </View>
+
+
+
                                     )
                                 })
                                 :

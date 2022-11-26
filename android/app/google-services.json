@@ -1,34 +1,41 @@
 {
   "project_info": {
-    "project_number": "544462601135",
-    "project_id": "nile-254c8",
-    "storage_bucket": "nile-254c8.appspot.com"
+    "project_number": "322145768931",
+    "project_id": "popfiit-74abf",
+    "storage_bucket": "popfiit-74abf.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:544462601135:android:28407689725da611360d5a",
+        "mobilesdk_app_id": "1:322145768931:android:e0979d6738ab17139d7cd6",
         "android_client_info": {
           "package_name": "com.popfit"
         }
       },
       "oauth_client": [
         {
-          "client_id": "544462601135-bfn34htkd1gi245at5bijmsjjdnt61t9.apps.googleusercontent.com",
+          "client_id": "322145768931-9ojtd3e8gq7eb5bqdec8ud4jr48fh3r0.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD1Urv5hPeRdlqgxjSqCOFZujjKp3tChDg"
+          "current_key": "AIzaSyCPWQgSkmx6abAh4y2HROHeD8ys-pJT6z0"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "544462601135-bfn34htkd1gi245at5bijmsjjdnt61t9.apps.googleusercontent.com",
+              "client_id": "322145768931-9ojtd3e8gq7eb5bqdec8ud4jr48fh3r0.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "322145768931-dg4766ibkvr2l9fkvofdgfuk7eerucsr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.popfiitapp.com"
+              }
             }
           ]
         }

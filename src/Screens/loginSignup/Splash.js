@@ -23,9 +23,15 @@ const Splash = (props) => {
       //  setIsLoading(true)
       try {
         const response = await axios.get(`${API.NOTIFICATION}`, { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } });
-        let data = response?.data?.data?.length;
-        console.log('incrementCounter _Splash', data);
-        dispatch(incrementCounter(parseInt(data)));
+        
+        let notidata = 0;
+        for (let i = 0; i <= response.data.data.length; i++) {
+          if (response.data.data[i].is_read == 0) {
+            notidata = notidata + 1
+  
+          }
+        }
+        dispatch(incrementCounter(parseInt(notidata)));
         // AsyncStorage.setItem("notification", JSON.stringify(data));
         // if (response?.data?.status == '1') {
         //   // setIsLoading(false)
@@ -33,7 +39,7 @@ const Splash = (props) => {
         // }
       }
       catch (error) {
-        Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+        // Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
         // alert("SPLASH error", error);
         // setIsLoading(false)
         console.log("Splash_error:::", error);

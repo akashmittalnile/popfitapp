@@ -11,7 +11,7 @@ import {
   Pressable,
   Modal,
   SafeAreaView,
-  Dimensions, Linking, ActivityIndicator
+  Dimensions, Linking, ActivityIndicator,KeyboardAvoidingView,Platform
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Pages } from 'react-native-pages';
@@ -210,6 +210,7 @@ const BlogDetail = (props) => {
       height: HEIGHT, flexGrow: 1,
     }} >
       <Headers
+      // navigation={props.navigation}
         Backicon={{
           visible: true,
         }}
@@ -224,7 +225,9 @@ const BlogDetail = (props) => {
           visible: true,
 
         }}
-        BelliconononClick={() => { props.navigation.navigate("Notifications") }}
+        BelliconononClick={() => { 
+          props.navigation.navigate("Notifications") 
+        }}
       />
       {!isLoading ?
         (<>
@@ -291,7 +294,7 @@ const BlogDetail = (props) => {
 
                     <View>
                       <View style={{ marginLeft: 20, marginTop: 6, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
-                        <Text style={{ textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "500" }}>{subcategoryBlogdetailsitems?.blog_detail?.youtube_title.slice(0, 36) + '...'}</Text>
+                        <Text style={{ textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "500" }}>{subcategoryBlogdetailsitems?.blog_detail?.youtube_title.slice(0, 36)}</Text>
                       </View>
                       <View style={{
                         marginHorizontal: 20, marginTop: 6, height: 200, borderRadius: 20, marginVertical: 1, width: WIDTH * 0.9,
@@ -349,7 +352,7 @@ const BlogDetail = (props) => {
                         <Text style={{ textAlign: 'left', fontSize: 18, color: '#000', fontWeight: "500" }} >{subcategoryBlogdetailsitems?.blog_detail?.image_title}</Text>
                       </View>
 
-                      <View style={{ backgroundColor: "white", borderRadius: 20, marginTop: 10, height: HEIGHT * 0.2, width: WIDTH * 0.9, marginHorizontal: 18, }}>
+                      <View style={{ backgroundColor: "white", borderRadius: 20, marginTop: 6, height: HEIGHT * 0.2, width: WIDTH * 0.9, marginHorizontal: 18, }}>
                         <Image resizeMode='contain'
                           source={{ uri: `${subcategoryBlogdetailsitems?.blog_detail?.image}` }}
                           style={{ width: '100%', height: '100%', justifyContent: "center", alignItems: 'center', borderRadius: 20 }}
@@ -570,16 +573,23 @@ const BlogDetail = (props) => {
                   onRequestClose={() => {
                     setComments(false);
                   }}>
+                    <KeyboardAvoidingView
+                style={{ flex: 1 }}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
                   <View
                     style={{
                       flex: 1,
-                      justifyContent: 'flex-end',
-                      alignItems: 'center',
+                      // justifyContent: 'flex-end',
+                      // alignItems: 'center',
                       backgroundColor: 'rgba(140, 141, 142, 0.7)',
                     }}>
+                       <TouchableOpacity
+                      onPress={() => setComments(false)}
+                      style={{ flex: 1 }}
+                    />
                     <View
                       style={{
-                        margin: 10,
+                        // margin: 10,
                         backgroundColor: 'white',
                         borderRadius: 20,
                         //paddingTop:10,
@@ -645,7 +655,7 @@ const BlogDetail = (props) => {
 
                             borderColor: "#bbbaba",
                             borderWidth: 1,
-                            padding: 5,
+                            paddingHorizontal: 10,
                             //marginHorizontal: 15,
                             borderRadius: 15,
                             backgroundColor: 'white',
@@ -665,13 +675,13 @@ const BlogDetail = (props) => {
                               multiline={true}
                               textAlignVertical='top'
                               style={{
-
+                                // padding: 10,
                                 //  backgroundColor:"red",
-                                width: 330,
+                                width: '99%',
                                 color: 'black',
                                 paddingHorizontal: 10,
                                 borderRadius: 10,
-                                // height: 130,
+                                height: "100%",
                                 justifyContent: "flex-start",
                                 //marginBottom:80
                               }}
@@ -713,6 +723,7 @@ const BlogDetail = (props) => {
                       </View>
                     </View>
                   </View>
+                  </KeyboardAvoidingView> 
                 </Modal>
               </View>)
               :

@@ -54,12 +54,11 @@ const Shop = (props) => {
   // };
 
   useEffect(() => {
-    StoresProductget();
-    // const unsubscribe = props.navigation.addListener('focus', () => {
-
-
-    // });
-    // return unsubscribe;
+    
+    const unsubscribe = props.navigation.addListener('focus', () => {
+      StoresProductget();
+    })
+    return unsubscribe;
 
   }, []);
 
@@ -324,7 +323,7 @@ const Shop = (props) => {
                     marginHorizontal: 10,
                     shadowColor: '#000000',
                     shadowRadius: 5,
-                    shadowOpacity: 1.0,
+                    shadowOpacity: 0.3,
                     elevation: 5,
                     zIndex: 999,
                   }}>

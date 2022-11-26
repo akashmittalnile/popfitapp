@@ -70,14 +70,14 @@ const CustomDrawerrender = (props) => {
 
   const getusertoken = async () => {
     const usertoken = await AsyncStorage.getItem("authToken");
-    // console.log(".....drawer profiletoken get::", usertoken);
-    setuserprofile(usertoken);
    
+    setuserprofile(usertoken);
+
     setloginbtn(usertoken);
     GetProfile();
   }
   const buttonClickedHandler = () => {
-    props.navigation.goBack();
+    props.navigation.goBack()
   }
 
   const gotologin_signuppage = () => {
@@ -86,30 +86,30 @@ const CustomDrawerrender = (props) => {
 
   const GetProfile = async () => {
     const Token = await AsyncStorage.getItem("authToken");
-      setIsLoading(true)
-      try {
-        const response = await axios.get(`${API.GET_PROFILE}`, { headers: { "Authorization": ` ${Token != null ? Token : null}` } });
-        // console.log("", response);
-        // console.log("ResponseProfile ::::", response.data.status);
-        if (response.data.status == '1') {
-          setprofiledata(response.data.data)
-          // console.log("User_token_not_received+yet!!!>>>", response.data.data.first_name);
-          // setIsLoading(false);
-        } 
-        // else {
-          // Alert.alert('drawer', 'Something went wrong please exit the app and try again');
-          // setIsLoading(false);
-        // }
+    setIsLoading(true);
+    try {
+      const response = await axios.get(`${API.GET_PROFILE}`, { headers: { "Authorization": ` ${Token}` } });
+      // console.log("", response);
+      // console.log("ResponseProfile ::::", response.data.status);
+      if (response.data.status === 1) {
+        setprofiledata(response.data.data)
+        // console.log("User_token_not_received+yet!!!>>>", response.data.data.first_name);
+        // setIsLoading(false);
+      }
+      else if (response.data.status === 0) {
+        // Alert.alert('', 'Something went wrong, Please exit the app and try again');
+        setIsLoading(false);
+      }
 
-      }
-      catch (error) {
-        Alert.alert("profile","Internet connection appears to be offline. Please check your internet connection and try again.")
-        // Alert.alert('drawer', 'Something went wrong please exit the app and try again');
-        // console.log("GET User Profile in drawer error:", error.response.data.message);
-        
-      }
-      setIsLoading(false)
- 
+    }
+    catch (error) {
+      // Alert.alert("profile","Internet connection appears to be offline. Please check your internet connection and try again.")
+      // Alert.alert('drawer', 'Something went wrong please exit the app and try again');
+      console.log("GET User Profile in drawer error:", error.response.data.message);
+
+    }
+    setIsLoading(false)
+
   };
 
   const Emailvalidaton = (text) => {
@@ -170,7 +170,7 @@ const CustomDrawerrender = (props) => {
         }
 
       } catch (error) {
-        Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+        Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
         // Alert.alert('', 'Something went wrong please exit the app and try again');
         // console.log("error_ContactUs:", error.response.data.message);
         setIsLoading(false);
@@ -239,14 +239,24 @@ const CustomDrawerrender = (props) => {
               }}>
                 <View style={{ borderRadius: 20, backgroundColor: 'white', marginHorizontal: 20, height: 100, flexDirection: 'row', marginTop: 30 }}>
                   <View style={{ justifyContent: 'center', width: 100, height: 100 }} >
-                    <Image
-                      source={{ uri: `${profiledata.user_profile}` }}
-                      resizeMode="contain"
-                      style={{
-                        width: 80,
-                        height: 80, alignSelf: 'center', borderRadius: 80 / 2, borderColor: "#383838", borderWidth: 1
-                        , backgroundColor: "black"
-                      }} />
+                    {profiledata.user_profile != "" ?
+                      <Image
+                        source={{ uri: `${profiledata.user_profile}` }}
+                        resizeMode="contain"
+                        style={{
+                          width: 80,
+                          height: 80, alignSelf: 'center', borderRadius: 80 / 2, borderColor: "#383838", borderWidth: 1
+                          , backgroundColor: "black"
+                        }} />
+                      :
+                      <Image
+                        source={require('../Screens/assets/AvatarImg.png')}
+                        resizeMode="contain"
+                        style={{
+                          width: 80,
+                          height: 80, alignSelf: 'center', borderRadius: 80 / 2, borderColor: "#383838", 
+                        }} />
+                    }
                   </View>
                   <View style={{ justifyContent: 'center', flex: 1.1, height: 100, }} >
                     <Text numberOfLines={2} style={{ fontSize: 15, color: 'black', textAlign: 'left' }}>{profiledata.first_name + " " + profiledata.last_name}</Text>
@@ -280,6 +290,29 @@ const CustomDrawerrender = (props) => {
                   </View>
                 </View>
               </TouchableOpacity>
+              {
+                loginbtn != null ?
+                  (<TouchableOpacity onPress={() => props.navigation.navigate("SubscriptionPlan")} >
+                    <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
+                      <View style={{ width: 50, height: 50 }} >
+                        <Image resizeMode='contain'
+                          source={require('../Screens/assets/subscribeicon.png')}
+                          style={{
+                            width: 22,
+                            height: 22, marginLeft: 5
+                          }} />
+                      </View>
+                      <View style={{ height: 30, width: 100 }} >
+                        <View style={{ width: 100, height: 30, marginLeft: -10 }} >
+                          <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Subscriptions</Text>
+                        </View>
+                      </View>
+                    </View>
+                  </TouchableOpacity>)
+                  :
+                   <></>
+
+              }
               {
                 loginbtn != null ?
                   (<TouchableOpacity onPress={() => props.navigation.navigate("MyOrder")} >
@@ -562,7 +595,7 @@ const CustomDrawerrender = (props) => {
                         placeholderTextColor='#D7D7D7'
                         style={{
                           width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 15, color: "black",
-                          fontSize: 14,height:"100%"
+                          fontSize: 14, height: "100%"
                         }} />
                     </View>
                     {/* <View style={{ height: 50, marginHorizontal: 25, marginTop: 15 }}>
@@ -594,10 +627,12 @@ const CustomDrawerrender = (props) => {
                           }}
                         /
                       </View> */}
-                    <View style={{    marginTop: 25,flexDirection: 'column', height: 65,
-                    justifyContent: "flex-start", alignItems: 'flex-start'}}>
+                    <View style={{
+                      marginTop: 25, flexDirection: 'column', height: 65,
+                      justifyContent: "flex-start", alignItems: 'flex-start'
+                    }}>
                       <View style={{
-                      borderRadius: 25, marginHorizontal: 20, flexDirection: 'row',
+                        borderRadius: 25, marginHorizontal: 20, flexDirection: 'row',
                         height: 45,
                         shadowColor: '#11032586',
                         // backgroundColor: 'red',s
@@ -618,7 +653,7 @@ const CustomDrawerrender = (props) => {
                           placeholderTextColor='#D7D7D7'
                           style={{
                             width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 8, color: "black",
-                            fontSize: 14,height:"100%"
+                            fontSize: 14, height: "100%"
                           }} />
 
 
@@ -654,7 +689,7 @@ const CustomDrawerrender = (props) => {
                         textAlignVertical='top'
                         style={{
                           width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 6, color: "black",
-                          fontSize: 14,height:"100%"
+                          fontSize: 14, height: "100%"
                         }} />
                     </View>
 

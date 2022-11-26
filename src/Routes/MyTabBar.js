@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import 'react-native-gesture-handler';
 import * as React from 'react';
-import { View, Text, Image, SafeAreaView } from 'react-native';
+import { View, Text, Image, SafeAreaView, Platform } from 'react-native';
 import Home from '../Screens/Dasboard/Home';
 import BlogDetail from '../Screens/blog/BlogDetail';
 import ShippingDetail from '../Screens/shipping/ShippingDetail';
@@ -29,7 +29,7 @@ import AboutsUs from '../Screens/Terms Condition ,Privay  and About/AboutsUs';
 import RefundPolicy from '../Screens/Terms Condition ,Privay  and About/RefundPolicy';
 import EditMyProfile from '../Screens/Profile/EditMyProfile';
 import MyProfile from '../Screens/Profile/MyProfile';
-import ChangePassword from '../Screens/Profile/ChangePassword';
+
 // import CardPayment from '../Screens/PaymentGateway/CardPayment';
 import ClothesType from '../Screens/clothes Type/ClothesType';
 import SubscriptionPlan from '../Screens/subscription Plan/SubscriptionPlan';
@@ -43,6 +43,7 @@ import PaymentScreen from '../Screens/PaymentGateway/PaymentScreen';
 import Audiolist from '../Screens/training/Audiolist';
 import Videolist from '../Screens/training/Videolist';
 import ViewInvoice from '../Screens/myorder/Invoicedwn';
+import ChangePassword from '../Screens/Profile/ChangePassword';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -161,7 +162,7 @@ const HomeBottomTab = props => {
         name="Address"
         component={Address}
       />
-      
+
       <Stack.Screen
         options={{ headerShown: false }}
         name="BlogDetail"
@@ -187,6 +188,7 @@ const HomeBottomTab = props => {
         name="ChangePassword"
         component={ChangePassword}
       />
+
       <Stack.Screen
         options={{ headerShown: false }}
         name="TermsAndCondition"
@@ -217,8 +219,8 @@ const HomeBottomTab = props => {
         name="MenTshirts"
         component={MenTshirts}
       />
-      {/* <Stack.Screen options={{ headerShown: false }} name="Notifications" component={Notifications} /> */}
-   
+
+
     </Stack.Navigator>
   );
 };
@@ -228,7 +230,7 @@ const TrainingBottomTab = props => {
     <Stack.Navigator
     //initialRouteName='TrainingDetail'
     >
-    
+
       <Stack.Screen
         options={{ headerShown: false }}
         name="TrainingDetail"
@@ -254,7 +256,7 @@ const TrainingBottomTab = props => {
         name="TrainingPersonaDetail"
         component={TrainingPersonaDetail}
       />
-      {/* <Stack.Screen options={{ headerShown: false }} name="Notifications" component={Notifications} /> */}
+
       <Stack.Screen
         options={{ headerShown: false }}
         name="Address"
@@ -283,7 +285,7 @@ const ShopBottomTab = props => {
     <Stack.Navigator
     //initialRouteName='Shop'
     >
-     
+
       <Stack.Screen
         options={{ headerShown: false }}
         name="Shop"
@@ -322,7 +324,7 @@ const ShopBottomTab = props => {
         component={PaymentScreen}
       />
       {/* <Stack.Screen options={{ headerShown: false }} name="CardPayment" component={CardPayment} /> */}
-      {/* <Stack.Screen options={{ headerShown: false }} name="Notifications" component={Notifications} /> */}
+
     </Stack.Navigator>
   );
 };
@@ -351,7 +353,7 @@ const BlogBottomTab = props => {
         name="SubCategoryBlog"
         component={SubCategoryBlog}
       />
-      {/* <Stack.Screen options={{ headerShown: false }} name="Notifications" component={Notifications} /> */}
+
       <Stack.Screen
         options={{ headerShown: false }}
         name="CartAdded"
@@ -360,7 +362,15 @@ const BlogBottomTab = props => {
     </Stack.Navigator>
   );
 };
-
+export const Hidemytab = props => {
+  return (
+    <Stack.Navigator
+      initialRouteName='MyTabBar'>
+      <Stack.Screen options={{ headerShown: false }} name="Notifications" component={Notifications} />
+      <Stack.Screen options={{ headerShown: false }} name="MyTabBar" component={MyTabBar} />
+    </Stack.Navigator>
+  )
+}
 const MyTabBar = props => {
   return (
     <SafeAreaView
@@ -381,7 +391,7 @@ const MyTabBar = props => {
           tabBarStyle: {
             showIcon: true,
             height: 60,
-            // paddingTop:18,
+            paddingTop: Platform.OS == "ios" ? 22 : "auto", ///only for ios app
             padding: 10,
             backgroundColor: '#262626',
             tabBarLabel: ({ focused, color, size }) => (

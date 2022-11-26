@@ -19,6 +19,7 @@ export const API = {
     TRAINING_SUB_CATERORY: BaseUrl + '/api/workout_subcategory',
     SUBSCRIPTION_PLAN: BaseUrl + '/api/subscription_plan',
     NEWS_LETTER_SUBSCRIPTION: BaseUrl + '/api/subscribe_to_newsletter',
+    NEWSLETTER_UNSUBSCRIBE:BaseUrl+'/api/unsubscribeNewsletter',
     BLOG_MAIN_SCREEN: BaseUrl + '/api/blog',
     BLOG_DETAILS: BaseUrl + '/api/blog_details',
     BLOG_SUBCATEGORY: BaseUrl + '/api/get_blog_subcategory',
@@ -36,6 +37,7 @@ export const API = {
     COUPON_REMOVE: BaseUrl + '/api/remove_coupon',
     COUPON_APPLYED: BaseUrl + '/api/applyed_coupon',
     ORDER_DETAIL: BaseUrl + '/api/order_detail',
+    CANCEL_ORDER:BaseUrl + '/api/cancelOrder',
     SET_TRAINING: BaseUrl + '/api/set_training',
     // SEARCH_ORDER_FILTER: BaseUrl + '/api/order_filter',
     SHIPPING_ADDRESS_ADD: BaseUrl + '/api/add_shipping_address',
@@ -57,6 +59,7 @@ export const API = {
     NOTIFICATION_DELETE: BaseUrl + '/api/delete_notification',
     STRIPE_PAYMENT: BaseUrl + '/api/stripePost',
     ORDER_PLACED: BaseUrl + '/api/save_order',
-    INVOICE:BaseUrl + '/api/download_invoice'
+    INVOICE:BaseUrl + '/api/download_invoice',
+    CANCEL_SUBSCRIPTION:BaseUrl + '/api/cancel_subscription'
 
 }

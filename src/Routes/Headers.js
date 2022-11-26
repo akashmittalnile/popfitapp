@@ -2,14 +2,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Image, SafeAreaView, Dimensions, ScrollView, Modal, Alert } from 'react-native';
+import { View, Text,   StyleSheet, TextInput, Image, SafeAreaView, Dimensions, ScrollView, Modal, Alert,TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { incrementCounter } from '../Redux/actions/UpdateCounter';
 import axios from 'axios';
 import { API } from '../Routes/Urls';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomLoader from "./CustomLoader";
-
+ 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
@@ -60,8 +60,8 @@ const Headers = ({
             const response = await axios.get(`${API.NOTIFICATION}`, {
                 headers: { Authorization: ` ${usertkn != null ? usertkn : null}` },
             });
-            
-           
+
+
             // AsyncStorage.setItem("notification", JSON.stringify(data));
             if (response.data.status == '1') {
                 // console.log('1');
@@ -79,9 +79,9 @@ const Headers = ({
             }
         } catch (error) {
             Alert.alert('1catch', 'Something went wrong please exit the app and try again');
-           
+
             // console.log("Notification_catch-error:::", error.response.data.message);
-        }   setIsLoading(false);
+        } setIsLoading(false);
     };
     const ItemRemove = async item => {
         const usertkn = await AsyncStorage.getItem('authToken');
@@ -267,9 +267,10 @@ const Headers = ({
                     Bellicon?.visible ?
                         (<View style={style.navigationBarRightContainer}>
                             <TouchableOpacity onPress={() => {
-                                setNotificationModal(true);
-                                setIsLoading(true)
-                                GetNotification();
+                                BelliconononClick()
+                                // setNotificationModal(true);
+                                // setIsLoading(true)
+                                // GetNotification();
                                 // clearNoti()
                             }}>
                                 <Image source={require('../Screens/assets/bellRight.png')}
@@ -317,12 +318,14 @@ const Headers = ({
                 }
 
             </View>
-            <Modal
+            
+            {/* <Modal
                 animationType="fade"
                 transparent={false}
+                
                 visible={NotificationModal}
                 onRequestClose={() => {
-                    setNotificationModal(false);
+                    setNotificationModal(false)
                 }}
             >
                 <View
@@ -335,7 +338,7 @@ const Headers = ({
                     }}>
                     <View style={{
                         flex: 1,
-                        top: 0,
+                        top: 40,
                         height: 60,
                         width: "100%",
                         flexDirection: 'row',
@@ -344,26 +347,28 @@ const Headers = ({
                         backgroundColor: '#262626',
                         position: 'absolute'
                     }}>
-                        <View style={{
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                        }}>
-                            <TouchableOpacity onPress={() => {
-                                setNotificationModal(false)
-                                // setIsLoading(false)
-                            }} style={{ marginLeft: 4 }}>
-                                <Image source={require('../Screens/assets/leftArrowWhite.png')}
-                                    style={{
-                                        width: 30,
-                                        height: 20,
-                                        alignSelf: 'center'
-                                    }} />
 
-                            </TouchableOpacity>
-                        </View>
+                        <TouchableOpacity onPress={() => {
+                            setNotificationModal(false),console.log('====================================');
+                            console.log("on click");
+                            console.log('====================================');
+                             
+                        }} style={{
+                            marginLeft: 4, justifyContent: 'center',
+                            alignItems: 'center', backgroundColor:"red" 
+                        }}>
+                            <Image source={require('../Screens/assets/leftArrowWhite.png')}
+                                style={{
+                                    width: 30,
+                                    height: 20,
+                                    alignSelf: 'center'
+                                }} />
+
+                        </TouchableOpacity>
+
                         <View style={{
                             flex: 1,
-
+                            marginLeft: -20,
                             justifyContent: 'center',
                             alignItems: 'center',
                             // right: 0
@@ -393,7 +398,7 @@ const Headers = ({
                                 {noti?.length > 0 ? (
                                     noti.map((item, index) => {
                                         return (
-                                            <View key = {String(index)}
+                                            <View key={String(index)}
                                                 style={{
                                                     width: '100%',
                                                 }}>
@@ -406,7 +411,7 @@ const Headers = ({
                                                             style={{
                                                                 marginHorizontal: 10,
                                                                 // marginTop: 6,
-                                                                height: 85,
+                                                                height: 88,
                                                                 borderRadius: 20,
                                                                 // marginBottom: 10,
                                                                 marginVertical: 10,
@@ -525,7 +530,7 @@ const Headers = ({
                                                             style={{
                                                                 marginHorizontal: 10,
                                                                 // marginTop: 6,
-                                                                height: 85,
+                                                                height: 88,
                                                                 borderRadius: 20,
                                                                 // marginBottom: 10,
                                                                 marginVertical: 10,
@@ -669,7 +674,7 @@ const Headers = ({
                     )}
                 </View>
 
-            </Modal>
+            </Modal> */}
         </View>
     );
 };

@@ -196,13 +196,13 @@ const Signup = (props, navigation) => {
       dob: userbirthday,
       email: values?.email,
       phone: phoneNumber,
-      address_1: values?.address1,
-      address_2: values?.address2,
+      // address_1: values?.address1,
+      // address_2: values?.address2,
       country_code: Countrycode,
       state: valuestate,
       city: valuecity,
       // address: values?.address_type,
-      address: "",
+      // address: "",
       zipcode: values?.zip_code,
       about_us: ischecked,
       password: values?.passwords,
@@ -229,7 +229,7 @@ const Signup = (props, navigation) => {
 
       })
       .catch(function (error) {
-        Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+        Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
         // Alert.alert('', 'Something went wrong please exit the app and try again');
         // console.log("Signup_error:", error);
         setIsLoading(false);
@@ -270,7 +270,7 @@ const Signup = (props, navigation) => {
       }
     }
     catch (error) {
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
       // console.log("Countryerror:", error.response.data.message);
       setAlertVisibility(false);
       // setLoading(false)
@@ -304,7 +304,7 @@ const Signup = (props, navigation) => {
       }
     }
     catch (error) {
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
       // console.log("emailerror:", error.response.data.message);
       // setIsLoading(false);
       setAlertVisibility(false);
@@ -395,13 +395,13 @@ const Signup = (props, navigation) => {
                   birthday: '',
                   type_your_username: '',
                   email: '',
-                  address1: '',
-                  address2: '',
+                  // address1: '',
+                  // address2: '',
                   zip_code: '',
                   country: '',
                   state: '',
                   city: '',
-                  address_type: '',
+                  // address_type: '',
                   passwords: '',
                   cfm_password: '',
 
@@ -425,10 +425,10 @@ const Signup = (props, navigation) => {
                     .string()
                     .email()
                     .required('Enter valid email id *'),
-                  address1: yup
-                    .string(),
-                  address2: yup
-                    .string(),
+                  // address1: yup
+                  //   .string(),
+                  // address2: yup
+                  //   .string(),
                   zip_code: yup
                     .string()
                     .min(5, "ZIP code minimum length 5-digits and maximum 9-digits")
@@ -440,8 +440,8 @@ const Signup = (props, navigation) => {
                     .string(),
                   city: yup
                     .string(),
-                  address_type: yup
-                    .string(),
+                  // address_type: yup
+                  //   .string(),
                   passwords: yup
                     .string()
                     .required('Password length must be greater than 8 characters*')
@@ -455,7 +455,7 @@ const Signup = (props, navigation) => {
               >
                 {({ values, handleChange, errors, setFieldTouched, touched, isValid, handleSubmit }) => (
                   <View style={{
-                    height: 1500, justifyContent: "flex-start", alignItems: "center", paddingTop: 10
+                    height: 1100, justifyContent: "flex-start", alignItems: "center", paddingTop: 10
                   }}>
                     <View style={{ flexDirection: 'row', borderRadius: 25, height: 50, marginHorizontal: 33, }}>
                       <View style={{ flexDirection: 'column' }}>
@@ -638,7 +638,7 @@ const Signup = (props, navigation) => {
                         }
                       </View>
 
-                      <View style={{ flexDirection: 'column', marginTop: 8 }}>
+                      {/* <View style={{ flexDirection: 'column', marginTop: 8 }}>
                         <TextInput
                           style={style.textInput}
                           placeholder='Address Line 1'
@@ -649,11 +649,9 @@ const Signup = (props, navigation) => {
                           onChangeText={handleChange('address1')}
                           onBlur={() => setFieldTouched('address1')}
                         />
-                        {/* {touched.type_your_username && errors.type_your_username &&
-                      <Text style={{ fontSize: 12, color: '#FF0D10', paddingLeft: 30, }}>{errors.type_your_username}</Text>
-                    } */}
-                      </View>
-
+                       
+                      </View> */}
+                      {/* 
                       <View style={{ flexDirection: 'column', marginTop: 8 }}>
                         <TextInput
                           style={style.textInput}
@@ -666,10 +664,10 @@ const Signup = (props, navigation) => {
                           onChangeText={handleChange('address2')}
                           onBlur={() => setFieldTouched('address2')}
                         />
-                        {/* {touched.type_your_username && errors.type_your_username &&
+                        {touched.type_your_username && errors.type_your_username &&
                       <Text style={{ fontSize: 12, color: '#FF0D10', paddingLeft: 30, }}>{errors.type_your_username}</Text>
-                    } */}
-                      </View>
+                    }
+                      </View> */}
                       <View style={{ flexDirection: 'column', marginTop: 8 }}>
                         <TextInput
                           style={style.textInput}
@@ -687,75 +685,73 @@ const Signup = (props, navigation) => {
                           <Text style={{ fontSize: 12, color: '#FF0D10', paddingLeft: 30, }}>{errors.zip_code}</Text>
                         }
                       </View>
-                      <View style={{ flexDirection: 'column', }}>
-                        <View style={{ width: 350, height: 50, marginTop: 18, zIndex: 3 }} >
-                          <DropDownPicker
-                            loading={loading}
-                            onPress={() => SelectCountry()}
-                            itemKey="value"
-                            items={Countryitems.map((item, id) => ({ label: item?.name, value: item?.id, id: item?.code }))}
-                            setItems={setCountryitems}
-                            maxHeight={240}
-                            dropDownDirection="BOTTOM"
-                            placeholder="Country"
-                            itemStyle={{ justifyContent: 'flex-start' }}
-                            textStyle={{
-                              fontSize: 16
-                            }}
-                            on
-                            containerStyle={{ height: 40, }}
-                            placeholderTextColor='#8F93A0'
-                            open={opencountry}
-                            setOpen={setopencountry}
-                            //bottomOffset={100}
-                            scrollViewProps={{
-                              decelerationRate: "medium", ScrollView: "#ffcc00"
-                            }}
-                            searchable={true}
-                            searchPlaceholder="Search Country..."
-                            searchContainerStyle={{
-                              borderBottomColor: "#dfdfdf"
-                            }}
-                            searchTextInputStyle={{
-                              color: "#000", borderColor: "#0000"
-                            }}
 
-                            value={valuecountry}
-                            setValue={setvaluecountry}
-                            listMode="MODAL"
-                            // onChangeValue={(value) => {
-                            //   console.log("yoyo value:",value,);
-                            // }}
-                            onSelectItem={(itm) => {
-                              setCountrycode(itm.id)
-                              setMsgCountry(false)
-                              console.log("yoyo item:", itm);
-                            }}
-                            // onChangeText={(item) => { setvaluecountry(item), setMsgCountry(false) ,console.log('item',item)}}
-                            defaultValue={null}
-                            dropDownContainerStyle={{
-                              borderColor: '#8F93A0',
-                              color: '#8F93A0',
-                              fontSize: 16,
-                              borderRadius: 10,
-                              shadowColor: '#000000',
+                      <View style={{ width: 350, height: 50, zIndex: 3, marginTop: 18 }} >
+                        <DropDownPicker
+                          loading={loading}
+                          onPress={() => SelectCountry()}
+                          itemKey="value"
+                          items={Countryitems.map((item, id) => ({ label: item?.name, value: item?.id, id: item?.code }))}
+                          setItems={setCountryitems}
+                          maxHeight={240}
+                          dropDownDirection="BOTTOM"
+                          placeholder="Country"
+                          itemStyle={{ justifyContent: 'flex-start' }}
+                          textStyle={{
+                            fontSize: 16
+                          }}
+                          on
+                          containerStyle={{ height: 40, }}
+                          placeholderTextColor='#8F93A0'
+                          open={opencountry}
+                          setOpen={setopencountry}
+                          //bottomOffset={100}
+                          scrollViewProps={{
+                            decelerationRate: "medium", ScrollView: "#ffcc00"
+                          }}
+                          searchable={true}
+                          searchPlaceholder="Search Country..."
+                          searchContainerStyle={{
+                            borderBottomColor: "#dfdfdf"
+                          }}
+                          searchTextInputStyle={{
+                            color: "#000", borderColor: "#0000"
+                          }}
 
-                              shadowRadius: 5,
-                              shadowOpacity: 1.0,
-                              elevation: 5,
-                              zIndex: 999,
+                          value={valuecountry}
+                          setValue={setvaluecountry}
+                          listMode="MODAL"
+                          // onChangeValue={(value) => {
+                          //   console.log("yoyo value:",value,);
+                          // }}
+                          onSelectItem={(itm) => {
+                            setCountrycode(itm.id)
+                            setMsgCountry(false)
+                            console.log("yoyo item:", itm);
+                          }}
+                          // onChangeText={(item) => { setvaluecountry(item), setMsgCountry(false) ,console.log('item',item)}}
+                          defaultValue={null}
+                          dropDownContainerStyle={{
+                            borderColor: '#8F93A0',
+                            color: '#8F93A0',
+                            fontSize: 16,
+                            borderRadius: 10,
+                            shadowColor: '#000000',
 
-                            }}
-                            style={{
-                              borderColor: 'white', backgroundColor: 'white', borderRadius: 25, alignItems: "center"
-                              , justifyContent: "center", zIndex: 3, paddingLeft: 20
-                            }}
-                          />
+                            shadowRadius: 5,
+                            shadowOpacity: 1.0,
+                            elevation: 5,
+                            zIndex: 999,
 
-                        </View>
+                          }}
+                          style={{
+                            borderColor: 'white', backgroundColor: 'white', borderRadius: 25, alignItems: "center"
+                            , justifyContent: "center", zIndex: 3, paddingLeft: 20
+                          }}
+                        />
                         {
                           msgcountry ?
-                            <View style={{ justifyContent: "center", alignItems: "flex-start", marginTop: 8, paddingLeft: 20, }}>
+                            <View style={{ justifyContent: "center", alignItems: "flex-start", marginTop: 8, paddingLeft: 20, height:30 }}>
                               <Text style={{
                                 fontSize: 12,
                                 color: '#FF0D10',
@@ -764,9 +760,11 @@ const Signup = (props, navigation) => {
                             </View>
                             : <></>}
                       </View>
+
+
                       <View style={{
                         width: 350,
-                        height: 50, marginTop: 25, zIndex: 2
+                        height: 50, marginTop: 30, zIndex: 2
                       }}>
                         <DropDownPicker
                           placeholder="State"

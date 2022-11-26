@@ -246,6 +246,7 @@ const CartAdded = (props) => {
             height: HEIGHT, flexGrow: 1, backgroundColor: 'white',
         }} >
             <Headers
+                // navigation={props.navigation}
                 Backicon={{
                     visible: true,
                 }}
@@ -378,7 +379,7 @@ const CartAdded = (props) => {
                                                                     alignItems: 'center',
                                                                     borderRadius: 20 / 2,
                                                                     top: 10,
-                                                                    right: 10
+                                                                    right: 10, zIndex: 999
                                                                 }}>
 
                                                                 <Image resizeMode='contain'
@@ -389,15 +390,21 @@ const CartAdded = (props) => {
                                                             </TouchableOpacity>
 
                                                             {/* min to max button */}
-                                                            <View style={{ backgroundColor: '#f2f2f2', flexDirection: 'row', borderRadius: 10, justifyContent: "center", alignItems: "center", height: 50, marginTop: 35, width: 110, marginLeft: 90, position: "absolute", bottom: 6, right: 6, paddingLeft: 6, paddingRight: 6 }}>
+                                                            <View style={{ backgroundColor: '#f2f2f2', flexDirection: 'row', borderRadius: 10, justifyContent: "center", alignItems: "center", height: 50, marginTop: 35, width: 110, marginLeft: 90, position: "absolute", bottom: 6, right: 6, paddingLeft: 6, paddingRight: 6, zIndex: 999 }}>
                                                                 <View style={{
                                                                     height: 44, marginRight: 5, justifyContent: "center", alignItems: "center",
                                                                 }}>
                                                                     <TouchableOpacity onPress={() => { Productincrease(item, '') }}>
-                                                                        <View style={{ backgroundColor: '#d6d6d6', width: 36, height: 36, padding: 1, justifyContent: "center", alignItems: 'center', borderRadius: 15 / 2 }}>
+                                                                        <Image resizeMode="contain"
+                                                                            style={{
+                                                                                width: 30,
+                                                                                height: 30, alignSelf: 'center'
+                                                                            }}
+                                                                            source={require('../assets/negativebtn.png')} />
+                                                                        {/* <View style={{ backgroundColor: '#d6d6d6', width: 36, height: 36, padding: 1, justifyContent: "center", alignItems: 'center', borderRadius: 15 / 2 ,zIndex:999}}>
                                                                             <Text style={{ textAlign: 'center', fontSize: 37, color: 'black', marginBottom: 8, height: 50, justifyContent: "center", alignItems: "center", }}>-</Text>
 
-                                                                        </View>
+                                                                        </View> */}
                                                                     </TouchableOpacity>
                                                                 </View>
 
@@ -414,10 +421,16 @@ const CartAdded = (props) => {
                                                                     height: 44, justifyContent: "center", alignItems: "center",
                                                                 }}>
                                                                     <TouchableOpacity onPress={() => { Productincrease(item, "inc") }}>
-                                                                        <View style={{ backgroundColor: '#dbdbdb', width: 36, height: 36, padding: 1, justifyContent: "center", alignItems: 'center', borderRadius: 15 / 2 }}>
+                                                                    <Image resizeMode="contain"
+                                                                            style={{
+                                                                                width: 30,
+                                                                                height: 30, alignSelf: 'center'
+                                                                            }}
+                                                                            source={require('../assets/plusbtn.png')} />
+                                                                        {/* <View style={{ backgroundColor: '#dbdbdb', width: 36, height: 36, padding: 1, justifyContent: "center", alignItems: 'center', borderRadius: 15 / 2, }}>
                                                                             <Text style={{ textAlign: 'center', fontSize: 28, color: 'black', marginTop: 8, height: 50, justifyContent: "center", alignItems: "center", }}>+</Text>
 
-                                                                        </View>
+                                                                        </View> */}
                                                                     </TouchableOpacity>
                                                                 </View>
                                                             </View>
@@ -510,8 +523,7 @@ const CartAdded = (props) => {
                                                                     </Text>
                                                                     <View style={{ width: WIDTH * 0.4, alignItems: "flex-start", justifyContent: "flex-start", marginTop: 6 }}>
                                                                         <View>
-                                                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Price: <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', }}>$
-                                                                                {item.product_price}
+                                                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Price: <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', }}>${item.product_price}
                                                                             </Text></Text>
                                                                             <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Quantity: <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', }}>
                                                                                 {item.qty}

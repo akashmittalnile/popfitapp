@@ -7,6 +7,7 @@ import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomLoader from '../../Routes/CustomLoader';
 
 
 
@@ -15,17 +16,13 @@ const ApplyCoupon = (props) => {
     const [response, setRespone] = useState([]);
     const [visible, setVisible] = useState(true);
     const [Id, setId] = useState()
+    const [isLoading, setIsLoading] = useState(false);
     const setSelectedcoupon = (item) => {
         props.navigation.navigate("ShippingDetail", {
             Selectcoupon: item
         });
     }
-    const buttonClickedHandler1 = () => {
-        props.navigation.goBack();
-    }
-    const gotoNotification = () => {
-        props.navigation.navigate("Notifications");
-    }
+
     useEffect(() => {
         CouponListApi();
         setVisible(true);
@@ -45,31 +42,31 @@ const ApplyCoupon = (props) => {
     // }
     const CouponListApi = async () => {
         const usertkn = await AsyncStorage.getItem("authToken");
-
+        setIsLoading(true);
         try {
             const response = await axios.get(`${API.COUPON_LIST}`, {
                 'headers': { "Authorization": ` ${usertkn}` }
             });
             // console.log("", response);
-            // console.log("Response_CouponListApi ::::", response.data.data);
+            console.log("Response_CouponListApi ::::", response.data.data);
             setCoupondata(response.data.data);
-            let result = coupondata.map(a => a.id)
-            setId(result);
+            // let result = coupondata.map(a => a.id)
+            // setId(result);
             // console.log("");
 
             // setIsLoading(false)
         }
         catch (error) {
             Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
-            // console.log("ShippingProductserror:::", error.response.data.message);
+            console.log("ShippingProductserror:::", error.response.data.message);
             // setIsLoading(false)
         }
-
+        setIsLoading(false)
     };
 
     const CouponApplyed = async (item) => {
         console.log("CouponApplyed innn....%%%%%%%%%%%%", item.id);
-        // setIsLoading(true);
+        setIsLoading(true);
         try {
             const usertkn = await AsyncStorage.getItem("authToken");
             const response = await axios.post(`${API.COUPON_APPLYED}`, { "coupon_id": item.id, },
@@ -93,16 +90,16 @@ const ApplyCoupon = (props) => {
                 setVisible(false);
                 alert("your order is below 2000")
             }
-            setProductitems(response.data.data)
+            // setProductitems(response.data.data)
             // setIsLoading(false);
         }
         catch (error) {
-            Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
-            // console.log("......error.........", error.response.data.message);
-            // setIsLoading(false);
+            // Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+            console.log("......error.........", error.response.data.message);
+            setIsLoading(false);
 
         }
-
+        setIsLoading(false)
     };
     return (
         <SafeAreaView style={{
@@ -128,9 +125,19 @@ const ApplyCoupon = (props) => {
                 }}
                 BelliconononClick={() => { props.navigation.navigate("Notifications") }}
             />
-            <ScrollView>
+
+            {!isLoading ?
                 <View style={{ paddingBottom: 80, justifyContent: "center" }}>
-                    <Text style={{ marginLeft: 15, marginTop: 20, textAlign: 'left', fontSize: 18, color: '#000000' }}>Select Coupons</Text>
+
+                    {
+                        coupondata.length > 0 ?
+                            (<View style={{ marginTop: 20, marginLeft: 15, }}>
+                                <Text numberOfLines={1} style={{ textAlign: 'left', fontSize: 18, color: '#000000', fontWeight: "500" }}>Select Coupons</Text>
+                            </View>)
+                            :
+                            null
+                    }
+
 
                     <FlatList
                         data={coupondata}
@@ -193,7 +200,9 @@ const ApplyCoupon = (props) => {
                         }
                     />
                 </View>
-            </ScrollView>
+                :
+                (<CustomLoader showLoader={isLoading} />)}
+
         </SafeAreaView>
     )
 }

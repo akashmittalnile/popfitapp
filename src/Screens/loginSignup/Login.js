@@ -82,7 +82,7 @@ const Login = props => {
         console.log('FIRE_Token_loginscreen-USEEFFECT-ANDRIOD>>>', FIRE_Token);
       } else if (FB_TOKEN != 0) {
         setfirebase_token(FB_TOKEN);
-        // console.log("FIRE_Token_loginscreen-USEEFFECT::ISO>", FIRE_Token);
+        console.log("FIRE_Token_loginscreen-USEEFFECT::ISO>", FB_TOKEN);
       }
     };
     GetToken();
@@ -112,23 +112,23 @@ const Login = props => {
       });
 
       if (response.data.status == 1) {
-        console.log('............Login..............', response.data.success.token);
-        const userToken = response.data.success.token;
+        console.log('............Login..............', response.remember_token);
+        const userToken = response.data.remember_token;
         await AsyncStorage.setItem('authToken', userToken);
-        const userProfiles = response.data.success.token;
+        const userProfiles = response.data.remember_token;
         await AsyncStorage.setItem('userView', userProfiles);
         props.navigation.navigate('DrawerMain1');
         // const Emaiil = response.data.data.email;
         // console.log("....set...email:", email);
-        await AsyncStorage.setItem('useremail', email);
+       
 
       } else if (response.data.status == 0) {
 
-        Alert.alert('', 'please check email and password!');
+        Alert.alert('', 'Login Failed: Your user email or password is incorrect');
       }
     } catch (error) {
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
-      // console.log("error??login????", error);
+      Alert.alert("error","Internet connection appears to be offline. Please check your internet connection and try again.")
+      console.log("error??login????", error);
       // Alert.alert('', 'Something went wrong please exit the app and try again');
     }
     setIsLoading(false);
@@ -541,48 +541,27 @@ const Login = props => {
                     routes: [{ name: 'DrawerMain1' }]
                 })}
             style={{
-              marginRight: 10,
+            position:'absolute',
               flex: 1,
-              right: 10,
-              marginTop: 15,
-              width: '97%',
-              height: 40,
-              alignItems: 'flex-end',
-              justifyContent: 'flex-end',
-              flexDirection: 'row',
-              bottom:18
+              left:10,
+              marginTop: 18,
+              width: 30,
+              height: 20,
+              alignItems: 'flex-start',
+              justifyContent: 'flex-start',
+              
+          
               // backgroundColor: "red"
             }}>
-              <View
-                style={{
-                  // marginTop: 15,
-                  width: 90,
-                  height: 40,
-                  alignItems: 'center',
-                  justifyContent: 'flex-end',
-                  // backgroundColor: "pink"
-                }}>
-                <Text
-                  style={{
-                    textDecorationLine: 'underline',
-                    alignSelf: 'center',
-                    textAlign: 'center',
-                    fontSize: 13,
-                    color: '#ffcc00',
-                    justifyContent: 'center',
-                    
-                  }}>
-                  Back to home
-                </Text>
-              </View>
+              
               <View style={{
                 alignItems: "center",
                 justifyContent: 'center', height: 15,
               }}>
-                <Image source={require('../assets/arrowPointToRight.png')}
+                <Image source={require('../assets/leftArrowWhite.png')}
                   style={{
-                    width: 6,
-                    height: 10, alignSelf: 'center'
+                    width: 30,
+                    height: 20, alignSelf: 'center'
                   }} />
               </View>
             </TouchableOpacity>
@@ -1170,7 +1149,7 @@ const Login = props => {
                                   <View
                                     style={{
                                       justifyContent: 'center',
-                                      marginHorizontal: 20,
+                                      marginHorizontal: 10,
                                       marginTop: 5,
                                     }}>
                                     <Text
@@ -1181,9 +1160,7 @@ const Login = props => {
                                       }}>
                                       {alertMsgForget0}
                                     </Text>
-                                    {/* <Text style={{ color: "red", fontSize: 15,textAlign:"left" }}>
-                                  {alertMsgForget}
-                                  </Text> */}
+                                     
                                   </View>
                                 ) : null}
                               </View>
@@ -1200,7 +1177,8 @@ const Login = props => {
                               }}>
                               <TouchableOpacity
                                 onPress={() => {
-                                  handleSubmit();
+                                  handleSubmit()
+                                  // setMsgAlert(false)
                                   // ForgetAPI(values);
                                 }}>
                                 <View
@@ -1232,6 +1210,7 @@ const Login = props => {
               </Modal>
             ) : null}
           </ScrollView>
+
           {/* Verified forgot OTP */}
           {forgotSendotp ? (
             <Modal

@@ -35,6 +35,7 @@ const EditMyProfile = (props) => {
   };
 
   const openLibrary = async () => {
+    console.log("slectphoto:");
     try {
       let value = await ImagePicker.openPicker({
         width: 1080,
@@ -318,7 +319,7 @@ const EditMyProfile = (props) => {
 
 
             </View>
-            <TouchableOpacity onPress={() => openLibrary()}>
+            <TouchableOpacity onPress={() => {openLibrary()}}>
               <View style={{
                 marginTop: 20, borderRadius: 25, marginRight: 120, marginLeft: 20, flexDirection: 'row',
                 height: 40,

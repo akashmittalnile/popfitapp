@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import {View,Image,Text,StyleSheet,SafeAreaView} from 'react-native';
-import MyTabBar from './MyTabBar';
+import MyTabBar, { Hidemytab } from './MyTabBar';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import CustomDrawerrender from './CustomDrawerrender';
 import LoginMain from './LoginMain';
@@ -11,14 +11,14 @@ const DrawerMain1 = (props) => {
   // console.log('Signed In Drawer');
      return(
       <Drawer.Navigator 
-      initialRouteName="MyTabBar"
+      initialRouteName="Hidemytab"
       headerMode={null}
       screenOptions={{ headerShown: false }}
       drawerContent={(props) => <CustomDrawerrender {...props} />}
       >
       
      
-      <Drawer.Screen name="MyTabBar" component={MyTabBar} />
+      <Drawer.Screen name="Hidemytab" component={Hidemytab} />
       
       <Drawer.Screen name="LoginMain" component={LoginMain} />
         

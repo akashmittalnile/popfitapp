@@ -173,7 +173,7 @@ const ChangePassword = (props) => {
                                 onChangeText={handleChange('old_pswd')}
                                 onBlur={() => setFieldTouched('old_pswd')}
 
-                                style={{ width: '70%', paddingLeft: 20, color: "black" }} />
+                                style={{ width: '70%', paddingLeft: 20, color: "black",height:"100%" }} />
 
                             {touched.old_pswd && errors.old_pswd &&
                                 <Text style={{ fontSize: 12, color: '#FF0D10', paddingLeft: 20, }}>{errors.old_pswd}</Text>
@@ -201,7 +201,7 @@ const ChangePassword = (props) => {
                                 value={values.password}
                                 onChangeText={handleChange('password')}
                                 onBlur={() => setFieldTouched('password')}
-                                style={{ width: '70%', justifyContent: 'center', alignItems: 'center', color: "black", paddingLeft: 20 }} />
+                                style={{ width: '70%', justifyContent: 'center', alignItems: 'center', color: "black", paddingLeft: 20 ,height:"100%"}} />
                             {touched.password && errors.password &&
                                 <Text style={{ fontSize: 12, color: '#FF0D10', paddingLeft: 20, }}>{errors.password}</Text>
                             }
@@ -228,7 +228,7 @@ const ChangePassword = (props) => {
                                 value={values.cfm_password}
                                 onChangeText={handleChange('cfm_password')}
                                 onBlur={() => setFieldTouched('cfm_password')}
-                                style={{ width: '70%', justifyContent: 'center', alignItems: 'center', color: "black", paddingLeft: 20 }}
+                                style={{height:"100%", width: '70%', justifyContent: 'center', alignItems: 'center', color: "black", paddingLeft: 20 }}
                             />
                             {touched.cfm_password && errors.cfm_password &&
                                 <Text style={{ fontSize: 12, color: '#FF0D10', paddingLeft: 20, }}>{errors.cfm_password}</Text>

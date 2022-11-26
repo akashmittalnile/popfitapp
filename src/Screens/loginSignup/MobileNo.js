@@ -433,7 +433,7 @@ const MobileNo = (props) => {
   // }, [props, navigation]);
 
 
-  const [flag, setFlag] = useState('http://purecatamphetamine.github.io/country-flag-icons/3x2/US.svg ');
+  const [flag, setFlag] = useState('http://purecatamphetamine.github.io/country-flag-icons/3x2/US.svg');
   const [code, setcode] = useState('+1');
   //ISOCode PAss on SignUp Screen
   const [code1, setcode1] = useState('')
@@ -559,7 +559,7 @@ const MobileNo = (props) => {
                             <View style={{ position: 'absolute', height: 49, backgroundColor: "white", alignItems: 'center', zIndex: 999, flexDirection: 'row', width: 130, borderRadius: 30, padding: 10 }}>
                               <TouchableOpacity onPress={() => { setisvisuable(true) }}
                                 style={{ width: 50, height: 27, flexDirection: 'row', alignItems: 'center' }}>
-                                <SvgCssUri
+                                <SvgCssUri 
                                   width="100%"
                                   height="100%"
                                   uri={flag}

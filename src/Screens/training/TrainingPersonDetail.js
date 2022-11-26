@@ -164,7 +164,7 @@ const TrainingPersonaDetail = (props) => {
             <ScrollView nestedScrollEnabled={true} horizontal={false}
                 style={{ backgroundColor: 'white' }} >
                 {!isLoading ?
-                    (< View style={{ flex:1}} >
+                    (< View style={{ flex: 1 }} >
                         <Divider color='#393939' width={1.2} />
 
 
@@ -227,7 +227,7 @@ const TrainingPersonaDetail = (props) => {
 
 
 
-                        <View style={{ paddingBottom: 30, width: "100%",  height:"100%", justifyContent: "flex-start", alignItems: "flex-start", paddingBottom: 100  }}>
+                        <View style={{ paddingBottom: 30, width: "100%", height: "100%", justifyContent: "flex-start", alignItems: "flex-start", paddingBottom: 10 }}>
                             <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 17, color: '#000', fontWeight: "500" }}>Please Enter Your Basic Details</Text>
 
                             <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000', }}>Select Gender</Text>
@@ -292,10 +292,10 @@ const TrainingPersonaDetail = (props) => {
                                     ]}
                                     listParentContainerStyle={{
                                         justifyContent: "center",
-                                        alignItems: "center", paddingLeft: 25
+                                        alignItems: "center", paddingLeft: 22
                                     }}
                                     listParentLabelStyle={{
-                                        fontWeight: "600", fontSize: 16
+                                        fontWeight: "400", fontSize: 15, 
                                     }}
 
                                     backgroundColor='white'
@@ -346,7 +346,12 @@ const TrainingPersonaDetail = (props) => {
                                     // onChangeText={(item) => setValue(item)}
                                     defaultValue={null}
                                     dropDownContainerStyle={{
-                                        backgroundColor: 'white', zIndex: 1000, elevation: 1000, borderColor: '#8F93A0', borderRadius: 15,
+                                        backgroundColor: 'white',
+                                        zIndex: 999,
+                                        elevation: 10,
+                                        borderColor: '#8F93A0',
+                                        borderRadius: 15,
+                                        marginTop: 6,
                                         // backgroundColor:"red",
                                         // borderColor: '#8F93A0',
                                         // color: '#8F93A0',
@@ -367,12 +372,16 @@ const TrainingPersonaDetail = (props) => {
 
                                     }}
                                     style={{
-                                        borderColor: 'white', backgroundColor: 'white', borderRadius: 25, shadowColor: '#000',
+                                        borderColor: 'white',
+                                        backgroundColor: 'white',
+                                        borderRadius: 25, shadowColor: '#000',
                                         shadowOffset: { width: 0, height: 2 },
                                         shadowOpacity: 0.2,
                                         elevation: 2,
                                         alignItems: "center"
-                                        , justifyContent: "center", zIndex: 3, paddingLeft: 20
+                                        , justifyContent: "center", 
+                                        zIndex: 3, 
+                                        paddingLeft: 20
                                     }}
                                 />
 
@@ -388,9 +397,9 @@ const TrainingPersonaDetail = (props) => {
                                     </View>
                                     : <></>
                             }
-                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000', }}>Current Fitness Level</Text>
+                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000', zIndex: -999 }}>Current Fitness Level</Text>
 
-                            <View style={{ marginHorizontal: 20, flexDirection: 'row', height: 40, marginTop: 10, justifyContent: "flex-start", alignItems: "center" }}>
+                            <View style={{ marginHorizontal: 20, flexDirection: 'row', height: 40, marginTop: 10, justifyContent: "flex-start", alignItems: "center",zIndex: -999  }}>
 
                                 <TouchableOpacity onPress={() => {
 
@@ -431,13 +440,13 @@ const TrainingPersonaDetail = (props) => {
                                     </View>
                                     : null
                             }
-                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000', }}>Date of Birth</Text>
+                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000',zIndex: -999  }}>Date of Birth</Text>
 
-                            <View style={{ marginHorizontal: 20, flexDirection: 'row', height: 40, marginTop: 10, justifyContent: 'flex-start', alignItems: "center", width: "100%", flex: 1 }}>
+                            <View style={{ marginHorizontal: 20, flexDirection: 'row', height: 40, marginTop: 10, justifyContent: 'flex-start', alignItems: "center", width: "100%", flex: 1,zIndex: -999  }}>
 
                                 <View style={{ borderWidth: 1, borderColor: '#bbbaba', justifyContent: 'center', width: 70, backgroundColor: 'white', borderRadius: 35, alignItems: 'center' }}>
                                     <TextInput
-                                        style={{ textAlign: 'center', fontSize: 15, color: 'black', justifyContent: 'center', alignItems: 'center' }}
+                                        style={{ textAlign: 'center', fontSize: 15, color: 'black', justifyContent: 'center', alignItems: 'center' ,height:'100%'}}
                                         keyboardType={'number-pad'}
                                         maxLength={4}
                                         placeholderTextColor="#bbbaba"
@@ -449,12 +458,12 @@ const TrainingPersonaDetail = (props) => {
 
                                 <View style={{ marginLeft: 10, borderWidth: 1, borderColor: '#bbbaba', justifyContent: 'center', width: 70, backgroundColor: 'white', borderRadius: 35 }}>
                                     <TextInput
-                                        style={{ textAlign: 'center', fontSize: 15, color: 'black', justifyContent: 'center', alignItems: 'center', }}
+                                        style={{ textAlign: 'center', fontSize: 15, color: 'black', justifyContent: 'center', alignItems: 'center',height:'100%' }}
                                         onChangeText={(Month) => {
-                                            // if (Month > 12) {
-                                            //     Alert.alert('', 'Please enter valid month!')
-                                            //     return
-                                            // }
+                                            if (Month > 12) {
+                                                Alert.alert('', 'Please enter valid month!')
+                                                return
+                                            }
                                             setMonth(Month)
                                         }}
                                         value={Month}
@@ -467,7 +476,7 @@ const TrainingPersonaDetail = (props) => {
                                 </View>
                                 <View style={{ marginLeft: 10, borderWidth: 1, borderColor: '#bbbaba', justifyContent: 'center', width: 70, borderRadius: 35 }}>
                                     <TextInput
-                                        style={{ textAlign: 'center', fontSize: 15, color: 'black', justifyContent: 'center', alignItems: 'center' }}
+                                        style={{ textAlign: 'center', fontSize: 15, color: 'black', justifyContent: 'center', alignItems: 'center',height:'100%' }}
                                         onChangeText={(Date) => {
                                             if (Date > 31) {
                                                 Alert.alert('', 'Please enter valid date !')
@@ -496,7 +505,7 @@ const TrainingPersonaDetail = (props) => {
                                     : null
                             }
 
-                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000', }}>Weight</Text>
+                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000',zIndex: -999  }}>Weight</Text>
 
                             <View style={{ width: "80%", flexDirection: 'row', height: 40, marginTop: 10, marginLeft: 20, justifyContent: "space-between", }}>
                                 {
@@ -583,7 +592,7 @@ const TrainingPersonaDetail = (props) => {
                                 style={{ flex: 1 }}
                                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
                                 <>
-                                    <View style={{ flexDirection: 'column',width:"100%" }}>
+                                    <View style={{ flexDirection: 'column', width: "100%" }}>
                                         <View style={{ width: "80%", flexDirection: 'row', height: 40, marginTop: 10, marginLeft: 20, justifyContent: "space-between", }}>
 
                                             {
@@ -668,13 +677,13 @@ const TrainingPersonaDetail = (props) => {
 
                                         }
                                     </View>
-                                    <View style={{ flexDirection: 'row', height: 34, justifyContent: 'center', width: "100%", alignItems: "center", flex: 1, marginTop: 50, }}>
+                                    <View style={{ flexDirection: 'row', height: 34, justifyContent: 'center', width: "100%", alignItems: "center", marginTop: 50, }}>
                                         <TouchableOpacity
                                             onPress={() => {
                                                 SetTrainingPlan(),
                                                     steOnsubmiterrormsg(true);
                                             }}>
-                                            <View style={{ borderWidth: 1, borderColor: '#ffcc00', justifyContent: 'center', alignItems: "center", width: 110, height: 34, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
+                                            <View style={{ borderWidth: 1, borderColor: '#ffcc00', justifyContent: 'center', alignItems: "center", width: 110, height: 34, backgroundColor: '#ffcc00', borderRadius: 35 }}>
                                                 <Text style={{ textAlign: 'center', fontSize: 12, color: 'white', }}>Save Detail</Text>
                                             </View>
                                         </TouchableOpacity>

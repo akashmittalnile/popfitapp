@@ -63,7 +63,12 @@ const TrainingDetail = (props) => {
             setUserToken(usertkn);
         }
         checktoken();
+        const unsubscribe = props.navigation.addListener('focus', () => {
+            workoutCategoryAPI();
+        })
+            return unsubscribe;
     }, []);
+
     const gotoSubscriptionPlan = async() => {
         const usertkn = await AsyncStorage.getItem("authToken");
         if (usertkn == null) {
@@ -76,15 +81,84 @@ const TrainingDetail = (props) => {
     }
 
     const Checkedtoken = async (item) => {
+        console.log("item:",item);
         const usertkn = await AsyncStorage.getItem("authToken");
         if (usertkn == null) {
             Alert.alert('', 'Please login first')
         }
         else if (usertkn != null) {
-            props.navigation.navigate("OutdoorTrainning", {
-                TrainingData: item,
-                categoryId: planid
-            })
+            if (planid.plan_status == "Inactive" || planid.plan_id == "0"  )
+            {
+                if(item.plan_id.includes('1') ){
+                    // console.log("ncludes+1:",item.plan_id.includes('1'));
+                   props.navigation.navigate("OutdoorTrainning", {
+                        TrainingData: item,
+                        categoryId: planid
+                    })
+                }  
+                else if(item.plan_id.includes('2') ){
+                    props.navigation.navigate("SubscriptionPlan")
+                    // console.log("ncludes+2:",item.plan_id.includes('2'));
+                    // props.navigation.navigate("OutdoorTrainning", {
+                    //     TrainingData: item,
+                    //     categoryId: planid
+                    // })
+                }
+                else if(item.plan_id.includes('3')  ){
+                    props.navigation.navigate("SubscriptionPlan")
+                    // console.log("ncludes+3:",item.plan_id.includes('3'));
+                    // props.navigation.navigate("OutdoorTrainning", {
+                    //     TrainingData: item,
+                    //     categoryId: planid
+                    // })
+                }
+                
+                else {
+                    //   console.log("Buy+plan" );
+                    props.navigation.navigate("SubscriptionPlan")
+                }
+                
+            }
+            else  if (planid.plan_status == "Active" && planid.plan_id == "1" ){
+                 if(item.plan_id.includes("1") ){
+                    props.navigation.navigate("OutdoorTrainning", {
+                        TrainingData: item,
+                        categoryId: planid
+                    })
+                }else if(item.plan_id.includes("2") && item.user_plan_id == "2" ){
+                    props.navigation.navigate("OutdoorTrainning", {
+                        TrainingData: item,
+                        categoryId: planid
+                    })
+                }else{
+                    props.navigation.navigate("SubscriptionPlan")
+                }
+               
+            }
+            else if (planid.plan_status == "Active" && planid.plan_id == "2"){
+                if(item.user_plan_id == "2" && item.plan_id.includes("1")){
+                    props.navigation.navigate("OutdoorTrainning", {
+                        TrainingData: item,
+                        categoryId: planid
+                    })
+                }else if(item.plan_id.includes("2") ){
+                    props.navigation.navigate("OutdoorTrainning", {
+                        TrainingData: item,
+                        categoryId: planid
+                    })
+                }else{
+                    props.navigation.navigate("SubscriptionPlan")
+                }
+               
+            }
+            else if (planid.plan_status == "Active" && planid.plan_id == "3"){
+                props.navigation.navigate("OutdoorTrainning", {
+                    TrainingData: item,
+                    categoryId: planid
+                })
+            }
+            
+           
         }
 
     }
@@ -97,7 +171,7 @@ const TrainingDetail = (props) => {
             const response = await axios.get(`${API.TRAINING_WORKOUT_CATEGORY}`,
                 { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } }
             );
-            console.log("::::Traing_Workout_Response>>>::", response.data);
+            // console.log("::::Traing_Workout_Response>>>::", response.data);
             // console.log("Traing_Workout_data:::>:::", response.data.data);
             setPlanId(response.data);
             // const Selectplainid = JSON.stringify(response.data?.plan_id);
@@ -122,7 +196,7 @@ const TrainingDetail = (props) => {
             height: HEIGHT, flexGrow: 1, backgroundColor: 'black'
         }} >
             <Headers
-            navigation={props.navigation}
+            // navigation={props.navigation}
                 Drawericon={{
                     visible: true,
                 }}
@@ -138,7 +212,7 @@ const TrainingDetail = (props) => {
 
                 }}
                 BelliconononClick={() => {
-                    //  props.navigation.navigate('Notifications')
+                     props.navigation.navigate('Notifications')
                      }}
             />
             {!isLoading ?

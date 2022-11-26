@@ -24,8 +24,8 @@ export default function PaymentScreen(props) {
   const [adddrs, setAdddrs] = useState(props?.route?.params?.SetAddrs);
   const [amout, setAmout] = useState(props?.route?.params?.SubscriptionPlan);
   const [orderprice, setOrderprice] = useState(props?.route?.params?.Totalprice);
-  const[textline,settextline]=useState(props?.route?.params?.Instruction);
-  console.log("Data Get from Subscription Plans::", amout);
+  const [textline, settextline] = useState(props?.route?.params?.Instruction);
+
 
   // const fetchPaymentIntentClientSecret = async () => {
   //   // console.log("user name::", username);
@@ -78,7 +78,7 @@ export default function PaymentScreen(props) {
   };
 
   useEffect(() => {
-   
+
     const checklogin = async () => {
       let Usertoken = await AsyncStorage.getItem("authToken");
       console.log("token.......", Usertoken);
@@ -87,19 +87,19 @@ export default function PaymentScreen(props) {
         Alert.alert('', 'Please login First ')
         // props.navigation.navigate('LoginMain', {
         //   screen: 'LoginSignUp',
-  
+
         // });
-  
+
       }
       else {
         // GetSubscriptionPlan(item.id);
-       
+
         console.log("??????????????error",);
       }
     };
     console.log('Plan data status::', props?.route?.params?.SubscriptionPlan)
-    // console.log("Order_Amount:", props?.route?.params?.Totalprice);
-    // console.log("ADDRESS seleted::", props?.route?.params?.SetAddrs);
+    console.log("Order_Amount:", props?.route?.params?.Totalprice);
+    console.log("ADDRESS seleted::", props?.route?.params?.SetAddrs);
     // const Totalprice = props?.route?.params?.Totalprice
     // const unsubscribe = props.navigation.addListener('focus', () => {
 
@@ -108,7 +108,7 @@ export default function PaymentScreen(props) {
     checklogin()
 
   }, []);
-  
+
   const planpaymentdone = () => {
     console.log("subs...training plan:::");
     setOrderPlacedPopUp(false);
@@ -119,18 +119,19 @@ export default function PaymentScreen(props) {
 
 
   const gotostipepayment = async (id) => {
+    console.log("Data Get from Subscription Plans::", amout);
     // const PlanId = await AsyncStorage.getItem("Planid");
-
-    console.log("selected plain price:", amout.price_id, id);
     const Token = await AsyncStorage.getItem("authToken");
-    const Plan_amout = amout != undefined ? amout.price : orderprice;
-    const plan_id = amout != undefined ? amout.price_id : null;
-  console.log('====================================');
-  console.log(amout.price_id, id,Token);
-  console.log('====================================');
+    console.log("selected plain price:", amout?.price_id, id, amout?.price);
+
+    const Plan_amout = amout != undefined ? amout?.price : orderprice;
+    const plan_id = amout != undefined ? amout?.price_id : null;
+    console.log('====================================');
+    console.log(amout?.price_id, id, amout?.price, Token);
+    console.log('====================================');
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.STRIPE_PAYMENT}`, { 'method_id': id, 'plan_amount': JSON.stringify(Plan_amout), 'plan_id': plan_id },   { headers: { "Authorization": ` ${Token != null ? Token : null}` } }
+      const response = await axios.post(`${API.STRIPE_PAYMENT}`, { 'method_id': id, 'plan_amount': JSON.stringify(Plan_amout), 'plan_id': plan_id }, { headers: { "Authorization": ` ${Token != null ? Token : null}` } }
 
         // {
         //   headers: {
@@ -138,8 +139,8 @@ export default function PaymentScreen(props) {
         //     "Content-Type": "application/json",
         //     "Authorization": ` ${Token}`
         //   }}
-        
-        )
+
+      )
 
       console.log("Response.Stripe:", response.data);
 
@@ -147,12 +148,12 @@ export default function PaymentScreen(props) {
         // console.log("Response.Stripe:", response.data.tran_id);
         if (amout == null) {
           setTransid(response.data.tran_id)
-         
+
           setOrderPlacedPopUp(true);
 
         } else if (amout != null) {
           setTransid(response.data.tran_id)
-        
+
           setPlanPlacedPopUp(true);
         }
         else {
@@ -179,47 +180,46 @@ export default function PaymentScreen(props) {
       // Alert.alert("payment failed not valid status !");
     }
     catch (error) {
-      console.log("payment error:",error.response.data);
-      Alert.alert("","Please check your internet connection and try again.")
+      console.log("payment error:", error.response.data);
+      Alert.alert("", "Please check your internet connection and try again.")
       // Alert.alert('','Something went wrong please exit the app and try again')
     }
     setIsLoading(false);
   };
 
   const OrderPlacedAfterpaymentdone = async () => {
-    console.log("after_payment::::", adddrs, transid,textline);
+    console.log("after_payment::::", adddrs, transid, textline);
     const Token = await AsyncStorage.getItem("authToken");
 
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.ORDER_PLACED}`, { 'shipping_address': adddrs, 'transaction_id': transid, 'amount': amout != undefined ? amout.price : orderprice,'delivery_inst':textline != null ? textline : null }, {
+      const response = await axios.post(`${API.ORDER_PLACED}`, { 'shipping_address': adddrs, 'transaction_id': transid, 'amount': amout != undefined ? amout.price : orderprice, 'delivery_inst': textline != null ? textline : null }, {
         headers: { "Authorization": ` ${Token}` }
       })
       console.log("Orderplaced_response:", response.data);
+      setOrderPlacedPopUp(false);
+      setPlanPlacedPopUp(false);
       if (response.data.status == 1) {
         console.log("status1:", response.data.message);
-
         setPlanPlacedPopUp(false);
-       
         props.navigation.navigate("MyOrder");
-
-        // else if (planPlacedPopUp == "true") {
-        //   setOrderPlacedPopUp(false);
-        //   setIsLoading(false);
-        //   props.navigation.navigate("TrainingDetail")
-        // }
+      }
+        else if (planPlacedPopUp == "true") {
+          setOrderPlacedPopUp(false);
+          setIsLoading(false);
+          props.navigation.navigate("TrainingDetail")
+        }
         // else {
         //   Alert.alert('status == 1', 'something went wrong!!!!')
         // }
 
-      }
       else if (response.data.status == 0) {
-     
+
         // Alert.alert('', 'Something went wrong please exit the app and try again');
         console.log("status0:", response.data.message);
       }
     } catch (error) {
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
       // Alert.alert('', 'Something went wrong please exit the app and try again');
 
     }
@@ -392,7 +392,7 @@ export default function PaymentScreen(props) {
                     <Text style={{ marginHorizontal: 20, marginTop: 10, textAlign: 'left', fontSize: 12, color: 'black', fontWeight: "400" }}>Your order has been placed successfully you can click on View Orders to track the status and delivery.
                     </Text>
                     <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 30, marginTop: 30 }}>
-                      <TouchableOpacity onPress={() => { OrderPlacedAfterpaymentdone() }}>
+                      <TouchableOpacity onPress={() => OrderPlacedAfterpaymentdone()}>
                         <View style={{ alignItems: 'center', justifyContent: 'center', width: 130, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
 
                           <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>View Orders</Text>
@@ -511,7 +511,7 @@ export default function PaymentScreen(props) {
         </ScrollView>)
         :
 
-        (<CustomLoader showLoader={isLoading}/>)}
+        (<CustomLoader showLoader={isLoading} />)}
     </SafeAreaView>
   );
 }

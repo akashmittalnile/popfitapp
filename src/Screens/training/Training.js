@@ -174,8 +174,8 @@ const Training = (props) => {
 
     }
     catch (error) {
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
-      //console.log(".WorkoutSubCategorytraininglist.....error.........", error?.response?.data?.message);
+      // Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      console.log(".WorkoutSubCategorytraininglist.....error.........", error );
       }
       setIsLoading(false);
   };
