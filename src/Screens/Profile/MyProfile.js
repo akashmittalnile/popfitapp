@@ -58,7 +58,7 @@ const MyProfile = (props) => {
             return 'Order delivered'
         }
         else if (status == '5') {
-            return 'Order Cancel'
+            return 'Order cancelled'
         }
         else {
             return 'data not available'
@@ -67,15 +67,23 @@ const MyProfile = (props) => {
     function OrderDATE(data) {
 
         if (data.order_status_id == '1') {
-            return data.order_placed
+            return data?.status_TimeDate
+            // return data.order_placed
         }
         else if (data.order_status_id == '2') {
-            return data.odis_date
+            return data?.status_TimeDate
+            // return data.odis_date
         }
         else if (data.order_status_id == '3') {
-            return data.ofd_date
+            return data?.status_TimeDate
+            // return data.ofd_date
         } else if (data.order_status_id == '4') {
-            return data.odeliv_date
+            return data?.status_TimeDate
+            // return data.odeliv_date
+        }
+        else if (data.order_status_id == '5') {
+            return data?.status_TimeDate
+            // return data.cancel_date
         }
         else {
             return ''
@@ -109,7 +117,7 @@ const MyProfile = (props) => {
         }
       };
     const getInvoiceUrl = async (item)=>{
-        console.log("item in profile",item.order_id);
+        console.log("item in profile",item?.order_id);
         // console.log("GetInvoiceUrl:In-api:",InvoiceMyorderid);
         const ordertoken = await AsyncStorage.getItem("authToken");
         try {
@@ -377,7 +385,7 @@ const downloadFile = async (url) => {
 
                                                 <View style={{ height: 30, marginTop: 1, justifyContent: 'flex-start', alignItems: "flex-start", marginLeft: 1, }}>
 
-                                                    <Text style={{ fontSize: 14, color: '#455A64', fontWeight: "500" }}>Order No. : <Text style={{ fontSize: 14, color: '#FFCC00', }}> {item.order_number}</Text></Text>
+                                                    <Text style={{ fontSize: 14, color: '#455A64', fontWeight: "500" }}>Order No. : <Text style={{ fontSize: 14, color: '#FFCC00', }}> {item?.order_number}</Text></Text>
 
                                                 </View>
 
@@ -422,21 +430,21 @@ const downloadFile = async (url) => {
                                                             height: "100%", alignSelf: 'center',
 
                                                         }}
-                                                        source={{ uri: item.product_image }} />
+                                                        source={{ uri: item?.product_image }} />
 
                                                 </View>
 
                                                 <View style={{
                                                     justifyContent: "flex-start", alignItems: "flex-start", width: WIDTH * 0.97, marginLeft: 15,
                                                 }}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 15, color: '#455A64', fontWeight: "600" }}>{item.product_name.slice(0, 25)}</Text>
+                                                    <Text style={{ textAlign: 'left', fontSize: 15, color: '#455A64', fontWeight: "600" }}>{item?.product_name.slice(0, 25)}</Text>
 
                                                     <View style={{ marginTop: 6, flexDirection: 'row', justifyContent: "flex-start", alignItems: "flex-start", height: 60, width: WIDTH * 0.97 }}>
 
 
                                                         <View style={{ marginTop: 1, flexDirection: 'row', marginLeft: 0 }}>
                                                             <View>
-                                                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Price: <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#77869E', }}>${item.order_price}</Text></Text>
+                                                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Total Amount: <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#77869E', }}>${item?.order_price}</Text></Text>
                                                             </View>
 
                                                         </View>
@@ -495,11 +503,11 @@ const downloadFile = async (url) => {
                                                     <Text style={{ textAlign: 'left', fontSize: 14, color: '#353535', fontWeight: "500" }}>Order Status :</Text>
                                                 </View>
 
-                                                {item.order_status_id >= "1" ?
+                                                {item?.order_status_id >= "1" ?
                                                     (<View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}>
-                                                        <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "400" }}>{Orderstatus(item.order_status_id)}</Text>
+                                                        <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "400" }}>{Orderstatus(item?.order_status_id)}</Text>
                                                         <View style={{ marginTop: 6, }}>
-                                                            <Text style={{ textAlign: 'left', fontSize: 9, color: '#455A64', fontWeight: "400" }}>{OrderDATE(item)}</Text>
+                                                            <Text style={{ textAlign: 'left', fontSize: 12, color: '#455A64', fontWeight: "400" }}>{OrderDATE(item)}</Text>
                                                         </View>
                                                     </View>)
                                                     :

@@ -677,7 +677,7 @@ const TrainingPersonaDetail = (props) => {
 
                                         }
                                     </View>
-                                    <View style={{ flexDirection: 'row', height: 34, justifyContent: 'center', width: "100%", alignItems: "center", marginTop: 50, }}>
+                                    <View style={{ flexDirection: 'row', height: 34, justifyContent: 'center', width: "100%", alignItems: "center", marginTop: 50,marginBottom:90 }}>
                                         <TouchableOpacity
                                             onPress={() => {
                                                 SetTrainingPlan(),

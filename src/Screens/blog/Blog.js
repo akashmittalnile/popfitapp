@@ -44,13 +44,13 @@ const Blog = (props) => {
   const [Blogcategorylist, setBlogcategorylist] = useState([]);
   const [blogbanner, setBlogbanner] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const[NewsletterPopup,setNewsletterPopup]=useState(false);
+  const [NewsletterPopup, setNewsletterPopup] = useState(false);
   const [newsletteremail, setNewsletteremail] = useState("");
   console.log('====================================');
   console.log("emailsssss:", newsletteremail);
   console.log('====================================');
 
-  const gotoBlogDetail = async(item) => {
+  const gotoBlogDetail = async (item) => {
     const usertkn = await AsyncStorage.getItem("authToken");
     if (usertkn == null) {
       Alert.alert('', 'Please login first')
@@ -60,11 +60,11 @@ const Blog = (props) => {
         blogdetail_id: item
       });
     }
-  
+
 
 
   };
-  const gotoCategory = async(item) => {
+  const gotoCategory = async (item) => {
     const usertkn = await AsyncStorage.getItem("authToken");
     if (usertkn == null) {
       Alert.alert('', 'Please login first')
@@ -74,7 +74,7 @@ const Blog = (props) => {
         ITEMS: item
       });
     }
-};
+  };
 
 
   useEffect(() => {
@@ -232,7 +232,7 @@ const Blog = (props) => {
 
         }}
         BelliconononClick={() => {
-          props.navigation.navigate('Notifications') 
+          props.navigation.navigate('Notifications')
         }}
       />
       {!isLoading ?
@@ -509,10 +509,16 @@ const Blog = (props) => {
                         justifyContent: "center",
                         alignItems: 'center',
                       }}>
+                      <View style={{ width: WIDTH * 0.45, backgroundColor: '#c9bca0', height: 25,   justifyContent: 'center', alignItems: "center", borderTopLeftRadius: 20 ,borderTopRightRadius: 20}}>
+                        <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "500" }}>{item?.cat_name?.slice(0, 26) + '...'}</Text>
 
+                      </View>
                       <View
                         style={{
-                          width: WIDTH * 0.45, height: 180, borderRadius: 20,
+                          width: WIDTH * 0.45,
+                          height: 155,
+                          // borderRadius: 20,
+
                           justifyContent: "flex-start", alignItems: "flex-start"
                         }}>
                         <Image
@@ -521,14 +527,11 @@ const Blog = (props) => {
                           style={{
                             width: "100%",
                             height: "100%",
-                            borderRadius: 20,
+                           borderBottomLeftRadius:20,borderBottomRightRadius:20,
                             alignSelf: 'center',
                           }}
                         />
-                        <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
-                          <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "500" }}>{item?.cat_name}</Text>
 
-                        </View>
 
                       </View>
                       <View style={{
@@ -735,9 +738,9 @@ const Blog = (props) => {
 
                             <View style={{ marginLeft: 30, marginBottom: 15, flexDirection: 'row', height: 36, marginHorizontal: 20, marginTop: 30, justifyContent: "center", alignItems: 'center', }}>
                               <TouchableOpacity disabled={!isValid}
-                                onPress={() => { 
-                                  handleSubmit(values) 
-                                  }}>
+                                onPress={() => {
+                                  handleSubmit(values)
+                                }}>
                                 <View style={{ alignItems: 'center', justifyContent: 'center', width: 150, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
 
                                   <Text style={{ textAlign: 'center', fontSize: 15, color: 'white' }}>Subscribe</Text>

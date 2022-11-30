@@ -416,7 +416,7 @@ PODS:
     - react-native-video/Video (= 5.2.1)
   - react-native-video/Video (5.2.1):
     - React-Core
-  - react-native-webview (11.24.0):
+  - react-native-webview (11.25.0):
     - React-Core
   - React-perflogger (0.68.0)
   - React-RCTActionSheet (0.68.0):
@@ -506,6 +506,8 @@ PODS:
     - RNFBApp
   - RNGestureHandler (2.8.0):
     - React-Core
+  - RNI18n (2.0.15):
+    - React
   - RNIap (12.4.4):
     - React-Core
   - RNImageCropPicker (0.38.1):
@@ -656,6 +658,7 @@ DEPENDENCIES:
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNI18n (from `../node_modules/react-native-i18n`)
   - RNIap (from `../node_modules/react-native-iap`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
@@ -797,6 +800,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/messaging"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNI18n:
+    :path: "../node_modules/react-native-i18n"
   RNIap:
     :path: "../node_modules/react-native-iap"
   RNImageCropPicker:
@@ -867,7 +872,7 @@ SPEC CHECKSUMS:
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
   react-native-track-player: 0c26d981b5097910486cbbeb6d8f5352d41be069
   react-native-video: c26780b224543c62d5e1b2a7244a5cd1b50e8253
-  react-native-webview: 6408bc328e65042d240d0ebd62baa76ffd23b1aa
+  react-native-webview: a71da846ed2e9085440e1d6659c04e285528834b
   React-perflogger: 15cb741d6c2379f4d3fc8f9e4d4e1110ef3020cb
   React-RCTActionSheet: ea9099db0597bd769430db1e2d011fd5fdb7fc5e
   React-RCTAnimation: 252df4749866f2654f37612f839522cac91c1165
@@ -889,6 +894,7 @@ SPEC CHECKSUMS:
   RNFBApp: a61f530d08a0f5996b1fbdcbd1b8bb077d5d61a1
   RNFBMessaging: f7a90ac199e1bc771e9e09058ed0354efd047182
   RNGestureHandler: 62232ba8f562f7dea5ba1b3383494eb5bf97a4d3
+  RNI18n: e2f7e76389fcc6e84f2c8733ea89b92502351fd8
   RNIap: 3bcd6982cf99503339cf9243e4ba70a45ea2cf72
   RNImageCropPicker: 648356d68fbf9911a1016b3e3723885d28373eda
   RNReanimated: b21b362b4b8ca921932e8b1718e88cf3a36f157e
@@ -908,6 +914,6 @@ SPEC CHECKSUMS:
   Yoga: 6671cf077f614314c22fd09ddf87d7abeee64e96
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 785a0086ef1df2d2cdeaf7543774dbe267cd6e5d
+PODFILE CHECKSUM: 90341184e40fd6c06be72ccccdb2046d21e216c0
 
 COCOAPODS: 1.11.3

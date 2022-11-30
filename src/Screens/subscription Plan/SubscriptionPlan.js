@@ -8,7 +8,7 @@ import {
   TextInput,
   Image,
   Alert,
-  Pressable, SafeAreaView, Dimensions, ActivityIndicator, VirtualizedList, Platform
+  Pressable, SafeAreaView, Dimensions, ActivityIndicator, VirtualizedList, Platform, Modal
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -24,7 +24,10 @@ import Headers from '../../Routes/Headers';
 import CustomLoader from '../../Routes/CustomLoader';
 import * as IAP from 'react-native-iap';
 import { async } from 'regenerator-runtime';
-import Cancelsubscribe from './Cancelsubscribe';
+import CancelSubscription from './CancelSubscription';
+// import { styless } from './CancelSubscriptionStyle';
+// //import : svg
+// import CheckSvg from '../assets/Vector.svg';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -73,58 +76,57 @@ const SubscriptionPlan = (props) => {
         } catch (error) { }
       });
   };
-const Ioscheckplan =async()=>{
-  if (Platform.OS === 'ios') {
-    let purchaseUpdatedListener;
-    let purchaseErrorListener;
+  const Ioscheckplan = async () => {
+    if (Platform.OS === 'ios') {
+      let purchaseUpdatedListener;
+      let purchaseErrorListener;
 
 
-    IAP.initConnection()
-      .catch(() => {
-        console.error('error connecting to store..');
-      })
-      .then(async () => {
-        console.log('connected to store...');
-        IAP.getSubscriptions({ skus: items })
-          .catch(function (error) {
-            console.error('error finding purchases', error);
-          })
-          .then(function (res) {
-            console.log('got product', res);
-            SetSubscriptionData(res);
+      IAP.initConnection()
+        .catch(() => {
+          console.error('error connecting to store..');
+        })
+        .then(async () => {
+          console.log('connected to store...');
+          IAP.getSubscriptions({ skus: items })
+            .catch(function (error) {
+              console.error('error finding purchases', error);
+            })
+            .then(function (res) {
+              console.log('got product', res);
+              SetSubscriptionData(res);
 
-          });
+            });
 
+        });
+
+
+      purchaseErrorListener = IAP.purchaseErrorListener(error => {
+        if (error['responseCode'] === '2') {
+        } else {
+          Alert.alert("error", 'There has been an error with your purchase,error code = ' + error['code']);
+        }
       });
-
-
-    purchaseErrorListener = IAP.purchaseErrorListener(error => {
-      if (error['responseCode'] === '2') {
-      } else {
-        Alert.alert("error", 'There has been an error with your purchase,error code = ' + error['code']);
-      }
-    });
-    purchaseUpdatedListener = IAP.purchaseUpdatedListener(purchase => {
-      try {
-        const receipt = purchase.transactionReceipt;
-      } catch (error) {
-        console.log('error', error);
-      }
-    });
+      purchaseUpdatedListener = IAP.purchaseUpdatedListener(purchase => {
+        try {
+          const receipt = purchase.transactionReceipt;
+        } catch (error) {
+          console.log('error', error);
+        }
+      });
+    }
   }
-}
   useEffect(() => {
-    GetSubscriptionPlan();
+    // GetSubscriptionPlan();
     Ioscheckplan();
+    const unsubscribe = props.navigation.addListener('focus', () => {
+      GetSubscriptionPlan();
+    })
+    return unsubscribe;
     // return () => { };
   }, []);
 
-  // useEffect(async () => {
 
-    
-
-  //   // return () => { };
-  // }, []);
 
   const checklogin = async (item) => {
     let Usertoken = await AsyncStorage.getItem("authToken");
@@ -146,16 +148,7 @@ const Ioscheckplan =async()=>{
       // console.log("??????????????error", item.id);
     }
   };
-  // const requestSubscription = async (sku,offerToken) => {
-  //   try {
-  //     await requestSubscription(
-  //       {sku},
-  //       ...(offerToken && {subscriptionOffers: [{sku, offerToken}]}),
-  //     );
-  //   } catch (err) {
-  //     console.warn(err.code, err.message);
-  //   }
-  // };
+
   const purchasePlan = async (item, offerToken) => {
 
     setIsLoading(true)
@@ -181,7 +174,7 @@ const Ioscheckplan =async()=>{
           setIsLoading(false);
         }
       } else {
-        Alert.alert("",'This plan does not exist');
+        Alert.alert("", 'This plan does not exist');
         // dispatch(CustomAlertAction.showToast('This plan does not exist'));
         setIsLoading(false);
       }
@@ -191,14 +184,12 @@ const Ioscheckplan =async()=>{
 
     let usertkn = await AsyncStorage.getItem("authToken");
     // console.log(".....usertoken..PLAN_IN...", usertkn);
-    // if (Platform.OS === 'android'){
 
-    // }
     setIsLoading(true)
     try {
       const response = await axios.get(`${API.SUBSCRIPTION_PLAN}`,
         { headers: { "Authorization": ` ${usertkn}` } }
-      );
+      )
 
       // console.log("ResponseSUBscribtion_plan ::::", response.data);
       if (response.data.status == 1) {
@@ -218,8 +209,10 @@ const Ioscheckplan =async()=>{
 
   const cancelMemberShip = async (subs_id) => {
 
+
     let usertkn = await AsyncStorage.getItem("authToken");
     console.log("... PLAN_ID...", subs_id);
+
 
     setIsLoading(true)
     try {
@@ -229,22 +222,42 @@ const Ioscheckplan =async()=>{
 
       // console.log("ResponseSUBscribtion_plan ::::", response.data);
       if (response.data.status == 1) {
+        props.navigation.goBack();
         Alert.alert("", "Subscription cancelled successfully")
-        console.log("SUBSCRIPTION_plan_data!!!>>>", response.data);
+        // console.log("SUBSCRIPTION_plan_data!!!>>>", response.data);
 
       }
     }
     catch (error) {
       // Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
       console.log('error in cancelMemberShip', error);
-
     }
     setIsLoading(false)
   }
+  const showAlert = (subs_id) =>
+    Alert.alert(
+      "",
+      "Are you sure you want to cancel subscription.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Ok",
+          onPress: () => { cancelMemberShip(subs_id) }
+
+        },
+      ],
+      {
+        cancelable: true,
+      }
+    );
   const cancelMemberShipIos = () => {
+    console.log("modala ios cancel button press 1")
     setShowCancelSubscription(true);
-    // Linking.openURL('https://apps.apple.com/account/subscriptions');
-  };
+
+  }
   return (
     <SafeAreaView style={{
       flex: 1,
@@ -268,130 +281,226 @@ const Ioscheckplan =async()=>{
         }}
         BelliconononClick={() => { props.navigation.navigate("Notifications") }}
       />
-      {!isLoading ?
-        (<View>
-          {
-            activeplan?.my_subscriber?.my_subscriber_status == "Active" ?
+      <ScrollView>
+        {!isLoading ?
+          (<View>
+            {
+              activeplan?.my_subscriber_status === "Active" ?
 
-            (<>
-              <View style={{ marginLeft: 10, marginTop: 5, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}  >
-                <Text style={{ textAlign: 'left', fontSize: 17, color: '#000', fontWeight: "500" }} >My Plan</Text>
-              </View>
-              <View style={{
-                height: 122, width: "94%",
-                justifyContent: "flex-start",
-                alignItems: "flex-start",
-                marginHorizontal: 10, borderRadius: 20, padding: 4,backgroundColor: '#FFCC00'
-              }}>
-                <View
-                  style={{
-                    // flex: 1,
-                    marginTop: 8,
-                    // borderRadius: 50,
-                    height: 30,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    position: "absolute",
-                    width: 100,
-                    right: 10,
-                    // backgroundColor: '#FFCC00'
-                    // backgroundColor: "#FFCC00",
-                    // Top: 119,
-                    // Left: 234
-                  }}>
-
-                
-                  <View style={{ flexDirection: "row", width: 60, justifyContent: "center", alignItems: 'center'}}>
-                    <Image source={require('../assets/Ellipsewhite.png')}
-                      style={{
-                        width: 8,
-                        height: 8,borderRadius:50,marginRight:8
-                      }} />
-                    <View style={{ justifyContent: "center", alignItems: 'center' }}>
-                      <Text style={{ textAlign: 'left', fontSize: 14, color: 'white', }}>Active</Text>
-                    </View>
-
-                  </View>
-
-
-                </View>
-
-                <View style={{ flexDirection: "row" }}>
-                  <View style={{ justifyContent: 'center', width: 55, height: 55, borderRadius: 55 / 2, backgroundColor: "#ffcc00", marginHorizontal: 10, marginTop: 10 }}>
-                    <Image
-                      source={require('../assets/activeplan.png')}
-                      resizeMode="contain"
-                      style={{
-                        width: 60,
-                        height: 60, alignSelf: 'center',
-                      }} />
+                (<>
+                  <View style={{ marginLeft: 10, marginTop: 5, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}  >
+                    <Text style={{ textAlign: 'left', fontSize: 18, color: '#000', fontWeight: "500" }} >My Plan</Text>
                   </View>
                   <View style={{
-                    height: 60, width: "40%", flexDirection: 'column', alignItems: "center",
-                    justifyContent: "center", marginTop: 6,
+                    height: 122, width: "94%",
+                    justifyContent: "flex-start",
+                    alignItems: "flex-start",
+                    marginHorizontal: 10, borderRadius: 20, padding: 4, backgroundColor: '#FFCC00'
                   }}>
-                    <Text style={{
-                      // backgroundColor:"red",
-                      textAlign: 'left',
-                      fontSize: 20,
-                      color: '#FFFFFF',
-                      fontWeight: "500"
-                    }}> 
-                      {activeplan?.my_subscriber?.plan_name}
-                    </Text>
-                    <View style={{
-                      flexDirection: 'row',
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}>
-                      <Text
-                        style={{
-                          // marginLeft: 10,
-                          // marginTop: 10,
-                          textAlign: 'center',
-                          fontSize: 22,
-                          color: '#FFFFFF',
-                          fontWeight: "500"
-                        }}>€  
-                        {activeplan?.my_subscriber?.amount}
+                    <View
+                      style={{
+
+                        marginTop: 8,
+
+                        height: 30,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        position: "absolute",
+                        width: 100,
+                        right: 10,
+
+                      }}>
+
+
+                      <View style={{ flexDirection: "row", width: 60, justifyContent: "center", alignItems: 'center' }}>
+                        <Image source={require('../assets/Ellipsewhite.png')}
+                          style={{
+                            width: 8,
+                            height: 8, borderRadius: 50, marginRight: 8
+                          }} />
+                        <View style={{ justifyContent: "center", alignItems: 'center' }}>
+                          <Text style={{ textAlign: 'left', fontSize: 14, color: 'white', }}>Active</Text>
+                        </View>
+
+                      </View>
+
+
+                    </View>
+
+                    <View style={{ flexDirection: "row" }}>
+
+                      <View style={{ justifyContent: 'center', width: 55, height: 55, borderRadius: 55 / 2, backgroundColor: "#ffcc00", marginHorizontal: 10, marginTop: 10 }}>
+                        <Image
+                          source={require('../assets/activeplan.png')}
+                          resizeMode="contain"
+                          style={{
+                            width: 60,
+                            height: 60, alignSelf: 'center',
+                          }} />
+                      </View>
+                      <View style={{
+                        height: 60, width: "40%", flexDirection: 'column', alignItems: "flex-start",
+                        justifyContent: "center", marginTop: 6, marginLeft: 14
+                      }}>
                         <Text style={{
                           // backgroundColor:"red",
                           textAlign: 'left',
-                          fontSize: 14,
+                          fontSize: 20,
                           color: '#FFFFFF',
-
                           fontWeight: "500"
-                        }}> / 
-                          {activeplan?.my_subscriber?.plan_type}
-                          </Text></Text>
+                        }}>
+                          {activeplan?.my_subscriber?.plan_name}
+                        </Text>
+                        <View style={{
+                          flexDirection: 'row',
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}>
+                          <Text
+                            style={{
+                              // marginLeft: 10,
+                              // marginTop: 10,
+                              textAlign: 'center',
+                              fontSize: 22,
+                              color: '#FFFFFF',
+                              fontWeight: "500"
+                            }}>€
+                            {activeplan?.my_subscriber?.amount}/
+                            <Text style={{
+                              // backgroundColor:"red",
+                              textAlign: 'left',
+                              fontSize: 14,
+                              color: '#FFFFFF',
+
+                              fontWeight: "500"
+                            }}> {activeplan?.my_subscriber?.plan_type}
+                            </Text></Text>
+
+                        </View>
+                      </View>
 
                     </View>
+
+                    <TouchableOpacity
+                      onPress={() =>
+                        Platform.OS === 'android'
+                          ? showAlert(activeplan?.my_subscriber?.subscr_id)
+                          :
+                          cancelMemberShipIos()
+
+                      }
+                      style={{
+                        marginLeft: 90,
+                        height: 30, width: 100, flexDirection: 'column', alignItems: "center",
+                        justifyContent: "center", marginTop: 10, backgroundColor: "#FED945", borderRadius: 50, borderWidth: 1, borderColor: "#FFFFFF"
+                      }}>
+                      <Text style={{ color: 'white', fontSize: 14, fontWeight: "400", textAlign: "center" }}>Cancel</Text>
+                    </TouchableOpacity>
                   </View>
-
-                </View>
-                <TouchableOpacity
-                  onPress={() =>
-                    Platform.OS === 'android'
-                      ? cancelMemberShip(activeplan?.my_subscriber?.subscr_id)
-                      : cancelMemberShipIos()
-                  }
-                  style={{
-                    marginLeft: 90,
-                    height: 30, width: 100, flexDirection: 'column', alignItems: "center",
-                    justifyContent: "center", marginTop: 10, backgroundColor: "#FED945", borderRadius: 50, borderWidth: 1, borderColor: "#FFFFFF"
+                </>)
+                :
+                (<>
+                  <View style={{ marginLeft: 10, marginTop: 5, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}  >
+                    <Text style={{ textAlign: 'left', fontSize: 18, color: '#000', fontWeight: "500" }} >My Plan</Text>
+                  </View>
+                  <View style={{
+                    height: 122, width: "94%",
+                    justifyContent: "flex-start",
+                    alignItems: "flex-start",
+                    marginHorizontal: 10, borderRadius: 20, padding: 4, backgroundColor: '#FFCC00'
                   }}>
-                  <Text style={{ color: 'white', fontSize: 14, fontWeight: "400", textAlign: "center" }}>Cancel</Text>
-                </TouchableOpacity>
-              </View>
-            </>)
-              :
-              <></>
-          }
-          <>
+                    <View
+                      style={{
 
-          </>
-          {/* <View style={styles.navigationBarColor}>
+                        marginTop: 8,
+
+                        height: 30,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        position: "absolute",
+                        width: 100,
+                        right: 10,
+
+                      }}>
+
+
+                      <View style={{ flexDirection: "row", width: 60, justifyContent: "center", alignItems: 'center' }}>
+                        <Image source={require('../assets/Ellipsewhite.png')}
+                          style={{
+                            width: 8,
+                            height: 8, borderRadius: 50, marginRight: 8
+                          }} />
+                        <View style={{ justifyContent: "center", alignItems: 'center' }}>
+                          <Text style={{ textAlign: 'left', fontSize: 14, color: 'white', }}>Active</Text>
+                        </View>
+
+                      </View>
+
+
+                    </View>
+
+                    <View style={{ flexDirection: "row" }}>
+
+                      <View style={{ justifyContent: 'center', width: 55, height: 55, borderRadius: 55 / 2, backgroundColor: "#ffcc00", marginHorizontal: 10, marginTop: 10 }}>
+                        <Image
+                          source={require('../assets/activeplan.png')}
+                          resizeMode="contain"
+                          style={{
+                            width: 60,
+                            height: 60, alignSelf: 'center',
+                          }} />
+                      </View>
+                      <View style={{
+                        height: 60, width: "40%", flexDirection: 'column', alignItems: "flex-start",
+                        justifyContent: "center", marginTop: 6, marginLeft: 14
+                      }}>
+                        <Text style={{
+                          // backgroundColor:"red",
+                          textAlign: 'left',
+                          fontSize: 20,
+                          color: '#FFFFFF',
+                          fontWeight: "500"
+                        }}>Free
+                        </Text>
+                        <View style={{
+                          flexDirection: 'row',
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}>
+                          <Text
+                            style={{
+                              // marginLeft: 10,
+                              // marginTop: 10,
+                              textAlign: 'center',
+                              fontSize: 22,
+                              color: '#FFFFFF',
+                              fontWeight: "500"
+                            }}>€ 0
+                            <Text style={{
+                              // backgroundColor:"red",
+                              textAlign: 'left',
+                              fontSize: 14,
+                              color: '#FFFFFF',
+
+                              fontWeight: "500"
+                            }}> {activeplan?.my_subscriber?.plan_type}
+                            </Text></Text>
+
+                        </View>
+                      </View>
+
+                    </View>
+
+
+                  </View>
+                </>)
+            }
+            <>
+
+            </>
+            {/* <View style={styles.navigationBarColor}>
             <View style={styles.navigationBarLeftContainer}>
               <TouchableOpacity
                 onPress={() => {
@@ -444,61 +553,61 @@ const Ioscheckplan =async()=>{
           </View> */}
 
 
-          <View style={{
-            paddingBottom: 80, alignItems: "center",
-            justifyContent: "center", marginTop: 15
-          }}>
+            <View style={{
+              paddingBottom: 80, alignItems: "center",
+              justifyContent: "center", marginTop: 15
+            }}>
 
-            <FlatList
-              data={SubscriptionsId}
-              numColumns={2}
-              keyExtractor={(item, index) => String(index)}
-              renderItem={({ item, index }) => {
-                return (
-                  <>  
-                  {index == 0 ? <></>
-                  :
-                   <View
-                  style={{
-                    
-                    backgroundColor: "#ffcc00",
-                    marginTop: 10,
-                    marginHorizontal: 5,
-                    borderRadius: 20,
-                    width: WIDTH * 0.60,
-                    height: 210,
-                   
+              <FlatList
+                data={SubscriptionsId}
+                numColumns={2}
+                keyExtractor={(item, index) => String(index)}
+                renderItem={({ item, index }) => {
+                  return (
+                    <>
+                      {index == 0 ? <></>
+                        :
+                        <View
+                          style={{
+
+                            backgroundColor: "#ffcc00",
+                            marginTop: 10,
+                            marginHorizontal: 5,
+                            borderRadius: 20,
+                            width: WIDTH * 0.60,
+                            height: 210,
 
 
-                  }}>
-                  <View style={{
-                    height: 30, borderRadius: 20, flexDirection: 'row', alignItems: "center",
-                    justifyContent: "center", flex: 1, width: "100%",
-                  }}>
-                    <View
-                      style={{
-                        flex: 0.6,
-                        height: 45,
-                        flexDirection: 'row',
-                        borderTopLeftRadius: 20,
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}>
-                      <Text
-                        style={{
-                          width: 90,
-                          // marginLeft: 10,
-                          // marginTop: 10,
-                          textAlign: 'center',
-                          fontSize: 16,
-                          color: 'white',
-                          fontWeight: "500"
 
-                        }}>
-                        {item.title}
-                      </Text>
-                    </View>
-                    {/* <View
+                          }}>
+                          <View style={{
+                            height: 30, borderRadius: 20, flexDirection: 'row', alignItems: "center",
+                            justifyContent: "center", flex: 1, width: "100%",
+                          }}>
+                            <View
+                              style={{
+                                flex: 0.6,
+                                height: 45,
+                                flexDirection: 'row',
+                                borderTopLeftRadius: 20,
+                                justifyContent: "center",
+                                alignItems: "center",
+                              }}>
+                              <Text
+                                style={{
+                                  width: 90,
+                                  // marginLeft: 10,
+                                  // marginTop: 10,
+                                  textAlign: 'center',
+                                  fontSize: 16,
+                                  color: 'white',
+                                  fontWeight: "500"
+
+                                }}>
+                                {item?.title}
+                              </Text>
+                            </View>
+                            {/* <View
                       style={{
                         flex: 0.4, height: 60, borderTopRightRadius: 20, alignItems: "center",
                         justifyContent: "center"
@@ -528,35 +637,35 @@ const Ioscheckplan =async()=>{
                           }}></View>
                       </BackgroundImage>
                     </View> */}
-                  </View>
-                  {/* // plan price */}
-                  <View style={{
-                    height: 30, width: "100%", flexDirection: 'column', alignItems: "center",
-                    justifyContent: "center",
-                  }}>
-                    <View style={{
-                      flexDirection: 'row',
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}>
-                      <Text
-                        style={{
-                          // marginLeft: 10,
-                          // marginTop: 10,
-                          textAlign: 'center',
-                          fontSize: 20,
-                          color: 'white',
+                          </View>
+                          {/* // plan price */}
+                          <View style={{
+                            height: 30, width: "100%", flexDirection: 'column', alignItems: "center",
+                            justifyContent: "center",
+                          }}>
+                            <View style={{
+                              flexDirection: 'row',
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}>
+                              <Text
+                                style={{
+                                  // marginLeft: 10,
+                                  // marginTop: 10,
+                                  textAlign: 'center',
+                                  fontSize: 20,
+                                  color: 'white',
 
-                          fontWeight: "500"
-                        }}>€{item.price}{item.type == "Weekly" ? null :  "/"}<Text style={{
-                          // backgroundColor:"red",
-                          textAlign: 'left',
-                          fontSize: 12,
-                          color: 'white',
+                                  fontWeight: "500"
+                                }}>€{item?.price}{item?.type == "Weekly" ? null : "/"}<Text style={{
+                                  // backgroundColor:"red",
+                                  textAlign: 'left',
+                                  fontSize: 12,
+                                  color: 'white',
 
-                          fontWeight: "500"
-                        }}> {item.type == "Weekly" ? null :  item.type}</Text></Text>
-                      {/* <Text
+                                  fontWeight: "500"
+                                }}> {item?.type == "Weekly" ? null : item?.type}</Text></Text>
+                              {/* <Text
                           style={{
                             // backgroundColor:"red",
                             marginLeft: 2,
@@ -568,7 +677,7 @@ const Ioscheckplan =async()=>{
                             // marginTop: 10,
                           }}>{item.price}/</Text>
                       <Text */}
-                      {/* style={{
+                              {/* style={{
                           // backgroundColor:"red",
                           textAlign: 'left',
                           fontSize: 10,
@@ -578,121 +687,121 @@ const Ioscheckplan =async()=>{
                         }}>
                         {item.type}
                       </Text> */}
-                    </View>
-                  </View>
+                            </View>
+                          </View>
 
-                  {/* description */}
-                  <View style={{
-                    width: "100%",
-                    alignItems: "flex-start",
-                    // justifyContent: "center",
-                    paddingVertical: 2, height: 100
-                  }}>
-                    <View
-                      style={{
-                        marginHorizontal: 10,
-                        height: 30,
-                        flexDirection: 'row',
+                          {/* description */}
+                          <View style={{
+                            width: "100%",
+                            alignItems: "flex-start",
+                            // justifyContent: "center",
+                            paddingVertical: 2, height: 100
+                          }}>
+                            <View
+                              style={{
+                                marginHorizontal: 10,
+                                height: 30,
+                                flexDirection: 'row',
 
-                        // marginBottom: 6,
-                        // backgroundColor: "pink",
-                        justifyContent: "center",
-                        alignItems: "center"
-                      }}>
-                      <View
-                        style={{
-                          marginTop: -10,
-                          // alignItems: "flex-start",
-                          // justifyContent: "flex-start",
-                          backgroundColor: 'white',
-                          borderRadius: 20,
-                          height: 5,
-                          width: 5,
-                        }}></View>
-                      <View style={{ marginLeft: 5, alignItems: 'center' }}>
-                        <Text numberOfLines={2}
-                          style={{
-                            // 
-                            textAlign: 'left',
-                            fontSize: 10,
-                            color: 'white',
-                            fontWeight: "500"
+                                // marginBottom: 6,
+                                // backgroundColor: "pink",
+                                justifyContent: "center",
+                                alignItems: "center"
+                              }}>
+                              <View
+                                style={{
+                                  marginTop: -10,
+                                  // alignItems: "flex-start",
+                                  // justifyContent: "flex-start",
+                                  backgroundColor: 'white',
+                                  borderRadius: 20,
+                                  height: 5,
+                                  width: 5,
+                                }}></View>
+                              <View style={{ marginLeft: 5, alignItems: 'center' }}>
+                                <Text numberOfLines={2}
+                                  style={{
+                                    // 
+                                    textAlign: 'left',
+                                    fontSize: 10,
+                                    color: 'white',
+                                    fontWeight: "500"
 
-                          }}>{item.title_1}
-                        </Text>
-                      </View>
-                    </View>
+                                  }}>{item?.title_1}
+                                </Text>
+                              </View>
+                            </View>
 
-                    <View
-                      style={{
-                        marginHorizontal: 10,
-                        height: 30,
-                        flexDirection: 'row',
+                            <View
+                              style={{
+                                marginHorizontal: 10,
+                                height: 30,
+                                flexDirection: 'row',
 
-                        // marginBottom: 6,
-                        // backgroundColor: "pink",
-                        justifyContent: "center",
-                        alignItems: "center"
-                      }}>
-                      <View
-                        style={{
-                          marginTop: -10,
-                          // alignItems: "flex-start",
-                          // justifyContent: "flex-start",
-                          backgroundColor: 'white',
-                          borderRadius: 20,
-                          height: 5,
-                          width: 5,
-                        }}></View>
-                      <View style={{ marginLeft: 5, alignItems: 'center' }}>
-                        <Text numberOfLines={2}
-                          style={{
-                            // 
-                            textAlign: 'left',
-                            fontSize: 10,
-                            color: 'white',
-                            fontWeight: "500"
+                                // marginBottom: 6,
+                                // backgroundColor: "pink",
+                                justifyContent: "center",
+                                alignItems: "center"
+                              }}>
+                              <View
+                                style={{
+                                  marginTop: -10,
+                                  // alignItems: "flex-start",
+                                  // justifyContent: "flex-start",
+                                  backgroundColor: 'white',
+                                  borderRadius: 20,
+                                  height: 5,
+                                  width: 5,
+                                }}></View>
+                              <View style={{ marginLeft: 5, alignItems: 'center' }}>
+                                <Text numberOfLines={2}
+                                  style={{
+                                    // 
+                                    textAlign: 'left',
+                                    fontSize: 10,
+                                    color: 'white',
+                                    fontWeight: "500"
 
-                          }}>{item.title_2}
-                        </Text>
-                      </View>
-                    </View>
+                                  }}>{item?.title_2}
+                                </Text>
+                              </View>
+                            </View>
 
-                    <View
-                      style={{
-                        marginHorizontal: 10,
-                        height: 30,
-                        flexDirection: 'row',
+                            <View
+                              style={{
+                                marginHorizontal: 10,
+                                height: 30,
+                                flexDirection: 'row',
 
-                        // marginBottom: 6,
-                        // backgroundColor: "pink",
-                        justifyContent: "center",
-                        alignItems: "center"
-                      }}>
-                      <View
-                        style={{
-                          marginTop: -10,
-                          // alignItems: "flex-start",
-                          // justifyContent: "flex-start",
-                          backgroundColor: 'white',
-                          borderRadius: 20,
-                          height: 5,
-                          width: 5,
-                        }}></View>
-                      <View style={{ marginLeft: 5, alignItems: 'center' }}>
-                        <Text numberOfLines={2}
-                          style={{
-                            // 
-                            textAlign: 'left',
-                            fontSize: 10,
-                            color: 'white',
-                            fontWeight: "500"
+                                // marginBottom: 6,
+                                // backgroundColor: "pink",
+                                justifyContent: "center",
+                                alignItems: "center"
+                              }}>
+                              <View
+                                style={{
+                                  marginTop: -10,
+                                  // alignItems: "flex-start",
+                                  // justifyContent: "flex-start",
+                                  backgroundColor: 'white',
+                                  borderRadius: 20,
+                                  height: 5,
+                                  width: 5,
+                                }}></View>
+                              <View style={{ marginLeft: 5, alignItems: 'center' }}>
+                                <Text numberOfLines={2}
+                                  style={{
+                                    // 
+                                    textAlign: 'left',
+                                    fontSize: 10,
+                                    color: 'white',
+                                    fontWeight: "500"
 
-                          }}>{item.title_3}
-                        </Text>
-                      </View>
-                    </View>
-                    {/* <View
+                                  }}>{item?.title_3}
+                                </Text>
+                              </View>
+                            </View>
+                            {/* <View
                         style={{
                           marginHorizontal: 10,
                           height: 15,
@@ -749,98 +858,143 @@ const Ioscheckplan =async()=>{
                           </Text>
                         </View>
                       </View> */}
-                  </View>
+                          </View>
 
-                  <View style={{
-                    flex: 1, flexDirection: 'row', width: "100%", alignItems: "flex-start",
-                    justifyContent: "flex-start", height: 50,
-                  }}>
-                    <View
-                      style={{ flex: 0.4, height: 40, borderBottomLeftRadius: 20, }}>
-                      <BackgroundImage
-                        source={require('../assets/leftCurve.png')}
-                        style={{ height: 90, alignItems: "center", justifyContent: 'center', }}></BackgroundImage>
-                    </View>
-                    <View
-                      style={{
-                        flex: 0.2,
-                        justifyContent: 'center',
-                        // flexDirection: 'row',
-                        alignItems: "center",
-                        height: 30,
-                        // marginTop: 6,
-
-                      }}>
-                      {item.name === "Free" ?
-                        (<TouchableOpacity
-                          onPress={() => props.navigation.goBack()}
-                          style={{ borderRadius: 50, }}>
-                          <View
-                            style={{
-                              // marginLeft: 10,
-                              justifyContent: 'center',
-                              backgroundColor: 'white',
-                              width: 120,
-                              height: 30,
-                              borderRadius: 50,
-                            }}>
-                            <Text
+                          <View style={{
+                            flex: 1, flexDirection: 'row', width: "100%", alignItems: "flex-start",
+                            justifyContent: "flex-start", height: 50,
+                          }}>
+                            <View
+                              style={{ flex: 0.4, height: 40, borderBottomLeftRadius: 20, }}>
+                              <BackgroundImage
+                                source={require('../assets/leftCurve.png')}
+                                style={{ height: 90, alignItems: "center", justifyContent: 'center', }}></BackgroundImage>
+                            </View>
+                            <View
                               style={{
-                                textAlign: 'center',
-                                fontSize: 12,
-                                color: '#c79d3a',
-                                fontWeight: "500"
+                                flex: 0.2,
+                                justifyContent: 'center',
+                                // flexDirection: 'row',
+                                alignItems: "center",
+                                height: 30,
+                                // marginTop: 6,
 
                               }}>
-                              Free
-                            </Text>
+                              {item?.title === "Free" ?
+                                (<TouchableOpacity
+                                  onPress={() => props.navigation.goBack()}
+                                  style={{ borderRadius: 50, }}>
+                                  <View
+                                    style={{
+                                      // marginLeft: 10,
+                                      justifyContent: 'center',
+                                      backgroundColor: 'white',
+                                      width: 120,
+                                      height: 30,
+                                      borderRadius: 50,
+                                    }}>
+                                    <Text
+                                      style={{
+                                        textAlign: 'center',
+                                        fontSize: 12,
+                                        color: '#c79d3a',
+                                        fontWeight: "500"
+
+                                      }}>
+                                      Free
+                                    </Text>
+                                  </View>
+                                </TouchableOpacity>)
+                                :
+                                (<TouchableOpacity onPress={() => { Platform.OS === 'android' ? checklogin(item) : purchasePlan(item) }}
+                                  style={{ borderRadius: 50, }}>
+                                  <View
+                                    style={{
+                                      // marginLeft: 10,
+                                      justifyContent: 'center',
+                                      backgroundColor: 'white',
+                                      width: 120,
+                                      height: 30,
+                                      borderRadius: 50,
+                                    }}>
+                                    <Text
+                                      style={{
+                                        textAlign: 'center',
+                                        fontSize: 12,
+                                        color: '#c79d3a',
+                                        fontWeight: "500"
+
+                                      }}>
+                                      Subscribe Now
+                                    </Text>
+                                  </View>
+                                </TouchableOpacity>)
+
+                              }
+
+                            </View>
                           </View>
-                        </TouchableOpacity>)
-                        :
-                        (<TouchableOpacity onPress={() => { Platform.OS === 'android' ? checklogin(item) : purchasePlan(item) }}
-                          style={{ borderRadius: 50, }}>
-                          <View
-                            style={{
-                              // marginLeft: 10,
-                              justifyContent: 'center',
-                              backgroundColor: 'white',
-                              width: 120,
-                              height: 30,
-                              borderRadius: 50,
-                            }}>
-                            <Text
-                              style={{
-                                textAlign: 'center',
-                                fontSize: 12,
-                                color: '#c79d3a',
-                                fontWeight: "500"
+                        </View>}
+                    </>
 
-                              }}>
-                              Subscribe Now
-                            </Text>
-                          </View>
-                        </TouchableOpacity>)
 
-                      }
-
-                    </View>
+                  )
+                }
+                }
+              />
+            </View>
+            {/* <Modal
+              visible={showCancelSubscription}
+              onRequestClose={ () => {setShowCancelSubscription(false)}}
+              animationType="slide"
+              transparent={true}>
+              <View style={styless.container}>
+                <TouchableOpacity style={styless.blurView} onPress={setShowCancelSubscription(false)} />
+                <View style={styless.mainView}>
+                  <Text style={styless.TitleText}>Cancel subscription</Text>
+                  <View
+                    style={{
+                      borderBottomWidth: 0.5,
+                      marginVertical: 10,
+                      borderColor: "gray",
+                    }}
+                  />
+                  <View style={styless.bulletView}>
+                    <CheckSvg />
+                    <Text style={styless.bulletTextStyle}>Open the Settings app.</Text>
                   </View>
-                </View>}
-                </>
-                
-
-                )
-              }
-              }
+                  <View style={styless.bulletView}>
+                    <CheckSvg />
+                    <Text style={styless.bulletTextStyle}>Tap your name.</Text>
+                  </View>
+                  <View style={styless.bulletView}>
+                    <CheckSvg />
+                    <Text style={styless.bulletTextStyle}>Tap Subscriptions.</Text>
+                  </View>
+                  <View style={styless.bulletView}>
+                    <CheckSvg />
+                    <Text style={styless.bulletTextStyle}>Tap the subscription.</Text>
+                  </View>
+                  <View style={styless.bulletView}>
+                    <CheckSvg />
+                    <Text style={styless.bulletTextStyle}>
+                      Tap Cancel Subscription. You might need to scroll down to find the
+                      Cancel Subscription button. If there is no Cancel button or you
+                      see an expiration message in red text, the subscription is already
+                      canceled.
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </Modal> */}
+            <CancelSubscription
+              visible={showCancelSubscription}
+              setVisibility={setShowCancelSubscription}
             />
-          </View>
-          <Cancelsubscribe
-            visible={showCancelSubscription}
-            setVisibility={setShowCancelSubscription}
-          />
-        </View>)
-        :
-        (<CustomLoader showLoader={isLoading} />)}
+          </View>)
+          :
+          (<CustomLoader showLoader={isLoading} />)}
+      </ScrollView>
     </SafeAreaView>
   );
 }

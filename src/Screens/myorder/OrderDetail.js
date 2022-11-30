@@ -261,6 +261,25 @@ const OrderDetail = (props) => {
         }
         setIsLoading(false);
     };
+     const showAlert = ( ) =>
+    Alert.alert(
+      "",
+      "Are you sure you want to cancel order.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Ok",
+          onPress: () => { CancelOrder() }
+
+        },
+      ],
+      {
+        cancelable: true,
+      }
+    );
     return (
         <SafeAreaView style={{
             flex: 1,
@@ -298,7 +317,7 @@ const OrderDetail = (props) => {
                                                 // backgroundColor: '#fffcee',
                                                 width: "99.9%",
                                                 height: 70,
-                                                marginTop: 20,
+                                                // marginTop: 20,
                                                 marginBottom: 20,
                                                 marginHorizontal: 2,
                                                 justifyContent: "center",
@@ -412,7 +431,7 @@ const OrderDetail = (props) => {
 
                                                             <View style={{ flexDirection: 'column', }}>
                                                                 <View>
-                                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000' }}>Total Amount: <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#455A64', }}>${item.total_price}</Text></Text>
+                                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000',fontWeight: "500" }}>Total Amount: <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#455A64', }}>${item.total_price}</Text></Text>
                                                                 </View>
                                                                 <View>
                                                                     <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000' }}>Quantity: <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#000000', }}>{item.qty}</Text></Text>
@@ -526,7 +545,7 @@ const OrderDetail = (props) => {
                                                 {
                                                     item.order_status_id >= "1" ?
 
-                                                        (<View style={{ justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", width: WIDTH * 0.68, height: 45, paddingBottom: 5 }}>
+                                                        (<View style={{ justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", width: WIDTH * 0.68, height: 45, paddingBottom: 5, }}>
 
                                                             <View style={{ position: "absolute", left: 10, justifyContent: "center", alignItems: "center", top: 15 }}>
 
@@ -536,23 +555,19 @@ const OrderDetail = (props) => {
                                                                         height: 22, alignSelf: 'center',
                                                                     }} />
 
-                                                                {/* <Image source={require('../assets/Ellipse_187.png')}
-                                                                style={{
-                                                                    width: 20,
-                                                                    height: 20, alignSelf: 'center',
-                                                                }} /> */}
+                                                              
 
                                                             </View>
 
                                                             <View style={{ justifyContent: "center", alignItems: "flex-start", top: 6 }}>
                                                                 <View style={{ justifyContent: "center", alignItems: "flex-start", width: WIDTH * 0.36 }}>
-                                                                    <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>Order placed</Text>
+                                                                    <Text style={{ marginTop: 6, textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>Order placed</Text>
                                                                 </View>
                                                                 <Text style={{ marginTop: 2, textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "400" }}>{item?.op_date != null ? item?.op_date : null}</Text>
                                                             </View>
                                                         </View>)
                                                         :
-                                                        (<View style={{ backgroundColor: "white", justifyContent: "center", alignItems: "center", flexDirection: "row", width: WIDTH * 0.47, height: 45, paddingBottom: 5 }}>
+                                                        (<View style={{  justifyContent: "center", alignItems: "center", flexDirection: "row", width: WIDTH * 0.47, height: 45, paddingBottom: 5 }}>
 
                                                             <View style={{ position: "absolute", left: 10, justifyContent: "center", alignItems: "center", top: 15 }}>
 
@@ -571,7 +586,7 @@ const OrderDetail = (props) => {
                                                 }
 
 
-                                                <View style={{ backgroundColor: "white", justifyContent: "space-between", alignItems: "flex-start", width: WIDTH * 0.5, height: 30, }}>
+                                                <View style={{   justifyContent: "space-between", alignItems: "flex-start", width: WIDTH * 0.5, height: 30, }}>
                                                     {
                                                         item.order_status_id >= "1" ?
                                                             (<View style={{ position: "absolute", left: 18, justifyContent: "center", alignItems: "center" }}>
@@ -614,10 +629,42 @@ const OrderDetail = (props) => {
 
                                                 </View>
 
-                                                {
+                                        
+
+                                                <View>
+                                                    {item.order_status_id == 5 ?
+                                                        <View>
+                                                            {
+                                                                item.order_status_id == "5" ?
+
+                                                                    (<View style={{   justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", width: WIDTH * 0.63, height: 45, paddingBottom: 5 }}>
+
+                                                                        <View style={{ position: "absolute", left: 10, justifyContent: "center", alignItems: "center", top: 10 }}>
+
+                                                                            <Image source={require('../assets/Vector_red.png')}
+                                                                                style={{
+                                                                                    width: 22,
+                                                                                    height: 22, alignSelf: 'center',
+                                                                                }} />
+
+                                                                        </View>
+
+                                                                        <View style={{ justifyContent: "center", alignItems: "flex-start", top: 3, marginLeft: 18 }}>
+                                                                            <View style={{ justifyContent: "center", alignItems: "flex-start", width: WIDTH * 0.36 }}>
+                                                                                <Text style={{  textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>Cancelled</Text></View>
+                                                                            <Text style={{ marginTop: 2, textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "400" }}>{item?.cancel_date != null ? item?.cancel_date : null}</Text>
+                                                                        </View>
+                                                                    </View>)
+                                                                    :
+                                                                    null
+                                                            }
+                                                        </View>
+                                                        :
+                                                        <View>
+                                                                    {
                                                     item.order_status_id >= "2" ?
 
-                                                        (<View style={{ backgroundColor: "white", justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", width: WIDTH * 0.63, height: 45, paddingBottom: 5 }}>
+                                                        (<View style={{  justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", width: WIDTH * 0.63, height: 45, paddingBottom: 5}}>
 
                                                             <View style={{ position: "absolute", left: 10, justifyContent: "center", alignItems: "center", top: 15 }}>
 
@@ -628,16 +675,16 @@ const OrderDetail = (props) => {
                                                                     }} />
                                                             </View>
 
-                                                            <View style={{ justifyContent: "center", alignItems: "flex-start", top: 10 }}>
+                                                            <View style={{ justifyContent: "center", alignItems: "flex-start", top: 6 ,marginLeft:18}}>
 
-                                                                <View style={{ justifyContent: "center", alignItems: "flex-start", width: WIDTH * 0.36 }}>
+                                                                <View style={{ justifyContent: "center", alignItems: "flex-start", width: WIDTH * 0.36}}>
                                                                     <Text style={{ textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>Order dispatched</Text>
                                                                 </View>
                                                                 <Text style={{ marginTop: 2, textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "400" }}>{item?.odis_date != null ? item?.odis_date : null} </Text>
                                                             </View>
                                                         </View>)
                                                         :
-                                                        (<View style={{ backgroundColor: "white", justifyContent: "center", alignItems: "center", flexDirection: "row", width: WIDTH * 0.54, height: 45, paddingBottom: 5, }}>
+                                                        (<View style={{  justifyContent: "center", alignItems: "center", flexDirection: "row", width: WIDTH * 0.54, height: 45, paddingBottom: 5, }}>
 
                                                             <View style={{ position: "absolute", left: 10, justifyContent: "center", alignItems: "center", top: 15 }}>
 
@@ -655,7 +702,7 @@ const OrderDetail = (props) => {
                                                         </View>)
                                                 }
 
-                                                <View style={{ backgroundColor: "white", justifyContent: "space-between", alignItems: "flex-start", width: WIDTH * 0.5, height: 30, }}>
+                                                <View style={{   justifyContent: "space-between", alignItems: "flex-start", width: WIDTH * 0.5, height: 30, }}>
                                                     {
                                                         item.order_status_id >= "2" ?
                                                             (<View style={{ position: "absolute", left: 18, justifyContent: "center", alignItems: "center" }}>
@@ -699,7 +746,7 @@ const OrderDetail = (props) => {
                                                 {
                                                     item.order_status_id >= "3" ?
 
-                                                        (<View style={{ backgroundColor: "white", justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", width: WIDTH * 0.63, height: 45, paddingBottom: 5 }}>
+                                                        (<View style={{  justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", width: WIDTH * 0.63, height: 45, paddingBottom: 5 }}>
 
                                                             <View style={{ position: "absolute", left: 10, justifyContent: "center", alignItems: "center", top: 15 }}>
 
@@ -717,7 +764,7 @@ const OrderDetail = (props) => {
 
                                                             </View>
 
-                                                            <View style={{ justifyContent: "center", alignItems: "flex-start", top: 10 }}>
+                                                            <View style={{ justifyContent: "center", alignItems: "flex-start", top: 4,marginLeft:18 }}>
                                                                 <View style={{ justifyContent: "center", alignItems: "flex-start", width: WIDTH * 0.36 }}>
                                                                     <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>Out for delivery</Text>
                                                                 </View>
@@ -725,7 +772,7 @@ const OrderDetail = (props) => {
                                                             </View>
                                                         </View>)
                                                         :
-                                                        (<View style={{ backgroundColor: "white", justifyContent: "center", alignItems: "center", flexDirection: "row", width: WIDTH * 0.51, height: 45, paddingBottom: 5 }}>
+                                                        (<View style={{ justifyContent: "center", alignItems: "center", flexDirection: "row", width: WIDTH * 0.51, height: 45, paddingBottom: 5 }}>
 
                                                             <View style={{ position: "absolute", left: 10, justifyContent: "center", alignItems: "center", top: 15 }}>
 
@@ -784,43 +831,12 @@ const OrderDetail = (props) => {
                                                     }
                                                 </View>
 
-                                                <View>
-                                                    {item.order_status_id == 5 ?
-                                                        <View>
-                                                            {
-                                                                item.order_status_id == "5" ?
-
-                                                                    (<View style={{ backgroundColor: "white", justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", width: WIDTH * 0.63, height: 45, paddingBottom: 5 }}>
-
-                                                                        <View style={{ position: "absolute", left: 10, justifyContent: "center", alignItems: "center", top: 15 }}>
-
-                                                                            <Image source={require('../assets/Vector.png')}
-                                                                                style={{
-                                                                                    width: 22,
-                                                                                    height: 22, alignSelf: 'center',
-                                                                                }} />
-
-                                                                        </View>
-
-                                                                        <View style={{ justifyContent: "center", alignItems: "flex-start", top: 10, marginLeft: 10 }}>
-                                                                            <View style={{ justifyContent: "center", alignItems: "flex-start", width: WIDTH * 0.36 }}>
-                                                                                <Text style={{ marginTop: 1, textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>Cancelled</Text></View>
-                                                                            <Text style={{ marginTop: 2, textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "400" }}>{item?.cancel_date != null ? item?.cancel_date : null}</Text>
-                                                                        </View>
-                                                                    </View>)
-                                                                    :
-                                                                    null
-                                                            }
-                                                        </View>
-                                                        :
-                                                        <View>
-
                                                             {
                                                                 item.order_status_id >= "4" ?
 
-                                                                    (<View style={{ backgroundColor: "white", justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", width: WIDTH * 0.63, height: 45, paddingBottom: 5 }}>
+                                                                    (<View style={{  justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", width: WIDTH * 0.63, height: 45, paddingBottom: 5 }}>
 
-                                                                        <View style={{ position: "absolute", left: 10, justifyContent: "center", alignItems: "center", top: 15 }}>
+                                                                        <View style={{ position: "absolute", left: 10, justifyContent: "center", alignItems: "center", top: 15 ,}}>
 
                                                                             <Image source={require('../assets/Vector.png')}
                                                                                 style={{
@@ -836,14 +852,14 @@ const OrderDetail = (props) => {
 
                                                                         </View>
 
-                                                                        <View style={{ justifyContent: "center", alignItems: "flex-start", top: 10 }}>
+                                                                        <View style={{ justifyContent: "center", alignItems: "flex-start", top: 5 ,marginLeft:18}}>
                                                                             <View style={{ justifyContent: "center", alignItems: "flex-start", width: WIDTH * 0.36 }}>
                                                                                 <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "400" }}>Order delivered</Text></View>
                                                                             <Text style={{ marginTop: 2, textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "400" }}>{item?.odeliv_date != null ? item?.odeliv_date : null}</Text>
                                                                         </View>
                                                                     </View>)
                                                                     :
-                                                                    (<View style={{ backgroundColor: "white", justifyContent: "center", alignItems: "center", flexDirection: "row", width: WIDTH * 0.51, height: 45, paddingBottom: 5 }}>
+                                                                    (<View style={{   justifyContent: "center", alignItems: "center", flexDirection: "row", width: WIDTH * 0.51, height: 45, paddingBottom: 5 }}>
 
                                                                         <View style={{ position: "absolute", left: 10, justifyContent: "center", alignItems: "center", top: 15 }}>
 
@@ -868,6 +884,7 @@ const OrderDetail = (props) => {
 
 
                                             </View>
+
                                             {/* Forter button */}
                                             <View
                                                 style={{
@@ -883,11 +900,11 @@ const OrderDetail = (props) => {
                                                     alignSelf: "center"
                                                 }}>
                                                 {
-                                                    item?.order_status == "Order cancelled" ?
+                                                    item?.order_status == "Order cancelled" || item?.order_status_id === "4" ?
                                                        <></>
                                                         :
                                                         <TouchableOpacity
-                                                            onPress={() => { CancelOrder() }}>
+                                                            onPress={() => { showAlert() }}>
                                                             <View
                                                                 style={{
                                                                     width: 160,
@@ -895,7 +912,7 @@ const OrderDetail = (props) => {
                                                                     backgroundColor: '#ffcc00',
                                                                     borderRadius: 50,
                                                                     justifyContent: "center",
-                                                                    alignSelf: "center"
+                                                                    alignSelf: "center",marginRight:20
                                                                 }}>
                                                                 <View
                                                                     style={{
@@ -941,7 +958,7 @@ const OrderDetail = (props) => {
                                                             flex: 1,
                                                             backgroundColor: '#ffcc00',
                                                             borderRadius: 50,
-                                                            marginLeft: 20,
+                                                            // marginLeft: 20,
                                                             justifyContent: "center",
                                                             alignSelf: "center"
                                                         }}>

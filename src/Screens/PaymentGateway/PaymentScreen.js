@@ -131,7 +131,7 @@ export default function PaymentScreen(props) {
     console.log('====================================');
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.STRIPE_PAYMENT}`, { 'method_id': id, 'plan_amount': JSON.stringify(Plan_amout), 'plan_id': plan_id }, { headers: { "Authorization": ` ${Token != null ? Token : null}` } }
+      const response = await axios.post(`${API.STRIPE_PAYMENT}`, { 'method_id': id, 'plan_amount': JSON.stringify(Plan_amout), 'plan_id': plan_id }, { headers: { "Authorization": ` ${Token}` } }
 
         // {
         //   headers: {

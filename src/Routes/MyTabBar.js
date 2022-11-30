@@ -44,6 +44,8 @@ import Audiolist from '../Screens/training/Audiolist';
 import Videolist from '../Screens/training/Videolist';
 import ViewInvoice from '../Screens/myorder/Invoicedwn';
 import ChangePassword from '../Screens/Profile/ChangePassword';
+ 
+import CancelSubscription from '../Screens/subscription Plan/CancelSubscription';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -219,7 +221,11 @@ const HomeBottomTab = props => {
         name="MenTshirts"
         component={MenTshirts}
       />
-
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name="CancelSubscription"
+        component={CancelSubscription}
+      />
 
     </Stack.Navigator>
   );

@@ -181,7 +181,8 @@ const MyOrder = (props) => {
 
         }
         catch (error) {
-            Alert.alert("order","Internet connection appears to be offline. Please check your internet connection and try again.")
+            props.navigation.goBack();
+            Alert.alert("","Something went wrong please exit the app and try again.")
             // console.log("Countryerror:", error.response.data.message);
             //Alert.alert("something went wrong !", '');
             setordermsg(response.data.message)
@@ -223,7 +224,7 @@ const MyOrder = (props) => {
             return 'Order delivered'
         }
         else if (status == '5') {
-            return 'Order Cancel'
+            return 'Order cancelled'
         }
         else {
             return 'data not available'
@@ -493,7 +494,7 @@ const MyOrder = (props) => {
 
                                                             <View style={{ flexDirection: 'row' }}>
                                                                 <View>
-                                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64' }}>Total Amount: <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#77869E' }}>${item.total_price}</Text></Text>
+                                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64',fontWeight: "500" }}>Total Amount: <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#77869E' }}>${item.total_price}</Text></Text>
                                                                 </View>
 
                                                             </View>

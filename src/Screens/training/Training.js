@@ -101,7 +101,7 @@ const Training = (props) => {
       icon: 'data:<data_type>/<file_extension>;base64,<base64_data>',
       // type: 'data:image/png;base64,<imageInBase64>',
       message: "Popfiit Blog Post !!!",
-      url: `${trainingBlog_list.youtube_link}`,
+      url: `${trainingBlog_list?.youtube_link}`,
     }
     try {
       const shareResponse = await Share.open(shareOptions);
@@ -250,7 +250,7 @@ const Training = (props) => {
                   </View>
 
                   <View style={{ marginHorizontal: 20, marginTop: 1, height: "auto", width: WIDTH * 0.92, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}>
-                    <Text style={{ textAlign: 'left', fontSize: 12, color: '#000' }}>{trainingBlog_list[0].image_description}</Text>
+                    <Text style={{ textAlign: 'left', fontSize: 12, color: '#000' }}>{trainingBlog_list[0]?.image_description}</Text>
                   </View>
 
                   {/* Training video */}

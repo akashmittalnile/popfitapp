@@ -66,10 +66,10 @@ const TrainingDetail = (props) => {
         const unsubscribe = props.navigation.addListener('focus', () => {
             workoutCategoryAPI();
         })
-            return unsubscribe;
+        return unsubscribe;
     }, []);
 
-    const gotoSubscriptionPlan = async() => {
+    const gotoSubscriptionPlan = async () => {
         const usertkn = await AsyncStorage.getItem("authToken");
         if (usertkn == null) {
             Alert.alert('', 'Please login first')
@@ -77,26 +77,24 @@ const TrainingDetail = (props) => {
         else if (usertkn != null) {
             props.navigation.navigate("SubscriptionPlan")
         }
-         
+
     }
 
     const Checkedtoken = async (item) => {
-        console.log("item:",item);
+        console.log("item:", item);
         const usertkn = await AsyncStorage.getItem("authToken");
         if (usertkn == null) {
             Alert.alert('', 'Please login first')
         }
         else if (usertkn != null) {
-            if (planid.plan_status == "Inactive" || planid.plan_id == "0"  )
-            {
-                if(item.plan_id.includes('1') ){
-                    // console.log("ncludes+1:",item.plan_id.includes('1'));
-                   props.navigation.navigate("OutdoorTrainning", {
+            if (planid.plan_status == "Inactive" || planid.plan_id == "0") {
+                if (item.plan_id.includes('1')) {
+                    props.navigation.navigate("OutdoorTrainning", {
                         TrainingData: item,
                         categoryId: planid
                     })
-                }  
-                else if(item.plan_id.includes('2') ){
+                }
+                else if (item.plan_id.includes('2')) {
                     props.navigation.navigate("SubscriptionPlan")
                     // console.log("ncludes+2:",item.plan_id.includes('2'));
                     // props.navigation.navigate("OutdoorTrainning", {
@@ -104,7 +102,7 @@ const TrainingDetail = (props) => {
                     //     categoryId: planid
                     // })
                 }
-                else if(item.plan_id.includes('3')  ){
+                else if (item.plan_id.includes('3')) {
                     props.navigation.navigate("SubscriptionPlan")
                     // console.log("ncludes+3:",item.plan_id.includes('3'));
                     // props.navigation.navigate("OutdoorTrainning", {
@@ -112,53 +110,53 @@ const TrainingDetail = (props) => {
                     //     categoryId: planid
                     // })
                 }
-                
+
                 else {
                     //   console.log("Buy+plan" );
                     props.navigation.navigate("SubscriptionPlan")
                 }
-                
+
             }
-            else  if (planid.plan_status == "Active" && planid.plan_id == "1" ){
-                 if(item.plan_id.includes("1") ){
+            else if (planid.plan_status == "Active" && planid.plan_id == "1") {
+                if (item.plan_id.includes("1")) {
                     props.navigation.navigate("OutdoorTrainning", {
                         TrainingData: item,
                         categoryId: planid
                     })
-                }else if(item.plan_id.includes("2") && item.user_plan_id == "2" ){
+                } else if (item.plan_id.includes("2") && item.user_plan_id == "2") {
                     props.navigation.navigate("OutdoorTrainning", {
                         TrainingData: item,
                         categoryId: planid
                     })
-                }else{
+                } else {
                     props.navigation.navigate("SubscriptionPlan")
                 }
-               
+
             }
-            else if (planid.plan_status == "Active" && planid.plan_id == "2"){
-                if(item.user_plan_id == "2" && item.plan_id.includes("1")){
+            else if (planid.plan_status == "Active" && planid.plan_id == "2") {
+                if (item.user_plan_id == "2" && item.plan_id.includes("1")) {
                     props.navigation.navigate("OutdoorTrainning", {
                         TrainingData: item,
                         categoryId: planid
                     })
-                }else if(item.plan_id.includes("2") ){
+                } else if (item.plan_id.includes("2")) {
                     props.navigation.navigate("OutdoorTrainning", {
                         TrainingData: item,
                         categoryId: planid
                     })
-                }else{
+                } else {
                     props.navigation.navigate("SubscriptionPlan")
                 }
-               
+
             }
-            else if (planid.plan_status == "Active" && planid.plan_id == "3"){
+            else if (planid.plan_status == "Active" && planid.plan_id == "3") {
                 props.navigation.navigate("OutdoorTrainning", {
                     TrainingData: item,
                     categoryId: planid
                 })
             }
-            
-           
+
+
         }
 
     }
@@ -179,11 +177,11 @@ const TrainingDetail = (props) => {
             // console.log("storeplanid:", Selectplainid);
             setTrainingWorkCatgry(response.data.data)
             setRecommendation(response.data.recommendation_category)
-            
+
         }
         catch (error) {
             // console.log(".....TrainingDetails.error.........", error.response.data.message);
-            Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+            Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
 
         }
         setIsLoading(false);
@@ -196,7 +194,7 @@ const TrainingDetail = (props) => {
             height: HEIGHT, flexGrow: 1, backgroundColor: 'black'
         }} >
             <Headers
-            // navigation={props.navigation}
+                // navigation={props.navigation}
                 Drawericon={{
                     visible: true,
                 }}
@@ -212,8 +210,8 @@ const TrainingDetail = (props) => {
 
                 }}
                 BelliconononClick={() => {
-                     props.navigation.navigate('Notifications')
-                     }}
+                    props.navigation.navigate('Notifications')
+                }}
             />
             {!isLoading ?
                 (<>
@@ -280,7 +278,7 @@ const TrainingDetail = (props) => {
             </View>
             </View> */}
                     <Divider color='#393939' width={1.2} />
-                    <ScrollView  nestedscrollenabled={true}>
+                    <ScrollView nestedscrollenabled={true}>
                         <View style={{ backgroundColor: '#262626', height: 180, borderBottomLeftRadius: 25, borderBottomRightRadius: 25 }}>
                             <Pages indicatorColor='#ffcc00' >
                                 <View style={{ marginTop: 20, height: 130, flexDirection: 'row', marginHorizontal: 20, borderRadius: 20 }}>
@@ -332,7 +330,7 @@ const TrainingDetail = (props) => {
                         {/* Recommended category */}
                         <View style={{ flexDirection: "column" }}>
                             {
-                                recommendation.length > 0   ?
+                                recommendation.length > 0 ?
                                     (<View style={{ marginTop: 20, marginLeft: 15, }}>
                                         <Text numberOfLines={1} style={{ textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "500" }}>Recommended Categories</Text>
                                     </View>)
@@ -366,30 +364,32 @@ const TrainingDetail = (props) => {
                                                     alignItems: 'center',
                                                 }}>
 
+                                                <View style={{ width: WIDTH * 0.45, backgroundColor: '#c9bca0', height: 25, justifyContent: 'center', alignItems: "center", borderTopLeftRadius: 20, borderTopRightRadius: 20, }}>
+                                                    <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name?.slice(0, 26) + '...'}</Text>
+
+                                                </View>
                                                 <View
                                                     style={{
-                                                        width: WIDTH * 0.45, height: 150, borderTopRightRadius: 20,
-                                                        borderTopLeftRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
+                                                        width: WIDTH * 0.45,
+                                                        height: 130,
+                                                        // borderTopRightRadius: 20,
+                                                        // borderTopLeftRadius: 20, 
+                                                        justifyContent: "flex-start", alignItems: "flex-start"
                                                     }}>
                                                     <Image
-                                                        source={{ uri: `${item.image}` }}
+                                                        source={{ uri: `${item?.image}` }}
                                                         resizeMode="stretch"
                                                         style={{
                                                             width: "100%",
                                                             height: "100%",
-                                                            borderTopLeftRadius: 20,
-                                                            borderTopRightRadius: 20,
                                                             alignSelf: 'center',
                                                         }}
                                                     />
-                                                    <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
-                                                        <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name}</Text>
 
-                                                    </View>
 
                                                 </View>
-                                                <View style={{ width: WIDTH * 0.45, height: 30, borderBottomRightRadius: 20, justifyContent: 'center', borderBottomLeftRadius: 20, backgroundColor: '#262626' }}>
-                                                    <Text style={{ textAlign: 'center', fontSize: 9, color: '#c9bca0' }}>Subscription {item?.plan_name} @ {item?.plan_price} {item.plan_type} </Text>
+                                                <View style={{ width: WIDTH * 0.45, height: 25, borderBottomRightRadius: 20, justifyContent: 'center', borderBottomLeftRadius: 20, backgroundColor: '#262626' }}>
+                                                    <Text style={{ textAlign: 'center', fontSize: 11, color: '#c9bca0' }}>Subscription {item?.plan_name} Plan </Text>
                                                 </View>
 
                                             </View>
@@ -402,7 +402,7 @@ const TrainingDetail = (props) => {
                         {/* Workout Category */}
                         <View style={{ flexDirection: "column" }}>
                             {
-                                TrainingWorkCatgry.length > 0  ?
+                                TrainingWorkCatgry.length > 0 ?
                                     (<View style={{ marginTop: 1, marginLeft: 15, }}>
                                         <Text numberOfLines={1} style={{ textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "500" }}>Workout Categories</Text>
                                     </View>)
@@ -436,30 +436,33 @@ const TrainingDetail = (props) => {
                                                     alignItems: 'center',
                                                 }}>
 
+                                                <View style={{ width: WIDTH * 0.45, backgroundColor: '#c9bca0', height: 25, justifyContent: 'center', alignItems: "center", borderTopLeftRadius: 20, borderTopRightRadius: 20, }}>
+                                                    <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name?.slice(0, 26) + '...'}</Text>
+
+                                                </View>
                                                 <View
                                                     style={{
-                                                        width: WIDTH * 0.45, height: 150, borderTopRightRadius: 20,
-                                                        borderTopLeftRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
+                                                        width: WIDTH * 0.45,
+                                                        height: 130,
+                                                        // borderTopRightRadius: 20,
+                                                        // borderTopLeftRadius: 20, 
+                                                        justifyContent: "flex-start", alignItems: "flex-start"
                                                     }}>
                                                     <Image
-                                                        source={{ uri: `${item.image}` }}
+                                                        source={{ uri: `${item?.image}` }}
                                                         resizeMode="stretch"
                                                         style={{
                                                             width: "100%",
                                                             height: "100%",
-                                                            borderTopLeftRadius: 20,
-                                                            borderTopRightRadius: 20,
+
                                                             alignSelf: 'center',
                                                         }}
                                                     />
-                                                    <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
-                                                        <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name}</Text>
 
-                                                    </View>
 
                                                 </View>
-                                                <View style={{ width: WIDTH * 0.45, height: 30, borderBottomRightRadius: 20, justifyContent: 'center', borderBottomLeftRadius: 20, backgroundColor: '#262626' }}>
-                                                    <Text style={{ textAlign: 'center', fontSize: 9, color: '#c9bca0' }}>Subscription {item?.plan_name} @ {item?.plan_price} {item.plan_type} </Text>
+                                                <View style={{ width: WIDTH * 0.45, height: 25, borderBottomRightRadius: 20, justifyContent: 'center', borderBottomLeftRadius: 20, backgroundColor: '#262626' }}>
+                                                    <Text style={{ textAlign: 'center', fontSize: 11, color: '#c9bca0' }}>Subscription {item?.plan_name} Plan  </Text>
                                                 </View>
 
                                             </View>
@@ -471,7 +474,7 @@ const TrainingDetail = (props) => {
                     </ScrollView>
                 </>)
                 :
-                ( <CustomLoader showLoader={isLoading}/>)}
+                (<CustomLoader showLoader={isLoading} />)}
         </SafeAreaView>
 
     );

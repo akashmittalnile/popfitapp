@@ -45,7 +45,7 @@ const Home = (props) => {
         homeblogid: item
       })
     }
-   
+
   }
   const gotoShop = () => {
     props.navigation.navigate("FitnessEquipment", {
@@ -56,7 +56,7 @@ const Home = (props) => {
     props.navigation.navigate('ProductDetail', {
       ITEM: item
     });
-  }  
+  }
   const gototshirtproduct = (item) => {
     props.navigation.navigate("ProductDetail", {
       CLOTHITEM: item
@@ -70,7 +70,7 @@ const Home = (props) => {
   const gotoRecipecategory = () => {
     props.navigation.navigate("Recipecategory")
   }
-  const gotoRecipeDetails = async(item) => {
+  const gotoRecipeDetails = async (item) => {
     const usertkn = await AsyncStorage.getItem("authToken");
     if (usertkn == null) {
       Alert.alert('', 'Please login first')
@@ -80,7 +80,7 @@ const Home = (props) => {
         getHomeRecipelistID: item
       })
     }
-   
+
   }
   const gotoTrainingsubcatgory = async (item) => {
     const usertkn = await AsyncStorage.getItem("authToken");
@@ -281,18 +281,22 @@ const Home = (props) => {
 
                       // flex: 1
                     }}>
+                      <View style={{ width: WIDTH * 0.45, backgroundColor: '#c9bca0', height: 25,   justifyContent: 'center', alignItems: "center", borderTopLeftRadius: 20 ,borderTopRightRadius: 20,}}>
+                        <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name?.slice(0, 26) + '...'}</Text>
 
+                      </View>
                       <View
 
                         style={{
                           // marginTop: 1,
-                          width: WIDTH * 0.45, height: 150,
+                          width: WIDTH * 0.45, height: 130,
                           // borderRadius: 100  ,
                           // backgroundColor: '#fceeb5',
                           // flex: 1,
                           // borderRadius: 20,
-                          borderTopRightRadius: 20,
-                          borderTopLeftRadius: 20,
+                          // borderTopRightRadius: 20,
+                          // borderTopLeftRadius: 20,
+                          
                           justifyContent: "flex-start", alignItems: "flex-start"
 
                         }}>
@@ -303,20 +307,16 @@ const Home = (props) => {
                           style={{
                             width: "100%",
                             height: "100%",
-                            borderTopLeftRadius: 20,
-                            borderTopRightRadius: 20,
                             alignSelf: 'center',
+                            borderTopRightRadius: 0.01,
                           }}
                         />
 
-                        <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
-                          <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name?.slice(0, 15) + '...'}</Text>
 
-                        </View>
                       </View>
 
-                      <View style={{ width: WIDTH * 0.45, height: 30, borderBottomRightRadius: 20, justifyContent: 'center', borderBottomLeftRadius: 20, backgroundColor: '#262626' }}>
-                        <Text style={{ textAlign: 'center', fontSize: 9, color: '#c9bca0' }}>Subscription {item?.plan_name} @ {item?.plan_price} {item.plan_type}</Text>
+                      <View style={{ width: WIDTH * 0.45, height: 25, borderBottomRightRadius: 20, justifyContent: 'center', borderBottomLeftRadius: 20, backgroundColor: '#262626' }}>
+                        <Text style={{ textAlign: 'center', fontSize: 11, color: '#c9bca0' }}>Subscription {item?.plan_name} Plan</Text>
                       </View>
 
 

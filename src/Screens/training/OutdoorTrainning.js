@@ -198,7 +198,7 @@ const OutdoorTrainning = (props) => {
         </View>
       </View> */}
           {
-            TrainingSUBCatgry.length != 0 ?
+            TrainingSUBCatgry?.length != 0 ?
               (<ScrollView>
                 <View style={{ marginTop: 10, justifyContent: "center", alignItems: "center", width: WIDTH * 0.4, height: 50 }}>
                   <Text style={{ textAlign: 'left', fontSize: 18, color: '#ffffff', fontWeight: "500" }}>Sub Categories</Text>
@@ -235,7 +235,7 @@ const OutdoorTrainning = (props) => {
                                 width: WIDTH * 0.45, height: 160, borderRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
                               }}>
                               <Image
-                                source={{ uri: item.image }}
+                                source={{ uri: item?.image }}
                                 resizeMode="contain"
                                 style={{
                                   width: "100%",

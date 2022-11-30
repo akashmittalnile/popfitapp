@@ -23,9 +23,9 @@ const Splash = (props) => {
       //  setIsLoading(true)
       try {
         const response = await axios.get(`${API.NOTIFICATION}`, { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } });
-        
+      let count=response.data.length
         let notidata = 0;
-        for (let i = 0; i <= response.data.data.length; i++) {
+        for (let i = 0; i <= count; i++) {
           if (response.data.data[i].is_read == 0) {
             notidata = notidata + 1
   

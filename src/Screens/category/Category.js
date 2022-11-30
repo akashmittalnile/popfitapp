@@ -131,10 +131,16 @@ const Category = (props) => {
                           justifyContent: "center",
                           alignItems: 'center',
                         }}>
+                        <View style={{ width: WIDTH * 0.45, backgroundColor: '#c9bca0', height: 25, justifyContent: 'center', alignItems: "center", borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
+                          <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "500" }}>{item?.subcat_name?.slice(0, 15) + '...'}</Text>
 
+                        </View>
                         <View
                           style={{
-                            width: WIDTH * 0.45, height: 180, borderRadius: 20,
+                            width: WIDTH * 0.45,
+                            height: 155,
+
+
                             justifyContent: "flex-start", alignItems: "flex-start"
                           }}>
                           <Image
@@ -143,14 +149,11 @@ const Category = (props) => {
                             style={{
                               width: "100%",
                               height: "100%",
-                              borderRadius: 20,
+                              borderBottomLeftRadius:20,borderBottomRightRadius:20,
                               alignSelf: 'center',
                             }}
                           />
-                          <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
-                            <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "500" }}>{item?.subcat_name?.slice(0, 15) + '...'}</Text>
 
-                          </View>
 
                         </View>
                         <View style={{
