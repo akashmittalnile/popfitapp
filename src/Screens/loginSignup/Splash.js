@@ -42,7 +42,7 @@ const Splash = (props) => {
         // Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
         // alert("SPLASH error", error);
         // setIsLoading(false)
-        console.log("Splash_error:::", error);
+        // console.log("Splash_error:::", error);
 
       }
 
@@ -73,7 +73,7 @@ const Splash = (props) => {
       }
       catch (error) {
         Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
-        console.log("Cartproducts_splash:::", error.response.data.message);
+        // console.log("Cartproducts_splash:::", error.response.data.message);
         // setIsLoading(false)
       }
 

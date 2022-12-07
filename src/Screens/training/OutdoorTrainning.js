@@ -25,11 +25,11 @@ const OutdoorTrainning = (props) => {
   const [tokenuser, SetTokenUser] = useState("");
 
   useEffect(() => {
-    console.log("categoryId_item..plan_id.............:", props?.route?.params?.categoryId?.plan_id);
+    // console.log("categoryId_item..plan_id.............:", props?.route?.params?.categoryId?.plan_id);
 
-    console.log("TrainingID_item.from home..............:", props?.route?.params?.TrainingID);
+    // console.log("TrainingID_item.from home..............:", props?.route?.params?.TrainingID);
     // const TrainingID = props?.route?.params?.TrainingID?.id
-    console.log("Trainingdata_From trainingscreen:", props?.route?.params?.TrainingData);
+    // console.log("Trainingdata_From trainingscreen:", props?.route?.params?.TrainingData);
 
     workoutSubCategoryAPI();
     // console.log("Traingplanstatus...:", props?.route?.params?.TrainingData);
@@ -45,10 +45,10 @@ const OutdoorTrainning = (props) => {
   }, []);
 
   const gotoOutdoorCycle = (item) => {
-    console.log("checkdataa:::::", item)
+    // console.log("checkdataa:::::", item)
     if (checkplanid?.plan_status == "Active" || checkplanid?.plan_id >= 2) {
       if (tokenuser != null) {
-        console.log("ACTIVE plan::::::");
+        // console.log("ACTIVE plan::::::");
         props.navigation.navigate("Training", {
           Tainingcat_id: checkplanid != undefined ? checkplanid?.id : hometrainingid?.id,
           Trainingsubcat_data: item
@@ -63,7 +63,7 @@ const OutdoorTrainning = (props) => {
 
     }
     else if (checkplanid?.plan_status == "Inactive" || checkplanid?.plan_id == 1) {
-      console.log("ACTIVE plan::::::");
+      // console.log("ACTIVE plan::::::");
       props.navigation.navigate("Training", {
         Tainingcat_id: checkplanid != undefined ? checkplanid?.id : hometrainingid?.id,
         Trainingsubcat_data: item
@@ -100,14 +100,14 @@ const OutdoorTrainning = (props) => {
 
   const workoutSubCategoryAPI = async () => {
     const usertkn = await AsyncStorage.getItem("authToken");
-    console.log("plain id :", checkplanid?.id);
-    console.log("training home id::", hometrainingid?.id);
+    // console.log("plain id :", checkplanid?.id);
+    // console.log("training home id::", hometrainingid?.id);
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.TRAINING_SUB_CATERORY}`, { "category_id": checkplanid != undefined ? checkplanid?.id : hometrainingid?.id },
         { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } }
       );
-      console.log(":::::::::workoutSubCategoryAPI_Response>>>", response?.data?.message);
+      // console.log(":::::::::workoutSubCategoryAPI_Response>>>", response?.data?.message);
       // console.log("workoutSubCategoryAPI_data::::::", response.data.data);
       // alert("Get Sub-category data successfully");
       if (response?.data?.status == '1') {

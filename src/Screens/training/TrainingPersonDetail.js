@@ -90,10 +90,10 @@ const TrainingPersonaDetail = (props) => {
 
         }
         setIsLoading(true);
-        console.log("karan_basicdetails...", data);
+        // console.log("karan_basicdetails...", data);
         try {
             const response = await axios.post(`${API.SET_TRAINING}`, data, { headers: { "Authorization": ` ${Usertoken1}` } });
-            console.log("Response_SetTrainingPlan::::", response.data);
+            // console.log("Response_SetTrainingPlan::::", response.data);
 
             // console.log("SetTrainingPlan_data!!!>>>", response.data.message);
             if (response.data.status == 1) {

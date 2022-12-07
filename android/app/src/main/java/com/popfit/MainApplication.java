@@ -38,14 +38,15 @@ public class MainApplication extends Application implements ReactApplication {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
 
-          //firbae package 
-          // packages.add(new RNFirebaseMessagingPackage());
-          // package.add(new RNFirebaseLinksPackage());
-          // packages.add(new RNFirebaseRemoteConfigPackagePackage());
-          // pacakges.add(new RNFirebaseNotificationsPackage());
-          // Packages that cannot be autolinked yet can be added manually here, for example:
-          // packages.add(new MyReactNativePackage());
-         
+          // firbae package
+            
+          //  packages.add(new RNFirebaseMessagingPackage());
+          //  package.add(new RNFirebaseLinksPackage());
+          //  packages.add(new RNFirebaseRemoteConfigPackagePackage());
+          //  pacakges.add(new RNFirebaseNotificationsPackage());
+          //  Packages that cannot be autolinked yet can be added manually here, for example:
+          //  packages.add(new MyReactNativePackage());
+
           return packages;
         }
 

@@ -36,9 +36,9 @@ const OrderDetail = (props) => {
         // console.log(".....drawer profiletoken get::", usertoken);
     }
 
-    console.log("MY order list...............:", props?.route?.params?.Gotoorderdetails?.item_no);
+    // console.log("MY order list...............:", props?.route?.params?.Gotoorderdetails?.item_no);
     const Gotoorderdetails = props?.route?.params?.Gotoorderdetails?.item_no;
-    console.log("From profileorder list...............:", props?.route?.params?.gotoprofileOrderdetails?.order_number);
+    // console.log("From profileorder list...............:", props?.route?.params?.gotoprofileOrderdetails?.order_number);
     const gotoprofileOrderdetails = props?.route?.params?.gotoprofileOrderdetails?.order_number;
 
     const Emailvalidaton = (text) => {
@@ -46,7 +46,7 @@ const OrderDetail = (props) => {
         let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
         if (reg.test(text) === false) {
             setemailerrormsg("Email is Not Correct")
-            console.log("Email is Not Correct");
+            // console.log("Email is Not Correct");
             setEmailAlert(true)
             setUseremail(text)
             return false;
@@ -54,7 +54,7 @@ const OrderDetail = (props) => {
         else {
             setUseremail(text)
             setEmailAlert(false)
-            console.log("Email is Correct");
+            // console.log("Email is Correct");
         }
     }
     const checkPermission = async (download_url) => {
@@ -71,25 +71,25 @@ const OrderDetail = (props) => {
                 );
                 if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                     downloadFile(download_url);
-                    console.log('Storage Permission Granted.');
+                    // console.log('Storage Permission Granted.');
                 } else {
                     Alert.alert('Error', 'Storage Permission Not Granted');
                 }
             } catch (err) {
                 // To handle permission related exception
-                console.log('ERROR' + err);
+                // console.log('ERROR' + err);
             }
         }
     };
     const getInvoiceUrl = async (item) => {
-        console.log("item", item.order_id);
+        // console.log("item", item.order_id);
         // console.log("GetInvoiceUrl:In-api:",InvoiceMyorderid);
         const ordertoken = await AsyncStorage.getItem("authToken");
         try {
 
             const res = await axios.post(`${API.INVOICE}`, { "order_id": Gotoorderdetails != undefined ? Gotoorderdetails : gotoprofileOrderdetails }, { headers: { "Authorization": ` ${ordertoken}` } });
 
-            console.log('res', res.data)
+            // console.log('res', res.data)
             if (res.data.status == 1) {
                 // checkPermission(res.data.url)
                 console.log('res status == 1', res.data.download_url)
@@ -162,8 +162,8 @@ const OrderDetail = (props) => {
         setIsLoading(true);
         try {
             const response = await axios.post(`${API.ORDER_DETAIL}`, { "item_no": Gotoorderdetails != undefined ? Gotoorderdetails : gotoprofileOrderdetails }, { headers: { "Authorization": ` ${usertkn}` } });
-            console.log(":::::::::MyOrderDetailst_Response>>>", response.data.order);
-            console.log("status _OrderDetails:", response.data.status);
+            // console.log(":::::::::MyOrderDetailst_Response>>>", response.data.order);
+            // console.log("status _OrderDetails:", response.data.status);
             if (response.data.status == 1) {
                 setOrderitemdata(response.data.order)
 
@@ -189,7 +189,7 @@ const OrderDetail = (props) => {
                 email: Useremail,
                 message: Typemessage
             }
-            console.log("........contactus", data);
+            // console.log("........contactus", data);
             // setIsLoading(true);
             // setContactUs(true);
             try {
@@ -198,7 +198,7 @@ const OrderDetail = (props) => {
                 // console.log("contactus-Status ::::", response.data.status);
                 if (response.data.status == '1') {
                     Alert.alert('', 'Your message has been sent successfully we will contact you shortly.')
-                    console.log("response_contactus ::::", response.data);
+                    // console.log("response_contactus ::::", response.data);
                     setContactUs(false);
                     setIsLoading(false);
                     setUserName("")
@@ -238,7 +238,7 @@ const OrderDetail = (props) => {
 
 
             if (response.data.status == 1) {
-                console.log("status _OrderCancel:", response.data);
+                // console.log("status _OrderCancel:", response.data);
                 Alert.alert("", response.data.message, [
                     {
                         text: "ok",
@@ -255,7 +255,7 @@ const OrderDetail = (props) => {
         catch (error) {
             // Alert.alert('', 'error.response.data.message');
             Alert.alert("", "Please check your internet connection and try again.")
-            console.log("......error.........", error.response.data.message);
+            // console.log("......error.........", error.response.data.message);
 
 
         }

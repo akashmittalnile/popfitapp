@@ -22,12 +22,10 @@ import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
 import CustomLoader from '../../Routes/CustomLoader';
-import * as IAP from 'react-native-iap';
+// import * as IAP from 'react-native-iap';
 import { async } from 'regenerator-runtime';
 import CancelSubscription from './CancelSubscription';
-// import { styless } from './CancelSubscriptionStyle';
-// //import : svg
-// import CheckSvg from '../assets/Vector.svg';
+
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -76,49 +74,49 @@ const SubscriptionPlan = (props) => {
         } catch (error) { }
       });
   };
-  const Ioscheckplan = async () => {
-    if (Platform.OS === 'ios') {
-      let purchaseUpdatedListener;
-      let purchaseErrorListener;
+  // const Ioscheckplan = async () => {
+  //   if (Platform.OS === 'ios') {
+  //     let purchaseUpdatedListener;
+  //     let purchaseErrorListener;
 
 
-      IAP.initConnection()
-        .catch(() => {
-          console.error('error connecting to store..');
-        })
-        .then(async () => {
-          console.log('connected to store...');
-          IAP.getSubscriptions({ skus: items })
-            .catch(function (error) {
-              console.error('error finding purchases', error);
-            })
-            .then(function (res) {
-              console.log('got product', res);
-              SetSubscriptionData(res);
+  //     IAP.initConnection()
+  //       .catch(() => {
+  //         console.error('error connecting to store..');
+  //       })
+  //       .then(async () => {
+  //         console.log('connected to store...');
+  //         IAP.getSubscriptions({ skus: items })
+  //           .catch(function (error) {
+  //             console.error('error finding purchases', error);
+  //           })
+  //           .then(function (res) {
+  //             console.log('got product', res);
+  //             SetSubscriptionData(res);
 
-            });
+  //           });
 
-        });
+  //       });
 
 
-      purchaseErrorListener = IAP.purchaseErrorListener(error => {
-        if (error['responseCode'] === '2') {
-        } else {
-          Alert.alert("error", 'There has been an error with your purchase,error code = ' + error['code']);
-        }
-      });
-      purchaseUpdatedListener = IAP.purchaseUpdatedListener(purchase => {
-        try {
-          const receipt = purchase.transactionReceipt;
-        } catch (error) {
-          console.log('error', error);
-        }
-      });
-    }
-  }
+  //     purchaseErrorListener = IAP.purchaseErrorListener(error => {
+  //       if (error['responseCode'] === '2') {
+  //       } else {
+  //         Alert.alert("error", 'There has been an error with your purchase,error code = ' + error['code']);
+  //       }
+  //     });
+  //     purchaseUpdatedListener = IAP.purchaseUpdatedListener(purchase => {
+  //       try {
+  //         const receipt = purchase.transactionReceipt;
+  //       } catch (error) {
+  //         console.log('error', error);
+  //       }
+  //     });
+  //   }
+  // }
   useEffect(() => {
-    // GetSubscriptionPlan();
-    Ioscheckplan();
+
+    // Ioscheckplan();
     const unsubscribe = props.navigation.addListener('focus', () => {
       GetSubscriptionPlan();
     })
@@ -130,7 +128,7 @@ const SubscriptionPlan = (props) => {
 
   const checklogin = async (item) => {
     let Usertoken = await AsyncStorage.getItem("authToken");
-    console.log("token.......", Usertoken);
+    // console.log("token.......", Usertoken);
     setchecktoken(Usertoken);
     if (Usertoken == null) {
       Alert.alert('', 'Please login First ')
@@ -149,37 +147,37 @@ const SubscriptionPlan = (props) => {
     }
   };
 
-  const purchasePlan = async (item, offerToken) => {
+  // const purchasePlan = async (item, offerToken) => {
 
-    setIsLoading(true)
-    {
-      const index = subscriptionData.findIndex(e => e.title.toUpperCase() == item.title.toUpperCase());
-      console.warn("index", index);
+  //   setIsLoading(true)
+  //   {
+  //     const index = subscriptionData.findIndex(e => e.title.toUpperCase() == item.title.toUpperCase());
+  //     console.warn("index", index);
 
-      if (index > -1) {
-        try {
-          var data = await IAP.requestSubscription(
-            { sku: subscriptionData[index].productId }, (offerToken && { subscriptionOffers: [{ sku: subscriptionData[index].productId, offerToken }] }),
-          );
-          console.log('check Ashish data is==>>', data);
-          const receipt = data.transactionReceipt;
-          setIsLoading(false);
-          // if (receipt) {
-          //   buyPlanInIos(item, data.transactionReceipt);
-          // } else {
-          //   console.log('i am here ');
-          // }
-        } catch (error) {
-          console.error('error in purchasePlan', error);
-          setIsLoading(false);
-        }
-      } else {
-        Alert.alert("", 'This plan does not exist');
-        // dispatch(CustomAlertAction.showToast('This plan does not exist'));
-        setIsLoading(false);
-      }
-    }
-  };
+  //     if (index > -1) {
+  //       try {
+  //         var data = await IAP.requestSubscription(
+  //           { sku: subscriptionData[index].productId }, (offerToken && { subscriptionOffers: [{ sku: subscriptionData[index].productId, offerToken }] }),
+  //         );
+  //         console.log('check Ashish data is==>>', data);
+  //         const receipt = data.transactionReceipt;
+  //         setIsLoading(false);
+  //         // if (receipt) {
+  //         //   buyPlanInIos(item, data.transactionReceipt);
+  //         // } else {
+  //         //   console.log('i am here ');
+  //         // }
+  //       } catch (error) {
+  //         console.error('error in purchasePlan', error);
+  //         setIsLoading(false);
+  //       }
+  //     } else {
+  //       Alert.alert("", 'This plan does not exist');
+  //       // dispatch(CustomAlertAction.showToast('This plan does not exist'));
+  //       setIsLoading(false);
+  //     }
+  //   }
+  // };
   const GetSubscriptionPlan = async () => {
 
     let usertkn = await AsyncStorage.getItem("authToken");
@@ -201,7 +199,7 @@ const SubscriptionPlan = (props) => {
     }
     catch (error) {
       // Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
-      console.log('error in getAllMemberShipPlan', error);
+      // console.log('error in getAllMemberShipPlan', error);
 
     }
     setIsLoading(false)
@@ -211,7 +209,7 @@ const SubscriptionPlan = (props) => {
 
 
     let usertkn = await AsyncStorage.getItem("authToken");
-    console.log("... PLAN_ID...", subs_id);
+    // console.log("... PLAN_ID...", subs_id);
 
 
     setIsLoading(true)
@@ -230,7 +228,7 @@ const SubscriptionPlan = (props) => {
     }
     catch (error) {
       // Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
-      console.log('error in cancelMemberShip', error);
+      // console.log('error in cancelMemberShip', error);
     }
     setIsLoading(false)
   }
@@ -254,9 +252,7 @@ const SubscriptionPlan = (props) => {
       }
     );
   const cancelMemberShipIos = () => {
-    console.log("modala ios cancel button press 1")
     setShowCancelSubscription(true);
-
   }
   return (
     <SafeAreaView style={{

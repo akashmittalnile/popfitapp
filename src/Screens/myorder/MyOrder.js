@@ -49,18 +49,18 @@ const MyOrder = (props) => {
                 );
                 if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                     downloadFile(download_url);
-                    console.log('Storage Permission Granted.');
+                    // console.log('Storage Permission Granted.');
                 } else {
                     Alert.alert('Error', 'Storage Permission Not Granted');
                 }
             } catch (err) {
                 // To handle permission related exception
-                console.log('ERROR' + err);
+                // console.log('ERROR' + err);
             }
         }
     };
     const getInvoiceUrl = async (item) => {
-        console.log("item", item.order_id);
+        // console.log("item", item.order_id);
         // console.log("GetInvoiceUrl:In-api:",InvoiceMyorderid);
         const ordertoken = await AsyncStorage.getItem("authToken");
         try {
@@ -148,24 +148,24 @@ const MyOrder = (props) => {
     // console.log("select filter", value);
 
     const MyorderApi = async (values) => {
-        console.log("select filter", values);
+        // console.log("select filter", values);
         // setcopyDdownValue(values)
         const ordertoken = await AsyncStorage.getItem("authToken");
-        console.log(".....MY_order token get_in MYORDER::", ordertoken);
-        console.log('====================================');
-        console.log("Search VAlue in api", values);
-        console.log('====================================');
+        // console.log(".....MY_order token get_in MYORDER::", ordertoken);
+        // console.log('====================================');
+        // console.log("Search VAlue in api", values);
+        // console.log('====================================');
 
         setIsLoading(true);
         try {
             const response = await axios.post(`${API.MY_ORDER}`, { "search": values != null ? values : null }, { headers: { "Authorization": ` ${ordertoken}` } });
-            console.log("Myorderresssss:", response?.data);
+            // console.log("Myorderresssss:", response?.data);
             // console.log("Response_MYorders  ::::", response.data.success);
             // console.log('====================================');
-            console.log("Response MY_Orders  ::::", response?.data?.order);
+            // console.log("Response MY_Orders  ::::", response?.data?.order);
             // console.log('====================================');
             // if (response.data.status == 1) {
-            console.log("................", response.data.order.length);
+            // console.log("................", response.data.order.length);
             if (response.data.order.length == 0) {
 
                 setordereditem(null)

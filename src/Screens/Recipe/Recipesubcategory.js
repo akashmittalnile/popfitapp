@@ -38,10 +38,10 @@ const Recipesubcategory = props => {
     });
   };
 
-  console.log("Home_RecipeLIST...............:", props?.route?.params?.getHomeRecipelistID?.id);
+  // console.log("Home_RecipeLIST...............:", props?.route?.params?.getHomeRecipelistID?.id);
   const getHomeRecipelistID = props?.route?.params?.getHomeRecipelistID?.id
 
-  console.log("REcipe_datalist...............:", props?.route?.params?.RecipecategoryID?.id);
+  // console.log("REcipe_datalist...............:", props?.route?.params?.RecipecategoryID?.id);
   const RecipecategoryID = props?.route?.params?.RecipecategoryID?.id
 
   useEffect(() => {
@@ -52,8 +52,8 @@ const Recipesubcategory = props => {
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.RECIPE_LIST}`, { "category_id": getHomeRecipelistID ? getHomeRecipelistID : RecipecategoryID });
-      console.log("::::Recipe_List_Response:::::", response.data.blog_list);
-      console.log("Recipe_List....", response.data.blog_list)
+      // console.log("::::Recipe_List_Response:::::", response.data.blog_list);
+      // console.log("Recipe_List....", response.data.blog_list)
       setRecipeData(response.data.blog_list)
      
     }

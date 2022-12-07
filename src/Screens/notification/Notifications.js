@@ -38,7 +38,7 @@ const Notifications = props => {
   const [noti, setNoti] = useState([]);
 
   const Clicknotication = item => {
-    console.log('after click data:', item.type);
+    // console.log('after click data:', item.type);
     if (item.type == 'recipe') {
       // setNotificationModal(false);
       navigation.navigate("Home")
@@ -51,7 +51,7 @@ const Notifications = props => {
     } else {
       // setNotificationModal(false);
       Alert.alert('TYPE:COUPON');
-      console.log('Go to current page for coupon !!');
+      // console.log('Go to current page for coupon !!');
     }
   };
   //   const Clicknotication = item => {
@@ -113,7 +113,7 @@ const Notifications = props => {
     console.warn('$$$$$$id---->', item.id);
     let id = item.id;
     const url = API.NOTIFICATION_DELETE + '/' + id;
-    console.log('url------>', url);
+    // console.log('url------>', url);
     axios({
       url: url,
       method: 'DELETE',
@@ -132,7 +132,7 @@ const Notifications = props => {
         setIsLoading(false);
       })
       .catch(function (error) {
-        console.log('......error.........', error);
+        // console.log('......error.........', error);
         Alert.alert('something went wrong in catch');
         setIsLoading(false);
       });

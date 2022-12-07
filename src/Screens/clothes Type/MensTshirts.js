@@ -38,7 +38,7 @@ const MenTshirts = props => {
   const [shopitems, setshopitems] = useState([]);
 
   const gotoShippingDetail = (item) => {
-    console.log("product filter api:", item);
+    // console.log("product filter api:", item);
     props.navigation.navigate('ProductDetail', {
       MENSITEM: item
     });
@@ -88,7 +88,7 @@ const MenTshirts = props => {
 
   const ShopFilter = async () => {
     const Token = await AsyncStorage.getItem("authToken");
-    console.log("SHOP filter...........>>>", ischecked, FitnessID);
+    // console.log("SHOP filter...........>>>", ischecked, FitnessID);
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.SHOP_FILTER}`, { "search": ischecked, "shop_id": FitnessID, "category_id": categoryID }, { headers: { "Authorization": ` ${Token}` } });

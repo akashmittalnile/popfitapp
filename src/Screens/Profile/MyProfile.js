@@ -197,18 +197,18 @@ const downloadFile = async (url) => {
 
     const GetProfile = async () => {
         const usertkn = await AsyncStorage.getItem("authToken");
-        console.log(usertkn);
+        // console.log(usertkn);
         setIsLoading(true);
         try {
             const response = await axios.get(`${API.GET_PROFILE}`, { headers: { "Authorization": ` ${usertkn}` } });
             // console.log("", response);
-            console.log("ResponseProfile ::::", response.data.status);
+            // console.log("ResponseProfile ::::", response.data.status);
             if (response.data.status == 1) {
                 
                 setUserprofile(response.data.data)
                 setorderdata(response.data.orders)
                 
-                console.log("User_ordersdetails>>>", response.data.orders);
+                // console.log("User_ordersdetails>>>", response.data.orders);
             } else {
                 Alert.alert('','Something went wrong please exit the app and try again.');
                 

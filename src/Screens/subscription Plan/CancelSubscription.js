@@ -11,7 +11,7 @@ const CancelSubscription = ({ visible, setVisibility }) => {
   const closeModal = () => {
     setVisibility(false);
   };
-  console.log("in IOS cancel modal open ");
+  // console.log("in IOS cancel modal open ");
   //UI
   return (
 

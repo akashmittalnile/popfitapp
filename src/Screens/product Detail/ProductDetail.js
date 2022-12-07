@@ -57,7 +57,7 @@ const ProductDetail = (props) => {
   // };
 
 
-  console.log("Store_item...............:", props?.route?.params?.ITEM?.id);
+  // console.log("Store_item...............:", props?.route?.params?.ITEM?.id);
   const ITEM = props?.route?.params?.ITEM?.id
   // console.log("ClothITEM_item...............:", props?.route?.params?.CLOTHITEM?.id);
   const CLOTHITEM = props?.route?.params?.CLOTHITEM?.id
@@ -101,7 +101,7 @@ const ProductDetail = (props) => {
     }
     catch (error) {
       Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
-      console.log("......StoresProductDetails_error.........", error.response.data.message);
+      // console.log("......StoresProductDetails_error.........", error.response.data.message);
     }
     setIsLoading(false);
   };
@@ -122,14 +122,14 @@ const ProductDetail = (props) => {
     }
     catch (error) {
       Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
-      console.log("ShippingProductserror:::", error.response.data.message);
+      // console.log("ShippingProductserror:::", error.response.data.message);
 
     }
     setIsLoading(false)
   };
   const UserToken = async () => {
     const usertkn = await AsyncStorage.getItem("authToken");
-    console.log("TOKEN:", usertkn);
+    // console.log("TOKEN:", usertkn);
     setUsertoken(usertkn)
   }
   const ProductADDcart = async () => {
@@ -142,7 +142,7 @@ const ProductDetail = (props) => {
       const response = await axios.post(`${API.PRODUCT_DETAILS_ADD_ITEM}`, { "qty": countnums, "product_id": productids }, {
         'headers': { "Authorization": ` ${usertkn}` }
       });
-      console.log(":::::::::ProductADD_Response>>>", response.data.message);
+      // console.log(":::::::::ProductADD_Response>>>", response.data.message);
       // console.log("status _ProductADD:", response.data.status);
       if (response.data.status == 1) {
         props.navigation.navigate("CartAdded")
@@ -158,7 +158,7 @@ const ProductDetail = (props) => {
     }
     catch (error) {
       Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
-      console.log("......error ProductADD.........", error.response.data.message);
+      // console.log("......error ProductADD.........", error.response.data.message);
     }
     setIsLoading(false);
   };

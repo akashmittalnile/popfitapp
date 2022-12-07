@@ -58,9 +58,9 @@ const EditMyProfile = (props) => {
   }, []);
 
   const Setuserdetails = (userprofile) => {
-    console.log('====================================');
-    console.log(userprofile?.first_name, userprofile?.last_name, userprofile?.phone, userprofile?.email);
-    console.log('====================================');
+    // console.log('====================================');
+    // console.log(userprofile?.first_name, userprofile?.last_name, userprofile?.phone, userprofile?.email);
+    // console.log('====================================');
     setFirstname(userprofile?.first_name),
       setLastname(userprofile?.last_name),
       setMobileno(userprofile?.phone),
@@ -86,7 +86,7 @@ const EditMyProfile = (props) => {
     }
     catch (error) {
       Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
-      console.log("GetUserProfile _Catch_error:", error.response.data.message);
+      // console.log("GetUserProfile _Catch_error:", error.response.data.message);
     
     } setIsLoading(false);
   };
@@ -114,17 +114,17 @@ const EditMyProfile = (props) => {
         uri: profileImage.path,
       });
     }
-    console.log("upload image", formdata);
+    // console.log("upload image", formdata);
     try {
       const response = await axios.post(`${API.PROFILE_UPDATE}`, formdata, { headers: { "Authorization": ` ${usertkn}`, 'Content-Type': 'multipart/form-data' } });
-      console.log("ResponseProfile_UpdateStatus ::::", response.data);
+      // console.log("ResponseProfile_UpdateStatus ::::", response.data);
       // console.log("Profile_Update ::::", response.data.message);
       if (response.data.status == 1) {
         setEditMyProfilePopUp(true);
         setIsLoading(false);
       }
       else {
-        console.log("Profile_Update_else ::::", response.data.message);
+        // console.log("Profile_Update_else ::::", response.data.message);
         setIsLoading(false);
       }
     }

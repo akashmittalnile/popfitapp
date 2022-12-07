@@ -38,7 +38,7 @@ const Shop = (props) => {
   // const openDrawer = () => props.navigation.dispatch(DrawerActions.openDrawer());
 
   const gotoShippingDetail = (item) => {
-    console.log("filter product id:", item);
+    // console.log("filter product id:", item);
     // const Token = await AsyncStorage.getItem("authToken")
     // if (Token == null) {
     //   Alert.alert('Shop', 'Login First!')
@@ -54,25 +54,25 @@ const Shop = (props) => {
   // };
 
   useEffect(() => {
-    
-    const unsubscribe = props.navigation.addListener('focus', () => {
-      StoresProductget();
-    })
-    return unsubscribe;
+    StoresProductget();
+    // const unsubscribe = props.navigation.addListener('focus', () => {
+      
+    // })
+    // return unsubscribe;
 
   }, []);
 
 
   const ShopFilter = async () => {
     const Token = await AsyncStorage.getItem("authToken");
-    console.log("SHOP filter...........>>>", ischecked);
+    // console.log("SHOP filter...........>>>", ischecked);
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.SHOP_FILTER}`, { "search": ischecked, "shop_id": '', "category_id": '' },
         { headers: { "Authorization": ` ${Token}` } }
       );
-      console.log(":::::::::Shop_FIlter>>>", response.data.data);
-      console.log("SHOP_Status", response.data.status);
+      // console.log(":::::::::Shop_FIlter>>>", response.data.data);
+      // console.log("SHOP_Status", response.data.status);
       if (response.data.status == 1) {
         setshopitems(response.data.data)
 
@@ -93,7 +93,7 @@ const Shop = (props) => {
   };
   const StoresProductget = async () => {
     const Token = await AsyncStorage.getItem("authToken");
-    console.log("in SHOP Check token:", Token);
+    // console.log("in SHOP Check token:", Token);
 
     setIsLoading(true);
     try {

@@ -59,8 +59,8 @@ const Recipecategory = props => {
     setIsLoading(true);
     try {
       const response = await axios.get(`${API.RECIPE_CATEGORY}`);
-      console.log(":::::::::Recipe_Category_Response>>>", response.data.recipeData);
-      console.log(".....Recipe_category....", response.data.recipeData)
+      // console.log(":::::::::Recipe_Category_Response>>>", response.data.recipeData);
+      // console.log(".....Recipe_category....", response.data.recipeData)
       setRecipecategory(response.data.recipeData)
      
     }
@@ -110,7 +110,7 @@ const Recipecategory = props => {
                     fontSize: 18,
                     color: 'white'
                   }}>
-                  Recipes Category
+                  Recipes Categories
                 </Text>
               </View>
             </View>

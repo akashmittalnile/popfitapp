@@ -48,9 +48,7 @@ const CartAdded = (props) => {
 
     }
     const gotoProductDetailsview = (item) => {
-        console.log('====================================');
-        console.log("gotoProductDetailsview", item);
-        console.log('====================================');
+         
         props.navigation.navigate("ProductDetail", {
             Cartaddedview: item
         });
@@ -89,7 +87,7 @@ const CartAdded = (props) => {
             // GetShippingProducts();
             const UserToken = async () => {
                 const usertkn = await AsyncStorage.getItem("authToken");
-                console.log("TOKEN:", usertkn);
+                // console.log("TOKEN:", usertkn);
                 setUsertoken(usertkn)
                 if (usertkn == null) {
                     // Alert.alert('Access Deny', 'Login first !')
@@ -154,7 +152,7 @@ const CartAdded = (props) => {
                 // console.log("ResponseShippingProducts(product) ::::", response.data.data);
                 setproductdata(response.data.data);
                 let cartdata = response.data.data.length;
-                console.log("cartdataReducer.....:", cartdata);
+                // console.log("cartdataReducer.....:", cartdata);
                 dispatch(CartCounter(parseInt(cartdata)));
                 setuseraddress(response.data.address_lists);
                 setSubtotal(response.data.sub_total);

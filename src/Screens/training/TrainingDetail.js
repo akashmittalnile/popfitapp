@@ -48,12 +48,12 @@ const TrainingDetail = (props) => {
         }
         try {
             const shareResponse = await Share.open(shareOptions);
-            console.log('====================================');
-            console.log(JSON.stringify(shareResponse));
-            console.log('====================================');
+             
+            // console.log(JSON.stringify(shareResponse));
+             
         }
         catch (error) {
-            console.log('ERROR=>', error);
+            // console.log('ERROR=>', error);
         }
     };
     useEffect(() => {
@@ -81,7 +81,7 @@ const TrainingDetail = (props) => {
     }
 
     const Checkedtoken = async (item) => {
-        console.log("item:", item);
+        // console.log("item:", item);
         const usertkn = await AsyncStorage.getItem("authToken");
         if (usertkn == null) {
             Alert.alert('', 'Please login first')
@@ -340,8 +340,7 @@ const TrainingDetail = (props) => {
 
                             <FlatList
                                 columnWrapperStyle={{
-                                    flex: 1,
-
+                                    flex: 1
                                 }}
                                 keyExtractor={(item, index) => String(index)}
                                 numColumns={2}
@@ -357,7 +356,7 @@ const TrainingDetail = (props) => {
                                                     backgroundColor: 'white',
                                                     height: 180,
                                                     width: WIDTH * 0.45,
-                                                    borderRadius: 25,
+                                                    borderRadius: 20,
                                                     // marginBottom: 10,
                                                     marginHorizontal: 10,
                                                     justifyContent: "center",
@@ -429,7 +428,7 @@ const TrainingDetail = (props) => {
                                                     backgroundColor: 'white',
                                                     height: 180,
                                                     width: WIDTH * 0.45,
-                                                    borderRadius: 25,
+                                                    borderRadius: 20,
                                                     // marginBottom: 10,
                                                     marginHorizontal: 10,
                                                     justifyContent: "center",

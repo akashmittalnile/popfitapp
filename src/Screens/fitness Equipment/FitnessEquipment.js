@@ -57,8 +57,8 @@ const FitnessEquipment = (props) => {
       const response = await axios.post(`${API.SHOP_CATEGORY}`, { 'shop_id': FitnessID },
         { headers: { "Authorization": ` ${Token}` } }
       );
-      console.log(":::::::::FitnessEquipmentStore_Response>>>", response.data.shop_category);
-      console.log("status _FitnessEquipment", response.data.status);
+      // console.log(":::::::::FitnessEquipmentStore_Response>>>", response.data.shop_category);
+      // console.log("status _FitnessEquipment", response.data.status);
       setimagepath(response.data.image_path);
       if (response.data.shop_category.length != 0) {
         setshopitems(response.data.shop_category)

@@ -46,9 +46,7 @@ const Blog = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [NewsletterPopup, setNewsletterPopup] = useState(false);
   const [newsletteremail, setNewsletteremail] = useState("");
-  console.log('====================================');
-  console.log("emailsssss:", newsletteremail);
-  console.log('====================================');
+  
 
   const gotoBlogDetail = async (item) => {
     const usertkn = await AsyncStorage.getItem("authToken");
@@ -78,10 +76,11 @@ const Blog = (props) => {
 
 
   useEffect(() => {
-    const unsubscribe = props.navigation.addListener('focus', () => {
-      GetCategoryBlogApi();
-    })
-    return unsubscribe;
+    GetCategoryBlogApi();
+    // const unsubscribe = props.navigation.addListener('focus', () => {
+      
+    // })
+    // return unsubscribe;
 
 
   }, []);
@@ -99,15 +98,15 @@ const Blog = (props) => {
 
     }
     // await AsyncStorage.setItem('useremail', values.Checkemail);
-    console.log("blog newsletter:", data);
+    // console.log("blog newsletter:", data);
     if (usertkn != null) {
       // console.log("......userenteremail::", EnterEmail);
       setIsLoading(true);
       try {
 
         const response = await axios.post(`${API.NEWS_LETTER_SUBSCRIPTION}`, data, { headers: { "Authorization": ` ${usertkn}` } });
-        console.log(":::::::::Traing_Workout_Response>>>", response.data);
-        console.log("Traing_Workout_data::::::", response.data.status);
+        // console.log(":::::::::Traing_Workout_Response>>>", response.data);
+        // console.log("Traing_Workout_data::::::", response.data.status);
         if (response.data.status == 1) {
           // props.navigation.goBack()
           GetCategoryBlogApi();
@@ -145,15 +144,15 @@ const Blog = (props) => {
       email: newsletteremail
       // email: values.Checkemail,
     }
-    console.log("newsletter:", data);
+    // console.log("newsletter:", data);
     if (usertkn != null) {
 
       setIsLoading(true);
       try {
 
         const response = await axios.post(`${API.NEWSLETTER_UNSUBSCRIBE}`, data, { headers: { "Authorization": ` ${usertkn}` } });
-        console.log("::Unsubscribe_Response>>>", response.data);
-        console.log("Unsubscribe_data::::::", response.data.status);
+        // console.log("::Unsubscribe_Response>>>", response.data);
+        // console.log("Unsubscribe_data::::::", response.data.status);
         if (response.data.status == 1) {
           // props.navigation.goBack()
           GetCategoryBlogApi();
@@ -186,7 +185,7 @@ const Blog = (props) => {
   };
   const GetCategoryBlogApi = async () => {
     const usertkn = await AsyncStorage.getItem("authToken");
-    console.log('token::::::', usertkn);
+    // console.log('token::::::', usertkn);
     setIsLoading(true);
     try {
 

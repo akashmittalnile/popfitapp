@@ -33,7 +33,7 @@ const Category = (props) => {
     });
   }
 
-  console.log("item.category_id..............:", props.route.params.ITEMS.id);
+  // console.log("item.category_id..............:", props.route.params.ITEMS.id);
   const ITEMS = props.route.params.ITEMS.id
 
   useEffect(() => {
@@ -45,19 +45,19 @@ const Category = (props) => {
 
   const getusertoken = async () => {
     const usertoken = await AsyncStorage.getItem("authToken");
-    console.log("check_roken in comment button:::>>>>>..", usertoken);
+    // console.log("check_roken in comment button:::>>>>>..", usertoken);
     setsubscriptiontoken(usertoken);
   }
 
   const getCategoryApi = async () => {
     const Token = await AsyncStorage.getItem("authToken");
-    console.log("category_id get.....;;;;;", ITEMS);
+    // console.log("category_id get.....;;;;;", ITEMS);
     // const categoryitem = ITEMS;
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.BLOG_SUBCATEGORY}`, { "category_id": ITEMS }, { headers: { "Authorization": ` ${Token != null ? Token : null}` } });
-      console.log(":::::::::category_Response>>>", response.data.blog_subcategory);
-      console.log("status category:", response.data.status);
+      // console.log(":::::::::category_Response>>>", response.data.blog_subcategory);
+      // console.log("status category:", response.data.status);
       if (response.data.status == 1) {
         setsubcategoryitems(response.data.blog_subcategory)
         // setIsLoading(false);

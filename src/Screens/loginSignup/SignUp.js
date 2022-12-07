@@ -208,7 +208,7 @@ const Signup = (props, navigation) => {
       password: values?.passwords,
       c_password: values?.cfm_password,
     };
-    console.log(".......userInputdata", data);
+    // console.log(".......userInputdata", data);
     setIsLoading(true);
     axios({
       url: API.SIGN_UP,
@@ -217,7 +217,7 @@ const Signup = (props, navigation) => {
 
     })
       .then(function (response) {
-        console.log("responsesignup :", response?.data);
+        // console.log("responsesignup :", response?.data);
         if (response.data.status == 1) {
           setRegisteredPopUp(true);
           setIsLoading(false);
@@ -246,13 +246,13 @@ const Signup = (props, navigation) => {
     // setIsLoading(true);
     try {
       const response = await axios.get(`${API.GET_COUNTRY}`);
-      console.log("Countryresponse ::::", response.data.data);
+      // console.log("Countryresponse ::::", response.data.data);
       setCountryitems(response.data.data)
       // console.log(setCountryitems);
       // setIsLoading(false)
       // setLoading(false)
       if (response.data.status == 1) {
-        console.log(".......statsus", response.data.status);
+        // console.log(".......statsus", response.data.status);
         // if (response.data.data.id == valuecountry) {
         //   setSelectedcountrycode(response.data.data.code)
         // } else {
@@ -431,8 +431,8 @@ const Signup = (props, navigation) => {
                   //   .string(),
                   zip_code: yup
                     .string()
-                    .min(5, "ZIP code minimum length 5-digits and maximum 9-digits")
-                    .max(9, "ZIP code minimum length 5-digits and maximum 9-digits")
+                    .min(4, "ZIP code minimum length 4-digits and maximum 10-digits")
+                    .max(10, "ZIP code minimum length 4-digits and maximum 10-digits")
                     .required('Enter Pin Code *'),
                   country: yup
                     .string(),
@@ -676,7 +676,7 @@ const Signup = (props, navigation) => {
                           placeholderTextColor='#8F93A0'
                           fontWeight='normal'
                           keyboardType='number-pad'
-                          maxLength={9}
+                          maxLength={10}
                           value={values.zip_code}
                           onChangeText={handleChange('zip_code')}
                           onBlur={() => setFieldTouched('zip_code')}

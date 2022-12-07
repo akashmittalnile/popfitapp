@@ -6,7 +6,7 @@ const Welcome = (props) => {
 
   const [imageString, setImageString] = useState('');
   const buttonClickedHandler = () => {
-    console.log('You have been clicked a button!');
+    // console.log('You have been clicked a button!');
     // do something
   };
   function padding(a, b, c, d) {

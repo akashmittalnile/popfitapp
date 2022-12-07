@@ -56,13 +56,13 @@ const BlogDetail = (props) => {
   //   props.navigation.navigate('ContactUs');
   // };
 
-  console.log("Blog_id_item ...............:", props?.route?.params?.blogdetail_id?.id);
+  // console.log("Blog_id_item ...............:", props?.route?.params?.blogdetail_id?.id);
   const blogdetail_id = props?.route?.params?.blogdetail_id?.id;
 
-  console.log("CategoryBlog_id_item ...............:", props?.route?.params?.Categoryblogid?.id);
+  // console.log("CategoryBlog_id_item ...............:", props?.route?.params?.Categoryblogid?.id);
   const Categoryblogid = props?.route?.params?.Categoryblogid?.id;
 
-  console.log("homeblogid_item ...............:", props?.route?.params?.homeblogid?.id);
+  // console.log("homeblogid_item ...............:", props?.route?.params?.homeblogid?.id);
   const homeblogid = props?.route?.params?.homeblogid?.id;
   // let BLOGId = blogdetail_id ? blogdetail_id : Categoryblogid ? Categoryblogid : homeblogid ? homeblogid : null;
 
@@ -70,17 +70,17 @@ const BlogDetail = (props) => {
     const checklogin = async () => {
       let Usertoken = await AsyncStorage.getItem("authToken");
       setsubscriptiontoken(Usertoken);
-      console.log("token.......", Usertoken);
+      // console.log("token.......", Usertoken);
       if (Usertoken != null) {
         getCategoryblog_detail();
         // props.navigation.navigate('LoginMain', {
         //   screen: 'LoginSignUp',
         // });
-        console.log(".....usertoken ..........................");
+        // console.log(".....usertoken ..........................");
       }
       else {
         getCategoryblog_detail();
-        console.log("..........usertoken_null/////:");
+        // console.log("..........usertoken_null/////:");
       }
     };
     checklogin();
@@ -93,7 +93,7 @@ const BlogDetail = (props) => {
 
   // }
   const Checkedtoken = () => {
-    console.log("Checkedtoken status::", subscriptiontoken);
+    // console.log("Checkedtoken status::", subscriptiontoken);
     subscriptiontoken == null ?
       Alert.alert('', 'Please login first')
       :
@@ -115,9 +115,9 @@ const BlogDetail = (props) => {
       }
       try {
         const shareResponse = await Share.open(shareOptions);
-        console.log('====================================');
-        console.log(JSON.stringify(shareResponse));
-        console.log('====================================');
+        
+        // console.log(JSON.stringify(shareResponse));
+        
       }
       catch (error) {
         console.log('ERROR=>', error);
@@ -129,19 +129,16 @@ const BlogDetail = (props) => {
 
   const getCategoryblog_detail = async () => {
     let Token = await AsyncStorage.getItem("authToken");
-    console.log('====================================');
-
-    console.log("check_token in comment button:::>>>>>..", Token);
-    console.log('====================================');
+    
 
     setIsLoading(true);
     try {
 
       const response = await axios.post(`${API.BLOG_DETAILS}`, { "blog_id": blogdetail_id ? blogdetail_id : Categoryblogid ? Categoryblogid : homeblogid },
         { headers: { "Authorization": ` ${Token != null ? Token : null}` } });
-      console.log(":::::::::DetailsBLog_Response>>>", response.data.blog_detail);
-      console.log("status _DetailsBLog:", response.data.status);
-      console.log("status _comment_count:", response.data.comment_count);
+      // console.log(":::::::::DetailsBLog_Response>>>", response.data.blog_detail);
+      // console.log("status _DetailsBLog:", response.data.status);
+      // console.log("status _comment_count:", response.data.comment_count);
       // console.log("status _blog_comment:", response.data.blog_comment);
       if (response.data.status == '1') {
         setApiStatus('1');
@@ -174,14 +171,14 @@ const BlogDetail = (props) => {
 
   const ShareCommentApi = async () => {
 
-    console.log("User commented_STATUS:::::::::::::::::::::::", subscriptiontoken);
+    // console.log("User commented_STATUS:::::::::::::::::::::::", subscriptiontoken);
     const EnterComment = usercomment;
     setIsLoading(true);
     try {
       // setIsLoading(false);
       const response = await axios.post(`${API.SEND_COMMENTS}`, { "blog_id": blogdetail_id ? blogdetail_id : Categoryblogid ? Categoryblogid : homeblogid ? homeblogid : null, "comment": EnterComment }, { headers: { "Authorization": ` ${subscriptiontoken}` } })
-      console.log("User commented_STATUS::", response.data.status);
-      console.log("User commented_Message::", response.data.message);
+      // console.log("User commented_STATUS::", response.data.status);
+      // console.log("User commented_Message::", response.data.message);
       if (response.data.status == 1) {
         getCategoryblog_detail();
         setComments(false);

@@ -32,7 +32,7 @@ const ChangePassword = (props) => {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        console.log('user Phone no.::',props?.route?.params?.PhoneNo)
+        // console.log('user Phone no.::',props?.route?.params?.PhoneNo)
        
         
     
@@ -58,15 +58,15 @@ const ChangePassword = (props) => {
             confirm_new_password: values.cfm_password,
             phone:userphoneno
         };
-        console.log(".......userInputdata", data);
+        // console.log(".......userInputdata", data);
         setIsLoading(true);
         try {
             const response = await axios.post(`${API.CHANGE_PSWD}`, data,{ headers: { "Authorization": ` ${usertkn}` } });
-            console.log("inputdata...", response.data);
-            console.log("ResponseChangePsswd ::::", response.data.status);
+            // console.log("inputdata...", response.data);
+            // console.log("ResponseChangePsswd ::::", response.data.status);
             if (response.data.status == 1) {
                 setChangePasswordPopUp(!ChangePasswordPopUp)
-                console.log("User_change_psswd_successfully...>>>", response.data.message);
+                // console.log("User_change_psswd_successfully...>>>", response.data.message);
                  
             }
             else {

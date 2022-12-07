@@ -31,16 +31,16 @@ const OutDoorCycleDetails = (props) => {
     }
     try {
       const shareResponse = await Share.open(shareOptions);
-      console.log('====================================');
-      console.log(JSON.stringify(shareResponse));
-      console.log('====================================');
+      
+      // console.log(JSON.stringify(shareResponse));
+     
     }
     catch (error) {
-      console.log('ERROR=>', error);
+      // console.log('ERROR=>', error);
     }
   };
 
-  console.log("TainingDATA_...............:", props?.route?.params?.TrainingDATA?.id);
+  // console.log("TainingDATA_...............:", props?.route?.params?.TrainingDATA?.id);
   const TrainingDATA = props?.route?.params?.TrainingDATA?.id
 
   const TrainingDetailsAPI = async () => {
@@ -48,15 +48,15 @@ const OutDoorCycleDetails = (props) => {
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.TRAINING_LIST_DETAILS}`, { "training_id": TrainingDATA }, { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } });
-      console.log(":::::::::TrainingDetails_ResponseMessage>>>", response.data.message);
-      console.log("TrainingDetails__data::::::", response.data.training_detail);
+      // console.log(":::::::::TrainingDetails_ResponseMessage>>>", response.data.message);
+      // console.log("TrainingDetails__data::::::", response.data.training_detail);
       ;
       setTrainingDetails(response.data.training_detail)
    
 
     }
     catch (error) {
-      console.log("......error.........", error.response.data.message);
+      // console.log("......error.........", error.response.data.message);
       Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
       } setIsLoading(false);
   };

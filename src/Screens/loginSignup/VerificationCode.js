@@ -55,9 +55,9 @@ const VerificationCode = (props) => {
 
         const country_code = countrycod;
         setIsLoading(true);
-        console.log('====================================');
-        console.log("on");
-        console.log('====================================');
+        // console.log('====================================');
+        // console.log("on");
+        // console.log('====================================');
         try {
             const response = await axios.post(`${API.MOBILE_NO_VERIFY}`, { phone_number, country_code });
             // console.log("Mobile_Response>>>", response.data);
@@ -70,7 +70,7 @@ const VerificationCode = (props) => {
             //     phone: phone_number,
             // })
 
-            console.log("off");
+            // console.log("off");
         }
         catch (error) {
             Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")

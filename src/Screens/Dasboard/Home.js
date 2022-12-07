@@ -104,7 +104,7 @@ const Home = (props) => {
   // const openDrawer = () => props.navigation.dispatch(DrawerActions.openDrawer())
 
   useEffect(() => {
-    // StoresProductget()
+     
     const unsubscribe = props.navigation.addListener('focus', () => {
       StoresProductget();
     })
@@ -117,7 +117,7 @@ const Home = (props) => {
     const usertkn = await AsyncStorage.getItem("authToken");
     setIsLoading(true);
     try {
-      const response = await axios.get(`${API.HOME_PRODUCT_list}`, { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } });
+      const response = await axios.get(`${API.HOME_PRODUCT_list}`, { headers: { "Authorization": ` ${usertkn}` } });
       // console.log(":::::::::Home_Store_Response>>>", response.data.fitnes_product);
 
       setbanneritem(response.data.banner)
@@ -250,10 +250,7 @@ const Home = (props) => {
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 style={{ margin: 10 }}
-                // columnWrapperStyle={{
-                //   flex: 1,
-                //   justifyContent: "space-around"
-                // }}
+
                 keyExtractor={(item, index) => String(index)}
                 data={trainingdata}
 
@@ -269,46 +266,30 @@ const Home = (props) => {
                       borderRadius: 20,
                       justifyContent: "center",
                       alignItems: 'center',
-                      // shadowColor: '#ffffff',
-                      // shadowOffset: {
-                      //   width: 0,
-                      //   height: 3
-                      // },
-                      // shadowRadius: 5,
-                      // shadowOpacity: 1.0,
-                      // elevation: 5,
-                      // zIndex: 999,
 
-                      // flex: 1
                     }}>
-                      <View style={{ width: WIDTH * 0.45, backgroundColor: '#c9bca0', height: 25,   justifyContent: 'center', alignItems: "center", borderTopLeftRadius: 20 ,borderTopRightRadius: 20,}}>
+                      <View style={{ width: WIDTH * 0.45, backgroundColor: '#c9bca0', height: 25, justifyContent: 'center', alignItems: "center", borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
                         <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name?.slice(0, 26) + '...'}</Text>
 
                       </View>
                       <View
 
                         style={{
-                          // marginTop: 1,
                           width: WIDTH * 0.45, height: 130,
-                          // borderRadius: 100  ,
-                          // backgroundColor: '#fceeb5',
-                          // flex: 1,
-                          // borderRadius: 20,
-                          // borderTopRightRadius: 20,
-                          // borderTopLeftRadius: 20,
-                          
-                          justifyContent: "flex-start", alignItems: "flex-start"
+                           
+                          justifyContent: "flex-start",
+                          alignItems: "flex-start"
 
                         }}>
 
-                        <Image
-                          source={{ uri: item?.image }}
-                          resizeMode="contain"
+                        <Image resizeMode="stretch"
+                          source={{ uri: `${item?.image}` }}
+
                           style={{
                             width: "100%",
                             height: "100%",
                             alignSelf: 'center',
-                            borderTopRightRadius: 0.01,
+                          
                           }}
                         />
 
@@ -395,8 +376,8 @@ const Home = (props) => {
                       justifyContent: 'space-around',
                     }}>
                       <Image
-                        resizeMode='contain'
-                        source={{ uri: item?.image }}
+                        resizeMode='stretch'
+                        source={{ uri: `${item?.image}` }}
                         style={{ justifyContent: 'center', borderTopLeftRadius: 20, borderTopRightRadius: 20, alignItems: 'center', backgroundColor: 'white', width: '100%', height: '100%', }} />
                     </View>
                     {/* <View style={{
@@ -486,7 +467,7 @@ const Home = (props) => {
                         }}>
                         <Image
                           source={{ uri: `${item?.image}` }}
-                          resizeMode="contain"
+                          resizeMode="stretch"
                           style={{
                             width: "100%",
                             height: "100%",

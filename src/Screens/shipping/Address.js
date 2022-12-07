@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, Modal, SafeAreaView, Dimensions, ActivityIndicator } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, Modal, SafeAreaView, Dimensions, ActivityIndicator,KeyboardAvoidingView,Platform } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';
 import { RadioButton } from 'react-native-paper';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { Pages } from 'react-native-pages';
+import { Pages } from 'react-native-pages'; 
 import styles from '../../Routes/style'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API } from '../../Routes/Urls';
@@ -49,30 +49,36 @@ const Address = (props) => {
     // console.log('type&&&&&&&&', type);
 
     const validate = () => {
-        if (area_village == '') {
-            alert('please enter area_village');
-            return false
+       
+        if (pincode == '') {
+            alert('please enter piccode')
         }
-        else {
-            //  return true
-        }
+        // else if (pincode.length < 4 || pincode.length > 10) {
+        //     alert("Zipcode should be min 4 characters");
+          
+        //     return false;
+        // } else {
+        //     //  setPassword(true)
+
+        // }
     }
     const pass = () => {
 
-        // input validation
-        if (landmark == '') {
-            alert('please enter landmark')
-            return false;
+        if (phone == '') {
+            alert('please enter phone no.')
         }
+        if (phone.length < 0 || phone.length > 10) {
+            alert("Phone no. should be min 10 char and max 16 char");
 
-        else {
-            // landmark(true)
+            return false;
+        } else {
+            //  setPassword(true)
 
         }
     }
     const aa = (item) => {
 
-        console.log('aa_function$$$$$$item$$$4', item)
+        // console.log('aa_function$$$$$$item$$$4', item)
         setarea_village(item.area_village);
         setlandmark(item.landmark);
         setaddress_type(item.address_type);
@@ -104,13 +110,14 @@ const Address = (props) => {
         setstate('');
     }
     const gotocurrentpage = async (values) => {
+       
         const usertkn = await AsyncStorage.getItem("authToken");
-        if (landmark && area_village) {
+        if (area_village && address_type && city && full_name && house_no && phone && pincode && state) {
             validate();
             pass();
             setShippingAddressPopUp(false);
             setIsLoading(true);
-            console.log("res data-------->", data);
+            // console.log("res data-------->", data);
             try {
                 axios.post(`${API.SHIPPING_ADDRESS_ADD}`,
                     {
@@ -128,31 +135,32 @@ const Address = (props) => {
                 })
                     .then(function (response) {
                         // setIsLoading(false);
-                        console.log('res----->', response.data)
+                        // console.log('res----->', response.data)
                         GetShippingProducts()
+                       
                         setData(false)
                     })
                     .catch(function (error) {
                         // setIsLoading(false)
                         alert("Please enter valid email or password")
-                        console.log(error)
+                        // console.log(error)
 
                     })
             } catch (error) {
                 // setIsLoading(false)
                 Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
 
-                console.log("gotocurrentpage_error in address ...", error)
+                // console.log("gotocurrentpage_error in address ...", error)
 
             }
         }
         else {
-            // setIsLoading(false)
-            alert("Please enter both fields")
-        } setIsLoading(false);
+            validate();
+            alert("All the fields are required!")
+        } setIsLoading(false)
 
     }
-    console.log('item check-->>>>>', checkedItem);
+    // console.log('item check-->>>>>', checkedItem);
     AsyncStorage.setItem("item", JSON.stringify(checkedItem));
 
     useEffect(() => {
@@ -168,7 +176,7 @@ const Address = (props) => {
     const checklogin = async () => {
         let Usertoken = await AsyncStorage.getItem("authToken");
         // setproducttoken(Usertoken);
-        console.log("token.......", Usertoken);
+        // console.log("token.......", Usertoken);
         if (Usertoken == null) {
             props.navigation.navigate('LoginMain', {
                 screen: 'LoginSignUp',
@@ -194,7 +202,7 @@ const Address = (props) => {
         }
         catch (error) {
             Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
-            console.log("ShippingProductserror::Address_screen:", error.response.data.message);
+            // console.log("ShippingProductserror::Address_screen:", error.response.data.message);
             // setIsLoading(false);
         }
         setIsLoading(false);
@@ -204,11 +212,11 @@ const Address = (props) => {
     const ItemRemove = async (item) => {
         const usertkn = await AsyncStorage.getItem("authToken");
         setIsLoading(true);
-        console.log('ItemRemove$$$$$$id---->', item.id)
+        // console.log('ItemRemove$$$$$$id---->', item.id)
         try {
 
             const response = await axios.delete(`${API.DELETE_ITEM + '/' + item.id}`, { 'headers': { "Authorization": ` ${usertkn}` } });
-            console.log(":::::::::ItemRemove_Response>>>", response.data);
+            // console.log(":::::::::ItemRemove_Response>>>", response.data);
             if (response.data.status == "1") {
                 GetShippingProducts();
                 // setIsLoading(false);
@@ -220,14 +228,14 @@ const Address = (props) => {
         }
         catch (error) {
             Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
-            console.log("..ItemRemove....error.........", error.response.data.message);
+            // console.log("..ItemRemove....error.........", error.response.data.message);
             // setIsLoading(false);
         }
         setIsLoading(false);
     };
     const ItemUpdate = async () => {
         const usertkn = await AsyncStorage.getItem("authToken");
-        console.log('edit dtaaaa--------->', editdata)
+        // console.log('edit dtaaaa--------->', editdata)
         setIsLoading(true);
         try {
 
@@ -243,7 +251,7 @@ const Address = (props) => {
                 area_village: area_village,
                 landmark: landmark,
             }, { 'headers': { "Authorization": ` ${usertkn}` } });
-            console.log("Response itemupdate", response.data.status);
+            // console.log("Response itemupdate", response.data.status);
             setShippingAddressPopUp(false);
             clearState();
             setData(false)
@@ -253,7 +261,7 @@ const Address = (props) => {
 
         catch (error) {
             Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
-            console.log("..ItemUpdate....error.........", error);
+            // console.log("..ItemUpdate....error.........", error);
         }
         setIsLoading(false);
     };
@@ -312,14 +320,14 @@ const Address = (props) => {
                 (<>
                     {
                         useraddress.length > 0 ?
-                            (<View style={{flex:1}}>
+                            (<View style={{ flex: 1 }}>
                                 <Text style={{ marginLeft: 15, marginTop: 15, textAlign: 'left', fontSize: 18, color: '#000000', fontWeight: "500" }}>Select a Delivery Address</Text>
                                 <View
                                     style={{
                                         justifyContent: "center",
                                         alignItems: "flex-start",
                                         flexDirection: "row",
-                                        height: '74%',
+                                        height: '78%',
                                         marginHorizontal: 10,
                                         marginTop: 10,
                                     }}>
@@ -480,50 +488,54 @@ const Address = (props) => {
 
 
 
-                                {ShippingAddressPopUp ? (
-                                    <Modal
-                                        animationType="fade"
-                                        transparent={true}
-                                        visible={ShippingAddressPopUp}
-                                        onShow={() => {
-                                            console.warn('re------>', pincode);
-                                        }}
-                                        onRequestClose={() => {
-                                            setShippingAddressPopUp(false);
-                                        }}>
+
+                                <Modal
+                                    animationType="fade"
+                                    transparent={true}
+                                    visible={ShippingAddressPopUp}
+                                    onShow={() => {
+                                        console.warn('re------>', pincode);
+                                    }}
+                                    onRequestClose={() => {
+                                        setShippingAddressPopUp(false);
+                                    }}>
+                                    <KeyboardAvoidingView
+                                        style={{ flex: 1 }}
+                                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
                                         <View
                                             style={{
                                                 flex: 1,
-                                                justifyContent: 'flex-end',
-                                                alignItems: 'center',
+                                                // justifyContent: 'flex-end',
+                                                // alignItems: 'center',
                                                 backgroundColor: 'rgba(140, 141, 142, 0.7)',
                                             }}>
-                                            <ScrollView>
+                                            <ScrollView nestedScrollEnabled={true}>
                                                 <View
                                                     style={{
                                                         //margin: 10,
                                                         width: "100%",
-                                                        // height: "50%",
-                                                        backgroundColor: '#FFFFFF',
+                                                        height: HEIGHT * 0.99,
+                                                        // backgroundColor: '#FFFFFF',
                                                         borderRadius: 20,
-                                                        marginTop: 111,
-                                                        // justifyContent: "center",
+                                                        // marginTop: 111,
+                                                        justifyContent: "flex-end",
                                                         alignItems: 'center',
-                                                        shadowColor: '#000',
-                                                        shadowOffset: {
-                                                            width: 0,
-                                                            height: 2,
-                                                        },
-                                                        shadowOpacity: 0.25,
-                                                        shadowRadius: 4,
-                                                        elevation: 6,
+                                                        // shadowColor: '#000',
+                                                        // shadowOffset: {
+                                                        //     width: 0,
+                                                        //     height: 2,
+                                                        // },
+                                                        // shadowOpacity: 0.25,
+                                                        // shadowRadius: 4,
+                                                        // elevation: 6,
 
                                                     }}>
 
                                                     <View style={{
-
-                                                        height: "100%",
-                                                        width: WIDTH * 0.95,
+                                                        backgroundColor: '#FFFFFF',
+                                                        // height: "100%",
+                                                        width: WIDTH * 0.99,
+                                                        height: "auto",
                                                         // paddingTop: 20,
                                                         // padding: 10,
                                                         marginHorizontal: 10,
@@ -540,32 +552,48 @@ const Address = (props) => {
 
 
                                                         </View>
+                                                        <TouchableOpacity onPress={() => { setShippingAddressPopUp(false) }}
+                                                            style={{ position: "absolute", width: 30, backgroundColor: 'red', borderRadius: 35, height: 35, right: 10, top: 10 }}>
+                                                            <Image
+                                                                source={require('../assets/cancelWhite.png')}
+                                                                style={{
+                                                                    width: 35,
+                                                                    height: 35, alignSelf: 'center'
+                                                                }}
+
+                                                            />
+                                                        </TouchableOpacity>
                                                         <TextInput style={styl.textInput}
                                                             placeholder='Full Name(Required)*'
+                                                            placeholderTextColor="#8F93A0"
                                                             label="Full Name"
                                                             value={full_name}
                                                             onChangeText={e => onChangeNameHandler(e)}
                                                         />
                                                         <TextInput style={styl.textInput}
                                                             placeholder='Phone number(Required)*'
+                                                            placeholderTextColor="#8F93A0"
                                                             label="phone"
                                                             value={phone}
                                                             onChangeText={e => onChangePhoneHandler(e)}
                                                         />
                                                         <TextInput style={styl.textInput}
-                                                            placeholder='Pincode(Required)*'
+                                                            placeholder='Zip code(Required)*'
+                                                            placeholderTextColor="#8F93A0"
                                                             label="pin code"
                                                             value={pincode.toString()}
                                                             onChangeText={e => onChangePinHandler(e)}
                                                         />
                                                         <TextInput style={styl.textInput}
                                                             placeholder='State(Required)*'
+                                                            placeholderTextColor="#8F93A0"
                                                             label="State"
                                                             value={state}
                                                             onChangeText={e => onChangeStateHandler(e)}
                                                         />
                                                         <TextInput style={styl.textInput}
                                                             placeholder='City(Required)*'
+                                                            placeholderTextColor="#8F93A0"
                                                             label="city"
                                                             value={city}
                                                             onChangeText={e => onChangeCityHandler(e)}
@@ -573,6 +601,7 @@ const Address = (props) => {
 
                                                         <TextInput style={styl.textInput}
                                                             placeholder='House number(Required)*'
+                                                            placeholderTextColor="#8F93A0"
                                                             label="house no"
                                                             value={house_no}
                                                             onChangeText={e => onChangeHouseHandler(e)}
@@ -580,24 +609,123 @@ const Address = (props) => {
 
                                                         <TextInput style={styl.textInput}
                                                             placeholder='Roard name,Area,Colony(Required)*'
+                                                            placeholderTextColor="#8F93A0"
                                                             label="area village"
                                                             value={area_village}
                                                             onChangeText={e => onChangeAreaHandler(e)}
                                                         />
                                                         <TextInput style={styl.textInput}
-                                                            placeholder='Landmark(Required)*'
+                                                            placeholder='Landmark(optional)'
+                                                            placeholderTextColor="#8F93A0"
                                                             label="landmark"
                                                             value={landmark}
                                                             onChangeText={e => onChangeLandmarkHandler(e)}
                                                         />
 
-                                                        <TextInput style={styl.textInput}
+                                                        {/* <TextInput style={styl.textInput}
                                                             placeholder='Type of address'
                                                             label="Address type"
                                                             value={address_type}
                                                             onChangeText={e => onChangeAddressHandler(e)}
-                                                        />
-                                                        <View style={{ justifyContent: "center", alignItems: "center", marginBottom: 20, flexDirection: 'row', height: 38, marginHorizontal: 20, marginTop: 30 }}>
+                                                        /> */}
+                                                        <View style={{ height: 45, width: "98%", marginTop: 14, alignItems: 'flex-start', justifyContent: "flex-start", marginLeft: 10 }}>
+
+                                                            <Text style={{ color: 'black', textAlign: "left", fontSize: 16, fontWeight: "400" }}>Address Type</Text>
+
+                                                            <View style={{ height: 45, width: "90%", marginTop: 5, alignItems: 'center', justifyContent: "flex-start", flexDirection: "row" }}>
+
+                                                                <View
+                                                                    style={{
+                                                                        marginLeft: 10,
+                                                                        justifyContent: 'center',
+                                                                        flexDirection: 'row',
+                                                                        height: 40,
+                                                                    }}>
+                                                                    <TouchableOpacity
+                                                                        onPress={() => {
+                                                                            (isSecureEntry => !isSecureEntry);
+                                                                            onChangeAddressHandler("Home")
+                                                                        }}>
+
+                                                                        <View
+                                                                            style={{
+                                                                                flex: 1,
+                                                                                flexDirection: 'row',
+                                                                                justifyContent: 'flex-start',
+                                                                                alignItems: 'center',
+                                                                            }}>
+                                                                            <Image
+                                                                                source={address_type === 'Home' ? require('../assets/checked.png') : require('../assets/unchecked.png')}
+                                                                                style={{
+                                                                                    width: 25,
+                                                                                    height: 25,
+                                                                                    alignSelf: 'center',
+                                                                                    marginRight: 10,
+                                                                                }}
+                                                                            />
+
+                                                                            <Text
+                                                                                style={{
+                                                                                    fontWeight: "500",
+                                                                                    textAlign: 'left',
+                                                                                    fontSize: 11,
+                                                                                    color: "black"
+
+                                                                                }}>
+                                                                                Home
+                                                                            </Text>
+                                                                        </View>
+
+                                                                    </TouchableOpacity>
+                                                                </View>
+                                                                <View
+                                                                    style={{
+                                                                        marginLeft: 30,
+                                                                        justifyContent: 'center',
+                                                                        flexDirection: 'row',
+                                                                        height: 40,
+                                                                    }}>
+                                                                    <TouchableOpacity
+                                                                        onPress={() => {
+                                                                            (isSecureEntry => !isSecureEntry);
+                                                                            onChangeAddressHandler("Work")
+                                                                        }}>
+
+                                                                        <View
+                                                                            style={{
+                                                                                flex: 1,
+                                                                                flexDirection: 'row',
+                                                                                justifyContent: 'flex-start',
+                                                                                alignItems: 'center',
+                                                                            }}>
+                                                                            <Image
+                                                                                source={address_type === 'Work' ? require('../assets/checked.png') : require('../assets/unchecked.png')}
+                                                                                style={{
+                                                                                    width: 25,
+                                                                                    height: 25,
+                                                                                    alignSelf: 'center',
+                                                                                    marginRight: 10,
+                                                                                }}
+                                                                            />
+
+                                                                            <Text
+                                                                                style={{
+                                                                                    fontWeight: "500",
+                                                                                    textAlign: 'left',
+                                                                                    fontSize: 11,
+                                                                                    color: "black"
+
+                                                                                }}>
+                                                                                Work
+                                                                            </Text>
+                                                                        </View>
+
+                                                                    </TouchableOpacity>
+                                                                </View>
+
+                                                            </View>
+                                                        </View>
+                                                        <View style={{ justifyContent: "center", alignItems: "center", marginBottom: 20, flexDirection: 'row', height: 38, marginHorizontal: 20, marginTop: 60 }}>
                                                             <TouchableOpacity
                                                                 onPress={() => { data == true ? ItemUpdate() : gotocurrentpage() }} >
                                                                 <View style={{ justifyContent: 'center', width: 110, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
@@ -609,8 +737,9 @@ const Address = (props) => {
                                                 </View>
                                             </ScrollView>
                                         </View>
-                                    </Modal>
-                                ) : null}
+                                    </KeyboardAvoidingView>
+                                </Modal>
+
                             </View>)
                             :
                             (<View style={{

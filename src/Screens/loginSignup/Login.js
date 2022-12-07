@@ -128,7 +128,7 @@ const Login = props => {
       }
     } catch (error) {
       Alert.alert("error","Internet connection appears to be offline. Please check your internet connection and try again.")
-      console.log("error??login????", error);
+      // console.log("error??login????", error);
       // Alert.alert('', 'Something went wrong please exit the app and try again');
     }
     setIsLoading(false);

@@ -32,7 +32,7 @@ const ClothesType = (props) => {
    
   }
   
-  console.log("clothing_storeId......:", props?.route?.params?.Clothexploreid);
+  // console.log("clothing_storeId......:", props?.route?.params?.Clothexploreid);
   const ClothID = props?.route?.params?.Clothexploreid;
   useEffect(() => {
     ClothingStoresProduct();
@@ -56,8 +56,8 @@ const ClothesType = (props) => {
       const response = await axios.post(`${API.SHOP_CATEGORY}`, { 'shop_id': ClothID }, 
       { headers: { "Authorization": ` ${Token}` } }
       );
-      console.log(":::::::::FitnessEquipmentStore_Response>>>", response.data.shop_category);
-      console.log("status _FitnessEquipment", response.data.status);
+      // console.log(":::::::::FitnessEquipmentStore_Response>>>", response.data.shop_category);
+      // console.log("status _FitnessEquipment", response.data.status);
       setimagepath(response.data.image_path);
       if (response.data.shop_category.length != 0) {
         setshopitems(response.data.shop_category)

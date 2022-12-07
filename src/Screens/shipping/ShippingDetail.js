@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 //import { StyleSheet } from 'react-native';
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, Modal, SafeAreaView, Dimensions, ActivityIndicator, KeyboardAvoidingView } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, Modal, SafeAreaView, Dimensions, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -71,8 +71,8 @@ const ShippingDetail = (props) => {
         if (pincode == '') {
             alert('please enter piccode')
         }
-        // if (pincode.length < 0 || pincode.length > 10) {
-        //     alert("Pincode should be min 4 char");
+        // else if (pincode.length < 0 || pincode.length > 10) {
+        //     alert("Zipcode should be min 4 characters");
 
         //     return false;
         // } else {
@@ -99,9 +99,9 @@ const ShippingDetail = (props) => {
     }
 
     const gotocurrentpage = async (e) => {
-        console.log("ADDRESS-TYPE::", address_type);
+        // console.log("ADDRESS-TYPE::", address_type);
         const usertkn = await AsyncStorage.getItem("authToken");
-        if (landmark && area_village && address_type && city && full_name && house_no && phone && pincode && state) {
+        if (area_village && address_type && city && full_name && house_no && phone && pincode && state) {
             validate();
             pass();
             setShippingAddressPopUp(false);
@@ -128,15 +128,15 @@ const ShippingDetail = (props) => {
                     .catch(function (error) {
                         Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
                         // alert("gotocurrentpage...error", error)
-                        console.log("select-address", error)
+                        console.log("select-address::::::", error)
 
                     })
             } catch (error) {
+                console.log("add-address", error)
                 Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
             } setIsLoading(false)
         }
         else {
-
             alert("All the fields are required!")
         } setIsLoading(false)
     }
@@ -150,8 +150,8 @@ const ShippingDetail = (props) => {
 
     const gotoCardPayment = () => {
 
-        console.log(",,as,f,asfa,f,a,fa,,fa,f,:", setselectaddress);
-        console.log("Selected address:", address);
+        // console.log(",,as,f,asfa,f,a,fa,,fa,f,:", setselectaddress);
+        // console.log("Selected address:", address);
         if (setselectaddress || address != undefined) {
             props.navigation.navigate("PaymentScreen", {
                 Instruction: optComment,
@@ -164,7 +164,7 @@ const ShippingDetail = (props) => {
             })
 
         } else {
-            console.log("types::::", setselectaddress || address != undefined);
+            // console.log("types::::", setselectaddress || address != undefined);
             Alert.alert("", 'Choose Shipping Address')
         }
 
@@ -915,7 +915,7 @@ const ShippingDetail = (props) => {
                                                 onChangeText={e => onChangePhoneHandler(e)}
                                             />
                                             <TextInput style={styles.textInput}
-                                                placeholder='Pincode(Required)*'
+                                                placeholder='Zip code(Required)*'
                                                 placeholderTextColor="#8F93A0"
                                                 label="pincode"
 
@@ -952,7 +952,7 @@ const ShippingDetail = (props) => {
                                                 onChangeText={e => onChangeAreaHandler(e)}
                                             />
                                             <TextInput style={styles.textInput}
-                                                placeholder='Landmark(Required)*'
+                                                placeholder='Landmark(optional)'
                                                 placeholderTextColor="#8F93A0"
                                                 label="landmark"
                                                 value={landmark}

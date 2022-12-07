@@ -23,15 +23,15 @@ const RecipeDetails = (props) => {
 
   }, []);
 
-  console.log("RecipeDATA Details...............:", props?.route?.params?.getHomeRecipelistID?.id);
+  // console.log("RecipeDATA Details...............:", props?.route?.params?.getHomeRecipelistID?.id);
   const RecipeID = props?.route?.params?.RecipeID?.id
 
   const PostRecipecategoryDetail = async () => {
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.RECIPE_DETAILS}`, { "recipe_id": RecipeID });
-      console.log("::::Recipe_List_Response:::::", response.data.recipe_details);
-      console.log("Recipe_List....", response.data.recipe_details)
+      // console.log("::::Recipe_List_Response:::::", response.data.recipe_details);
+      // console.log("Recipe_List....", response.data.recipe_details)
       setRecipeDetails(response.data.recipe_details)
      
     }

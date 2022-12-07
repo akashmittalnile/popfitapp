@@ -48,7 +48,7 @@ const ApplyCoupon = (props) => {
                 'headers': { "Authorization": ` ${usertkn}` }
             });
             // console.log("", response);
-            console.log("Response_CouponListApi ::::", response.data.data);
+            // console.log("Response_CouponListApi ::::", response.data.data);
             setCoupondata(response.data.data);
             // let result = coupondata.map(a => a.id)
             // setId(result);
@@ -58,14 +58,14 @@ const ApplyCoupon = (props) => {
         }
         catch (error) {
             Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
-            console.log("ShippingProductserror:::", error.response.data.message);
+            // console.log("ShippingProductserror:::", error.response.data.message);
             // setIsLoading(false)
         }
         setIsLoading(false)
     };
 
     const CouponApplyed = async (item) => {
-        console.log("CouponApplyed innn....%%%%%%%%%%%%", item.id);
+        // console.log("CouponApplyed innn....%%%%%%%%%%%%", item.id);
         setIsLoading(true);
         try {
             const usertkn = await AsyncStorage.getItem("authToken");
@@ -95,7 +95,7 @@ const ApplyCoupon = (props) => {
         }
         catch (error) {
             // Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
-            console.log("......error.........", error.response.data.message);
+            // console.log("......error.........", error.response.data.message);
             setIsLoading(false);
 
         }

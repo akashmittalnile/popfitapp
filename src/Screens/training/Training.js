@@ -127,10 +127,10 @@ const Training = (props) => {
     })
   }
 
-  console.log("Tainingcat_id_item...............:", props?.route?.params?.Tainingcat_id);
+  // console.log("Tainingcat_id_item...............:", props?.route?.params?.Tainingcat_id);
   const Tainingcat_id = props?.route?.params?.Tainingcat_id
 
-  console.log("Trainingsubcat_Data...............:", props?.route?.params?.Trainingsubcat_data?.id);
+  // console.log("Trainingsubcat_Data...............:", props?.route?.params?.Trainingsubcat_data?.id);
   const Trainingsubcat_data = props?.route?.params?.Trainingsubcat_data?.id
 
   const WorkoutSubCategorytraininglist = async () => {
@@ -141,11 +141,11 @@ const Training = (props) => {
       const response = await axios.post(`${API.TRAINING_LIST}`, { "category_id": Tainingcat_id, "subcategory_id": Trainingsubcat_data },
       { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } }
       );
-      console.log(":::::::::TrainingCategoryListAPI_Response>>>", response.data);
+      // console.log(":::::::::TrainingCategoryListAPI_Response>>>", response.data);
 
     
       if (response?.data?.status == 1) {
-        console.log("TrainingCategoryListAPI_data::::::", response.data.blog_list);
+        // console.log("TrainingCategoryListAPI_data::::::", response.data.blog_list);
         // console.log("imageurl::", response.data.training_image);
         // console.log("AUDIO_url::", response.data.training_audio);
         // console.log("Video_url::", response.data.training_video);
@@ -175,7 +175,7 @@ const Training = (props) => {
     }
     catch (error) {
       // Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
-      console.log(".WorkoutSubCategorytraininglist.....error.........", error );
+      // console.log(".WorkoutSubCategorytraininglist.....error.........", error );
       }
       setIsLoading(false);
   };
@@ -278,7 +278,7 @@ const Training = (props) => {
                     data={youtubelinks}
                     keyExtractor={(item, index) => String(index)}
                     renderItem={({ item, index }) => {
-                      console.log("1st flastlist video:", item)
+                      // console.log("1st flastlist video:", item)
                       return (
 
                         <>

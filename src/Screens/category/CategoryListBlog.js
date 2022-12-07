@@ -34,8 +34,8 @@ const SubCategoryBlog = (props) => {
     })
   }
 
-  console.log("subcategory_id_get from category...............:", props.route.params.subcategoryITEM.id);
-  console.log("category_id_item category...............:", props.route.params.categoryITEM);
+  // console.log("subcategory_id_get from category...............:", props.route.params.subcategoryITEM.id);
+  // console.log("category_id_item category...............:", props.route.params.categoryITEM);
   const subcategoryITEM = props.route.params.subcategoryITEM.id;
   const categoryITEM = props.route.params.categoryITEM;
 
@@ -49,15 +49,15 @@ const SubCategoryBlog = (props) => {
     const Token = await AsyncStorage.getItem("authToken");
 
 
-    console.log("subcategory listBLog.....infunction;;;;;", subcategoryITEM);
-    console.log("categoryITEM listBLog....infunction.;;;;;", categoryITEM);
+    // console.log("subcategory listBLog.....infunction;;;;;", subcategoryITEM);
+    // console.log("categoryITEM listBLog....infunction.;;;;;", categoryITEM);
     const categoryitem = categoryITEM;
     const subcategoryid = subcategoryITEM;
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.BLOG_LISTBLOG}`, { "category_id": categoryitem, "subcategory_id": subcategoryid }, { headers: { "Authorization": ` ${Token != null ? Token : null}` } });
-      console.log(":::::::::listBLog_Response>>>", response.data.blog_list);
-      console.log("status _listBLog:", response.data.status);
+      // console.log(":::::::::listBLog_Response>>>", response.data.blog_list);
+      // console.log("status _listBLog:", response.data.status);
       if (response.data.status == 1) {
         setsubcategorylistBlogitems(response.data.blog_list);
         // setIsLoading(false);
