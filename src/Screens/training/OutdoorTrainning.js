@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ActivityIndicator } from 'react-native'
-import LinearGradient from 'react-native-linear-gradient';
-import { ScrollView } from 'react-native-gesture-handler';
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ScrollView,RefreshControl} from 'react-native'
+ 
 import { BackgroundImage } from 'react-native-elements/dist/config';
 import { RadioButton } from 'react-native-paper';
 import styles from '../../Routes/style'
@@ -10,7 +9,8 @@ import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
 import CustomLoader from '../../Routes/CustomLoader';
- 
+import { useTranslation } from 'react-i18next';
+
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -23,7 +23,14 @@ const OutdoorTrainning = (props) => {
   const [planstatus, setPlanstatus] = useState(JSON.stringify(props?.route?.params?.categoryId?.plan_id));
   const [hometrainingid, setHomeTrainingid] = useState(props?.route?.params?.TrainingID);
   const [tokenuser, SetTokenUser] = useState("");
+  const { t } = useTranslation();
 
+  const [refreshing, setrefreshing] = useState(false)
+  const onRefresh = () => {
+    setrefreshing(true)
+    workoutSubCategoryAPI();
+    setrefreshing(false)
+  }
   useEffect(() => {
     // console.log("categoryId_item..plan_id.............:", props?.route?.params?.categoryId?.plan_id);
 
@@ -33,19 +40,17 @@ const OutdoorTrainning = (props) => {
 
     workoutSubCategoryAPI();
     // console.log("Traingplanstatus...:", props?.route?.params?.TrainingData);
+
     const checklogin = async () => {
       let Usertoken = await AsyncStorage.getItem("authToken");
-
       SetTokenUser(Usertoken);
-
-
     };
     checklogin();
 
   }, []);
 
   const gotoOutdoorCycle = (item) => {
-    // console.log("checkdataa:::::", item)
+    console.log("checkdataa:::::", item)
     if (checkplanid?.plan_status == "Active" || checkplanid?.plan_id >= 2) {
       if (tokenuser != null) {
         // console.log("ACTIVE plan::::::");
@@ -55,10 +60,8 @@ const OutdoorTrainning = (props) => {
         })
       }
       else if (tokenuser == null) {
-        Alert.alert('', 'Please login first')
-        // props.navigation.navigate('LoginMain', {
-        //   screen: 'LoginSignUp',
-        // });
+        Alert.alert('', t('Please_login_first'))
+
       }
 
     }
@@ -68,16 +71,7 @@ const OutdoorTrainning = (props) => {
         Tainingcat_id: checkplanid != undefined ? checkplanid?.id : hometrainingid?.id,
         Trainingsubcat_data: item
       })
-      // Alert.alert("Please, Login First and Suscribe any plan!")
-      // if(checkplanid?.plan_id > "0"){
-      // props.navigation.navigate('LoginMain', {
-      //   screen: 'LoginSignUp',
-      // });
-      // }
-      // else if(checkplanid?.plan_id == "0")
-      // {
-      //   return
-      // }
+
 
 
     }
@@ -90,9 +84,9 @@ const OutdoorTrainning = (props) => {
 
   }
 
-  const gotoSubsciption = () => {
-    props.navigation.navigate("SubscriptionPlan")
-  }
+  // const gotoSubsciption = () => {
+  //   props.navigation.navigate("SubscriptionPlan")
+  // }
 
 
 
@@ -113,7 +107,7 @@ const OutdoorTrainning = (props) => {
       if (response?.data?.status == '1') {
         setTrainingSUBCatgry(response?.data?.data)
 
-      } 
+      }
       // else {
 
       //   Alert.alert('Training Not Accessible', 'Login First !')
@@ -122,7 +116,7 @@ const OutdoorTrainning = (props) => {
 
     }
     catch (error) {
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", t('Check_internet_connection'))
       // console.log("..workoutSubCategoryAPI..Catch..error.........", error.response?.data?.message);
     } setIsLoading(false);
   };
@@ -199,9 +193,19 @@ const OutdoorTrainning = (props) => {
       </View> */}
           {
             TrainingSUBCatgry?.length != 0 ?
-              (<ScrollView>
-                <View style={{ marginTop: 10, justifyContent: "center", alignItems: "center", width: WIDTH * 0.4, height: 50 }}>
-                  <Text style={{ textAlign: 'left', fontSize: 18, color: '#ffffff', fontWeight: "500" }}>Sub Categories</Text>
+              (<ScrollView
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                } 
+              >
+                <View style={{ marginTop: 20, justifyContent: "flex-start", alignItems: "flex-start", width: WIDTH * 0.45, height: 36, marginLeft: 20 }}>
+                  <Text style={{ textAlign: 'left', fontSize: 17, color: '#ffffff', fontWeight: "500" }}>
+
+                    {t('Sub_Categories')}
+                  </Text>
                 </View>
 
                 <View style={{
@@ -235,7 +239,7 @@ const OutdoorTrainning = (props) => {
                                 width: WIDTH * 0.45, height: 160, borderRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
                               }}>
                               <Image
-                                source={{ uri: item?.image }}
+                                source={{ uri: item?.image != "" ? item?.image : 'https://dev.pop-fiit.com/images/logo.png' }}
                                 resizeMode="contain"
                                 style={{
                                   width: "100%",
@@ -243,6 +247,7 @@ const OutdoorTrainning = (props) => {
                                   borderRadius: 20,
                                   // borderTopRightRadius: 20,
                                   alignSelf: 'center',
+                                  backgroundColor: "black"
                                 }}
                               />
                               <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
@@ -314,7 +319,7 @@ const OutdoorTrainning = (props) => {
                     width: 200,
                     height: 120, alignSelf: 'center'
                   }} />
-                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>Oops! No data found</Text>
+                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>{t('Oops_No_data_found')}</Text>
               </View>)
           }
         </>)

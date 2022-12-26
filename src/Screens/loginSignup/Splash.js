@@ -23,12 +23,12 @@ const Splash = (props) => {
       //  setIsLoading(true)
       try {
         const response = await axios.get(`${API.NOTIFICATION}`, { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } });
-      let count=response.data.length
+        let count = response.data.length
         let notidata = 0;
         for (let i = 0; i <= count; i++) {
           if (response.data.data[i].is_read == 0) {
             notidata = notidata + 1
-  
+
           }
         }
         dispatch(incrementCounter(parseInt(notidata)));
@@ -72,7 +72,7 @@ const Splash = (props) => {
         // setIsLoading(false);
       }
       catch (error) {
-        Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+        Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
         // console.log("Cartproducts_splash:::", error.response.data.message);
         // setIsLoading(false)
       }
@@ -108,11 +108,15 @@ const Splash = (props) => {
             <TouchableOpacity   >
               <View style={{
 
-                borderRadius: 10, height: 128, width: 270, marginLeft: -21,
+                borderRadius: 10, height: 128, width: 260, justifyContent: 'center',  backgroundColor: '#272727',
               }}>
 
-                <Image source={require('../assets/splashLogo.png')}
-
+                <Image resizeMode="contain"
+                source={require('../assets/layerCenter1.png')}
+                  style={{
+                    width: 200,
+                    height: 160, alignSelf: 'center',top:-30,left:-4
+                  }}
                 />
 
               </View>

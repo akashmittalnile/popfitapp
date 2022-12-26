@@ -1,15 +1,8 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
-import { useState } from "react";
-import { useEffect } from "react";
-import { View, Text,   StyleSheet, TextInput, Image, SafeAreaView, Dimensions, ScrollView, Modal, Alert,TouchableOpacity } from 'react-native';
+import { View, Text,   StyleSheet,Image,Dimensions, ScrollView, Modal, Alert,TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { incrementCounter } from '../Redux/actions/UpdateCounter';
-import axios from 'axios';
-import { API } from '../Routes/Urls';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-import CustomLoader from "./CustomLoader";
  
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
@@ -28,125 +21,7 @@ const Headers = ({
     const dispatch = useDispatch();
     const myNoticount = useSelector((state) => state.mofiynoti);
     const Mycartcount = useSelector((state) => state.Cartreducer);
-    const [NotificationModal, setNotificationModal] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [noti, setNoti] = useState([]);
-
-    const Clicknotication = item => {
-        console.log('after click data:', item.type);
-        if (item.type == 'recipe') {
-            setNotificationModal(false);
-            navigation.navigate("Home")
-        } else if (item.type == 'training') {
-            setNotificationModal(false);
-            navigation.navigate("TrainingDetail")
-        } else if (item.type == 'blog') {
-            setNotificationModal(false);
-            navigation.navigate("Blog")
-        } else {
-            setNotificationModal(false);
-            Alert.alert('TYPE:COUPON');
-            console.log('Go to current page for coupon !!');
-        }
-    };
-    const GetNotification = async () => {
-
-        // console.log('on');
-
-        const usertkn = await AsyncStorage.getItem('authToken');
-
-        setIsLoading(true);
-        try {
-            const response = await axios.get(`${API.NOTIFICATION}`, {
-                headers: { Authorization: ` ${usertkn != null ? usertkn : null}` },
-            });
-
-
-            // AsyncStorage.setItem("notification", JSON.stringify(data));
-            if (response.data.status == '1') {
-                // console.log('1');
-                let data = response.data.data.length;
-                // console.log('incrementCounter1', data);
-                dispatch(incrementCounter(parseInt(data)));
-                setNoti(response.data.data);
-                // setIsLoading(false);
-            }
-            if (response.data.status == '0') {
-                // console.log('0');
-                // Alert.alert("","Login First")
-                // setIsLoading(false);
-                // setNoti(response.data.data);
-            }
-        } catch (error) {
-            Alert.alert('1catch', 'Something went wrong please exit the app and try again');
-
-            // console.log("Notification_catch-error:::", error.response.data.message);
-        } setIsLoading(false);
-    };
-    const ItemRemove = async item => {
-        const usertkn = await AsyncStorage.getItem('authToken');
-        setIsLoading(true);
-        console.warn('$$$$$$id---->', item.id);
-        let id = item.id;
-        const url = API.NOTIFICATION_DELETE + '/' + id;
-        console.log('url------>', url);
-        axios({
-            url: url,
-            method: 'DELETE',
-            // data: data,
-            headers: {
-                Authorization: ` ${usertkn}`,
-            },
-        })
-            .then(function (response) {
-                if (response.data.status == '1') {
-                    GetNotification();
-                } else {
-                    alert('something went wrong');
-                }
-
-
-            })
-            .catch(function (error) {
-                console.log('......error.........', error);
-                Alert.alert('', 'Something went wrong please exit the app and try again');
-                // setIsLoading(false);
-            });
-        setIsLoading(false);
-
-    };
-
-    const NoticationDetails = async item => {
-        const usertkn = await AsyncStorage.getItem('authToken');
-        console.log('item in notification details API:', item.id);
-        if (item.id != null) {
-            let notifiID = item.id;
-            setIsLoading(true);
-
-            try {
-                const response = await axios.post(
-                    `${API.NOTIFICATION_DETAILS}`,
-                    { notification_id: notifiID },
-                    { headers: { Authorization: ` ${usertkn}` } },
-                );
-                console.log(
-                    'notificationdetails response:',
-                    response.data.message,
-                    response.data.status,
-                );
-                if (response.data.status == 1) {
-                    GetNotification();
-                    // setIsLoading(false);
-                } else if (response.data.status == 0) {
-                    alert('Server issue', 'Try again later ');
-                    // setIsLoading(false);
-                }
-            } catch (error) {
-                // console.log("NoticationDetails-error:::", error);
-                Alert.alert('', 'Something went wrong please exit the app and try again');
-            } setIsLoading(false);
-        } setIsLoading(false);
-    };
+    
     return (
         <View style={style.navigationBarBlack}>
 
@@ -183,10 +58,10 @@ const Headers = ({
             <View style={style.navigationBarCenterContainer}>
                 <TouchableOpacity>
                     <Image resizeMode="contain"
-                        source={require('../Screens/assets/layerCenter.png')}
+                        source={require('../Screens/assets/layerCenter1.png')}
                         style={{
                             width: 80,
-                            height: 50, alignSelf: 'center'
+                            height: 70, alignSelf: 'center', 
                         }} />
 
                 </TouchableOpacity>
@@ -709,11 +584,13 @@ const style = StyleSheet.create({
 
     navigationBarCenterContainer: {
         left: 20,
+        height: 60,
         // backgroundColor: "yellow",
         // flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        right: 0
+        right: 0,
+        top:-15,
     },
     navigationBarRightContainer: {
 

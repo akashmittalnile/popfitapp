@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, Modal, ActivityIndicator } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, Modal, ScrollView, RefreshControl } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
-import { ScrollView } from 'react-native-gesture-handler';
+// import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';
 import { RadioButton } from 'react-native-paper';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -12,6 +12,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { async } from 'regenerator-runtime';
 import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -20,18 +21,26 @@ var HEIGHT = Dimensions.get('window').height;
 
 const ProductDetail = (props) => {
 
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [productdata, setproductdata] = useState([]);
   const [useraddress, setuseraddress] = useState([]);
-  // const [prodtid, setprodtid] = useState(" ");
+
   const [Productitems, setProductitems] = useState("");
-  // console.log("StoresProductDetails????",Productitems);
+
   const [ImageBaseUrl, setImageBaseUrl] = useState('');
   const [countnums, setCountnum] = useState(1);
   const [usertoken, setUsertoken] = useState("");
-  // const [CartAddedPopUp, setCartAddedPopUp] = useState(false);
+
+  const [currenysymbol, SetCurrenysymbol] = useState('')
 
 
+  const [refreshing, setrefreshing] = useState(false)
+  const onRefresh = () => {
+    setrefreshing(true)
+    StoresProductDetails();
+    setrefreshing(false)
+  }
   // const gotoShippingDetail = () => {
   //   // setCartAddedPopUp(false);
   //   props.navigation.navigate("ShippingDetail");
@@ -57,7 +66,7 @@ const ProductDetail = (props) => {
   // };
 
 
-  // console.log("Store_item...............:", props?.route?.params?.ITEM?.id);
+  console.log("Store_item...............:", props?.route?.params?.ITEM?.id);
   const ITEM = props?.route?.params?.ITEM?.id
   // console.log("ClothITEM_item...............:", props?.route?.params?.CLOTHITEM?.id);
   const CLOTHITEM = props?.route?.params?.CLOTHITEM?.id
@@ -75,12 +84,12 @@ const ProductDetail = (props) => {
   useEffect(() => {
     UserToken();
     StoresProductDetails();
-    const unsubscribe = props.navigation.addListener('focus', () => {
+    // const unsubscribe = props.navigation.addListener('focus', () => {
 
-      GetShippingProducts();
+    //   GetShippingProducts();
 
-    });
-    return unsubscribe;
+    // });
+    // return unsubscribe;
 
 
   }, [props]);
@@ -94,13 +103,13 @@ const ProductDetail = (props) => {
       const response = await axios.post(`${API.STORE_PRODUCT_DETAIL}`, { "product_id": productids });
       // console.log(":::::::::Shop_product_Response>>>", response.data.data);
       // console.log("status _SHOP:", response.data.status);
-
+      SetCurrenysymbol(response.data.currency)
       setProductitems(response.data.data);
       setImageBaseUrl(response.data.product_url);
 
     }
     catch (error) {
-      Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", t('Check_internet_connection'))
       // console.log("......StoresProductDetails_error.........", error.response.data.message);
     }
     setIsLoading(false);
@@ -121,7 +130,7 @@ const ProductDetail = (props) => {
 
     }
     catch (error) {
-      Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", t('Check_internet_connection'))
       // console.log("ShippingProductserror:::", error.response.data.message);
 
     }
@@ -151,13 +160,13 @@ const ProductDetail = (props) => {
 
       }
       else {
-        Alert.alert('Something went wrong !', 'Data not found')
+        Alert.alert('', t('Error_msg'))
 
       }
 
     }
     catch (error) {
-      Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", t('Check_internet_connection'))
       // console.log("......error ProductADD.........", error.response.data.message);
     }
     setIsLoading(false);
@@ -218,7 +227,14 @@ const ProductDetail = (props) => {
             backgroundColor: 'transparent',
           }}>
 
-            <ScrollView>
+            <ScrollView
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                />
+              }
+            >
               <View style={{ paddingBottom: 44 }}>
                 {/* productitem _image */}
                 <View style={{
@@ -266,7 +282,7 @@ const ProductDetail = (props) => {
                         alignSelf: 'center',
                         borderRadius: 20
                       }}
-                      source={{ uri: Productitems ? ImageBaseUrl + Productitems?.image[0] : null }} />
+                      source={{ uri: Productitems?.image != null ? `${ImageBaseUrl + Productitems?.image[0]}` : "https://dev.pop-fiit.com/images/logo.png" }} />
 
                   </View>
 
@@ -327,13 +343,13 @@ const ProductDetail = (props) => {
                 <View style={{ marginTop: 10, flex: 1, flexDirection: 'row', width: "95%", height: 50, justifyContent: "center", alignItems: "center" }}>
 
                   <View style={{ flex: 1, marginLeft: 20, height: 30, width: 100, justifyContent: "center", alignItems: "flex-start" }}>
-                    <Text style={{ textAlign: 'left', fontSize: 15, color: '#000000', fontWeight: "500" }}>Price: <Text style={{ textAlign: 'left', fontSize: 14, color: '#77869E', fontWeight: "500" }}>${Productitems?.price}</Text></Text>
+                    <Text style={{ textAlign: 'left', fontSize: 15, color: '#000000', fontWeight: "500" }}>{t('Price')}: <Text style={{ textAlign: 'left', fontSize: 14, color: '#77869E', fontWeight: "500" }}>{currenysymbol}{Productitems?.price}</Text></Text>
                   </View>
 
                 </View>
 
                 <View style={{ justifyContent: "flex-start", alignItems: "flex-start", width: "90%", marginLeft: 20, height: "auto", marginBottom: 20, marginTop: 4, }}>
-                  <Text style={{ textAlign: 'left', fontSize: 15, color: '#000000', fontWeight: "500" }}>Product Details</Text>
+                  <Text style={{ textAlign: 'left', fontSize: 15, color: '#000000', fontWeight: "500" }}>{t('Product_Details')}</Text>
                   <Text style={{ marginTop: 8, textAlign: 'left', fontSize: 14, color: '#000000', }}>{Productitems?.description}</Text>
                 </View>
 
@@ -621,20 +637,20 @@ const ProductDetail = (props) => {
                 style={{ justifyContent: 'center', backgroundColor: '#ffcc00', borderRadius: 50, alignItems: "center", height: 34, width: 170 }}>
 
 
-                <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', }}>Continue Shopping</Text>
+                <Text style={{ textAlign: 'center', fontSize: 13, color: 'white', }}>{t('Continue_Shopping')}</Text>
 
               </TouchableOpacity>
 
               <TouchableOpacity onPress={() => {
                 if (usertoken == null) {
-                  Alert.alert('', 'Please login first')
+                  Alert.alert('', t('Please_login_first'))
                 } else if (usertoken != null) {
                   ProductADDcart()
                 }
 
               }}
                 style={{ justifyContent: 'center', height: 34, backgroundColor: '#ffcc00', borderRadius: 50, marginLeft: 10, width: 130 }}>
-                <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', fontWeight: "500" }}>Add To Cart</Text>
+                <Text style={{ textAlign: 'center', fontSize: 13, color: 'white', fontWeight: "500" }}>{t('Add_To_Cart')}</Text>
                 {/* {
 Cartaddedview && Isshippingview == "" ?
 (<Text style={{ textAlign: 'center', fontSize: 16, color: 'white', fontWeight: "500" }}>Add To Cart</Text>)

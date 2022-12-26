@@ -11,15 +11,16 @@ import {
   Image,
   Alert,
   Modal, SafeAreaView, Dimensions,
-  ActivityIndicator
+  ScrollView,
+  RefreshControl
 } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+// import { ScrollView } from 'react-native-gesture-handler';
 import { DrawerActions } from '@react-navigation/native';
 import { API } from '../../Routes/Urls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
-import { Divider } from 'react-native-elements';
+import { useTranslation } from 'react-i18next';
 import { async } from 'regenerator-runtime';
 import CustomLoader from '../../Routes/CustomLoader';
 
@@ -36,7 +37,7 @@ const Shop = (props) => {
   const [shopitems, setshopitems] = useState([]);
 
   // const openDrawer = () => props.navigation.dispatch(DrawerActions.openDrawer());
-
+  const { t } = useTranslation();
   const gotoShippingDetail = (item) => {
     // console.log("filter product id:", item);
     // const Token = await AsyncStorage.getItem("authToken")
@@ -53,12 +54,16 @@ const Shop = (props) => {
   //   props.navigation.navigate('ShippingDetail');
   // };
 
+  const [refreshing, setrefreshing] = useState(false)
+  const onRefresh = () => {
+    setrefreshing(true)
+
+    StoresProductget();
+    setrefreshing(false)
+  }
   useEffect(() => {
     StoresProductget();
-    // const unsubscribe = props.navigation.addListener('focus', () => {
-      
-    // })
-    // return unsubscribe;
+
 
   }, []);
 
@@ -80,12 +85,12 @@ const Shop = (props) => {
 
       } else {
         setFilterPopUp(false);
-        Alert.alert('', 'Something went wrong please exit the app and try again');
+        Alert.alert('', t('Error_msg'));
       }
 
     }
     catch (error) {
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", t('Check_internet_connection'))
       // Alert.alert('', 'Something went wrong please exit the app and try again');
       // Alert.alert("filter",error.response.data.message);
     }
@@ -108,13 +113,13 @@ const Shop = (props) => {
       }
       else {
 
-        Alert.alert('', 'Something went wrong please exit the app and try again');
+        Alert.alert('', t('Error_msg'));
       }
 
     }
     catch (error) {
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
-       
+      Alert.alert("", t('Check_internet_connection'))
+
     }
     setIsLoading(false)
   };
@@ -207,20 +212,26 @@ const Shop = (props) => {
 
       {/* <Divider color="#393939" width={1.2} /> */}
       {!isLoading ?
-        (<ScrollView >
+        (<ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          } >
 
           <View style={{ height: 50, flexDirection: 'row', flex: 1, justifyContent: "flex-start", alignItems: "flex-start", width: "100%" }}>
-            <View style={{ justifyContent: "center", alignItems: "center", flex: 0.2, }}>
+            <View style={{ justifyContent: "center", alignItems: "flex-start", flex: 0.4, height: 50, marginLeft: 15, }}>
               <Text
                 style={{
-                  // marginLeft: 10,
+
                   marginTop: 20,
                   textAlign: 'left',
-                  fontSize: 18,
+                  fontSize: 17,
                   color: 'black',
                   fontWeight: "500"
                 }}>
-                Shop
+                {t('Shop')}
               </Text>
             </View>
 
@@ -334,11 +345,11 @@ const Shop = (props) => {
                       height: 155,
                       borderTopLeftRadius: 20,
                       borderTopRightRadius: 20,
-                      backgroundColor: 'white',
+                      backgroundColor: 'black',
                     }}>
                     <Image
-                      source={{ uri: item?.image ? item?.image : item?.product_image }}
-                      resizeMode="contain"
+                      source={{ uri: item?.image != "" ? `${item?.image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
+                      resizeMode="stretch"
                       style={{
                         width: "100%",
                         height: "100%",
@@ -359,7 +370,7 @@ const Shop = (props) => {
                         color: 'black', fontWeight: "500"
 
                       }}>
-                      {item?.name != null ? item?.name?.slice(0, 15) + '...' : item?.product_name?.slice(0, 15) + '...'}
+                      {item?.name != null ? item?.name?.slice(0, 15) : item?.product_name?.slice(0, 15)}
                     </Text>
 
                     <View
@@ -372,7 +383,7 @@ const Shop = (props) => {
                           fontSize: 12,
                           color: 'black', fontWeight: "500"
 
-                        }}>$ {item?.price != null ? item?.price : item?.product_price}
+                        }}>{item?.price != null ? item?.price : item?.product_price}
                       </Text>
 
                       <View
@@ -492,7 +503,7 @@ const Shop = (props) => {
                   backgroundColor: 'rgba(140, 141, 142, 0.7)',
                 }}>
                 <TouchableOpacity onPress={() => setFilterPopUp(false)}
-                  style={{ flex: 1,  }}
+                  style={{ flex: 1, }}
                 />
                 <View
                   style={{
@@ -560,7 +571,7 @@ const Shop = (props) => {
 
                           marginTop: 2,
                         }}>
-                        Filter
+                        {t('Filter')}
                       </Text>
                     </View>
 
@@ -613,7 +624,7 @@ const Shop = (props) => {
                                   color: ischecked == 'high_to_low' ? '#ffcc00' : '#8F93A0'
 
                                 }}>
-                                Higher to Lower Price
+                                {t('Higher_to_Lower_Price')}
                               </Text>
                             </View>
                           </View>
@@ -661,7 +672,7 @@ const Shop = (props) => {
                                   color: ischecked == 'low_to_high' ? '#ffcc00' : '#8F93A0'
 
                                 }}>
-                                Lower to Higher Price
+                                {t('Lower_to_Higher_Price')}
                               </Text>
                             </View>
                           </View>
@@ -909,7 +920,7 @@ const Shop = (props) => {
                                 color: 'white',
 
                               }}>
-                              Apply
+                              {t('Apply')}
                             </Text>
                           </View>
                         </TouchableOpacity>

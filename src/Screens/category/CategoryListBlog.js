@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, Linking, ActivityIndicator } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, Linking, ScrollView,RefreshControl } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
-import { ScrollView } from 'react-native-gesture-handler';
+ 
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -15,7 +16,14 @@ const SubCategoryBlog = (props) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [subcategorylistBlogitems, setsubcategorylistBlogitems] = useState([]);
+  const [refreshing, setrefreshing] = useState(false)
+  const onRefresh = () => {
+    setrefreshing(true)
+    getCategoryblog_listApi()
+    setrefreshing(false)
+  }
 
+  const { t } = useTranslation();
   // const openDrawer = () => props.navigation.dispatch(DrawerActions.openDrawer());
 
   // const gotoNotification = () => {
@@ -64,7 +72,7 @@ const SubCategoryBlog = (props) => {
       }
     }
     catch (error) {
-      Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", t('Check_internet_connection'))
       // console.log("......error.........", error.response.data.message);
       // setIsLoading(false);
 
@@ -102,10 +110,17 @@ const SubCategoryBlog = (props) => {
         (<>
           {
             subcategorylistBlogitems.length != 0 ?
-              (<ScrollView >
+              (<ScrollView 
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+              >
                 <View style={{ height: 50, flexDirection: 'row' }}>
                   <View style={{ flex: 1, marginLeft: 15, marginTop: 20, }}>
-                    <Text style={{ textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "500" }}>Blogs</Text>
+                    <Text style={{ textAlign: 'left', fontSize: 17, color: 'white', fontWeight: "500" }}>{t('Blogs')}</Text>
                   </View>
 
                 </View>
@@ -131,8 +146,8 @@ const SubCategoryBlog = (props) => {
                           justifyContent: "center",
                           alignItems: 'center',
                         }}>
-                        <View style={{width: WIDTH * 0.45, backgroundColor: '#c9bca0', height: 25,   justifyContent: 'center', alignItems: "center", borderTopLeftRadius: 20 ,borderTopRightRadius: 20}}>
-                          <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.image_title?.slice(0, 13) + '...'}</Text>
+                        <View style={{ width: WIDTH * 0.45, backgroundColor: '#c9bca0', height: 25, justifyContent: 'center', alignItems: "center", borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
+                          <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.image_title?.length >= 18 ? item?.image_title?.slice(0, 18) + '...' : item?.image_title?.slice(0, 13)}</Text>
 
                         </View>
                         <View
@@ -141,13 +156,13 @@ const SubCategoryBlog = (props) => {
                             justifyContent: "flex-start", alignItems: "flex-start"
                           }}>
                           <Image
-                            source={{ uri: `${item?.blog_image}` }}
+                            source={{ uri: item?.blog_image != "" ? `${item?.blog_image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
                             resizeMode="stretch"
                             style={{
                               width: "100%",
                               height: "100%",
                               borderBottomLeftRadius: 20, borderBottomRightRadius: 20,
-                              alignSelf: 'center',
+                              alignSelf: 'center', backgroundColor: "black"
                             }}
                           />
 
@@ -219,7 +234,7 @@ const SubCategoryBlog = (props) => {
                     width: 200,
                     height: 120, alignSelf: 'center'
                   }} />
-                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>No data found!</Text>
+                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>{t('Oops_No_data_found')}</Text>
               </View>)
           }
 

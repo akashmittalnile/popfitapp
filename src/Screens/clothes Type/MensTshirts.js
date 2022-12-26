@@ -4,39 +4,38 @@ import {
   FlatList,
   Text,
   TouchableOpacity,
-  StyleSheet,
-  TextInput,
   Image,
   Alert,
-  Pressable,
   Modal,
   SafeAreaView,
-  ActivityIndicator, Dimensions
+  Dimensions, ScrollView, RefreshControl
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-import { ScrollView } from 'react-native-gesture-handler';
-import { BackgroundImage } from 'react-native-elements/dist/config';
-import { RadioButton } from 'react-native-paper';
-import DropDownPicker from 'react-native-dropdown-picker';
-import { Pages } from 'react-native-pages';
-import styles from '../../Routes/style';
+
 import Headers from '../../Routes/Headers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { API } from '../../Routes/Urls';
 import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
-const MenTshirts = props => {
+const MenTshirts = (props) => {
 
+  const { t } = useTranslation();
   const [FilterPopup, setFilterPopUp] = useState(false);
   const [ischecked, setChecked] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
   const [shopitems, setshopitems] = useState([]);
 
+  const [refreshing, setrefreshing] = useState(false)
+  const onRefresh = () => {
+    setrefreshing(true)
+    CLOTHStoresProduct();
+    setrefreshing(false)
+  }
   const gotoShippingDetail = (item) => {
     // console.log("product filter api:", item);
     props.navigation.navigate('ProductDetail', {
@@ -50,14 +49,7 @@ const MenTshirts = props => {
   const categoryID = props?.route?.params?.categoryID;
 
   useEffect(() => {
-
-
-    const unsubscribe = props.navigation.addListener('focus', () => {
-      CLOTHStoresProduct();
-
-    });
-    return unsubscribe;
-
+    CLOTHStoresProduct();
   }, []);
 
   const CLOTHStoresProduct = async () => {
@@ -73,12 +65,12 @@ const MenTshirts = props => {
       }
       else {
         // setIsLoading(false);
-        Alert.alert('', 'Something went wrong please exit the app and try again');
+        Alert.alert('', t('Error_msg'));
       }
 
     }
     catch (error) {
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", t('Check_internet_connection'))
       // console.log("CLOTHStores_Producterror.........", error.response.data.message);
       // Alert.alert('', 'Something went wrong please exit the app and try again');
       // setIsLoading(false);
@@ -100,14 +92,14 @@ const MenTshirts = props => {
         // setIsLoading(false);
       } else {
         setFilterPopUp(false);
-        Alert.alert('!', 'Something went wrong please exit the app and try again');
+        Alert.alert('', t('Error_msg'));
         // setIsLoading(false);
       }
 
     }
     catch (error) {
       // console.log(".....ShopFilter.error.........", error.response.data.message);
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", t('Check_internet_connection'))
       // Alert.alert('', 'Something went wrong please exit the app and try again');
       // setIsLoading(false);
     }
@@ -140,19 +132,26 @@ const MenTshirts = props => {
         (<>
           {
             shopitems.length != 0 ?
-              (<ScrollView>
+              (<ScrollView
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+              >
                 <View style={{ height: 50, flexDirection: 'row', flex: 1, justifyContent: "flex-start", alignItems: "flex-start", width: "100%" }}>
-                  <View style={{ justifyContent: "flex-start", alignItems: "flex-start", flex: 0.45, }}>
+                  <View style={{ justifyContent: "flex-start", alignItems: "flex-start", flex: 0.8, height: 50, marginLeft: 15, }}>
                     <Text
                       style={{
-                        marginLeft: 15,
+
                         marginTop: 20,
                         textAlign: 'left',
-                        fontSize: 18,
+                        fontSize: 17,
                         color: 'black',
                         fontWeight: "500"
                       }}>
-                      Clothing Store
+                      {t('Store_Categories')}
                     </Text>
                   </View>
 
@@ -231,8 +230,8 @@ const MenTshirts = props => {
                             backgroundColor: 'white',
                           }}>
                           <Image
-                            source={{ uri: item.product_image }}
-                            resizeMode="contain"
+                            source={{ uri: item?.product_image != null ? item?.product_image : 'https://dev.pop-fiit.com/images/logo.png' }}
+                            resizeMode="stretch"
                             style={{
                               width: "100%",
                               height: "100%",
@@ -380,7 +379,7 @@ const MenTshirts = props => {
                               fontWeight: "400",
                               marginTop: 2,
                             }}>
-                            Filter
+                            {t('Filter')}
                           </Text>
                         </View>
 
@@ -433,7 +432,7 @@ const MenTshirts = props => {
                                       color: ischecked == 'high_to_low' ? '#ffcc00' : '#8F93A0'
 
                                     }}>
-                                    Higher to Lower Price
+                                    {t('Higher_to_Lower_Price')}
                                   </Text>
                                 </View>
                               </View>
@@ -481,7 +480,7 @@ const MenTshirts = props => {
                                       color: ischecked == 'low_to_high' ? '#ffcc00' : '#8F93A0'
 
                                     }}>
-                                    Lower to Higher Price
+                                    {t('Lower_to_Higher_Price')}
                                   </Text>
                                 </View>
                               </View>
@@ -729,7 +728,7 @@ const MenTshirts = props => {
                                     color: 'white',
 
                                   }}>
-                                  Apply
+                                  {t('Apply')}
                                 </Text>
                               </View>
                             </TouchableOpacity>
@@ -755,7 +754,7 @@ const MenTshirts = props => {
                     width: 200,
                     height: 120, alignSelf: 'center'
                   }} />
-                <Text style={{ fontSize: 14, fontWeight: "bold" }}>No data found</Text>
+                <Text style={{ fontSize: 14, fontWeight: "bold" }}>{t('Oops_No_data_found')}</Text>
               </View>)
           }
 

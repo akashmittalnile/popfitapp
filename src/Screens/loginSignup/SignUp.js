@@ -1,12 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, SafeAreaView, Modal, Button, ActivityIndicator, Dimensions, KeyboardAvoidingView, Platform } from 'react-native'
-import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
-import { BackgroundImage } from 'react-native-elements/dist/config';
-import { RadioButton } from 'react-native-paper';
 import DropDownPicker from 'react-native-dropdown-picker';
 import style from '../../Routes/style';
-import SuccessfullyRegistered from '../PopUpScreens/SuccessfullyRegistered';
 import * as yup from 'yup';
 import { Formik } from 'formik';
 import MenuFieldState from '../../Screens/Menuinput/State/index';
@@ -17,12 +13,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import CalendarModal from './CalendarModal';
 import moment from 'moment';
 import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
 const Signup = (props, navigation) => {
 
+  const { t } = useTranslation();
   const [RegisteredPopUp, setRegisteredPopUp] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -59,8 +57,17 @@ const Signup = (props, navigation) => {
   const [ischecked, setChecked] = React.useState("");
   const emailInput = useRef(null);
 
-
-
+  const Firstnamevld = t('Enter_firstname');
+  const Lastnamevld = t('Enter_lastname');
+  const Usernamevld = t('Set_any_username');
+  const Emailvld = t('Enter_validemail_id');
+  const Zipcode_minvld = t('Zipcode_validation_minimun_msg');
+  // const Zipcode_maxvld = t('ZIP code minimum length 4-digits and maximum 10-digits');
+  const zipvld = t('Enter_ZipCode_signup');
+  const paswdvld = t('Password_length_greater_than_8_characters');
+  const paswdminvld = t('Your_password_short_minimum_8characters');
+  const cnfmpswdvld = t('Confirm_password_required');
+  const cnfmpswdmsg = t('Password_confirm_password_does_not_match');
 
   const [isToggle, setToggle] = useState(false)
   const [secureText, setSecureText] = useState(true)
@@ -208,7 +215,7 @@ const Signup = (props, navigation) => {
       password: values?.passwords,
       c_password: values?.cfm_password,
     };
-    // console.log(".......userInputdata", data);
+    console.log(".......userInputdata", data);
     setIsLoading(true);
     axios({
       url: API.SIGN_UP,
@@ -224,14 +231,14 @@ const Signup = (props, navigation) => {
         }
         else {
           setIsLoading(false);
-          Alert.alert('All the fields are required *', 'Fill correctly')
+          Alert.alert(t('All_the_fields_are_required'), '')
         }
 
       })
       .catch(function (error) {
-        Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+        Alert.alert("", t('Check_internet_connection'))
         // Alert.alert('', 'Something went wrong please exit the app and try again');
-        // console.log("Signup_error:", error);
+        console.log("Signup_error:", error);
         setIsLoading(false);
       })
   };
@@ -270,7 +277,7 @@ const Signup = (props, navigation) => {
       }
     }
     catch (error) {
-      Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", t('Check_internet_connection'))
       // console.log("Countryerror:", error.response.data.message);
       setAlertVisibility(false);
       // setLoading(false)
@@ -304,7 +311,7 @@ const Signup = (props, navigation) => {
       }
     }
     catch (error) {
-      Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", t('Check_internet_connection'))
       // console.log("emailerror:", error.response.data.message);
       // setIsLoading(false);
       setAlertVisibility(false);
@@ -338,7 +345,7 @@ const Signup = (props, navigation) => {
       }
     }
     catch (error) {
-      Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", t('Check_internet_connection'))
       // Alert.alert('', 'Something went wrong please exit the app and try again');
       // console.log("emailerror:", error.response.data.message);
 
@@ -384,7 +391,7 @@ const Signup = (props, navigation) => {
                   </TouchableOpacity>
                 </View>
                 <View style={style.BasicDetailsheader}>
-                  <Text style={{ textAlign: 'justify', fontSize: 20, color: 'white' }}>Please Enter Your Basic Details</Text>
+                  <Text style={{ textAlign: 'justify', fontSize: 20, color: 'white' }}>{t('Please_Enter_Your_Basic_Details')}</Text>
                 </View>
               </View>
 
@@ -411,29 +418,29 @@ const Signup = (props, navigation) => {
                 validationSchema={yup.object().shape({
                   first_Name: yup
                     .string()
-                    .required('Enter first name *'),
+                    .required(Firstnamevld),
                   last_Name: yup
                     .string()
-                    .required('Enter last name *'),
+                    .required(Lastnamevld),
                   birthday: yup
                     .string(),
                   type_your_username: yup
                     .string()
                     // .min(4, "Username  must be at least 4 characters")
-                    .required('Set any userName *'),
+                    .required(Usernamevld),
                   email: yup
                     .string()
                     .email()
-                    .required('Enter valid email id *'),
+                    .required(Emailvld),
                   // address1: yup
                   //   .string(),
                   // address2: yup
                   //   .string(),
                   zip_code: yup
                     .string()
-                    .min(4, "ZIP code minimum length 4-digits and maximum 10-digits")
-                    .max(10, "ZIP code minimum length 4-digits and maximum 10-digits")
-                    .required('Enter Pin Code *'),
+                    .min(4, Zipcode_minvld)
+                    .max(10, Zipcode_minvld)
+                    .required(zipvld),
                   country: yup
                     .string(),
                   state: yup
@@ -444,13 +451,13 @@ const Signup = (props, navigation) => {
                   //   .string(),
                   passwords: yup
                     .string()
-                    .required('Password length must be greater than 8 characters*')
-                    .min(8, 'Your password is too short minimum 8 characters *'),
+                    .required(paswdvld)
+                    .min(8, paswdminvld),
                   // .max(16, 'Your password should not  be more then   *'),
                   cfm_password: yup
                     .string()
-                    .required('Confirm password is required *')
-                    .oneOf([yup.ref('passwords')], 'Password & confirm password does not match')
+                    .required(cnfmpswdvld)
+                    .oneOf([yup.ref('passwords')], cnfmpswdmsg)
                 })}
               >
                 {({ values, handleChange, errors, setFieldTouched, touched, isValid, handleSubmit }) => (
@@ -478,7 +485,7 @@ const Signup = (props, navigation) => {
                             }} />
 
                           <TextInput
-                            placeholder="First Name"
+                            placeholder={t('First_Name')}
                             placeholderTextColor='#8F93A0'
                             value={values.first_Name}
 
@@ -517,7 +524,7 @@ const Signup = (props, navigation) => {
                             onChangeText={handleChange('last_Name')}
 
                             onBlur={() => setFieldTouched('last_Name')}
-                            placeholder="Last Name"
+                            placeholder={t('Last_Name')}
                             placeholderTextColor='#8F93A0'
                           />
                         </View>
@@ -552,7 +559,7 @@ const Signup = (props, navigation) => {
                               justifyContent: "center",
                               alignItems: "center"
                             }}
-                            placeholder='Date of birth'
+                            placeholder={t('Date_of_birth')}
                             // autoCapitalize="none"
                             // onBlur={() => setFieldTouched('birthday')}
                             placeholderTextColor='#8F93A0'
@@ -580,7 +587,7 @@ const Signup = (props, navigation) => {
                             fontSize: 12, color: 'red',
                             // color: '#FF0D10', 
                             paddingLeft: 30,
-                          }}>Select D.O.B *</Text>
+                          }}>{t('Select_DOB')} *</Text>
                           : <></>}
 
                       </View>
@@ -588,7 +595,7 @@ const Signup = (props, navigation) => {
                       <View style={{ flexDirection: 'column', marginTop: 8 }}>
                         <TextInput
                           style={style.textInput}
-                          placeholder='Username'
+                          placeholder={t('Username')}
                           secureTextEntry={false}
                           autoCapitalize="none"
                           placeholderTextColor='#8F93A0'
@@ -607,7 +614,7 @@ const Signup = (props, navigation) => {
                           <TextInput
                             ref={emailInput}
                             style={style.textInput}
-                            placeholder='Email'
+                            placeholder={t('Email')}
                             autoCapitalize="none"
                             keyboardType='email-address'
                             placeholderTextColor='#8F93A0'
@@ -671,7 +678,7 @@ const Signup = (props, navigation) => {
                       <View style={{ flexDirection: 'column', marginTop: 8 }}>
                         <TextInput
                           style={style.textInput}
-                          placeholder='Zip / Pin Code'
+                          placeholder={t('Zip_Pin_Code')}
                           autoCapitalize="none"
                           placeholderTextColor='#8F93A0'
                           fontWeight='normal'
@@ -695,7 +702,7 @@ const Signup = (props, navigation) => {
                           setItems={setCountryitems}
                           maxHeight={240}
                           dropDownDirection="BOTTOM"
-                          placeholder="Country"
+                          placeholder={t('Country')}
                           itemStyle={{ justifyContent: 'flex-start' }}
                           textStyle={{
                             fontSize: 16
@@ -751,7 +758,7 @@ const Signup = (props, navigation) => {
                         />
                         {
                           msgcountry ?
-                            <View style={{ justifyContent: "center", alignItems: "flex-start", marginTop: 8, paddingLeft: 20, height:30 }}>
+                            <View style={{ justifyContent: "center", alignItems: "flex-start", marginTop: 8, paddingLeft: 20, height: 30 }}>
                               <Text style={{
                                 fontSize: 12,
                                 color: '#FF0D10',
@@ -767,7 +774,7 @@ const Signup = (props, navigation) => {
                         height: 50, marginTop: 30, zIndex: 2
                       }}>
                         <DropDownPicker
-                          placeholder="State"
+                          placeholder={t('State')}
                           loading={loading}
                           onPress={() => { SelectState() }}
                           items={Stateitems.map(item => ({ label: item?.name, value: item?.id }))}
@@ -846,7 +853,7 @@ const Signup = (props, navigation) => {
                             },
                           }}
                           dropDownDirection="BOTTOM"
-                          placeholder="City"
+                          placeholder={t('City')}
                           containerStyle={{ height: 40 }}
                           textStyle={{
                             fontSize: 16
@@ -925,7 +932,7 @@ const Signup = (props, navigation) => {
                             //   fontSize: 18
                             // }}
                             //InputColor="red"
-                            placeholder='Create Password'
+                            placeholder={t('Create_Password')}
                             autoCapitalize="none"
                             onBlur={() => setFieldTouched('passwords')}
                             placeholderTextColor='#8F93A0'
@@ -952,7 +959,7 @@ const Signup = (props, navigation) => {
 
                         {
                           touched.passwords && errors.passwords &&
-                          <Text style={{ fontSize: 12, color: '#FF0D10', paddingLeft: 24, marginTop: 4 }}>{errors.passwords}</Text>
+                          <Text style={{ fontSize: 12, color: '#FF0D10', paddingLeft: 10, marginTop: 4 }}>{errors.passwords}</Text>
                         }
 
                       </View>
@@ -989,7 +996,7 @@ const Signup = (props, navigation) => {
                             //   fontSize: 18, marginTop: 15,
                             // }}
                             // InputColor="red"
-                            placeholder='Confirm Password'
+                            placeholder={t('Confirm_Password')}
                             autoCapitalize="none"
                             onBlur={() => setFieldTouched('cfm_password')}
                             placeholderTextColor='#8F93A0'
@@ -1014,7 +1021,7 @@ const Signup = (props, navigation) => {
                         </View>
                         {
                           touched.cfm_password && errors.cfm_password &&
-                          <Text style={{ fontSize: 12, color: '#FF0D10', paddingLeft: 24, marginTop: 8 }}>{errors.cfm_password}</Text>
+                          <Text style={{ fontSize: 12, color: '#FF0D10', paddingLeft: 10, marginTop: 8 }}>{errors.cfm_password}</Text>
                         }
                       </View>
 
@@ -1023,24 +1030,24 @@ const Signup = (props, navigation) => {
                       marginTop: 1
                     }}>
 
-                      <Text style={{ marginTop: 30, marginLeft: 2, textAlign: 'left', fontSize: 17, color: 'white', }}>How did you hear about us? (optional)</Text>
+                      <Text style={{ marginTop: 30, marginLeft: 2, textAlign: 'left', fontSize: 17, color: 'white', }}>{t('How_did_you_hear_aboutus')}</Text>
 
 
                       <View style={{ marginHorizontal: 1, marginTop: 20, height: 45, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', alignItems: 'center', justifyContent: 'space-evenly' }}>
 
                         <TouchableOpacity onPress={() => { setChecked('Internet') }}>
                           <View style={{ borderColor: ischecked == 'Internet' ? '#ffcc00' : '#8F93A0', borderWidth: 1, borderRadius: 25, width: 80, height: 45, alignItems: 'center', justifyContent: 'center', marginHorizontal: 0 }}>
-                            <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: ischecked == 'Internet' ? '#ffcc00' : '#8F93A0', }}>Internet</Text>
+                            <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: ischecked == 'Internet' ? '#ffcc00' : '#8F93A0', }}>{t('Internet')}</Text>
                           </View>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => { setChecked('Newspaper / Magazine') }}>
                           <View style={{ borderColor: ischecked == 'Newspaper / Magazine' ? '#ffcc00' : '#8F93A0', borderWidth: 1, borderRadius: 25, width: 170, height: 45, alignItems: 'center', justifyContent: 'center', marginHorizontal: 10 }}>
-                            <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: ischecked == 'Newspaper / Magazine' ? '#ffcc00' : '#8F93A0', }}> Newspaper / Magazine</Text>
+                            <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: ischecked == 'Newspaper / Magazine' ? '#ffcc00' : '#8F93A0', }}>{t('Newspaper_Magazine')}</Text>
                           </View>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => { setChecked('Referral') }}>
                           <View style={{ borderColor: ischecked == 'Referral' ? '#ffcc00' : '#8F93A0', borderWidth: 1, borderRadius: 25, width: 80, height: 45, alignItems: 'center', justifyContent: 'center' }}>
-                            <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: ischecked == 'Referral' ? '#ffcc00' : '#8F93A0', }}>Referral</Text>
+                            <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: ischecked == 'Referral' ? '#ffcc00' : '#8F93A0', }}>{t('Referral')}</Text>
                           </View>
                         </TouchableOpacity>
 
@@ -1049,12 +1056,14 @@ const Signup = (props, navigation) => {
 
                         <TouchableOpacity onPress={() => { setChecked('Other') }}>
                           <View style={{ marginLeft: -10, borderColor: ischecked == 'Other' ? '#ffcc00' : '#8F93A0', borderWidth: 1, borderRadius: 25, width: 80, height: 45, alignItems: 'center', justifyContent: 'center' }}>
-                            <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: ischecked == 'Other' ? '#ffcc00' : '#8F93A0', }}>Other</Text>
+                            <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: ischecked == 'Other' ? '#ffcc00' : '#8F93A0', }}>{t('Other')}</Text>
                           </View>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => { setChecked('Television / Radio') }}>
                           <View style={{ marginLeft: 10, borderColor: ischecked == 'Television / Radio' ? '#ffcc00' : '#8F93A0', borderWidth: 1, borderRadius: 25, width: 170, height: 45, alignItems: 'center', justifyContent: 'center' }}>
-                            <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: ischecked == 'Television / Radio' ? '#ffcc00' : '#8F93A0', }}>Television / Radio</Text>
+                            <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: ischecked == 'Television / Radio' ? '#ffcc00' : '#8F93A0', }}>
+                              {t('Television_Radio')}
+                            </Text>
                           </View>
                         </TouchableOpacity>
 
@@ -1075,20 +1084,16 @@ const Signup = (props, navigation) => {
                           setMsgCountry(true)
                         }
                         else if (valuecountry != "") { setMsgCountry(false) }
-
-
-
-
                       }}
                         disabled={!isValid}>
                         <View style={{ marginTop: 30, borderRadius: 50, width: 150, height: 40, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
-                          <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 16, color: 'white', }}>Next</Text>
+                          <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 16, color: 'white', }}>{t('Next')}</Text>
                         </View>
                       </TouchableOpacity>
 
                       <TouchableOpacity onPress={() => { gotoLogin() }}>
                         <View style={{ marginTop: 10, borderRadius: 25, width: 200, height: 50, alignItems: 'center', justifyContent: 'center' }}>
-                          <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'white', }}>Already have an account ?</Text>
+                          <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'white', }}>{t('Already_have_an_account')}</Text>
                         </View>
                       </TouchableOpacity>
                     </View>
@@ -1109,12 +1114,14 @@ const Signup = (props, navigation) => {
                     setRegisteredPopUp(false);
                   }}
                 >
+
                   <View style={{
                     flex: 1,
                     justifyContent: 'flex-end',
                     alignItems: 'center',
                     backgroundColor: 'rgba(140, 141, 142, 0.7)',
                   }}>
+
                     <View style={{
                       margin: 2,
                       backgroundColor: "white",
@@ -1164,15 +1171,14 @@ const Signup = (props, navigation) => {
 
                         </View>
 
-                        <Text style={{ marginTop: 15, marginLeft: 10, textAlign: 'center', fontSize: 18, color: 'black' }}>Successfully Registered</Text>
-                        <Text style={{ marginHorizontal: 20, marginTop: 10, textAlign: 'left', fontSize: 12, color: 'black', }}>It is a long established fact that a reader will be distracted by
-                          The readable of a page when looking its layout.
+                        <Text style={{ marginTop: 15, marginLeft: 10, textAlign: 'center', fontSize: 18, color: 'black' }}>{t('Successfully_Registered')}</Text>
+                        <Text style={{ marginHorizontal: 20, marginTop: 10, textAlign: 'left', fontSize: 12, color: 'black', }}>{t('Signuppopup_msg')}
                         </Text>
                         <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 30 }}>
                           <TouchableOpacity onPress={() => { gotoLogin() }}>
                             <View style={{ alignItems: 'center', justifyContent: 'center', width: 110, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
 
-                              <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Next</Text>
+                              <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>{t('Next')}</Text>
 
                             </View>
                           </TouchableOpacity>

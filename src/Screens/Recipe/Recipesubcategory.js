@@ -8,10 +8,10 @@ import {
   TextInput,
   Image,
   Alert,
-  Pressable, Modal, SafeAreaView, Dimensions, ActivityIndicator
+  Pressable, Modal, SafeAreaView, Dimensions, ScrollView,RefreshControl
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { ScrollView } from 'react-native-gesture-handler';
+// import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';
 import { RadioButton } from 'react-native-paper';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -23,14 +23,23 @@ import Headers from '../../Routes/Headers';
 import axios from 'axios';
 import { API } from '../../Routes/Urls';
 import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
 const Recipesubcategory = props => {
 
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [recipedata, setRecipeData] = useState([]);
+  
+  const [refreshing, setrefreshing] = useState(false)
+  const onRefresh = () => {
+    setrefreshing(true)
+    PostRecipecategoryList()
+    setrefreshing(false)
+  }
 
   const gotoRecipeDetails = (item) => {
     props.navigation.navigate('RecipeDetails', {
@@ -58,7 +67,7 @@ const Recipesubcategory = props => {
      
     }
     catch (error) {
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("",t('Check_internet_connection'))
       // console.log("......error.........", error.response.data.message);
       // Alert.alert("Something went wrong!", error.response.data.message);
        }
@@ -94,18 +103,25 @@ const Recipesubcategory = props => {
           {
             recipedata.length != 0 ?
               (<View style={{ paddingBottom: 60,flex: 1, }}>
-              <ScrollView>
+              <ScrollView 
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                />
+              }
+              >
 
 
-                <View style={{ marginTop: 10, height: 30, flexDirection: 'row' }}>
+                <View style={{ marginTop: 15, height: 30, flexDirection: 'row' }}>
                   <View style={{ flex: 1 }}>
                     <Text
                       style={{
                         marginLeft: 15,
-                        fontSize: 18,
+                        fontSize: 17,
                         color: 'white'
                       }}>
-                      Recipes Sub-Category
+                     {t('Recipes_Sub_Category')}
                     </Text>
                   </View>
                 </View>
@@ -143,14 +159,15 @@ const Recipesubcategory = props => {
                             borderTopLeftRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
                           }}>
                           <Image
-                            source={{ uri: `${item?.recipe_image}` }}
-                            resizeMode="contain"
+                            source={{ uri: item?.recipe_image != "" ? `${item?.recipe_image}` : 'https://dev.pop-fiit.com/images/logo.png'}}
+                            resizeMode="stretch"
                             style={{
                               width: "100%",
                               height: "100%",
                               borderTopLeftRadius: 20,
                               borderTopRightRadius: 20,
                               alignSelf: 'center',
+                              backgroundColor:"black"
                             }}
                           />
                           <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
@@ -233,7 +250,7 @@ const Recipesubcategory = props => {
                     width: 200,
                     height: 120, alignSelf: 'center'
                   }} />
-                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>Oops!, No data found</Text>
+                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>{t('Oops_No_data_found')}</Text>
               </View>)
           }
         </>)

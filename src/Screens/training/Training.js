@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ActivityIndicator, Modal } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler';
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ScrollView, Modal,RefreshControl } from 'react-native'
+// import { ScrollView } from 'react-native-gesture-handler';
 import Headers from '../../Routes/Headers';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
@@ -21,7 +21,7 @@ import CustomLoader from '../../Routes/CustomLoader';
 // import PauseSvg from "../../Screens/assets/pause-button.png";
 // import PlaySvg from "../../Screens/assets/play-button.png";
 // import MoreSvg from "../../Screens/assets/stop-audio.png";
-
+import { useTranslation } from 'react-i18next';
 
 
 var WIDTH = Dimensions.get('window').width;
@@ -29,6 +29,7 @@ var HEIGHT = Dimensions.get('window').height;
 
 const Training = (props) => {
 
+  const { t } = useTranslation();
   // const DATA = ['first row', 'second row', 'third row'];
   const [videomodal, setVideoModal] = useState(false);
   const [trainingBlog_list, setTrainingBlog_list] = useState([]);
@@ -38,6 +39,13 @@ const Training = (props) => {
   const [videobaseurl, setVideobaseurl] = useState("");
   const [fullScreen, setFullScreen] = useState(false);
   const [youtubelinks, setyoutubelinks] = useState([]);
+
+  const [refreshing, setrefreshing] = useState(false)
+  const onRefresh = () => {
+    setrefreshing(true)
+    WorkoutSubCategorytraininglist()
+    setrefreshing(false)
+  }
   // console.log("links:",youtubelinks);
 
   // console.log('audio123456:', audiobaseurl + "" + trainingBlog_list[0]?.training_audio[0]);
@@ -139,11 +147,11 @@ const Training = (props) => {
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.TRAINING_LIST}`, { "category_id": Tainingcat_id, "subcategory_id": Trainingsubcat_data },
-      { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } }
+        { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } }
       );
       // console.log(":::::::::TrainingCategoryListAPI_Response>>>", response.data);
 
-    
+
       if (response?.data?.status == 1) {
         // console.log("TrainingCategoryListAPI_data::::::", response.data.blog_list);
         // console.log("imageurl::", response.data.training_image);
@@ -162,11 +170,11 @@ const Training = (props) => {
         // }
         // console.log('addAudio(musicData)',musicData);
         setyoutubelinks(response?.data?.blog_list[0].youtube_link)
-        
+
       }
       else {
         console.log(".WorkoutSubCategorytraininglist.....error.........", error.response.data.message);
-        
+
         // Alert.alert('Technical Issue', '')
       }
 
@@ -176,8 +184,8 @@ const Training = (props) => {
     catch (error) {
       // Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
       // console.log(".WorkoutSubCategorytraininglist.....error.........", error );
-      }
-      setIsLoading(false);
+    }
+    setIsLoading(false);
   };
   return (
     <SafeAreaView style={{
@@ -206,9 +214,14 @@ const Training = (props) => {
         (<>
           {
             trainingBlog_list?.length != 0 ?
-
-
-              (<ScrollView>
+              (<ScrollView 
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+              >
                 <View style={{ justifyContent: "flex-start", flex: 1, alignItems: "flex-start" }}>
                   <View style={{
                     marginBottom: 5,
@@ -226,7 +239,7 @@ const Training = (props) => {
                       {
                         trainingBlog_list[0]?.training_image.map((itm, index) => {
                           return (
-                            <View key = {String(index)}
+                            <View key={String(index)}
                               style={{
                                 height: 190, width: WIDTH * 0.96, borderRadius: 20
                               }}>
@@ -256,14 +269,14 @@ const Training = (props) => {
                   {/* Training video */}
                   <View style={{ marginTop: 30, height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
                     <View style={{ flex: 0.8 }}>
-                      <Text style={{ marginLeft: 20, fontSize: 17, color: 'black', fontWeight: "500" }}>Training Videos</Text>
+                      <Text style={{ marginLeft: 20, fontSize: 17, color: 'black', fontWeight: "500" }}>{t('Training_Videos')}</Text>
                     </View>
                     <View style={{ flex: 0.25, right: 10, }}>
                       <TouchableOpacity onPress={() => {
                         gotoVideolist()
                       }}>
                         <View style={{ borderRadius: 50, height: 30, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center', }}>
-                          <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 12, color: 'white', fontWeight: "500" }}>View All</Text>
+                          <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 12, color: 'white', fontWeight: "500" }}>{t('View_All')}</Text>
                         </View>
                       </TouchableOpacity>
                     </View>
@@ -473,7 +486,7 @@ const Training = (props) => {
                     width: 200,
                     height: 120, alignSelf: 'center'
                   }} />
-                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>Oops! No data found</Text>
+                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>{t('Oops_No_data_found')}</Text>
               </View>)
           }
 
@@ -481,7 +494,7 @@ const Training = (props) => {
 
         </>)
         :
-        ( <CustomLoader showLoader={isLoading}/>)}
+        (<CustomLoader showLoader={isLoading} />)}
     </SafeAreaView >
 
   );

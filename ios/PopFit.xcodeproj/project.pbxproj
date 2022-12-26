@@ -602,7 +602,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 014BB9C8897EDC72EE983FFA /* Pods-PopFit-PopFitTests.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -630,7 +630,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B4990C9626BDD1C6381E2F00 /* Pods-PopFit-PopFitTests.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = PopFitTests/Info.plist;

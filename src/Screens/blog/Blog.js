@@ -13,11 +13,10 @@ import {
   SafeAreaView,
   Dimensions,
   ImageBackground,
-  KeyboardAvoidingView, Platform
+  KeyboardAvoidingView, Platform, RefreshControl,ScrollView
 
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';
 import { RadioButton } from 'react-native-paper';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -31,7 +30,7 @@ import * as yup from 'yup';
 import { Formik } from 'formik';
 import Headers from '../../Routes/Headers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { async } from 'regenerator-runtime';
+import { useTranslation } from 'react-i18next';
 import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
@@ -46,12 +45,14 @@ const Blog = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [NewsletterPopup, setNewsletterPopup] = useState(false);
   const [newsletteremail, setNewsletteremail] = useState("");
-  
+
+  const { t } = useTranslation();
+  const Validemail = t('Enter_valid_email_id')
 
   const gotoBlogDetail = async (item) => {
     const usertkn = await AsyncStorage.getItem("authToken");
     if (usertkn == null) {
-      Alert.alert('', 'Please login first')
+      Alert.alert('', t('Please_login_first'))
     }
     else if (usertkn != null) {
       props.navigation.navigate('BlogDetail', {
@@ -63,22 +64,84 @@ const Blog = (props) => {
 
   };
   const gotoCategory = async (item) => {
+
     const usertkn = await AsyncStorage.getItem("authToken");
     if (usertkn == null) {
-      Alert.alert('', 'Please login first')
+      Alert.alert('', t('Please_login_first'))
     }
     else if (usertkn != null) {
-      props.navigation.navigate('Category', {
-        ITEMS: item
-      });
+      if (blogbanner.plan_status == "Inactive" || blogbanner.plan_id == "0") {
+        if (item.plan_id.includes('1')) {
+          props.navigation.navigate('Category', {
+            ITEMS: item
+          });
+        }
+        else if (item.plan_id.includes('2')) {
+          props.navigation.navigate("SubscriptionPlan")
+          // console.log("ncludes+2:",item.plan_id.includes('2'));
+
+        }
+        else if (item.plan_id.includes('3')) {
+          props.navigation.navigate("SubscriptionPlan")
+          // console.log("ncludes+3:",item.plan_id.includes('3'));
+
+        }
+
+        else {
+          //   console.log("Buy+plan" );
+          props.navigation.navigate("SubscriptionPlan")
+        }
+
+      }
+      else if (blogbanner.plan_status == "Active" && blogbanner.plan_id == "1") {
+        if (item.plan_id.includes("1")) {
+          props.navigation.navigate('Category', {
+            ITEMS: item
+          });
+        } else if (item.plan_id.includes("2")) {
+          props.navigation.navigate('Category', {
+            ITEMS: item
+          });
+        } else {
+          props.navigation.navigate("SubscriptionPlan")
+        }
+
+      }
+      else if (blogbanner.plan_status == "Active" && blogbanner.plan_id == "2") {
+        if (item.user_plan_id == "2" && item.plan_id.includes("1")) {
+          props.navigation.navigate('Category', {
+            ITEMS: item
+          });
+        } else if (item.plan_id.includes("2")) {
+          props.navigation.navigate('Category', {
+            ITEMS: item
+          });
+        } else {
+          props.navigation.navigate("SubscriptionPlan")
+        }
+
+      }
+      else if (blogbanner.plan_status == "Active" && blogbanner.plan_id == "3") {
+        props.navigation.navigate('Category', {
+          ITEMS: item
+        });
+      }
     }
+
   };
 
+  const [refreshing, setrefreshing] = useState(false);
+
+  const onRefresh = () => {
+    setrefreshing(true)
+    GetCategoryBlogApi();
+    setrefreshing(false)
+  }
 
   useEffect(() => {
     GetCategoryBlogApi();
     // const unsubscribe = props.navigation.addListener('focus', () => {
-      
+    //   GetCategoryBlogApi();
     // })
     // return unsubscribe;
 
@@ -126,12 +189,12 @@ const Blog = (props) => {
 
       }
       catch (error) {
-        Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+        Alert.alert("", t('Check_internet_connection'))
         // Alert.alert('', 'Something went wrong please exit the app and try again');
         // console.log("......error.........", error.response.data.message);
       }
     } else {
-      Alert.alert('', 'Please login first')
+      Alert.alert('', t('Please_login_first'))
     } setIsLoading(false);
   };
 
@@ -157,7 +220,7 @@ const Blog = (props) => {
           // props.navigation.goBack()
           GetCategoryBlogApi();
           setNewsletteremail('')
-          Alert.alert('', ' Unsubscribe Newsletter',)
+          Alert.alert('', t('Unsubscribe_Newsletter'),)
           // [
           //   {
           //     text: "Unsubscribe",
@@ -173,13 +236,13 @@ const Blog = (props) => {
 
       }
       catch (error) {
-        Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+        Alert.alert("", t('Check_internet_connection'))
         // Alert.alert('', 'Something went wrong please exit the app and try again');
         // console.log("......error.........", error.response.data.message);
       }
     }
     else {
-      Alert.alert('', 'Something went wrong please exit the app and try again')
+      Alert.alert('', t('Error_msg'))
     }
     setIsLoading(false);
   };
@@ -194,13 +257,14 @@ const Blog = (props) => {
       );
       // console.log(":::::::::Traing_Workout_Response>>>", response.data);
       // console.log("Traing_Workout_data::::::", response.data.status);
+
       setBlogvideolist(response.data.blog)
       setBlogcategorylist(response.data.blogcategory)
       setBlogbanner(response.data)
 
     }
     catch (error) {
-      Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", t('Check_internet_connection'))
       // Alert.alert('', 'Something went wrong please exit the app and try again')
       // console.log("......error.........", error.response.data.message);
       // setIsLoading(false);
@@ -212,7 +276,7 @@ const Blog = (props) => {
     <SafeAreaView style={{
       flex: 1,
       width: WIDTH,
-      height: HEIGHT, backgroundColor: 'black', flexGrow: 1
+      height: "100%", backgroundColor: 'black', flexGrow: 1
     }} >
       <Headers
         // navigation={props.navigation}
@@ -235,9 +299,16 @@ const Blog = (props) => {
         }}
       />
       {!isLoading ?
-        (<View style={{ width: WIDTH, height: HEIGHT, flex: 1 }}>
+        (<View style={{ width: WIDTH, height: "100%", flex: 1 }}>
 
-          <ScrollView nestedScrollEnabled={true} >
+          <ScrollView nestedScrollEnabled={true}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+              />
+            }
+          >
             <Divider color="#393939" width={1.2} />
 
             {/*// btn navigate Newsletterpopup/// */}
@@ -247,7 +318,7 @@ const Blog = (props) => {
                 width: "100%",
                 borderBottomLeftRadius: 20,
                 borderBottomRightRadius: 20,
-                backgroundColor: '#262626',
+                // backgroundColor: '#262626',
                 paddingBottom: 10,
                 justifyContent: "center",
                 alignItems: "center",
@@ -277,12 +348,13 @@ const Blog = (props) => {
 
                       <Image
                         resizeMode='contain'
-                        source={{ uri: `${blogbanner?.banner_blog}` }}
+                        source={{ uri: blogbanner?.banner_blog != "" ? `${blogbanner?.banner_blog}` : 'https://dev.pop-fiit.com/images/logo.png' }}
                         style={{
 
                           alignSelf: 'center',
                           width: "100%",
                           height: "100%",
+                          backgroundColor: "black"
                           // borderBottomLeftRadius: 20,
                           // borderTopLeftRadius: 20,
                         }}
@@ -312,12 +384,13 @@ const Blog = (props) => {
 
                       <Image
                         resizeMode='contain'
-                        source={{ uri: `${blogbanner?.banner_blog}` }}
+                        source={{ uri: blogbanner?.banner_blog != "" ? `${blogbanner?.banner_blog}` : 'https://dev.pop-fiit.com/images/logo.png' }}
                         style={{
 
                           alignSelf: 'center',
                           width: "100%",
                           height: "100%",
+                          backgroundColor: "black"
                           // borderBottomLeftRadius: 20,
                           // borderTopLeftRadius: 20,
                         }}
@@ -417,11 +490,11 @@ const Blog = (props) => {
                 <Text
                   style={{
                     marginLeft: 15,
-                    fontSize: 18,
+                    fontSize: 17,
                     color: 'white',
                     fontWeight: "500"
                   }}>
-                  Trending New Blogs
+                  {t('Trending_New_Blogs')}
                 </Text>
               </View>
             </View>
@@ -451,15 +524,15 @@ const Blog = (props) => {
                     justifyContent: 'space-around',
                   }}>
                     <Image
-                      resizeMode='contain'
-                      source={{ uri: item.blog_image }}
-                      style={{ justifyContent: 'center', borderTopLeftRadius: 20, borderTopRightRadius: 20, alignItems: 'center', backgroundColor: 'white', width: '100%', height: '100%', }} />
+                      resizeMode='stretch'
+                      source={{ uri: item?.blog_image != "" ? `${item?.blog_image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
+                      style={{ justifyContent: 'center', borderTopLeftRadius: 20, borderTopRightRadius: 20, alignItems: 'center', backgroundColor: 'black', width: '100%', height: '100%', }} />
                   </View>
                   <View
                     style={{ height: 30, backgroundColor: '#fceeb5', borderBottomLeftRadius: 16, borderBottomRightRadius: 16, width: WIDTH * 0.45, justifyContent: "flex-start", alignItems: "center", paddingTop: 5, paddingLeft: 0, }}>
 
                     <Text numberOfLines={1}
-                      style={{ textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "500" }}>{item.youtube_title.slice(0, 15) + '...'}</Text>
+                      style={{ textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "500" }}>{item?.youtube_title?.length >= 18 ? item?.youtube_title?.slice(0, 18) + '...' : item?.youtube_title?.slice(0, 15)}</Text>
 
                     {/* <View style={{ height: 30, alignItems: "flex-start", paddingTop: 4, justifyContent: "flex-start", width: WIDTH * 0.42, marginBottom:4, }}>
                       <Text  numberOfLines={1}
@@ -471,16 +544,16 @@ const Blog = (props) => {
               )}
             />
             {/* ///Category Blogs/ */}
-            <View style={{ marginTop: 15, height: 30, flexDirection: 'row' }}>
+            <View style={{ marginTop: 25, height: 30, flexDirection: 'row' }}>
               <View style={{ flex: 1 }}>
                 <Text
                   style={{
                     marginLeft: 15,
-                    fontSize: 18,
+                    fontSize: 17,
                     color: 'white',
                     fontWeight: "500"
                   }}>
-                  Category Blogs
+                  {t('Category_Blogs')}
                 </Text>
               </View>
             </View>
@@ -508,8 +581,8 @@ const Blog = (props) => {
                         justifyContent: "center",
                         alignItems: 'center',
                       }}>
-                      <View style={{ width: WIDTH * 0.45, backgroundColor: '#c9bca0', height: 25,   justifyContent: 'center', alignItems: "center", borderTopLeftRadius: 20 ,borderTopRightRadius: 20}}>
-                        <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "500" }}>{item?.cat_name?.slice(0, 26) + '...'}</Text>
+                      <View style={{ width: WIDTH * 0.45, backgroundColor: '#c9bca0', height: 25, justifyContent: 'center', alignItems: "center", borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
+                        <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "500" }}>{item?.cat_name?.length >= 26 ? item?.cat_name?.slice(0, 26) + '...' : item?.cat_name?.slice(0, 26)}</Text>
 
                       </View>
                       <View
@@ -521,13 +594,13 @@ const Blog = (props) => {
                           justifyContent: "flex-start", alignItems: "flex-start"
                         }}>
                         <Image
-                          source={{ uri: `${item?.image}` }}
+                          source={{ uri: item?.image != "" ? `${item?.image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
                           resizeMode="stretch"
                           style={{
                             width: "100%",
                             height: "100%",
-                           borderBottomLeftRadius:20,borderBottomRightRadius:20,
-                            alignSelf: 'center',
+                            borderBottomLeftRadius: 20, borderBottomRightRadius: 20,
+                            alignSelf: 'center', backgroundColor: "black"
                           }}
                         />
 
@@ -660,7 +733,7 @@ const Blog = (props) => {
                         validationSchema={yup.object().shape({
                           Checkemail: yup
                             .string()
-                            .required('Please, enter a valid email address*'),
+                            .required(Validemail),
                         })}
                       >
                         {({ values, handleChange, errors, setFieldTouched, touched, isValid, handleSubmit }) => (
@@ -690,7 +763,7 @@ const Blog = (props) => {
                                 style={{ width: "100%", height: 190, borderTopLeftRadius: 20, borderTopRightRadius: 20, justifyContent: "center", alignSelf: "center" }} />
 
                               <View style={{ marginTop: 20, position: "absolute", marginLeft: 110, justifyContent: "center", alignItems: "center" }}>
-                                <Text style={{ textAlign: 'center', fontSize: 17, color: 'white', fontWeight: "600" }}>Subscribe News Letter</Text>
+                                <Text style={{ textAlign: 'center', fontSize: 17, color: 'white', fontWeight: "600" }}>{t('Subscribe_News_Letter')}</Text>
                               </View>
 
                             </View>

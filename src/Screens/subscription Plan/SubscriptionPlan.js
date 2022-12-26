@@ -8,10 +8,9 @@ import {
   TextInput,
   Image,
   Alert,
-  Pressable, SafeAreaView, Dimensions, ActivityIndicator, VirtualizedList, Platform, Modal
+  Pressable, SafeAreaView, Dimensions, ScrollView, RefreshControl, Platform, Modal
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-import { ScrollView } from 'react-native-gesture-handler';
+ 
 import { BackgroundImage } from 'react-native-elements/dist/config';
 import { RadioButton } from 'react-native-paper';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -22,16 +21,15 @@ import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
 import CustomLoader from '../../Routes/CustomLoader';
-// import * as IAP from 'react-native-iap';
-import { async } from 'regenerator-runtime';
 import CancelSubscription from './CancelSubscription';
-
+import { useTranslation } from 'react-i18next';
+import * as IAP from 'react-native-iap';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
 const SubscriptionPlan = (props) => {
-
+  const { t } = useTranslation();
   const [checktoken, setchecktoken] = useState("");
   const [SubscriptionsId, setSubscriptionsId] = useState([]);
   const [activeplan, setActiveplan] = useState('');
@@ -74,55 +72,56 @@ const SubscriptionPlan = (props) => {
         } catch (error) { }
       });
   };
-  // const Ioscheckplan = async () => {
-  //   if (Platform.OS === 'ios') {
-  //     let purchaseUpdatedListener;
-  //     let purchaseErrorListener;
+  const Ioscheckplan = async () => {
+    if (Platform.OS === 'ios') {
+      let purchaseUpdatedListener;
+      let purchaseErrorListener;
 
 
-  //     IAP.initConnection()
-  //       .catch(() => {
-  //         console.error('error connecting to store..');
-  //       })
-  //       .then(async () => {
-  //         console.log('connected to store...');
-  //         IAP.getSubscriptions({ skus: items })
-  //           .catch(function (error) {
-  //             console.error('error finding purchases', error);
-  //           })
-  //           .then(function (res) {
-  //             console.log('got product', res);
-  //             SetSubscriptionData(res);
+      IAP.initConnection()
+        .catch(() => {
+          console.error('error connecting to store..');
+        })
+        .then(async () => {
+          console.log('connected to store...');
+          IAP.getSubscriptions({ skus: items })
+            .catch(function (error) {
+              console.error('error finding purchases', error);
+            })
+            .then(function (res) {
+              console.log('got product', res);
+              SetSubscriptionData(res);
 
-  //           });
+            });
 
-  //       });
+        });
 
 
-  //     purchaseErrorListener = IAP.purchaseErrorListener(error => {
-  //       if (error['responseCode'] === '2') {
-  //       } else {
-  //         Alert.alert("error", 'There has been an error with your purchase,error code = ' + error['code']);
-  //       }
-  //     });
-  //     purchaseUpdatedListener = IAP.purchaseUpdatedListener(purchase => {
-  //       try {
-  //         const receipt = purchase.transactionReceipt;
-  //       } catch (error) {
-  //         console.log('error', error);
-  //       }
-  //     });
-  //   }
-  // }
+      purchaseErrorListener = IAP.purchaseErrorListener(error => {
+        if (error['responseCode'] === '2') {
+        } else {
+          Alert.alert("error", 'There has been an error with your purchase,error code = ' + error['code']);
+        }
+      });
+      purchaseUpdatedListener = IAP.purchaseUpdatedListener(purchase => {
+        try {
+          const receipt = purchase.transactionReceipt;
+        } catch (error) {
+          console.log('error', error);
+        }
+      });
+    }
+  }
+  const [refreshing, setrefreshing] = useState(false)
+  const onRefresh = () => {
+    setrefreshing(true)
+    GetSubscriptionPlan();
+    setrefreshing(false)
+  }
   useEffect(() => {
-
-    // Ioscheckplan();
-    const unsubscribe = props.navigation.addListener('focus', () => {
-      GetSubscriptionPlan();
-    })
-    return unsubscribe;
-    // return () => { };
-  }, []);
+    GetSubscriptionPlan();
+    Ioscheckplan();
+}, []);
 
 
 
@@ -131,7 +130,7 @@ const SubscriptionPlan = (props) => {
     // console.log("token.......", Usertoken);
     setchecktoken(Usertoken);
     if (Usertoken == null) {
-      Alert.alert('', 'Please login First ')
+      Alert.alert('', t('Please_login_first'))
       // props.navigation.navigate('LoginMain', {
       //   screen: 'LoginSignUp',
 
@@ -147,37 +146,37 @@ const SubscriptionPlan = (props) => {
     }
   };
 
-  // const purchasePlan = async (item, offerToken) => {
+  const purchasePlan = async (item, offerToken) => {
 
-  //   setIsLoading(true)
-  //   {
-  //     const index = subscriptionData.findIndex(e => e.title.toUpperCase() == item.title.toUpperCase());
-  //     console.warn("index", index);
+    setIsLoading(true)
+    {
+      const index = subscriptionData.findIndex(e => e.title.toUpperCase() == item.title.toUpperCase());
+      console.warn("index", index);
 
-  //     if (index > -1) {
-  //       try {
-  //         var data = await IAP.requestSubscription(
-  //           { sku: subscriptionData[index].productId }, (offerToken && { subscriptionOffers: [{ sku: subscriptionData[index].productId, offerToken }] }),
-  //         );
-  //         console.log('check Ashish data is==>>', data);
-  //         const receipt = data.transactionReceipt;
-  //         setIsLoading(false);
-  //         // if (receipt) {
-  //         //   buyPlanInIos(item, data.transactionReceipt);
-  //         // } else {
-  //         //   console.log('i am here ');
-  //         // }
-  //       } catch (error) {
-  //         console.error('error in purchasePlan', error);
-  //         setIsLoading(false);
-  //       }
-  //     } else {
-  //       Alert.alert("", 'This plan does not exist');
-  //       // dispatch(CustomAlertAction.showToast('This plan does not exist'));
-  //       setIsLoading(false);
-  //     }
-  //   }
-  // };
+      if (index > -1) {
+        try {
+          var data = await IAP.requestSubscription(
+            { sku: subscriptionData[index].productId }, (offerToken && { subscriptionOffers: [{ sku: subscriptionData[index].productId, offerToken }] }),
+          );
+          console.log('check Ashish data is==>>', data);
+          const receipt = data.transactionReceipt;
+          setIsLoading(false);
+          if (receipt) {
+            buyPlanInIos(item, data.transactionReceipt);
+          } else {
+            console.log('i am here ');
+          }
+        } catch (error) {
+          console.error('error in purchasePlan', error);
+          setIsLoading(false);
+        }
+      } else {
+        Alert.alert("", 'This plan does not exist');
+         
+        setIsLoading(false);
+      }
+    }
+  };
   const GetSubscriptionPlan = async () => {
 
     let usertkn = await AsyncStorage.getItem("authToken");
@@ -221,7 +220,7 @@ const SubscriptionPlan = (props) => {
       // console.log("ResponseSUBscribtion_plan ::::", response.data);
       if (response.data.status == 1) {
         props.navigation.goBack();
-        Alert.alert("", "Subscription cancelled successfully")
+        Alert.alert("",  t('Subscription_canceled_successfully'))
         // console.log("SUBSCRIPTION_plan_data!!!>>>", response.data);
 
       }
@@ -235,10 +234,10 @@ const SubscriptionPlan = (props) => {
   const showAlert = (subs_id) =>
     Alert.alert(
       "",
-      "Are you sure you want to cancel subscription.",
+       t('Are_you_sure_you_want_to_cancel_subscription'),
       [
         {
-          text: "Cancel",
+          text: t('Cancel'),
           style: "cancel",
         },
         {
@@ -277,7 +276,14 @@ const SubscriptionPlan = (props) => {
         }}
         BelliconononClick={() => { props.navigation.navigate("Notifications") }}
       />
-      <ScrollView>
+      <ScrollView 
+       refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+        />
+      }
+      >
         {!isLoading ?
           (<View>
             {
@@ -285,7 +291,7 @@ const SubscriptionPlan = (props) => {
 
                 (<>
                   <View style={{ marginLeft: 10, marginTop: 5, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}  >
-                    <Text style={{ textAlign: 'left', fontSize: 18, color: '#000', fontWeight: "500" }} >My Plan</Text>
+                    <Text style={{ textAlign: 'left', fontSize: 18, color: '#000', fontWeight: "500" }} >{t('My_Plan')}</Text>
                   </View>
                   <View style={{
                     height: 122, width: "94%",
@@ -316,7 +322,7 @@ const SubscriptionPlan = (props) => {
                             height: 8, borderRadius: 50, marginRight: 8
                           }} />
                         <View style={{ justifyContent: "center", alignItems: 'center' }}>
-                          <Text style={{ textAlign: 'left', fontSize: 14, color: 'white', }}>Active</Text>
+                          <Text style={{ textAlign: 'left', fontSize: 14, color: 'white', }}>{t('Active')}</Text>
                         </View>
 
                       </View>
@@ -361,7 +367,7 @@ const SubscriptionPlan = (props) => {
                               fontSize: 22,
                               color: '#FFFFFF',
                               fontWeight: "500"
-                            }}>€
+                            }}>{activeplan?.currency}
                             {activeplan?.my_subscriber?.amount}/
                             <Text style={{
                               // backgroundColor:"red",
@@ -391,14 +397,14 @@ const SubscriptionPlan = (props) => {
                         height: 30, width: 100, flexDirection: 'column', alignItems: "center",
                         justifyContent: "center", marginTop: 10, backgroundColor: "#FED945", borderRadius: 50, borderWidth: 1, borderColor: "#FFFFFF"
                       }}>
-                      <Text style={{ color: 'white', fontSize: 14, fontWeight: "400", textAlign: "center" }}>Cancel</Text>
+                      <Text style={{ color: 'white', fontSize: 14, fontWeight: "400", textAlign: "center" }}>{t('Cancel')}</Text>
                     </TouchableOpacity>
                   </View>
                 </>)
                 :
                 (<>
                   <View style={{ marginLeft: 10, marginTop: 5, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}  >
-                    <Text style={{ textAlign: 'left', fontSize: 18, color: '#000', fontWeight: "500" }} >My Plan</Text>
+                    <Text style={{ textAlign: 'left', fontSize: 18, color: '#000', fontWeight: "500" }} >{t('My_Plan')}</Text>
                   </View>
                   <View style={{
                     height: 122, width: "94%",
@@ -429,7 +435,7 @@ const SubscriptionPlan = (props) => {
                             height: 8, borderRadius: 50, marginRight: 8
                           }} />
                         <View style={{ justifyContent: "center", alignItems: 'center' }}>
-                          <Text style={{ textAlign: 'left', fontSize: 14, color: 'white', }}>Active</Text>
+                          <Text style={{ textAlign: 'left', fontSize: 14, color: 'white', }}>{t('Active')}</Text>
                         </View>
 
                       </View>
@@ -458,7 +464,7 @@ const SubscriptionPlan = (props) => {
                           fontSize: 20,
                           color: '#FFFFFF',
                           fontWeight: "500"
-                        }}>Free
+                        }}>{t('Free')}
                         </Text>
                         <View style={{
                           flexDirection: 'row',
@@ -473,7 +479,7 @@ const SubscriptionPlan = (props) => {
                               fontSize: 22,
                               color: '#FFFFFF',
                               fontWeight: "500"
-                            }}>€ 0
+                            }}>0
                             <Text style={{
                               // backgroundColor:"red",
                               textAlign: 'left',
@@ -653,7 +659,7 @@ const SubscriptionPlan = (props) => {
                                   color: 'white',
 
                                   fontWeight: "500"
-                                }}>€{item?.price}{item?.type == "Weekly" ? null : "/"}<Text style={{
+                                }}>{item?.price}{item?.type == "Weekly" ? null : "/"}<Text style={{
                                   // backgroundColor:"red",
                                   textAlign: 'left',
                                   fontSize: 12,
@@ -897,7 +903,7 @@ const SubscriptionPlan = (props) => {
                                         fontWeight: "500"
 
                                       }}>
-                                      Free
+                                      {t('Free')}
                                     </Text>
                                   </View>
                                 </TouchableOpacity>)
@@ -909,7 +915,7 @@ const SubscriptionPlan = (props) => {
                                       // marginLeft: 10,
                                       justifyContent: 'center',
                                       backgroundColor: 'white',
-                                      width: 120,
+                                      width: 140,
                                       height: 30,
                                       borderRadius: 50,
                                     }}>
@@ -921,7 +927,7 @@ const SubscriptionPlan = (props) => {
                                         fontWeight: "500"
 
                                       }}>
-                                      Subscribe Now
+                                      {t('Subscribe_Now')}
                                     </Text>
                                   </View>
                                 </TouchableOpacity>)
@@ -939,50 +945,7 @@ const SubscriptionPlan = (props) => {
                 }
               />
             </View>
-            {/* <Modal
-              visible={showCancelSubscription}
-              onRequestClose={ () => {setShowCancelSubscription(false)}}
-              animationType="slide"
-              transparent={true}>
-              <View style={styless.container}>
-                <TouchableOpacity style={styless.blurView} onPress={setShowCancelSubscription(false)} />
-                <View style={styless.mainView}>
-                  <Text style={styless.TitleText}>Cancel subscription</Text>
-                  <View
-                    style={{
-                      borderBottomWidth: 0.5,
-                      marginVertical: 10,
-                      borderColor: "gray",
-                    }}
-                  />
-                  <View style={styless.bulletView}>
-                    <CheckSvg />
-                    <Text style={styless.bulletTextStyle}>Open the Settings app.</Text>
-                  </View>
-                  <View style={styless.bulletView}>
-                    <CheckSvg />
-                    <Text style={styless.bulletTextStyle}>Tap your name.</Text>
-                  </View>
-                  <View style={styless.bulletView}>
-                    <CheckSvg />
-                    <Text style={styless.bulletTextStyle}>Tap Subscriptions.</Text>
-                  </View>
-                  <View style={styless.bulletView}>
-                    <CheckSvg />
-                    <Text style={styless.bulletTextStyle}>Tap the subscription.</Text>
-                  </View>
-                  <View style={styless.bulletView}>
-                    <CheckSvg />
-                    <Text style={styless.bulletTextStyle}>
-                      Tap Cancel Subscription. You might need to scroll down to find the
-                      Cancel Subscription button. If there is no Cancel button or you
-                      see an expiration message in red text, the subscription is already
-                      canceled.
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            </Modal> */}
+            
             <CancelSubscription
               visible={showCancelSubscription}
               setVisibility={setShowCancelSubscription}

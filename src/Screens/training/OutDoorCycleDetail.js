@@ -8,6 +8,7 @@ import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -16,6 +17,7 @@ const OutDoorCycleDetails = (props) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [trainingdetails, setTrainingDetails] = useState([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     TrainingDetailsAPI();
@@ -57,7 +59,7 @@ const OutDoorCycleDetails = (props) => {
     }
     catch (error) {
       // console.log("......error.........", error.response.data.message);
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("",t('Check_internet_connection'))
       } setIsLoading(false);
   };
   return (
@@ -154,7 +156,7 @@ const OutDoorCycleDetails = (props) => {
 
               <View style={{ backgroundColor: "white", borderRadius: 20, marginTop: 20, height: HEIGHT * 0.2, width: WIDTH * 0.9, marginHorizontal: 18, }}>
                 <Image resizeMode='contain'
-                  source={{ uri: trainingdetails?.image }} style={{ width: '100%', height: '100%', justifyContent: "center", alignItems: 'center', borderRadius: 20, }}
+                  source={{ uri: trainingdetails?.image != "" ? `${trainingdetails?.image}` : 'https://dev.pop-fiit.com/images/logo.png' }} style={{ width: '100%', height: '100%', justifyContent: "center", alignItems: 'center', borderRadius: 20, }}
                 />
               </View>
 

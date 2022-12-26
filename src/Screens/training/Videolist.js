@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, Image, Alert, SafeAreaView, Dimensions, ActivityIndicator } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler';
+import { View, FlatList, Text, Image, Alert, SafeAreaView, Dimensions, ScrollView,RefreshControl } from 'react-native'
+// import { ScrollView } from 'react-native-gesture-handler';
 import Headers from '../../Routes/Headers';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
@@ -8,7 +8,7 @@ import { WebView } from 'react-native-webview';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomLoader from '../../Routes/CustomLoader';
 // import TrackPlayer, { State } from 'react-native-track-player';
-
+import { useTranslation } from 'react-i18next';
 
 
 var WIDTH = Dimensions.get('window').width;
@@ -16,11 +16,19 @@ var HEIGHT = Dimensions.get('window').height;
 
 const Videolist = (props) => {
 
+    const { t } = useTranslation();
     const [trainingBlog_list, setTrainingBlog_list] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [videobaseurl, setVideobaseurl] = useState('');
     const[youtubelinks,setyoutubelinks]=useState([]);
 
+    
+  const [refreshing, setrefreshing] = useState(false)
+  const onRefresh = () => {
+    setrefreshing(true)
+    WorkoutSubCategorytraininglist();
+    setrefreshing(false)
+  }
     useEffect(() => {
         WorkoutSubCategorytraininglist();
     }, []);
@@ -52,12 +60,11 @@ const Videolist = (props) => {
 
         }
         catch (error) {
-            Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+            Alert.alert("", t('Check_internet_connection'))
             // console.log("......error.........", error.response.data.message);
-            // Alert.alert('Video list',"Something went wrong!");
             setIsLoading(false);
 
-        }
+        }setIsLoading(false);
     };
     return (
         <SafeAreaView style={{
@@ -86,12 +93,19 @@ const Videolist = (props) => {
                 (<>
                     {
                         trainingBlog_list.length != 0 ?
-                            (<ScrollView>
+                            (<ScrollView 
+                                refreshControl={
+                                    <RefreshControl
+                                      refreshing={refreshing}
+                                      onRefresh={onRefresh}
+                                    />
+                                  }
+                            >
                                 <View style={{ justifyContent: "flex-start", flex: 1, alignItems: "flex-start" }}>
                                     {/* Training video */}
                                     <View style={{ marginTop: 10, height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
 
-                                        <Text style={{ marginLeft: 15, fontSize: 18, color: 'black', fontWeight: "500" }}>Training Videos</Text>
+                                        <Text style={{ marginLeft: 15, fontSize: 18, color: 'black', fontWeight: "500" }}>{t('Training_Videos')}</Text>
 
                                     </View>
 
@@ -146,7 +160,7 @@ const Videolist = (props) => {
                                         width: 200,
                                         height: 120, alignSelf: 'center'
                                     }} />
-                                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>Oops! No data found</Text>
+                                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>{t('Oops_No_data_found')}</Text>
                             </View>)
                     }
                 </>)

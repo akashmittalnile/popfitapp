@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, Image, SafeAreaView, Dimensions, ActivityIndicator, Alert } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { View, FlatList, Text, TouchableOpacity, Image, SafeAreaView, Dimensions, RefreshControl, Alert ,ScrollView} from 'react-native';
+// import { ScrollView } from 'react-native-gesture-handler';
 import { Pages } from 'react-native-pages';
 import { DrawerActions } from '@react-navigation/native';
 import { Divider } from 'react-native-elements';
@@ -11,6 +11,7 @@ import Headers from '../../Routes/Headers';
 import Share from 'react-native-share';
 import { async } from 'regenerator-runtime';
 import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -22,6 +23,13 @@ const TrainingDetail = (props) => {
     const [recommendation, setRecommendation] = useState([]);
     const [userToken, setUserToken] = useState("");
 
+    const { t } = useTranslation();
+    const [refreshing, setrefreshing] = useState(false)
+    const onRefresh = () => {
+      setrefreshing(true)
+      workoutCategoryAPI();
+      setrefreshing(false)
+    }
     // const [subscriptiontoken, setsubscriptiontoken] = useState("");
     const [planid, setPlanId] = useState("");
 
@@ -29,7 +37,7 @@ const TrainingDetail = (props) => {
         const usertkn = await AsyncStorage.getItem("authToken");
         if (usertkn == null) {
 
-            Alert.alert('', 'Please login first')
+            Alert.alert('', t('Please_login_first'))
         }
         else if (usertkn != null) {
             props.navigation.navigate("TrainingPersonaDetail")
@@ -48,31 +56,31 @@ const TrainingDetail = (props) => {
         }
         try {
             const shareResponse = await Share.open(shareOptions);
-             
+
             // console.log(JSON.stringify(shareResponse));
-             
+
         }
         catch (error) {
             // console.log('ERROR=>', error);
         }
     };
     useEffect(() => {
-        workoutCategoryAPI();
-        const checktoken = async () => {
-            const usertkn = await AsyncStorage.getItem("authToken");
-            setUserToken(usertkn);
-        }
-        checktoken();
-        const unsubscribe = props.navigation.addListener('focus', () => {
-            workoutCategoryAPI();
-        })
-        return unsubscribe;
+        workoutCategoryAPI()
+        // const checktoken = async () => {
+        //     const usertkn = await AsyncStorage.getItem("authToken");
+        //     setUserToken(usertkn);
+        // }
+        // checktoken();
+        // const unsubscribe = props.navigation.addListener('focus', () => {
+        //     workoutCategoryAPI();
+        // })
+        // return unsubscribe;
     }, []);
 
     const gotoSubscriptionPlan = async () => {
         const usertkn = await AsyncStorage.getItem("authToken");
         if (usertkn == null) {
-            Alert.alert('', 'Please login first')
+            Alert.alert('', t('Please_login_first'))
         }
         else if (usertkn != null) {
             props.navigation.navigate("SubscriptionPlan")
@@ -84,7 +92,7 @@ const TrainingDetail = (props) => {
         // console.log("item:", item);
         const usertkn = await AsyncStorage.getItem("authToken");
         if (usertkn == null) {
-            Alert.alert('', 'Please login first')
+            Alert.alert('', t('Please_login_first'))
         }
         else if (usertkn != null) {
             if (planid.plan_status == "Inactive" || planid.plan_id == "0") {
@@ -181,7 +189,7 @@ const TrainingDetail = (props) => {
         }
         catch (error) {
             // console.log(".....TrainingDetails.error.........", error.response.data.message);
-            Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+            Alert.alert("", t('Check_internet_connection'))
 
         }
         setIsLoading(false);
@@ -278,7 +286,16 @@ const TrainingDetail = (props) => {
             </View>
             </View> */}
                     <Divider color='#393939' width={1.2} />
-                    <ScrollView nestedscrollenabled={true}>
+
+                    <ScrollView nestedscrollenabled={true}
+                  
+                    refreshControl={
+                      <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                      />
+                    }
+                    >
                         <View style={{ backgroundColor: '#262626', height: 180, borderBottomLeftRadius: 25, borderBottomRightRadius: 25 }}>
                             <Pages indicatorColor='#ffcc00' >
                                 <View style={{ marginTop: 20, height: 130, flexDirection: 'row', marginHorizontal: 20, borderRadius: 20 }}>
@@ -289,13 +306,15 @@ const TrainingDetail = (props) => {
                                     </View>
                                     <View style={{ flex: 1, backgroundColor: "white", borderBottomRightRadius: 20, borderTopRightRadius: 20 }}>
                                         <View style={{ height: 30, marginTop: 30, }}>
-                                            <Text style={{ textAlign: 'center', fontSize: 12, color: 'black', }}>Set Up Your Training Workout</Text>
+                                            <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', }}>{t('SetUp_Your_Training_Workout')}</Text>
                                         </View>
 
                                         <View style={{ marginHorizontal: 20, flexDirection: 'row', height: 30, justifyContent: 'center' }}>
                                             <TouchableOpacity onPress={() => { gotoTrainingpersondetails() }}>
-                                                <View style={{ borderWidth: 1, borderColor: '#ffcc00', justifyContent: 'center', width: 120, flex: 1, backgroundColor: 'white', borderRadius: 50 }}>
-                                                    <Text style={{ textAlign: 'center', fontSize: 9, color: '#ffcc00', }}>Save & Edit Details</Text>
+                                                <View style={{ borderWidth: 1, borderColor: '#ffcc00', justifyContent: 'center', width: 150, flex: 1, backgroundColor: 'white', borderRadius: 50,padding:2 }}>
+                                                    <Text numberOfLines={2} style={{ textAlign: 'center', fontSize: 9, color: '#ffcc00', }}> 
+                                                        {t('Save_Edit_Details')}
+                                                        </Text>
                                                 </View>
                                             </TouchableOpacity>
 
@@ -311,13 +330,13 @@ const TrainingDetail = (props) => {
                                     </View>
                                     <View style={{ flex: 1, backgroundColor: "white", borderBottomRightRadius: 20, borderTopRightRadius: 20 }}>
                                         <View style={{ height: 30, marginTop: 30, }}>
-                                            <Text style={{ textAlign: 'center', fontSize: 12, color: 'black', }}>Set Up Your Training Workout</Text>
+                                            <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', }}>{t('SetUp_Your_Training_Workout')}</Text>
                                         </View>
 
                                         <View style={{ marginHorizontal: 20, flexDirection: 'row', height: 30, justifyContent: 'center' }}>
                                             <TouchableOpacity onPress={() => { gotoSubscriptionPlan() }}>
                                                 <View style={{ borderWidth: 1, borderColor: '#ffcc00', justifyContent: 'center', width: 140, flex: 1, backgroundColor: 'white', borderRadius: 35 }}>
-                                                    <Text style={{ textAlign: 'center', fontSize: 9, color: '#ffcc00', }}>View Subscription Plan</Text>
+                                                    <Text style={{ textAlign: 'center', fontSize: 9, color: '#ffcc00', }}>{t('View_Subscription_Plan')}</Text>
                                                 </View>
                                             </TouchableOpacity>
 
@@ -332,7 +351,7 @@ const TrainingDetail = (props) => {
                             {
                                 recommendation.length > 0 ?
                                     (<View style={{ marginTop: 20, marginLeft: 15, }}>
-                                        <Text numberOfLines={1} style={{ textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "500" }}>Recommended Categories</Text>
+                                        <Text numberOfLines={1} style={{ textAlign: 'left', fontSize: 17, color: 'white', fontWeight: "500" }}>{t('Recommended_Categories')}</Text>
                                     </View>)
                                     :
                                     null
@@ -364,7 +383,7 @@ const TrainingDetail = (props) => {
                                                 }}>
 
                                                 <View style={{ width: WIDTH * 0.45, backgroundColor: '#c9bca0', height: 25, justifyContent: 'center', alignItems: "center", borderTopLeftRadius: 20, borderTopRightRadius: 20, }}>
-                                                    <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name?.slice(0, 26) + '...'}</Text>
+                                                    <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name?.length >= 26 ? item?.cat_name?.slice(0, 26) + '...' : item?.cat_name?.slice(0, 26)}</Text>
 
                                                 </View>
                                                 <View
@@ -376,7 +395,7 @@ const TrainingDetail = (props) => {
                                                         justifyContent: "flex-start", alignItems: "flex-start"
                                                     }}>
                                                     <Image
-                                                        source={{ uri: `${item?.image}` }}
+                                                        source={{ uri: item?.image != "" ? `${item?.image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
                                                         resizeMode="stretch"
                                                         style={{
                                                             width: "100%",
@@ -388,7 +407,7 @@ const TrainingDetail = (props) => {
 
                                                 </View>
                                                 <View style={{ width: WIDTH * 0.45, height: 25, borderBottomRightRadius: 20, justifyContent: 'center', borderBottomLeftRadius: 20, backgroundColor: '#262626' }}>
-                                                    <Text style={{ textAlign: 'center', fontSize: 11, color: '#c9bca0' }}>Subscription {item?.plan_name} Plan </Text>
+                                                    <Text numberOfLines={1}  style={{ textAlign: 'center', fontSize: 9, color: '#c9bca0' }}>{t('Subscription')} {item?.plan_name} {t('Plan')} </Text>
                                                 </View>
 
                                             </View>
@@ -403,7 +422,7 @@ const TrainingDetail = (props) => {
                             {
                                 TrainingWorkCatgry.length > 0 ?
                                     (<View style={{ marginTop: 1, marginLeft: 15, }}>
-                                        <Text numberOfLines={1} style={{ textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "500" }}>Workout Categories</Text>
+                                        <Text numberOfLines={1} style={{ textAlign: 'left', fontSize: 17, color: 'white', fontWeight: "500" }}>{t('Workout_Categories')}</Text>
                                     </View>)
                                     : null
                             }
@@ -436,7 +455,7 @@ const TrainingDetail = (props) => {
                                                 }}>
 
                                                 <View style={{ width: WIDTH * 0.45, backgroundColor: '#c9bca0', height: 25, justifyContent: 'center', alignItems: "center", borderTopLeftRadius: 20, borderTopRightRadius: 20, }}>
-                                                    <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name?.slice(0, 26) + '...'}</Text>
+                                                    <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name?.lenght >= 26 ? item?.cat_name?.slice(0, 26) + '...' : item?.cat_name?.slice(0, 26)}</Text>
 
                                                 </View>
                                                 <View
@@ -448,12 +467,12 @@ const TrainingDetail = (props) => {
                                                         justifyContent: "flex-start", alignItems: "flex-start"
                                                     }}>
                                                     <Image
-                                                        source={{ uri: `${item?.image}` }}
+                                                        source={{ uri: item?.image != "" ? `${item?.image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
                                                         resizeMode="stretch"
                                                         style={{
                                                             width: "100%",
                                                             height: "100%",
-
+                                                            backgroundColor: "black",
                                                             alignSelf: 'center',
                                                         }}
                                                     />
@@ -461,7 +480,7 @@ const TrainingDetail = (props) => {
 
                                                 </View>
                                                 <View style={{ width: WIDTH * 0.45, height: 25, borderBottomRightRadius: 20, justifyContent: 'center', borderBottomLeftRadius: 20, backgroundColor: '#262626' }}>
-                                                    <Text style={{ textAlign: 'center', fontSize: 11, color: '#c9bca0' }}>Subscription {item?.plan_name} Plan  </Text>
+                                                    <Text numberOfLines={1}  style={{ textAlign: 'center', fontSize: 9, color: '#c9bca0' }}>{t('Subscription')} {item?.plan_name} {t('Plan')}</Text>
                                                 </View>
 
                                             </View>

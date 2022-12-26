@@ -17,13 +17,8 @@ import {
   ActivityIndicator,
   Dimensions,
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';
-import { RadioButton } from 'react-native-paper';
-import DropDownPicker from 'react-native-dropdown-picker';
-import { Pages } from 'react-native-pages';
-import styles from '../../Routes/style';
 import axios from 'axios';
 import { API } from '../../Routes/Urls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -31,11 +26,20 @@ import Textinput from '../CommonTextInput/TextInput/Index';
 import * as yup from 'yup';
 import { Formik } from 'formik';
 import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
 const Login = props => {
+  const { t } = useTranslation();
+
+  const Validphoneyup = t('Enter_the_valid_mobile_number');
+  const newpswdvld = t('Please enter new password.');
+  const psswdvldmin= t('Your_password_short_minimum_8characters');
+  const confrmpswdvld = t('Confirm_password_required');
+  const confrmvldcheck= t('Password_confirm_password_does_not_match');
+
   const firstCodeRef = useRef();
   const secondCodeRef = useRef();
   const thirdCodeRef = useRef();
@@ -98,11 +102,8 @@ const Login = props => {
   //   }
 
   const onSubmitLoginAPi = async () => {
-    // if (!email.trim() || !password.trim()) {
-    //   alert("Email or Password is invalid");
-    //   return;
-    // }
-    console.log('LOGIN DETAILS ENTER:::', email, password, firebase_token);
+    
+    // console.log('LOGIN DETAILS ENTER:::', email, password, firebase_token);
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.LOGIN}`, {
@@ -112,7 +113,7 @@ const Login = props => {
       });
 
       if (response.data.status == 1) {
-        console.log('............Login..............', response.remember_token);
+        // console.log('............Login..............', response.remember_token);
         const userToken = response.data.remember_token;
         await AsyncStorage.setItem('authToken', userToken);
         const userProfiles = response.data.remember_token;
@@ -124,11 +125,11 @@ const Login = props => {
 
       } else if (response.data.status == 0) {
 
-        Alert.alert('', 'Login Failed: Your user email or password is incorrect');
+        Alert.alert('',  t('Login_email_pass_incorrect'));
       }
     } catch (error) {
-      Alert.alert("error","Internet connection appears to be offline. Please check your internet connection and try again.")
-      // console.log("error??login????", error);
+      Alert.alert("",t('Check_internet_connection'))
+      console.log("error??login????", error);
       // Alert.alert('', 'Something went wrong please exit the app and try again');
     }
     setIsLoading(false);
@@ -165,7 +166,7 @@ const Login = props => {
 
       }
     } catch (error) {
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", t('Check_internet_connection'))
       // Alert.alert('', 'Something went wrong please exit the app and try again');
     } setIsLoading(false);
   };
@@ -173,7 +174,7 @@ const Login = props => {
   const Validation = () => {
     const otp = otp1 + otp2 + otp3 + otp4;
     if (otp.length < 4) {
-      Alert.alert('Invalid Otp');
+      Alert.alert(t('Invalid_Otp'));
     } else return true;
   };
 
@@ -215,7 +216,7 @@ const Login = props => {
         });
       }
       catch (error) {
-        Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+        Alert.alert("", t('Check_internet_connection'))
         // Alert.alert('', 'Something went wrong please exit the app and try again');
         // console.log('error:', error.response.data.message);
 
@@ -313,20 +314,15 @@ const Login = props => {
       // console.log('Response_ChangepsswdAPI ::::', response.data.status);
       if (response.data.status == 1) {
         setChangePasword(false);
-        Alert.alert('Password changed successfully', '');
+        Alert.alert( t('Password_Changed_Successfully'), '');
         // console.log(
         //   'User_change_psswd_successfully...>>>',
         //   response.data.message,
         // );
 
-      } else {
-        // Alert.alert('Technical error', 'Try again later !');
-        // setAlertpsswdMsg(response.data.message);
-        // setMsgpsswdAlert(true);
-
-      }
+      }  
     } catch (error) {
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", t('Check_internet_connection'))
       // console.log('ChangePSwdApierror:', error.response.data.message);
       // Alert.alert('', 'Something went wrong please exit the app and try again');
     } setIsLoading(false);
@@ -355,10 +351,12 @@ const Login = props => {
                     justifyContent: 'center',
                   }}>
                   <View
-                    style={{ height: 120, marginTop: 160, alignItems: 'center' }}>
-                    <Image
-                      source={require('../assets/logo3.png')}
-                      style={{ height: 80, position: 'absolute', width: 140 }}
+                    style={{ height: 150, marginTop: 160, alignItems: 'center' ,justifyContent:"center"}}>
+                    <Image 
+                      source={require('../assets/layerCenter1.png')}
+                      style={{   position: 'absolute',  height: 150, 
+                      width: 200,
+                      top:-30,resizeMode: 'contain' }}
                     />
                   </View>
                 </View>
@@ -381,7 +379,7 @@ const Login = props => {
                     fontSize: 16,
                     color: 'black',
                   }}>
-                  Username
+                  {t('Username')}
                 </Text>
                 <View
                   style={{
@@ -391,7 +389,7 @@ const Login = props => {
                     fontSize: 18,
                   }}>
                   <Textinput
-                    placeholder="Enter Email"
+                    placeholder={t('Enter_Email')}
                     value={email}
                     //editable={!isLoading}
                     onChangeText={text => setEmail(text)}
@@ -417,7 +415,7 @@ const Login = props => {
                     fontSize: 16,
                     color: 'black',
                   }}>
-                  Password
+                  {t('Password')}
                 </Text>
 
                 <View
@@ -428,7 +426,7 @@ const Login = props => {
                     fontSize: 18,
                   }}>
                   <Textinput
-                    placeholder="Enter Password"
+                    placeholder={t('Enter_Password')}
                     value={password}
                     onChangeText={text => setpasssword(text)}
                     autoCapitalize="none"
@@ -459,7 +457,7 @@ const Login = props => {
                       fontSize: 12,
                       color: 'black',
                     }}>
-                    Forgot Password?
+                   {t('Forgot_Password')}?
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -484,10 +482,10 @@ const Login = props => {
                     style={{
                       alignSelf: 'center',
                       textAlign: 'center',
-                      fontSize: 16,
+                      fontSize: 15,
                       color: 'white',
                     }}>
-                    Login
+                    {t('Login')}
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -514,7 +512,7 @@ const Login = props => {
                   color: 'black',
                   justifyContent: 'center',
                 }}>
-                Don't have an account{' '}
+                {t('Do_not_have_account')}{' '}
               </Text>
 
               <TouchableOpacity
@@ -529,7 +527,7 @@ const Login = props => {
                     textDecorationLine: 'underline',
                   }}>
                   {' '}
-                  Sign up{' '}
+                  {t('Signuplogin')}{' '}
                 </Text>
               </TouchableOpacity>
 
@@ -1067,7 +1065,7 @@ const Login = props => {
                         validationSchema={yup.object().shape({
                           phoneNumber: yup
                             .string()
-                            .required('Enter the valid mobile number'),
+                            .required(Validphoneyup),
                         })}>
                         {({
                           values,
@@ -1101,7 +1099,7 @@ const Login = props => {
                                 color: 'black',
                                 width: 300,
                               }}>
-                              Please Enter Your Registered Mobile Number
+                              {t('Please_EnterReg_Mobile_No')}
                             </Text>
 
                             <View
@@ -1116,7 +1114,7 @@ const Login = props => {
                                 borderWidth: 1,
                               }}>
                               <TextInput
-                                placeholder="Enter Mobile Number"
+                                placeholder={t('Enter_Mobile_Number')}
                                 fontWeight="normal"
                                 maxLength={10}
                                 keyboardType="number-pad"
@@ -1171,9 +1169,10 @@ const Login = props => {
                                 marginLeft: 30,
                                 marginBottom: 20,
                                 flexDirection: 'row',
-                                height: 34,
+                                height: 38,
                                 marginHorizontal: 20,
                                 marginTop: 60,
+                               
                               }}>
                               <TouchableOpacity
                                 onPress={() => {
@@ -1185,18 +1184,19 @@ const Login = props => {
                                   style={{
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    width: 160,
+                                    width: 170,
                                     flex: 1,
                                     backgroundColor: '#ffcc00',
                                     borderRadius: 35,
+                                    padding:4
                                   }}>
                                   <Text
                                     style={{
                                       textAlign: 'center',
-                                      fontSize: 15,
+                                      fontSize: 12,
                                       color: 'white',
                                     }}>
-                                    Reset Password
+                                    {t('Reset_Password')}
                                   </Text>
                                 </View>
                               </TouchableOpacity>
@@ -1274,8 +1274,7 @@ const Login = props => {
                             fontSize: 14,
                             color: 'black',
                           }}>
-                          Please enter verification code received in your
-                          registered mobile number{' '}
+                          {t('Verified_otp_enter')}{' '}
                           <Text style={{ fontSize: 14, color: 'red' }}>
                             OTP: {forgetOtp}
                           </Text>
@@ -1462,16 +1461,16 @@ const Login = props => {
                           marginLeft: 30,
                           marginBottom: 1,
                           flexDirection: 'row',
-                          height: 34,
+                          height: 38,
                           marginHorizontal: 20,
                           marginTop: 30,
                           borderRadius: 50,
-                          backgroundColor: 'transparent',
+                          // backgroundColor: 'transparent',
                         }}>
                         <TouchableOpacity
                           style={{
                             borderRadius: 50,
-                            backgroundColor: 'transparent',
+                            // backgroundColor: 'transparent',
                           }}
                           onPress={() => {
                             VerifyOtp();
@@ -1480,18 +1479,19 @@ const Login = props => {
                             style={{
                               alignItems: 'center',
                               justifyContent: 'center',
-                              width: 160,
+                              width: 170,
                               flex: 1,
                               backgroundColor: '#ffcc00',
                               borderRadius: 50,
+                              padding:4
                             }}>
                             <Text
                               style={{
                                 textAlign: 'center',
-                                fontSize: 15,
+                                fontSize: 12,
                                 color: 'white',
                               }}>
-                              Reset Password
+                              {t('Reset_Password')}
                             </Text>
                           </View>
                         </TouchableOpacity>
@@ -1549,15 +1549,15 @@ const Login = props => {
                       validationSchema={yup.object().shape({
                         password: yup
                           .string()
-                          .required('Please enter new password.')
-                          .min(8, 'Your password is too short.'),
+                          .required(newpswdvld)
+                          .min(8, psswdvldmin),
 
                         cfm_password: yup
                           .string()
-                          .required('Confirm password is required')
+                          .required(confrmpswdvld)
                           .oneOf(
                             [yup.ref('password')],
-                            'Your passwords do not match.',
+                            confrmvldcheck,
                           ),
                       })}>
                       {({
@@ -1596,7 +1596,7 @@ const Login = props => {
                               color: 'black',
                               fontWeight: 'bold',
                             }}>
-                            Change Password
+                            {t('Change_Password')}
                           </Text>
 
                           <View
@@ -1621,7 +1621,7 @@ const Login = props => {
                                 // justifyContent: "center",
                               }}>
                               <TextInput
-                                placeholder="New Password****"
+                                placeholder={t('New_Password')}
                                 fontWeight="normal"
                                 autoCapitalize="none"
                                 placeholderTextColor="#D7D7D7"
@@ -1634,7 +1634,7 @@ const Login = props => {
                                   justifyContent: 'center',
                                   alignItems: 'center',
                                   color: 'black',
-                                  paddingLeft: 10,
+                                  paddingLeft: 15,
                                   color: 'black',
                                 }}
                               />
@@ -1687,7 +1687,7 @@ const Login = props => {
                                 // alignItems: 'center',
                               }}>
                               <TextInput
-                                placeholder="Confirm Password****"
+                                placeholder={t('Confirm_Password')}
                                 fontWeight="normal"
                                 autoCapitalize="none"
                                 placeholderTextColor="#D7D7D7"
@@ -1700,7 +1700,7 @@ const Login = props => {
                                   justifyContent: 'center',
                                   alignItems: 'center',
                                   color: 'black',
-                                  paddingLeft: 10,
+                                  paddingLeft: 15,
                                   color: 'black',
                                 }}
                               />
@@ -1721,13 +1721,13 @@ const Login = props => {
                           <View style={{ marginBottom: 20, flexDirection: 'row', height: 34, marginTop: 40, justifyContent: 'center' }}>
                             <TouchableOpacity onPress={() => { setChangePasword(false) }}>
                               <View style={{ justifyContent: 'center', width: 110, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
-                                <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', }}>Cancel</Text>
+                                <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', }}>{t('Cancel')}</Text>
                               </View>
                             </TouchableOpacity>
 
                             <TouchableOpacity onPress={() => { handleSubmit() }}>
                               <View style={{ justifyContent: 'center', width: 110, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50, marginLeft: 10 }}>
-                                <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', }}>Save</Text>
+                                <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', }}>{t('Save')}</Text>
 
                               </View>
                             </TouchableOpacity>

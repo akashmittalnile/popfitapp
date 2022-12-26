@@ -9,14 +9,10 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { useEffect } from 'react';
 import { API } from '../Routes/Urls';
 import axios from 'axios';
-
-
-var WIDTH = Dimensions.get('window').width;
-var HEIGHT = Dimensions.get('window').height;
-
+import { useTranslation } from 'react-i18next';
 
 const CustomDrawerrender = (props) => {
-
+  const { t } = useTranslation();
   const [userprofile, setuserprofile] = useState("");
   const [loginbtn, setloginbtn] = useState("");
 
@@ -32,27 +28,32 @@ const CustomDrawerrender = (props) => {
   const [emailerrormsg, setemailerrormsg] = useState("");
   const [emailalert, setEmailAlert] = useState(false);
   useEffect(() => {
-
     if (!check) {
       const getusertoken = async () => {
         const usertoken = await AsyncStorage.getItem("authToken");
-       
         setuserprofile(usertoken);
-    
         setloginbtn(usertoken);
-        GetProfile();
+        if (usertoken != "") {
+          GetProfile();
+        }
+
+        else {
+          console.log("drawerlogin else part call");
+          // GetProfile();
+        }
+
       }
-      // getusertoken();
+
       getusertoken()
     }
     const backAction = () => {
-      Alert.alert("Hold on!", "Are you sure you want to go back?", [
+      Alert.alert(t('Hold_on'), t('Are_you_sure_you_want_back'), [
         {
-          text: "Cancel",
+          text: t('Cancel'),
           onPress: () => null,
           style: "cancel"
         },
-        { text: "YES", onPress: () => BackHandler.exitApp() }
+        { text: t('Yes'), onPress: () => BackHandler.exitApp() }
       ]);
       return true;
     };
@@ -76,7 +77,7 @@ const CustomDrawerrender = (props) => {
 
   }, []);
 
-  
+
   const buttonClickedHandler = () => {
     props.navigation.goBack()
   }
@@ -90,17 +91,17 @@ const CustomDrawerrender = (props) => {
     setIsLoading(true);
     try {
       const response = await axios.get(`${API.GET_PROFILE}`, { headers: { "Authorization": ` ${Token}` } });
-      // console.log("", response);
+      // console.log("response profile", response);
       // console.log("ResponseProfile ::::", response.data.status);
       if (response.data.status === 1) {
         setprofiledata(response.data.data)
         // console.log("User_token_not_received+yet!!!>>>", response.data.data.first_name);
         // setIsLoading(false);
       }
-      else if (response.data.status === 0) {
-        // Alert.alert('', 'Something went wrong, Please exit the app and try again');
-        setIsLoading(false);
-      }
+      // else if (response.data.status === 0) {
+      //   Alert.alert('error', 'Something went wrong, Please exit the app and try again');
+      //   setIsLoading(false);
+      // }
 
     }
     catch (error) {
@@ -147,7 +148,7 @@ const CustomDrawerrender = (props) => {
         // console.log("response_contactus ::::", response.data);
         // console.log("contactus-Status ::::", response.data.status);
         if (response.data.status == '1') {
-          Alert.alert('', 'Your message has been sent successfully we will contact you shortly.')
+          Alert.alert('', t('Your_will_contact_shortly'))
           // console.log("response_contactus ::::", response.data);
           setContactUs(false);
           setIsLoading(false);
@@ -164,20 +165,20 @@ const CustomDrawerrender = (props) => {
           setTypemessage("")
           setIsLoading(false);
           setcheck(false);
-          Alert.alert('', 'Something went wrong please exit the app and try again');
+          Alert.alert('', t('Error_msg'));
         }
         else {
           setIsLoading(false);
         }
 
       } catch (error) {
-        Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+        // Alert.alert("",t('Check_internet_connection'))
         // Alert.alert('', 'Something went wrong please exit the app and try again');
         // console.log("error_ContactUs:", error.response.data.message);
         setIsLoading(false);
         setcheck(false)
       }
-    } else return Alert.alert('', 'All the fields are required!');
+    } else return Alert.alert('', t('All_the_fields_are_required'));
   };
 
   return (
@@ -190,29 +191,39 @@ const CustomDrawerrender = (props) => {
     }} >
       {!isLoading ?
         (<>
-          <TouchableOpacity onPress={() => { buttonClickedHandler() }}>
-            <View style={{
-              height: 60,
-              left: 10,
-              width: "20%",
-              justifyContent: 'center',
-            }}>
+          <View style={{
+            height: 60, width: "100%", flexDirection: "row", justifyContent
+              : "space-between"
+          }}>
+
+            <TouchableOpacity onPress={() => { buttonClickedHandler() }}
+              style={{
+                height: 50,
+                left: 10,
+                width: "20%",
+                justifyContent: 'center',
+                marginTop: 10,
+
+              }}>
               <Image source={require('../Screens/assets/cancelWhite.png')}
                 style={{
                   width: 30,
                   height: 30,
-                  marginTop: 5, left: 10
+                  left: 10
                 }}
               />
 
+
+            </TouchableOpacity>
+
+            <View style={{ width: 50, height: 34, alignItems: 'flex-end', justifyContent: 'flex-end', right: 10, marginTop: 10, }}>
+              <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 13, color: '#ffcc00', fontWeight: "400" }}>V <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 13, color: '#ffcc00', fontWeight: "400" }}>1.01</Text></Text>
             </View>
-          </TouchableOpacity>
-
-
+          </View>
           {
             userprofile == null ?
               (<TouchableOpacity onPress={() => gotologin_signuppage()}
-                style={{ borderRadius: 20, backgroundColor: 'white', marginHorizontal: 20, height: 100, flexDirection: 'row', marginTop: 30 }}>
+                style={{ borderRadius: 20, backgroundColor: 'white', marginHorizontal: 20, height: 100, flexDirection: 'row', marginTop: 20, marginRight: 27, }}>
                 <View style={{ justifyContent: 'center', width: 100, height: 100 }} >
                   <Image resizeMode="contain"
                     source={require('../Screens/assets/AvatarImg.png')}
@@ -223,7 +234,7 @@ const CustomDrawerrender = (props) => {
                 </View>
 
                 <View style={{ justifyContent: 'center', alignItems: "center", flex: 1, height: 100 }} >
-                  <Text style={{ fontSize: 14, color: 'black', textAlign: 'left', fontWeight: "500" }}>User's Login</Text>
+                  <Text style={{ fontSize: 14, color: 'black', textAlign: 'left', fontWeight: "500" }}>{t('Users_Login')}</Text>
                 </View>
 
                 <View style={{ justifyContent: 'flex-end', flex: 1 / 2, width: 50, borderBottomRightRadius: 20 }}>
@@ -238,11 +249,11 @@ const CustomDrawerrender = (props) => {
               (<TouchableOpacity onPress={() => {
                 props.navigation.navigate("MyProfile")
               }}>
-                <View style={{ borderRadius: 20, backgroundColor: 'white', marginHorizontal: 20, height: 100, flexDirection: 'row', marginTop: 30 }}>
+                <View style={{ borderRadius: 20, backgroundColor: 'white', marginHorizontal: 20, height: 100, flexDirection: 'row', marginTop: 20, marginRight: 27, }}>
                   <View style={{ justifyContent: 'center', width: 100, height: 100 }} >
                     {profiledata.user_profile != "" ?
                       <Image
-                        source={{ uri: `${profiledata.user_profile}` }}
+                        source={{ uri: profiledata?.user_profile != "" ? `${profiledata.user_profile}` : 'https://dev.pop-fiit.com/images/logo.png' }}
                         resizeMode="contain"
                         style={{
                           width: 80,
@@ -255,7 +266,7 @@ const CustomDrawerrender = (props) => {
                         resizeMode="contain"
                         style={{
                           width: 80,
-                          height: 80, alignSelf: 'center', borderRadius: 80 / 2, borderColor: "#383838", 
+                          height: 80, alignSelf: 'center', borderRadius: 80 / 2, borderColor: "#383838",
                         }} />
                     }
                   </View>
@@ -273,10 +284,10 @@ const CustomDrawerrender = (props) => {
               </TouchableOpacity>)
           }
           <ScrollView>
-            <View style={{ marginBottom: 20, marginTop: 20, marginHorizontal: 15, height: "95%", backgroundColor: '#000000' }} >
+            <View style={{ marginBottom: 20, marginTop: 10, marginHorizontal: 15, height: "95%", backgroundColor: '#000000' }} >
 
               <TouchableOpacity onPress={() => props.navigation.navigate("HomeBottomTab")} >
-                <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
+                <View style={{ marginTop: 15, flexDirection: 'row', height: 30, }}>
                   <View style={{ width: 50, height: 50 }} >
                     <Image source={require('../Screens/assets/menu1.png')}
                       style={{
@@ -284,9 +295,9 @@ const CustomDrawerrender = (props) => {
                         height: 20, marginLeft: 5
                       }} />
                   </View>
-                  <View style={{ height: 50 }} >
-                    <View style={{ width: 50, height: 50, marginLeft: -10 }} >
-                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Home</Text>
+                  <View style={{ height: 50,}} >
+                    <View style={{  height: 50, marginLeft: -10 }} >
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Home')}</Text>
                     </View>
                   </View>
                 </View>
@@ -305,15 +316,31 @@ const CustomDrawerrender = (props) => {
                       </View>
                       <View style={{ height: 30, width: 100 }} >
                         <View style={{ width: 110, height: 30, marginLeft: -10 }} >
-                          <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Subscriptions</Text>
+                          <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Subscriptions')}</Text>
                         </View>
                       </View>
                     </View>
                   </TouchableOpacity>)
                   :
-                   <></>
+                  <></>
 
               }
+              <TouchableOpacity onPress={() => props.navigation.navigate("Selector")}>
+                <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
+                  <View style={{ width: 50, height: 50, marginLeft: 5 }} >
+                    <Image source={require('../Screens/assets/Lngchoose.png')}
+                      style={{
+                        width: 22,
+                        height: 22,
+                      }} />
+                  </View>
+
+                  <View style={{ height: 50, marginLeft: -14,  }} >
+                    <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Choose_Language')}</Text>
+                  </View>
+
+                </View>
+              </TouchableOpacity>
               {
                 loginbtn != null ?
                   (<TouchableOpacity onPress={() => props.navigation.navigate("MyOrder")} >
@@ -326,9 +353,9 @@ const CustomDrawerrender = (props) => {
                             height: 20, marginLeft: 5
                           }} />
                       </View>
-                      <View style={{ height: 30, width: 100 }} >
-                        <View style={{ width: 100, height: 30, marginLeft: -10 }} >
-                          <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>My Order</Text>
+                      <View style={{ height: 30, }} >
+                        <View style={{   height: 30, marginLeft: -10 }} >
+                          <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('My_Order')}</Text>
                         </View>
                       </View>
                     </View>
@@ -337,11 +364,11 @@ const CustomDrawerrender = (props) => {
                   (null)
 
               }
-               <TouchableOpacity onPress={() => props.navigation.navigate("Recipecategory")}>
+              <TouchableOpacity onPress={() => props.navigation.navigate("Recipecategory")}>
                 <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
                   <View style={{ width: 50, height: 50, marginLeft: 4 }} >
                     <Image resizeMode='contain'
-                    source={require('../Screens/assets/Recipesicon.png')}
+                      source={require('../Screens/assets/Recipesicon.png')}
                       style={{
                         width: 23,
                         height: 24,
@@ -349,7 +376,7 @@ const CustomDrawerrender = (props) => {
                   </View>
                   <View style={{ height: 50 }} >
                     <View style={{ height: 50, marginLeft: -14 }} >
-                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Recipes</Text>
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Recipes')}</Text>
                     </View>
                   </View>
                 </View>
@@ -365,7 +392,7 @@ const CustomDrawerrender = (props) => {
                   </View>
                   <View style={{ height: 50 }} >
                     <View style={{ height: 50, marginLeft: -14 }} >
-                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Training</Text>
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Training')}</Text>
                     </View>
                   </View>
                 </View>
@@ -381,7 +408,7 @@ const CustomDrawerrender = (props) => {
                   </View>
                   <View style={{ height: 50 }} >
                     <View style={{ height: 50, marginLeft: -14 }} >
-                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Shop</Text>
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Shop')}</Text>
                     </View>
                   </View>
                 </View>
@@ -397,7 +424,7 @@ const CustomDrawerrender = (props) => {
                   </View>
                   <View style={{ height: 50 }} >
                     <View style={{ height: 50, marginLeft: -14 }} >
-                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Blogs</Text>
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Blogs')}</Text>
                     </View>
                   </View>
                 </View>
@@ -445,7 +472,7 @@ const CustomDrawerrender = (props) => {
                   </View>
                   <View style={{ height: 50 }} >
                     <View style={{ height: 50, marginLeft: -14 }} >
-                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Privacy Policy</Text>
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Privacy_Policy')}</Text>
                     </View>
                   </View>
                 </View>
@@ -466,7 +493,7 @@ const CustomDrawerrender = (props) => {
                   </View>
                   <View style={{ height: 50 }} >
                     <View style={{ height: 50, marginLeft: -14 }} >
-                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Contact Us</Text>
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Contact_Us')}</Text>
                     </View>
                   </View>
                 </View>
@@ -482,7 +509,7 @@ const CustomDrawerrender = (props) => {
                   </View>
                   <View style={{ height: 50 }} >
                     <View style={{ height: 50, marginLeft: -10 }} >
-                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>About Us</Text>
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('About_Us')}</Text>
                     </View>
                   </View>
                 </View>
@@ -505,7 +532,7 @@ const CustomDrawerrender = (props) => {
                       </View>
                       <View style={{ height: 50 }} >
                         <View style={{ height: 50, marginLeft: 10 }} >
-                          <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Logout</Text>
+                          <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Logout')}</Text>
                         </View>
                       </View>
                     </View>
@@ -584,7 +611,7 @@ const CustomDrawerrender = (props) => {
 
                       </View>
                       <View style={{ marginLeft: 10, }}>
-                        <Text style={{ textAlign: 'center', fontSize: 18, color: 'black', fontWeight: "500" }}>Contact Us</Text>
+                        <Text style={{ textAlign: 'center', fontSize: 18, color: 'black', fontWeight: "500" }}>{t('Contact_Us')}</Text>
                       </View>
 
 
@@ -606,7 +633,7 @@ const CustomDrawerrender = (props) => {
                     }}
                     >
                       <TextInput
-                        placeholder="Name"
+                        placeholder={t('Name')}
                         value={UserName}
                         onChangeText={(text) => setUserName(text)}
                         fontWeight='normal'
@@ -661,7 +688,7 @@ const CustomDrawerrender = (props) => {
                         // alignItems: 'center'
                       }}
                       ><TextInput
-                          placeholder="Please Enter Your Email ID"
+                          placeholder={t('Please_Enter_Your_Email_ID')}
                           value={Useremail}
                           //editable={!isLoading}
                           onChangeText={(text) => Emailvalidaton(text)}
@@ -670,7 +697,7 @@ const CustomDrawerrender = (props) => {
                           autoCorrect={false}
                           placeholderTextColor='#D7D7D7'
                           style={{
-                            width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 8, color: "black",
+                            width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 15, color: "black",
                             fontSize: 14, height: "100%"
                           }} />
 
@@ -696,7 +723,7 @@ const CustomDrawerrender = (props) => {
                       alignItems: 'center'
                     }}>
                       <TextInput
-                        placeholder="Type Message here"
+                        placeholder={t('Type_Message_here')}
                         value={Typemessage}
                         //editable={!isLoading}
                         onChangeText={(text) => setTypemessage(text)}
@@ -718,7 +745,7 @@ const CustomDrawerrender = (props) => {
                       }}>
                         <View style={{ alignItems: 'center', justifyContent: 'center', width: 120, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
 
-                          <Text style={{ textAlign: 'center', fontSize: 15, color: 'white' }}>Send</Text>
+                          <Text style={{ textAlign: 'center', fontSize: 15, color: 'white' }}>{t('Send')}</Text>
 
                         </View>
                       </TouchableOpacity>

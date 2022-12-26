@@ -14,9 +14,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 const EditMyProfile = (props) => {
 
+  const { t } = useTranslation();
   const [userprofile, setUserprofile] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [firstname, setFirstname] = useState("");
@@ -77,17 +79,14 @@ const EditMyProfile = (props) => {
       if (response.data.status == 1) {
         setUserprofile(response.data.data);
         Setuserdetails(response.data.data);
-       
-        // console.log("User_ordersdetails>>>", response.data.orders);
-      } else {
-        Alert.alert("something went wrong user Profile!")
-       
+
+
       }
     }
     catch (error) {
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", t('Check_internet_connection'))
       // console.log("GetUserProfile _Catch_error:", error.response.data.message);
-    
+
     } setIsLoading(false);
   };
 
@@ -129,7 +128,7 @@ const EditMyProfile = (props) => {
       }
     }
     catch (error) {
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", t('Check_internet_connection'))
       // console.log("Profile_Update _error:", error.response.data.message);
       setIsLoading(false);
     }
@@ -170,7 +169,7 @@ const EditMyProfile = (props) => {
             borderWidth: 1,
             height: 300
           }}>
-            <Text style={{ marginLeft: 25, marginTop: 20, textAlign: 'left', fontSize: 15, color: 'black', }}>Profile Name</Text>
+            <Text style={{ marginLeft: 25, marginTop: 20, textAlign: 'left', fontSize: 15, color: 'black', }}>{t('Profile_Name')}</Text>
 
             <View style={{ flexDirection: 'row', borderRadius: 25, height: 50, marginHorizontal: 23, marginTop: 15 }}>
               <View style={{
@@ -309,7 +308,7 @@ const EditMyProfile = (props) => {
               </View>
 
               <TextInput
-                placeholder="Enter Email"
+                placeholder="Email"
                 autoCorrect={false}
                 value={email}
                 onChangeText={(text) => setEmail(text)}
@@ -319,7 +318,7 @@ const EditMyProfile = (props) => {
 
 
             </View>
-            <TouchableOpacity onPress={() => {openLibrary()}}>
+            <TouchableOpacity onPress={() => { openLibrary() }}>
               <View style={{
                 marginTop: 20, borderRadius: 25, marginRight: 120, marginLeft: 20, flexDirection: 'row',
                 height: 40,
@@ -333,9 +332,9 @@ const EditMyProfile = (props) => {
               }}
               >
 
-                <View style={{ flex: 1 }}>
-                  <TextInput placeholder="   Change Profile Photo"
-
+                <View style={{ flex: 1, paddingLeft: 10 }}>
+                  <TextInput placeholder={t('Change_Profile_Photo')}
+                    style={{ fontSize: 12, color: "black" }}
                     fontWeight='normal'
                     placeholderTextColor='black'
                     editable={false} selectTextOnFocus={false}
@@ -365,13 +364,13 @@ const EditMyProfile = (props) => {
           <View style={{ marginBottom: 20, flexDirection: 'row', height: 34, marginTop: 40, justifyContent: 'center' }}>
             <TouchableOpacity onPress={() => { buttonClickedHandler() }}>
               <View style={{ justifyContent: 'center', width: 110, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
-                <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', }}>Cancel</Text>
+                <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', }}>{t('Cancel')}</Text>
               </View>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => { GetProfile() }}>
               <View style={{ justifyContent: 'center', width: 110, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50, marginLeft: 10 }}>
-                <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', }}>Save</Text>
+                <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', }}>{t('Save')}</Text>
 
               </View>
             </TouchableOpacity>
@@ -394,7 +393,7 @@ const EditMyProfile = (props) => {
                 }}>
                 <View
                   style={{
-                    margin:2,
+                    margin: 2,
                     backgroundColor: 'white',
                     borderRadius: 20,
                     width: '98%',
@@ -417,18 +416,17 @@ const EditMyProfile = (props) => {
                       <Image source={require('../assets/congrats.png')}
                         style={{ alignSelf: 'center', width: '100%', height: '100%', borderRadius: 15 }} />
                     </View>
-                    <View style={{marginTop: 25,width:"50%"}}>
-                    <Text style={{ textAlign: 'center', fontSize: 15, color: 'black', }}>Profile Details Update
-                      Successfully</Text>
+                    <View style={{ marginTop: 25, width: "50%" }}>
+                      <Text style={{ textAlign: 'center', fontSize: 15, color: 'black', }}>{t('Profile_Details_Update_Successfully')}</Text>
                     </View>
-                    
+
                     <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 50, marginHorizontal: 20, marginTop: 30 }}>
 
 
                       <TouchableOpacity onPress={buttonClickedHandler}>
-                        <View style={{ alignItems: 'center', justifyContent: 'center', width: 110, height:34, backgroundColor: '#ffcc00', borderRadius: 50 }}>
+                        <View style={{ alignItems: 'center', justifyContent: 'center', width: 110, height: 34, backgroundColor: '#ffcc00', borderRadius: 50 }}>
 
-                          <Text style={{ textAlign: 'center', fontSize: 15, color: 'white',fontWeight:"400" }}>Close</Text>
+                          <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', fontWeight: "400" }}>{t('Close')}</Text>
 
                         </View>
                       </TouchableOpacity>
@@ -441,10 +439,10 @@ const EditMyProfile = (props) => {
           ) : null}
         </ScrollView>)
         :
-        (<CustomLoader showLoader={isLoading}/>
-        // <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
-        //   <ActivityIndicator size="large" color="#ffcc00" />
-        // </View>
+        (<CustomLoader showLoader={isLoading} />
+          // <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
+          //   <ActivityIndicator size="large" color="#ffcc00" />
+          // </View>
         )}
     </SafeAreaView>
   );

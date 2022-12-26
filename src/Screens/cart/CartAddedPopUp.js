@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, ActivityIndicator, Dimensions } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, ActivityIndicator, Dimensions, ScrollView, RefreshControl } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
-import { ScrollView } from 'react-native-gesture-handler';
+// import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';
 import { RadioButton } from 'react-native-paper';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -16,12 +16,14 @@ import { CartCounter } from '../../Redux/actions/UpdateCounter';
 import { async } from 'regenerator-runtime';
 import CustomLoader from '../../Routes/CustomLoader';
 import { CommonActions } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
 const CartAdded = (props) => {
 
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     // const Mycartcount = useSelector((state) => state.Cartreducer);
     const [productdata, setproductdata] = useState([]);
@@ -35,12 +37,18 @@ const CartAdded = (props) => {
     const [shippingcost, setshipping_cost] = useState('');
     const [usertoken, setUsertoken] = useState("");
 
+    const [refreshing, setrefreshing] = useState(false)
+    const onRefresh = () => {
+        setrefreshing(true)
+        GetShippingProducts();
+        setrefreshing(false)
+    }
 
     const gotoShippingDetail = async () => {
         const Clickonbuproduct = await AsyncStorage.getItem("authToken");
 
         if (Clickonbuproduct == null) {
-            Alert.alert('Access Deny', 'Login first !')
+            Alert.alert('', t('Please_login_first'))
         }
         else if (Clickonbuproduct != null) {
             props.navigation.navigate("ShippingDetail");
@@ -48,7 +56,7 @@ const CartAdded = (props) => {
 
     }
     const gotoProductDetailsview = (item) => {
-         
+
         props.navigation.navigate("ProductDetail", {
             Cartaddedview: item
         });
@@ -90,7 +98,7 @@ const CartAdded = (props) => {
                 // console.log("TOKEN:", usertkn);
                 setUsertoken(usertkn)
                 if (usertkn == null) {
-                    // Alert.alert('Access Deny', 'Login first !')
+
                 } else if (usertkn != null) {
                     GetShippingProducts();
                 }
@@ -122,7 +130,7 @@ const CartAdded = (props) => {
                 // setIsLoading(false);
             }
             else {
-                Alert.alert("Add to cart", 'please login first!')
+                Alert.alert("", t('Please_login_first'))
                 // setSubtotal(response.data.sub_total);
                 // setIsLoading(false);
             }
@@ -130,8 +138,8 @@ const CartAdded = (props) => {
 
         }
         catch (error) {
-            Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
-            // Alert.alert( '','Your message has been sent successfully we will contact you shortly.')
+            // Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+            Alert.alert('', t('Error_msg'))
 
 
         }
@@ -145,7 +153,7 @@ const CartAdded = (props) => {
             try {
 
                 const response = await axios.get(`${API.SHIPPING_DETAILS}`, {
-                    'headers': { "Authorization": ` ${usertkn != null ? usertkn : null}` }
+                    'headers': { "Authorization": ` ${usertkn}` }
                 },
                 );
                 // console.log("", response);
@@ -163,8 +171,9 @@ const CartAdded = (props) => {
                 // setIsLoading(false);
             }
             catch (error) {
-                Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
-                // Alert.alert( '','Your message has been sent successfully we will contact you shortly.');
+                console.log("ResponseShippingProducts::::in cartscreen", error.response.data);
+                // Alert.alert("catch error", "Internet connection appears to be offline. Please check your internet connection and try again.")
+                Alert.alert('', t('Error_msg'));
                 // setIsLoading(false)
             }
         }
@@ -217,7 +226,7 @@ const CartAdded = (props) => {
             const response = await axios.post(`${API.PRODUCT_DETAILS_REMOVE_ITEM}`, { "cart_id": cartaddid }, {
                 'headers': { "Authorization": ` ${usertkn != null ? usertkn : null}` }
             },);
-            Alert.alert('', 'Removed item successfully');
+            Alert.alert('', t('Removed_item_successfully'));
             // console.log(":::::::::ProductRemovecart_Response>>>", response.data.message);
             // console.log("status _ProductRemovecart:", response.data.status);
             GetShippingProducts();
@@ -226,7 +235,7 @@ const CartAdded = (props) => {
             // setIsLoading(false);
         }
         catch (error) {
-            Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+            Alert.alert("", t('Check_internet_connection'))
             // Alert.alert( '','Your message has been sent successfully we will contact you shortly.')
             // console.log("....ProductRemovecart..error. cartscreen........", error.response.data.message);
             // setIsLoading(false);
@@ -266,7 +275,12 @@ const CartAdded = (props) => {
                     {
                         productdata.length > 0 && usertoken != null ?
                             <View style={{ paddingBottom: 60 }}>
-                                <ScrollView>
+                                <ScrollView refreshControl={
+                                    <RefreshControl
+                                        refreshing={refreshing}
+                                        onRefresh={onRefresh}
+                                    />
+                                }>
                                     <View
                                         style={{
                                             backgroundColor: 'white',
@@ -319,7 +333,7 @@ const CartAdded = (props) => {
                                                         color: '#000000',
                                                         fontWeight: "500",
                                                     }}>
-                                                    My Cart
+                                                    {t('My_Cart')}
                                                 </Text>
                                             </View>
                                             {/* <View
@@ -419,7 +433,7 @@ const CartAdded = (props) => {
                                                                     height: 44, justifyContent: "center", alignItems: "center",
                                                                 }}>
                                                                     <TouchableOpacity onPress={() => { Productincrease(item, "inc") }}>
-                                                                    <Image resizeMode="contain"
+                                                                        <Image resizeMode="contain"
                                                                             style={{
                                                                                 width: 30,
                                                                                 height: 30, alignSelf: 'center'
@@ -503,7 +517,7 @@ const CartAdded = (props) => {
                                                                             alignSelf: 'center',
 
                                                                         }}
-                                                                        source={{ uri: item?.product_image }}
+                                                                        source={{ uri: item?.product_image != '' ? `${item?.product_image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
                                                                     />
 
                                                                 </View>
@@ -521,9 +535,9 @@ const CartAdded = (props) => {
                                                                     </Text>
                                                                     <View style={{ width: WIDTH * 0.4, alignItems: "flex-start", justifyContent: "flex-start", marginTop: 6 }}>
                                                                         <View>
-                                                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Price: <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', }}>${item.product_price}
+                                                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>{t('Price')}: <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', }}>{item.product_price}
                                                                             </Text></Text>
-                                                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Quantity: <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', }}>
+                                                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>{t('Quantity')}: <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', }}>
                                                                                 {item.qty}
                                                                             </Text></Text>
                                                                         </View>
@@ -580,28 +594,28 @@ const CartAdded = (props) => {
                                         }}>
                                             <View style={{ marginTop: 10, height: 30, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.9 }}>
                                                 <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Subtotal:</Text>
+                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>{t('Subtotal')}:</Text>
                                                 </View>
                                                 <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
-                                                    <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>${subtotal}</Text>
+                                                    <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>{subtotal}</Text>
                                                 </View>
                                             </View>
 
                                             <View style={{ marginTop: 10, height: 30, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.9 }}>
                                                 <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Tax:</Text>
+                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>{t('Tax')}:</Text>
                                                 </View>
                                                 <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
-                                                    <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>${tax}</Text>
+                                                    <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>{tax}</Text>
                                                 </View>
                                             </View>
 
                                             <View style={{ marginTop: 10, height: 30, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.9 }}>
                                                 <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Shipping charges:</Text>
+                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>{t('Shipping_charges')}:</Text>
                                                 </View>
                                                 <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
-                                                    <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>${shippingcost}</Text>
+                                                    <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>{shippingcost}</Text>
                                                 </View>
                                             </View>
 
@@ -623,10 +637,10 @@ const CartAdded = (props) => {
 
                                             <View style={{ marginTop: 10, height: 40, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.94 }}>
                                                 <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Total Amount:</Text>
+                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>{t('Total_Amount')}:</Text>
                                                 </View>
                                                 <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
-                                                    <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 53, fontWeight: "500" }}>${total}</Text>
+                                                    <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 53, fontWeight: "500" }}>{total}</Text>
                                                 </View>
                                             </View>
 
@@ -654,7 +668,7 @@ const CartAdded = (props) => {
                                                 <View
                                                     style={{
                                                         justifyContent: 'center',
-                                                        width: 200,
+                                                        width: 170,
                                                         flex: 1,
                                                         backgroundColor: '#ffcc00',
                                                         borderRadius: 50,
@@ -662,12 +676,11 @@ const CartAdded = (props) => {
                                                     <Text
                                                         style={{
                                                             textAlign: 'center',
-                                                            fontSize: 15,
+                                                            fontSize: 13,
                                                             color: 'white',
-
-                                                            fontWeight: '700',
+                                                            fontWeight: '500',
                                                         }}>
-                                                        Continue Shopping
+                                                        {t('Continue_Shopping')}
                                                     </Text>
                                                 </View>
                                             </TouchableOpacity>
@@ -680,7 +693,7 @@ const CartAdded = (props) => {
                                                 <View
                                                     style={{
                                                         justifyContent: 'center',
-                                                        width: 120,
+                                                        width: 100,
                                                         flex: 1,
                                                         backgroundColor: '#ffcc00',
                                                         borderRadius: 50,
@@ -689,11 +702,11 @@ const CartAdded = (props) => {
                                                     <Text
                                                         style={{
                                                             textAlign: 'center',
-                                                            fontSize: 15,
+                                                            fontSize: 13,
                                                             color: 'white',
                                                             fontWeight: '500',
                                                         }}>
-                                                        Check Out
+                                                        {t('Check_Out')}
                                                     </Text>
                                                 </View>
                                             </TouchableOpacity>
@@ -713,7 +726,7 @@ const CartAdded = (props) => {
                                         width: 200,
                                         height: 120, alignSelf: 'center'
                                     }} />
-                                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>Oops! Cart is Empty</Text>
+                                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>{t('Oops_Cart_is_Empty')}</Text>
                             </View>)
                     }
                 </>

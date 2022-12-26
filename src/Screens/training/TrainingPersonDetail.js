@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, TouchableOpacity, TextInput, Image, Alert, SafeAreaView, ActivityIndicator, Dimensions, KeyboardAvoidingView, Platform, } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler';
+import { View, Text, TouchableOpacity, TextInput, Image, Alert, SafeAreaView, ActivityIndicator, Dimensions, KeyboardAvoidingView, Platform,ScrollView,RefreshControl } from 'react-native'
+// import { ScrollView } from 'react-native-gesture-handler';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Pages } from 'react-native-pages';
 import { Divider } from 'react-native-elements';
@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Headers from '../../Routes/Headers';
 import Share from 'react-native-share';
 import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 
 
@@ -18,6 +19,7 @@ var HEIGHT = Dimensions.get('window').height;
 
 const TrainingPersonaDetail = (props) => {
 
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [fitnessdata, setFitnessData] = useState("");
     const [isMale, setIsMale] = useState("");
@@ -38,9 +40,16 @@ const TrainingPersonaDetail = (props) => {
     const [onsubmiterrormsg, steOnsubmiterrormsg] = useState(false);
     const [copyDdownValue, setcopyDdownValue] = useState('');
 
-    const gotoSubscriptionPlan = () => {
-        props.navigation.navigate("SubscriptionPlan")
+
+    const [refreshing, setrefreshing] = useState(false)
+    const onRefresh = () => {
+      setrefreshing(true);
+      SetTrainingPlan();
+      setrefreshing(false);
     }
+    // const gotoSubscriptionPlan = () => {
+    //     props.navigation.navigate("SubscriptionPlan")
+    // }
 
     useEffect(() => {
         SetTrainingPlan();
@@ -93,7 +102,7 @@ const TrainingPersonaDetail = (props) => {
         // console.log("karan_basicdetails...", data);
         try {
             const response = await axios.post(`${API.SET_TRAINING}`, data, { headers: { "Authorization": ` ${Usertoken1}` } });
-            // console.log("Response_SetTrainingPlan::::", response.data);
+            console.log("Response_SetTrainingPlan::::", response.data);
 
             // console.log("SetTrainingPlan_data!!!>>>", response.data.message);
             if (response.data.status == 1) {
@@ -112,8 +121,8 @@ const TrainingPersonaDetail = (props) => {
 
         }
         catch (error) {
-            Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
-            // console.log("SUBSCRIPTION_error:", error.response.data.message);
+            Alert.alert("",  t('Check_internet_connection'))
+            console.log("SUBSCRIPTION_error:", error.response.data.message);
             // Alert.alert("Something went wrong !", error.response.data.message);
 
         }
@@ -161,8 +170,15 @@ const TrainingPersonaDetail = (props) => {
                 }}
                 BelliconononClick={() => { props.navigation.navigate("Notifications") }}
             />
-            <ScrollView nestedScrollEnabled={true} horizontal={false}
-                style={{ backgroundColor: 'white' }} >
+            <ScrollView nestedScrollEnabled={true}  
+                style={{ backgroundColor: 'white' }}
+                refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={onRefresh}
+                    />
+                  }
+                 >
                 {!isLoading ?
                     (< View style={{ flex: 1 }} >
                         <Divider color='#393939' width={1.2} />
@@ -228,9 +244,9 @@ const TrainingPersonaDetail = (props) => {
 
 
                         <View style={{ paddingBottom: 30, width: "100%", height: "100%", justifyContent: "flex-start", alignItems: "flex-start", paddingBottom: 10 }}>
-                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 17, color: '#000', fontWeight: "500" }}>Please Enter Your Basic Details</Text>
+                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 17, color: '#000', fontWeight: "500" }}>{t('Please_Enter_Your_Basic_Details')}</Text>
 
-                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000', }}>Select Gender</Text>
+                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000', }}>{t('Select_Gender')}</Text>
 
                             <View style={{ marginHorizontal: 20, flexDirection: 'row', height: 40, marginTop: 10, justifyContent: "flex-start", alignItems: "center" }}>
 
@@ -239,7 +255,7 @@ const TrainingPersonaDetail = (props) => {
                                     setIsMale("Male")
                                 }}>
                                     <View style={{ borderWidth: 1, borderColor: isMale == 'Male' ? '#ffcc00' : '#bbbaba', justifyContent: 'center', width: 90, height: 40, flex: 1, backgroundColor: 'white', borderRadius: 35, alignItems: 'center', }}>
-                                        <Text style={{ textAlign: 'center', fontSize: 9, color: isMale == 'Male' ? '#ffcc00' : '#bbbaba', }}>Male</Text>
+                                        <Text style={{ textAlign: 'center', fontSize: 9, color: isMale == 'Male' ? '#ffcc00' : '#bbbaba', }}>{t('Male')}</Text>
                                     </View>
                                 </TouchableOpacity>
 
@@ -248,7 +264,7 @@ const TrainingPersonaDetail = (props) => {
                                     setIsMale('Female')
                                 }}>
                                     <View style={{ marginLeft: 10, borderWidth: 1, borderColor: isMale == 'Female' ? '#ffcc00' : '#bbbaba', justifyContent: 'center', width: 90, flex: 1, backgroundColor: 'white', borderRadius: 35 }}>
-                                        <Text style={{ textAlign: 'center', fontSize: 9, color: isMale == 'Female' ? '#ffcc00' : '#bbbaba', }}>Female</Text>
+                                        <Text style={{ textAlign: 'center', fontSize: 9, color: isMale == 'Female' ? '#ffcc00' : '#bbbaba', }}>{t('Female')}</Text>
                                     </View>
                                 </TouchableOpacity>
                             </View>
@@ -259,11 +275,11 @@ const TrainingPersonaDetail = (props) => {
                                             fontSize: 12,
                                             color: '#FF0D10',
 
-                                        }}>Select Gender *</Text>
+                                        }}>{t('Select_Gender_msg')}</Text>
                                     </View>
                                     : <></>
                             }
-                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000', }}>Fitness Goal</Text>
+                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000', }}>{t('Fitness_Goal')}</Text>
 
                             {/* <View style={{ height: 40, marginHorizontal: 20, marginTop: 20, borderColor: '#bbbaba', borderWidth: 1, borderRadius: 35, flexDirection: 'row', alignItems: 'center', justifyContent: "center" }}>
                                 <MenuField
@@ -283,11 +299,11 @@ const TrainingPersonaDetail = (props) => {
                             <View style={{ height: 50, marginHorizontal: 10, marginVertical: 10, width: WIDTH * 0.9 }}>
                                 <DropDownPicker
                                     items={[
-                                        { label: 'Get out of comfort zone', value: 'Weight_Gain' },
-                                        { label: 'Lifting Weight', value: 'Lifting Weight' },
-                                        { label: 'Physical Strength', value: 'Physical Strength' },
-                                        { label: 'Pull-Up', value: 'Pull-Up' },
-                                        { label: 'Improve our immune system', value: 'Improve our immune system' }
+                                        { label: t('Weight_loss'), value: 'weight_loss' },
+                                        { label: t('Muscle_Gain'), value: 'muscle_gain' },
+                                        { label: t('Healthy'), value: 'healthy' },
+                                        { label: t('Toning'), value: 'toning' },
+                                        
 
                                     ]}
                                     listParentContainerStyle={{
@@ -300,7 +316,7 @@ const TrainingPersonaDetail = (props) => {
 
                                     backgroundColor='white'
                                     // loading={loading}
-                                    placeholder={value == "" ? "Goal Name" : value}
+                                    placeholder={value == "" ? t('Goal_Name') : value}
                                     containerStyle={{ height: 70 }}
                                     dropDownDirection="BOTTOM"
                                     bottomOffset={100}
@@ -393,11 +409,11 @@ const TrainingPersonaDetail = (props) => {
                                             fontSize: 12,
                                             color: '#FF0D10',
 
-                                        }}>Select Fitness Goal *</Text>
+                                        }}>{t('Select_Fitness_Goal_msg')}</Text>
                                     </View>
                                     : <></>
                             }
-                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000', zIndex: -999 }}>Current Fitness Level</Text>
+                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000', zIndex: -999 }}>{t('Current_Fitness_Level')}</Text>
 
                             <View style={{ marginHorizontal: 20, flexDirection: 'row', height: 40, marginTop: 10, justifyContent: "flex-start", alignItems: "center",zIndex: -999  }}>
 
@@ -406,7 +422,7 @@ const TrainingPersonaDetail = (props) => {
                                     setCurrentLevel('Beginners')
                                 }}>
                                     <View style={{ borderWidth: 1, borderColor: isCurrentlevel == 'Beginners' ? '#ffcc00' : '#bbbaba', justifyContent: 'center', width: 90, flex: 1, backgroundColor: 'white', borderRadius: 35, alignItems: 'center', }}>
-                                        <Text style={{ textAlign: 'center', fontSize: 9, color: isCurrentlevel == 'Beginners' ? '#ffcc00' : '#bbbaba', }}>Beginners</Text>
+                                        <Text style={{ textAlign: 'center', fontSize: 9, color: isCurrentlevel == 'Beginners' ? '#ffcc00' : '#bbbaba', }}>{t('Beginners')}</Text>
                                     </View>
                                 </TouchableOpacity>
 
@@ -415,7 +431,7 @@ const TrainingPersonaDetail = (props) => {
                                     setCurrentLevel('Average')
                                 }}>
                                     <View style={{ marginLeft: 10, borderWidth: 1, borderColor: isCurrentlevel != 'Average' ? '#bbbaba' : '#ffcc00', justifyContent: 'center', width: 90, flex: 1, backgroundColor: 'white', borderRadius: 35 }}>
-                                        <Text style={{ textAlign: 'center', fontSize: 9, color: isCurrentlevel != 'Average' ? '#bbbaba' : '#ffcc00', }}>Average</Text>
+                                        <Text style={{ textAlign: 'center', fontSize: 9, color: isCurrentlevel != 'Average' ? '#bbbaba' : '#ffcc00', }}>{t('Average')}</Text>
                                     </View>
                                 </TouchableOpacity>
 
@@ -424,7 +440,7 @@ const TrainingPersonaDetail = (props) => {
                                     setCurrentLevel('Advance')
                                 }}>
                                     <View style={{ marginLeft: 10, borderWidth: 1, borderColor: isCurrentlevel != 'Advance' ? '#bbbaba' : '#ffcc00', justifyContent: 'center', width: 90, flex: 1, backgroundColor: 'white', borderRadius: 35 }}>
-                                        <Text style={{ textAlign: 'center', fontSize: 9, color: isCurrentlevel != 'Advance' ? '#bbbaba' : '#ffcc00', }}>Advance</Text>
+                                        <Text style={{ textAlign: 'center', fontSize: 9, color: isCurrentlevel != 'Advance' ? '#bbbaba' : '#ffcc00', }}>{t('Advance')}</Text>
                                     </View>
                                 </TouchableOpacity>
 
@@ -436,11 +452,11 @@ const TrainingPersonaDetail = (props) => {
                                             fontSize: 12,
                                             color: '#FF0D10',
 
-                                        }}>Select Current Fitness Level *</Text>
+                                        }}>{t('Select_Current_Fitness_Level_msg')}</Text>
                                     </View>
                                     : null
                             }
-                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000',zIndex: -999  }}>Date of Birth</Text>
+                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000',zIndex: -999  }}>{t('Date_of_birth')}</Text>
 
                             <View style={{ marginHorizontal: 20, flexDirection: 'row', height: 40, marginTop: 10, justifyContent: 'flex-start', alignItems: "center", width: "100%", flex: 1,zIndex: -999  }}>
 
@@ -450,7 +466,7 @@ const TrainingPersonaDetail = (props) => {
                                         keyboardType={'number-pad'}
                                         maxLength={4}
                                         placeholderTextColor="#bbbaba"
-                                        placeholder="Year"
+                                        placeholder={t('Year')}
                                         onChangeText={(Year) => setYear(Year)}
                                         value={Year}
                                     />
@@ -468,7 +484,7 @@ const TrainingPersonaDetail = (props) => {
                                         }}
                                         value={Month}
 
-                                        placeholder="Month"
+                                        placeholder={t('Month')}
                                         placeholderTextColor="#bbbaba"
                                         keyboardType={'number-pad'}
                                         maxLength={2}
@@ -500,12 +516,12 @@ const TrainingPersonaDetail = (props) => {
                                             fontSize: 12,
                                             color: '#FF0D10',
 
-                                        }}>Enter Your D.O.B *</Text>
+                                        }}>{t('Enter_Your_DOB_msg')}</Text>
                                     </View>
                                     : null
                             }
 
-                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000',zIndex: -999  }}>Weight</Text>
+                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000',zIndex: -999  }}>{t('Weight')}</Text>
 
                             <View style={{ width: "80%", flexDirection: 'row', height: 40, marginTop: 10, marginLeft: 20, justifyContent: "space-between", }}>
                                 {
@@ -583,11 +599,11 @@ const TrainingPersonaDetail = (props) => {
                                             fontSize: 12,
                                             color: '#FF0D10',
 
-                                        }}>Enter Weight in KG / LB *</Text>
+                                        }}>{t('Enter_Weight_KGLB_msg')}</Text>
                                     </View>
                                     : null
                             }
-                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000', }}>Height</Text>
+                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000', }}>{t('Height')}</Text>
                             <KeyboardAvoidingView
                                 style={{ flex: 1 }}
                                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -671,7 +687,7 @@ const TrainingPersonaDetail = (props) => {
                                                         fontSize: 12,
                                                         color: '#FF0D10',
 
-                                                    }}>Enter Height in CM / IN *</Text>
+                                                    }}>{t('Enter_Height_CM_msg')}</Text>
                                                 </View>
                                                 : null
 
@@ -683,8 +699,8 @@ const TrainingPersonaDetail = (props) => {
                                                 SetTrainingPlan(),
                                                     steOnsubmiterrormsg(true);
                                             }}>
-                                            <View style={{ borderWidth: 1, borderColor: '#ffcc00', justifyContent: 'center', alignItems: "center", width: 110, height: 34, backgroundColor: '#ffcc00', borderRadius: 35 }}>
-                                                <Text style={{ textAlign: 'center', fontSize: 12, color: 'white', }}>Save Detail</Text>
+                                            <View style={{ borderWidth: 1, borderColor: '#ffcc00', justifyContent: 'center', alignItems: "center", width: 130, height: 36, backgroundColor: '#ffcc00', borderRadius: 35 }}>
+                                                <Text style={{ textAlign: 'center', fontSize: 12, color: 'white', }}>{t('Save_Detail')}</Text>
                                             </View>
                                         </TouchableOpacity>
                                     </View>

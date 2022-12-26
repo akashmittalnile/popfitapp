@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { View, TouchableHighlight, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, ActivityIndicator, StatusBar, } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler';
+import { View, TouchableHighlight, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, ActivityIndicator, StatusBar,ScrollView } from 'react-native'
+// import { ScrollView } from 'react-native-gesture-handler';
 // import { BackgroundImage } from 'react-native-elements/dist/config';
 // import LinearGradient from 'react-native-linear-gradient';
 // import style from '../../Routes/style';
@@ -12,8 +12,9 @@ import axios from 'axios';
 import * as yup from 'yup';
 import { Formik } from 'formik';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 
-// react-native-country-picker-modal
+ 
 
 const MobileNo = (props) => {
 
@@ -25,7 +26,12 @@ const MobileNo = (props) => {
   //   });
   //   return unsubscribe;
   // }, [props, navigation]);
+  // const[mobilevalidation,setMobilevalidation]=useState(t('Enter_Mobile_Number'))
+ 
+  const { t } = useTranslation();
 
+  const mobilevalidation = t('Phone_number_Required');
+  const vldnumbermsg = t('Enter_the_valid_mobile_number')
 
   const [flag, setFlag] = useState('http://purecatamphetamine.github.io/country-flag-icons/3x2/US.svg');
   const [code, setcode] = useState('+1');
@@ -84,7 +90,7 @@ const MobileNo = (props) => {
     const phone_number = values.phoneNumber;
     AsyncStorage.setItem("phnNumber", phone_number);
     const country_code = code;
-    // console.log("country_code.................", code);
+    console.log("country_code.................", code,phone_number);
     if (phone_number == "") {
       setIsLoading(true);
       setAlertVisibility(true);
@@ -92,7 +98,7 @@ const MobileNo = (props) => {
     }
     try {
       const response = await axios.post(`${API.MOBILE_NO_VERIFY}`, { phone_number, country_code });
-      // console.log(":::::::::Mobile_Response>>>", response.data);
+      console.log(":::::::::Mobile_Response>>>", response.data);
       // Alert.alert("Your OTP is ",response.data.country_code);
       props.navigation.navigate("VerificationCode", {
         Countrycode: response.data.country_code,
@@ -104,8 +110,8 @@ const MobileNo = (props) => {
       setIsLoading(false);
     }
     catch (error) {
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
-      // console.log("......error.........", error.response.data);
+      Alert.alert("", t('Check_internet_connection'))
+      console.log("......error.........", error.response.data);
       setIsLoading(false);
       setAlertVisibility(false);
     }
@@ -129,8 +135,8 @@ const MobileNo = (props) => {
                   validationSchema={yup.object().shape({
                     phoneNumber: yup
                       .string()
-                      .matches(PHONE_NO_REGEX, { message: "Please, Enter the valid mobile number ", excludeEmptyString: true })
-                      .required('Phone number is a required field'),
+                      .matches(PHONE_NO_REGEX, { message: vldnumbermsg , excludeEmptyString: true })
+                      .required(mobilevalidation),
 
 
                   })}
@@ -138,7 +144,7 @@ const MobileNo = (props) => {
                   {({ values, handleChange, errors, setFieldTouched, touched, isValid, handleSubmit }) => (
 
                     <View style={{ height: 200 }}>
-                      <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 19, color: 'white', }}>What's Your Mobile Number?</Text>
+                      <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 19, color: 'white', }}>{t('What_Your_Mobile_Number')}</Text>
 
 
                       <View style={{ height: 70, marginTop: 40, }} >
@@ -210,16 +216,16 @@ const MobileNo = (props) => {
                           }}
                             disabled={!isValid}>
                             <View style={{ marginTop: 30, borderRadius: 50, width: 150, height: 40, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
-                              <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'white', }}>Next</Text>
+                              <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'white', }}>{t('Next')}</Text>
                             </View>
                           </TouchableOpacity>
 
                           <View style={{ marginTop: 15, width: "100%", height: 40, alignItems: 'center', justifyContent: 'center', flexDirection: "row" }}>
-                            <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'white', justifyContent: 'center', }}>Already have an account </Text>
+                            <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'white', justifyContent: 'center', }}>{t('Already_have_an_account')} </Text>
 
                             <TouchableOpacity
                               onPress={() => { gotoLogin() }}>
-                              <Text style={{ textAlign: 'center', fontSize: 14, color: '#ffcc00', textDecorationLine: 'underline' }}> Login </Text>
+                              <Text style={{ textAlign: 'center', fontSize: 14, color: '#ffcc00', textDecorationLine: 'underline' }}>{t('Login')}</Text>
                             </TouchableOpacity>
 
                             <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'white', justifyContent: 'center' }}>?</Text>

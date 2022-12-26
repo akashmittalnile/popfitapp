@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native'
-import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
-import { BackgroundImage } from 'react-native-elements/dist/config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { API } from '../../Routes/Urls';
 import Headers from '../../Routes/Headers';
-import { useSafeAreaFrame } from 'react-native-safe-area-context';
-import { async } from 'regenerator-runtime';
 import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -19,9 +16,9 @@ const FitnessEquipment = (props) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [shopitems, setshopitems] = useState([]);
-  const [imagepath, setimagepath] = useState("");
+  const [imagepath, setimagepath] = useState('');
   // const [FilterPopup, setFilterPopUp] = useState(false);
-
+  const { t } = useTranslation();
 
   const gotoDumbleSet = (item) => {
 
@@ -71,7 +68,7 @@ const FitnessEquipment = (props) => {
 
     }
     catch (error) {
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", t('Check_internet_connection'))
       // console.log("......error.........", error.response.data.message);
       // Alert.alert("FitnessEquipment Store!", error.response.data.message)
     
@@ -117,7 +114,7 @@ const FitnessEquipment = (props) => {
                     color: 'black',
                     fontWeight: "500"
                   }}>
-                  Fitness Equipment
+                  {t('Fitness_Equipment')}
                 </Text>
               </View>
 
@@ -186,7 +183,7 @@ const FitnessEquipment = (props) => {
                           borderTopLeftRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
                         }}>
                         <Image
-                          source={{ uri: `${imagepath + item?.image}` }}
+                          source={{ uri: item?.image !=  null ? `${imagepath + item?.image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
                           resizeMode="contain"
                           style={{
                             width: "100%",

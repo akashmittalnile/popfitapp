@@ -5,7 +5,7 @@ import { View, Text, Modal, TouchableOpacity, Image } from 'react-native';
 import { styles } from './CancelSubscriptionStyle';
 //import : svg
 // import CheckSvg from '../assets/Vector.svg';
-
+import { useTranslation } from 'react-i18next';
 const CancelSubscription = ({ visible, setVisibility }) => {
   //function : modal function
   const closeModal = () => {
@@ -13,6 +13,7 @@ const CancelSubscription = ({ visible, setVisibility }) => {
   };
   // console.log("in IOS cancel modal open ");
   //UI
+  const { t } = useTranslation();
   return (
 
     <Modal
@@ -23,7 +24,7 @@ const CancelSubscription = ({ visible, setVisibility }) => {
       <View style={styles.container}>
         <TouchableOpacity style={styles.blurView} onPress={closeModal} />
         <View style={styles.mainView}>
-          <Text style={styles.TitleText}>Cancel subscription</Text>
+          <Text style={styles.TitleText}>{t('Cancel_subscription')}</Text>
           <View
             style={{
               borderBottomWidth: 0.5,
@@ -37,7 +38,7 @@ const CancelSubscription = ({ visible, setVisibility }) => {
                 width: 20,
                 height: 20, 
               }} />
-            <Text style={styles.bulletTextStyle}>Open the Settings app.</Text>
+            <Text style={styles.bulletTextStyle}>{t('Open_the_Settings_app')}.</Text>
           </View>
           <View style={styles.bulletView}>
             <Image source={require('../assets/Vector_ios.png')}
@@ -45,7 +46,7 @@ const CancelSubscription = ({ visible, setVisibility }) => {
                 width: 20,
                 height: 20,  
               }} />
-            <Text style={styles.bulletTextStyle}>Tap your name.</Text>
+            <Text style={styles.bulletTextStyle}>{t('Tap_your_name')}.</Text>
           </View>
           <View style={styles.bulletView}>
             <Image source={require('../assets/Vector_ios.png')}
@@ -53,7 +54,7 @@ const CancelSubscription = ({ visible, setVisibility }) => {
                 width: 20,
                 height:20, 
               }} />
-            <Text style={styles.bulletTextStyle}>Tap Subscriptions.</Text>
+            <Text style={styles.bulletTextStyle}>{t('Tap_Subscriptions')}.</Text>
           </View>
           <View style={styles.bulletView}>
             <Image source={require('../assets/Vector_ios.png')}
@@ -61,7 +62,7 @@ const CancelSubscription = ({ visible, setVisibility }) => {
                 width: 20,
                 height: 20,  
               }} />
-            <Text style={styles.bulletTextStyle}>Tap the subscription.</Text>
+            <Text style={styles.bulletTextStyle}>{t('Tap_the_subscription')}.</Text>
           </View>
           <View style={styles.bulletView}>
             <Image source={require('../assets/Vector_ios.png')}
@@ -70,10 +71,7 @@ const CancelSubscription = ({ visible, setVisibility }) => {
                 height: 20, 
               }} />
             <Text style={styles.bulletTextStyle}>
-              Tap Cancel Subscription. You might need to scroll down to find the
-              Cancel Subscription button. If there is no Cancel button or you
-              see an expiration message in red text, the subscription is already
-              canceled.
+              {t('Ios_Cancelled_mgs')}.
             </Text>
           </View>
         </View>

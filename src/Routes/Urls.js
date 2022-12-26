@@ -3,6 +3,7 @@ const BaseUrl = 'https://dev.pop-fiit.com';
 export const API = {
     LOGIN: BaseUrl + '/api/login',
     GET_PROFILE: BaseUrl + '/api/details',
+    Delete_USER: BaseUrl + '/api/delete_user',
     MOBILE_NO_VERIFY: BaseUrl + '/api/send_otp',
     FORGOT_PASSWORD: BaseUrl + '/api/forgetpassword',
     VERIFY_OTP: BaseUrl + "/api/verifyotp",
@@ -19,7 +20,7 @@ export const API = {
     TRAINING_SUB_CATERORY: BaseUrl + '/api/workout_subcategory',
     SUBSCRIPTION_PLAN: BaseUrl + '/api/subscription_plan',
     NEWS_LETTER_SUBSCRIPTION: BaseUrl + '/api/subscribe_to_newsletter',
-    NEWSLETTER_UNSUBSCRIBE:BaseUrl+'/api/unsubscribeNewsletter',
+    NEWSLETTER_UNSUBSCRIBE: BaseUrl + '/api/unsubscribeNewsletter',
     BLOG_MAIN_SCREEN: BaseUrl + '/api/blog',
     BLOG_DETAILS: BaseUrl + '/api/blog_details',
     BLOG_SUBCATEGORY: BaseUrl + '/api/get_blog_subcategory',
@@ -37,7 +38,7 @@ export const API = {
     COUPON_REMOVE: BaseUrl + '/api/remove_coupon',
     COUPON_APPLYED: BaseUrl + '/api/applyed_coupon',
     ORDER_DETAIL: BaseUrl + '/api/order_detail',
-    CANCEL_ORDER:BaseUrl + '/api/cancelOrder',
+    CANCEL_ORDER: BaseUrl + '/api/cancelOrder',
     SET_TRAINING: BaseUrl + '/api/set_training',
     // SEARCH_ORDER_FILTER: BaseUrl + '/api/order_filter',
     SHIPPING_ADDRESS_ADD: BaseUrl + '/api/add_shipping_address',
@@ -59,7 +60,8 @@ export const API = {
     NOTIFICATION_DELETE: BaseUrl + '/api/delete_notification',
     STRIPE_PAYMENT: BaseUrl + '/api/stripePost',
     ORDER_PLACED: BaseUrl + '/api/save_order',
-    INVOICE:BaseUrl + '/api/download_invoice',
-    CANCEL_SUBSCRIPTION:BaseUrl + '/api/cancel_subscription'
+    INVOICE: BaseUrl + '/api/download_invoice',
+    CANCEL_SUBSCRIPTION: BaseUrl + '/api/cancel_subscription',
+    EXPLORE_SHOP: BaseUrl + '/api/explore_shop'
 
 }

@@ -8,9 +8,7 @@ import { API } from '../../Routes/Urls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { async } from 'regenerator-runtime';
 import CustomLoader from '../../Routes/CustomLoader';
-
-
-
+import { useTranslation } from 'react-i18next';
 
 export default function PaymentScreen(props) {
 
@@ -25,8 +23,10 @@ export default function PaymentScreen(props) {
   const [amout, setAmout] = useState(props?.route?.params?.SubscriptionPlan);
   const [orderprice, setOrderprice] = useState(props?.route?.params?.Totalprice);
   const [textline, settextline] = useState(props?.route?.params?.Instruction);
+  const [ordernames, setOdernames] = useState(props?.route?.params?.Orderlistname);
+  const[Couponids,setCouponids]=useState( props?.route?.params?.Coupomid);
 
-
+  const { t } = useTranslation();
   // const fetchPaymentIntentClientSecret = async () => {
   //   // console.log("user name::", username);
   //   const response = await fetch(`${API_URL}/create-payment-intent`, {
@@ -79,33 +79,35 @@ export default function PaymentScreen(props) {
 
   useEffect(() => {
 
-    const checklogin = async () => {
-      let Usertoken = await AsyncStorage.getItem("authToken");
-      console.log("token.......", Usertoken);
-      setchecktoken(Usertoken);
-      if (Usertoken == null) {
-        Alert.alert('', 'Please login First ')
-        // props.navigation.navigate('LoginMain', {
-        //   screen: 'LoginSignUp',
+    // const checklogin = async () => {
+    //   let Usertoken = await AsyncStorage.getItem("authToken");
+    //   console.log("token.......", Usertoken);
+    //   setchecktoken(Usertoken);
+    //   if (Usertoken == null) {
+    //     Alert.alert('', 'Please login First ')
+    //     // props.navigation.navigate('LoginMain', {
+    //     //   screen: 'LoginSignUp',
 
-        // });
+    //     // });
 
-      }
-      else {
-        // GetSubscriptionPlan(item.id);
+    //   }
+    //   else {
+    //     // GetSubscriptionPlan(item.id);
 
-        console.log("??????????????error",);
-      }
-    };
+    //     console.log("??????????????error",);
+    //   }
+    // };
+    console.log('Apply coupon id::', props?.route?.params?.Coupomid)
     console.log('Plan data status::', props?.route?.params?.SubscriptionPlan)
     console.log("Order_Amount:", props?.route?.params?.Totalprice);
     console.log("ADDRESS seleted::", props?.route?.params?.SetAddrs);
+    console.log("order_item_name:", props?.route?.params?.Orderlistname);
     // const Totalprice = props?.route?.params?.Totalprice
     // const unsubscribe = props.navigation.addListener('focus', () => {
 
     // });
     // return unsubscribe;
-    checklogin()
+    // checklogin()
 
   }, []);
 
@@ -122,16 +124,16 @@ export default function PaymentScreen(props) {
     console.log("Data Get from Subscription Plans::", amout);
     // const PlanId = await AsyncStorage.getItem("Planid");
     const Token = await AsyncStorage.getItem("authToken");
-    console.log("selected plain price:", amout?.price_id, id, amout?.price);
+    console.log("selected plain price:", amout?.price_id, id, amout?.price ,orderprice);
 
-    const Plan_amout = amout != undefined ? amout?.price : orderprice;
+    const plan_amount = amout  != undefined ? amout?.price : orderprice.substring(1, 14);
     const plan_id = amout != undefined ? amout?.price_id : null;
     console.log('====================================');
-    console.log(amout?.price_id, id, amout?.price, Token);
+    console.log(plan_amount ,id ,amout?.price);
     console.log('====================================');
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.STRIPE_PAYMENT}`, { 'method_id': id, 'plan_amount': JSON.stringify(Plan_amout), 'plan_id': plan_id }, { headers: { "Authorization": ` ${Token}` } }
+      const response = await axios.post(`${API.STRIPE_PAYMENT}`, { 'method_id': id, 'plan_amount':  plan_amount, 'plan_id': plan_id }, { headers: { "Authorization": ` ${Token}` } }
 
         // {
         //   headers: {
@@ -157,8 +159,9 @@ export default function PaymentScreen(props) {
           setPlanPlacedPopUp(true);
         }
         else {
+           console.log("Response.Stripe:", response.data)
           setIsLoading(false);
-          Alert.alert(' status ==1 stripe response::', 'Something went wrong  ')
+          Alert.alert('121', t('Error_msg'))
         }
 
 
@@ -173,28 +176,26 @@ export default function PaymentScreen(props) {
         //     { text: "OK", onPress: () => props.navigation.navigate("Home") }
         //   ]
         // )
-      } else {
-        Alert.alert('', 'Something went wrong please try again.');
-        setIsLoading(false);
-      }
-      // Alert.alert("payment failed not valid status !");
+      }  
+       
     }
     catch (error) {
       console.log("payment error:", error.response.data);
-      Alert.alert("", "Please check your internet connection and try again.")
+      Alert.alert("", t('Error_msg'))
       // Alert.alert('','Something went wrong please exit the app and try again')
     }
     setIsLoading(false);
   };
 
   const OrderPlacedAfterpaymentdone = async () => {
-    console.log("after_payment::::", adddrs, transid, textline);
+    console.log("array to string",ordernames.toString());
+    console.log("after_payment::::", adddrs, transid, textline, ordernames,orderprice,Couponids);
     const Token = await AsyncStorage.getItem("authToken");
 
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.ORDER_PLACED}`, { 'shipping_address': adddrs, 'transaction_id': transid, 'amount': amout != undefined ? amout.price : orderprice, 'delivery_inst': textline != null ? textline : null }, {
-        headers: { "Authorization": ` ${Token}` }
+      const response = await axios.post(`${API.ORDER_PLACED}`, { 'shipping_address': adddrs, 'transaction_id': transid, 'amount': amout != undefined ? amout.price : orderprice, 'delivery_inst': textline != null ? textline : null, 'order_item': ordernames ,'coupon_id':1}, {
+        headers: { "Authorization": ` ${Token}`,'coupon_id':Couponids }
       })
       console.log("Orderplaced_response:", response.data);
       setOrderPlacedPopUp(false);
@@ -204,23 +205,26 @@ export default function PaymentScreen(props) {
         setPlanPlacedPopUp(false);
         props.navigation.navigate("MyOrder");
       }
-        else if (planPlacedPopUp == "true") {
-          setOrderPlacedPopUp(false);
-          setIsLoading(false);
-          props.navigation.navigate("TrainingDetail")
-        }
-        // else {
-        //   Alert.alert('status == 1', 'something went wrong!!!!')
-        // }
+      else if (planPlacedPopUp == "true") {
+        setOrderPlacedPopUp(false);
+        setIsLoading(false);
+        props.navigation.navigate("TrainingDetail")
+      }
+      // else {
+      //   Alert.alert('status == 1', 'something went wrong!!!!')
+      // }
 
       else if (response.data.status == 0) {
 
-        // Alert.alert('', 'Something went wrong please exit the app and try again');
+        Alert.alert('', response.data.message);
         console.log("status0:", response.data.message);
       }
     } catch (error) {
-      Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
-      // Alert.alert('', 'Something went wrong please exit the app and try again');
+      console.log("error in save order-catch:", error.response.data);
+      setOrderPlacedPopUp(false);
+      setPlanPlacedPopUp(false);
+      // Alert.alert("error", "Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert('', t('Error_msg'));
 
     }
     setIsLoading(false);
@@ -258,7 +262,7 @@ export default function PaymentScreen(props) {
               justifyContent: "center",
               alignContent: "flex-start"
             }}>
-              <Text style={{ textAlign: 'left', fontSize: 18, color: '#000000', fontWeight: "500" }}>Pay by Card</Text>
+              <Text style={{ textAlign: 'left', fontSize: 18, color: '#000000', fontWeight: "500" }}>{t('Pay_byCard')}</Text>
             </View>
             {/* <TextInput
             autoCapitalize='none'
@@ -308,7 +312,7 @@ export default function PaymentScreen(props) {
                 }
               }>
                 <View style={{ justifyContent: 'center', width: 120, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
-                  <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Pay</Text>
+                  <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>{t('Pay')}</Text>
                 </View>
               </TouchableOpacity>
 
@@ -324,12 +328,17 @@ export default function PaymentScreen(props) {
                 setOrderPlacedPopUp(false);
               }}
             >
+
               <View style={{
                 flex: 1,
                 justifyContent: 'flex-end',
                 alignItems: 'center',
                 backgroundColor: 'rgba(140, 141, 142, 0.7)',
               }}>
+                <TouchableOpacity
+                  onPress={() => setOrderPlacedPopUp(false)}
+                  style={{ flex: 1 }}
+                />
                 <View style={{
                   // margin: 10,
                   backgroundColor: "white",
@@ -388,14 +397,14 @@ export default function PaymentScreen(props) {
                       </View>
                     </View>
 
-                    <Text style={{ marginTop: 15, marginLeft: 10, textAlign: 'center', fontSize: 18, color: 'black', fontWeight: "500" }}>Order placed successfully</Text>
-                    <Text style={{ marginHorizontal: 20, marginTop: 10, textAlign: 'left', fontSize: 12, color: 'black', fontWeight: "400" }}>Your order has been placed successfully you can click on View Orders to track the status and delivery.
+                    <Text style={{ marginTop: 15, marginLeft: 10, textAlign: 'center', fontSize: 18, color: 'black', fontWeight: "500" }}>{t('order_placed_title')}</Text>
+                    <Text style={{ marginHorizontal: 20, marginTop: 10, textAlign: 'left', fontSize: 12, color: 'black', fontWeight: "400" }}>{t('order_placed_msg')}
                     </Text>
                     <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 30, marginTop: 30 }}>
                       <TouchableOpacity onPress={() => OrderPlacedAfterpaymentdone()}>
-                        <View style={{ alignItems: 'center', justifyContent: 'center', width: 130, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
+                        <View style={{ alignItems: 'center', justifyContent: 'center', width: 170, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
 
-                          <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>View Orders</Text>
+                          <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>{t('View_Orders')}</Text>
 
                         </View>
                       </TouchableOpacity>
@@ -485,14 +494,14 @@ export default function PaymentScreen(props) {
                       </View>
                     </View>
 
-                    <Text style={{ marginTop: 15, marginLeft: 10, textAlign: 'center', fontSize: 18, color: 'black', fontWeight: "500" }}>Subscription Purchased</Text>
-                    <Text style={{ marginHorizontal: 20, marginTop: 10, textAlign: 'left', fontSize: 12, color: 'black', fontWeight: "400" }}>You have successfully subscribed to the training please checkout the program.
+                    <Text style={{ marginTop: 15, marginLeft: 10, textAlign: 'center', fontSize: 18, color: 'black', fontWeight: "500" }}>{t('Subscription_purchased_title')}</Text>
+                    <Text style={{ marginHorizontal: 20, marginTop: 10, textAlign: 'left', fontSize: 12, color: 'black', fontWeight: "400" }}>{t('Subscription_msg')}
                     </Text>
                     <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 30, marginTop: 30 }}>
                       <TouchableOpacity onPress={() => { planpaymentdone() }}>
-                        <View style={{ alignItems: 'center', justifyContent: 'center', width: 130, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
+                        <View style={{ alignItems: 'center', justifyContent: 'center', width: 170, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
 
-                          <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>View Trainings</Text>
+                          <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>{t('View_Trainings')}</Text>
 
                         </View>
                       </TouchableOpacity>

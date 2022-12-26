@@ -11,15 +11,10 @@ import {
   Pressable,
   SafeAreaView,
   ActivityIndicator,
-  Dimensions,
+  Dimensions,ScrollView,RefreshControl
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-import { ScrollView } from 'react-native-gesture-handler';
-import { BackgroundImage } from 'react-native-elements/dist/config';
-import { RadioButton } from 'react-native-paper';
-import DropDownPicker from 'react-native-dropdown-picker';
-import { Pages } from 'react-native-pages';
-import styles from '../../Routes/style';
+ 
+// import { ScrollView } from 'react-native-gesture-handler';
 import Headers from '../../Routes/Headers';
 import axios from 'axios';
 import { API } from '../../Routes/Urls';
@@ -27,16 +22,24 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
 import { incrementCounter } from '../../Redux/actions/UpdateCounter';
 import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
 const Notifications = props => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const [isLoading, setIsLoading] = useState(false);
   const [noti, setNoti] = useState([]);
 
+  const [refreshing, setrefreshing] = useState(false)
+  const onRefresh = () => {
+    setrefreshing(true)
+    GetNotification();
+    setrefreshing(false)
+  }
   const Clicknotication = item => {
     // console.log('after click data:', item.type);
     if (item.type == 'recipe') {
@@ -133,7 +136,7 @@ const Notifications = props => {
       })
       .catch(function (error) {
         // console.log('......error.........', error);
-        Alert.alert('something went wrong in catch');
+        Alert.alert( '',t('Error_msg'));
         setIsLoading(false);
       });
 
@@ -187,7 +190,7 @@ const Notifications = props => {
       } catch (error) {
 
         // console.log("NoticationDetails-error:::", error);
-        Alert.alert('something went wrong !', 'Try again later');
+        Alert.alert('',t('Error_msg')  );
       } setIsLoading(false);
     } setIsLoading(false);
   };
@@ -229,7 +232,14 @@ const Notifications = props => {
             width: '100%',
             height: '100%',
           }}>
-          <ScrollView>
+          <ScrollView 
+           refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+          >
             {noti?.length > 0 ? (
               noti.map((item, index) => {
                 return (
@@ -497,7 +507,7 @@ const Notifications = props => {
                   }}
                 />
                 <Text style={{ fontSize: 14, fontWeight: '500', color: 'black' }}>
-                  No Notificaton Found !
+                  {t('No_Notification_found')} !
                 </Text>
               </View>
             )}

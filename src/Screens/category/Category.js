@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ActivityIndicator } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ActivityIndicator,ScrollView,RefreshControl } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
-import { ScrollView } from 'react-native-gesture-handler';
+// import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';
 import { RadioButton } from 'react-native-paper';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -12,6 +12,7 @@ import axios from 'axios';
 import Headers from '../../Routes/Headers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -21,8 +22,14 @@ const Category = (props) => {
   const [subcategoryitems, setsubcategoryitems] = useState([]);
   const [subscriptiontoken, setsubscriptiontoken] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const DATA = ['first row', 'second row', 'third row', 'first row', 'second row', 'third row'];
-
+ 
+  const [refreshing, setrefreshing] = useState(false)
+  const onRefresh = () => {
+    setrefreshing(true)
+    getCategoryApi();
+    setrefreshing(false)
+  }
+  const { t } = useTranslation();
   // const buttonClickedHandler = () => {
   //   props.navigation.goBack()
   // }
@@ -69,7 +76,7 @@ const Category = (props) => {
     }
     catch (error) {
       // Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
-      Alert.alert('', 'Something went wrong please exit the app and try again')
+      Alert.alert('', t('Error_msg'))
       // console.log("......error.........", error.response.data.message);
     }
     setIsLoading(false);
@@ -103,10 +110,15 @@ const Category = (props) => {
 
           {
             subcategoryitems.length != 0 ?
-              (<ScrollView >
+              (<ScrollView  refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                />
+              }>
                 <View style={{ height: 50, flexDirection: 'row' }}>
                   <View style={{ flex: 1, marginLeft: 15, marginTop: 20, }}>
-                    <Text style={{ textAlign: 'left', fontSize: 18, color: 'white', fontWeight: "500" }}>Sub-Category Blogs</Text>
+                    <Text style={{ textAlign: 'left', fontSize: 17, color: 'white', fontWeight: "500" }}>{t('Sub_Category_Blogs')}</Text>
                   </View>
 
                 </View>
@@ -132,7 +144,7 @@ const Category = (props) => {
                           alignItems: 'center',
                         }}>
                         <View style={{ width: WIDTH * 0.45, backgroundColor: '#c9bca0', height: 25, justifyContent: 'center', alignItems: "center", borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
-                          <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "500" }}>{item?.subcat_name?.slice(0, 15) + '...'}</Text>
+                          <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "500" }}>{item?.subcat_name?.length >= 18 ? item?.subcat_name?.slice(0, 18) + '...' : item?.subcat_name?.slice(0, 15)}</Text>
 
                         </View>
                         <View
@@ -144,13 +156,13 @@ const Category = (props) => {
                             justifyContent: "flex-start", alignItems: "flex-start"
                           }}>
                           <Image
-                            source={{ uri: `${item.image}` }}
+                            source={{ uri: item?.image != "" ? `${item?.image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
                             resizeMode="stretch"
                             style={{
                               width: "100%",
                               height: "100%",
-                              borderBottomLeftRadius:20,borderBottomRightRadius:20,
-                              alignSelf: 'center',
+                              borderBottomLeftRadius: 20, borderBottomRightRadius: 20,
+                              alignSelf: 'center', backgroundColor: "black"
                             }}
                           />
 
@@ -223,7 +235,7 @@ const Category = (props) => {
                     width: 200,
                     height: 120, alignSelf: 'center'
                   }} />
-                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>No data found!</Text>
+                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>{t('Oops_No_data_found')}</Text>
               </View>)
           }
 

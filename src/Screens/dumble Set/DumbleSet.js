@@ -1,17 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, Modal, SafeAreaView, ActivityIndicator, Dimensions } from 'react-native'
-import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
-import { BackgroundImage } from 'react-native-elements/dist/config';
-import { RadioButton } from 'react-native-paper';
-import DropDownPicker from 'react-native-dropdown-picker';
-import { Pages } from 'react-native-pages';
-import styles from '../../Routes/style'
 import Headers from '../../Routes/Headers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { API } from '../../Routes/Urls';
-import { log } from 'react-native-reanimated';
+import { useTranslation } from 'react-i18next';
 import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
@@ -21,7 +15,7 @@ const DumbleSet = (props) => {
 
   const [FilterPopup, setFilterPopUp] = useState(false);
   const [ischecked, setChecked] = useState("");
-
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [shopitems, setshopitems] = useState([]);
 
@@ -34,7 +28,7 @@ const DumbleSet = (props) => {
 
   // console.log("FITNESS_storeId......:", props?.route?.params?.SHOPID);
   const FitnessID = props?.route?.params?.SHOPID;
-  // console.log("FITNESS_categoryID......:", props?.route?.params?.categoryID);
+  console.log("FITNESS_categoryID......:", props?.route?.params?.categoryID);
   const categoryID = props?.route?.params?.categoryID;
 
   useEffect(() => {
@@ -65,7 +59,7 @@ const DumbleSet = (props) => {
 
     }
     catch (error) {
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", t('Check_internet_connection'))
       // console.log("......error.........", error.response.data.message);
       // Alert.alert("Catch error msg FitnessEquipment !!!!")
       // setIsLoading(false);
@@ -87,13 +81,13 @@ const DumbleSet = (props) => {
 
       } else {
         setFilterPopUp(false);
-        Alert.alert('!', 'Something went wrong please exit the app and try again');
+        Alert.alert('', t('Error_msg'));
         // setIsLoading(false);
       }
 
     }
     catch (error) {
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("",t('Check_internet_connection'))
       // console.log("......error.........", error.response.data.message);
       //Alert.alert('', 'Something went wrong please exit the app and try again');
       // setIsLoading(false);
@@ -139,7 +133,7 @@ const DumbleSet = (props) => {
                         color: 'black',
                         fontWeight: "500"
                       }}>
-                      Fitness Equipment
+                      {t('Fitness_Equipment')}
                     </Text>
                   </View>
 
@@ -214,7 +208,7 @@ const DumbleSet = (props) => {
                             backgroundColor: 'white',
                           }}>
                           <Image
-                            source={{ uri: item.product_image }}
+                            source={{ uri: item?.product_image != "" ? item?.product_image : 'https://dev.pop-fiit.com/images/logo.png' }}
                             resizeMode="contain"
                             style={{
                               width: "100%",
@@ -363,7 +357,7 @@ const DumbleSet = (props) => {
                               fontWeight: "400",
                               marginTop: 2,
                             }}>
-                            Filter
+                            {t('Filter')}
                           </Text>
                         </View>
 
@@ -416,7 +410,7 @@ const DumbleSet = (props) => {
                                       color: ischecked == 'high_to_low' ? '#ffcc00' : '#8F93A0'
 
                                     }}>
-                                    Higher to Lower Price
+                                   {t('Higher_to_Lower_Price')}
                                   </Text>
                                 </View>
                               </View>
@@ -464,7 +458,7 @@ const DumbleSet = (props) => {
                                       color: ischecked == 'low_to_high' ? '#ffcc00' : '#8F93A0'
 
                                     }}>
-                                    Lower to Higher Price
+                                    {t('Lower_to_Higher_Price')}
                                   </Text>
                                 </View>
                               </View>
@@ -712,7 +706,7 @@ const DumbleSet = (props) => {
                                     color: 'white',
 
                                   }}>
-                                  Apply
+                                  {t('Apply')}
                                 </Text>
                               </View>
                             </TouchableOpacity>
@@ -738,7 +732,7 @@ const DumbleSet = (props) => {
                     width: 200,
                     height: 120, alignSelf: 'center'
                   }} />
-                <Text style={{ fontSize: 14, fontWeight: "bold" }}>No data found</Text>
+                <Text style={{ fontSize: 14, fontWeight: "bold" }}>{t('Oops_No_data_found')}</Text>
               </View>)
           }
 

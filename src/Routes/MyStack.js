@@ -29,7 +29,7 @@ const MyStack = (props) => {
         setShowSplash(false);
         console.log(user);
         if (user) {
-            console.log(user);
+            // console.log(user);
             // setShowSplash(false);
 
             // await GetShippingProducts();
@@ -40,7 +40,7 @@ const MyStack = (props) => {
         else {
             setisSignedIn(false);
             // setShowSplash(false);
-            console.log("error_Mystack");
+            // console.log("error_Mystack");
         }
 
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ActivityIndicator } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ScrollView,RefreshControl } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
-import { ScrollView } from 'react-native-gesture-handler';
+// import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';
 import Headers from '../../Routes/Headers';
 import styles from '../../Routes/style'
@@ -9,14 +9,22 @@ import axios from 'axios';
 import { API } from '../../Routes/Urls';
 import { WebView } from 'react-native-webview';
 import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
 const RecipeDetails = (props) => {
 
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [recipedetails, setRecipeDetails] = useState([]);
+  const [refreshing, setrefreshing] = useState(false)
+  const onRefresh = () => {
+    setrefreshing(true)
+    PostRecipecategoryDetail();
+    setrefreshing(false)
+  }
 
   useEffect(() => {
     PostRecipecategoryDetail()
@@ -38,7 +46,7 @@ const RecipeDetails = (props) => {
     catch (error) {
       // console.log("......error.........", error.response.data.message);
       // Alert.alert("Something went wrong!", error.response.data.message);
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", t('Check_internet_connection'))
     }
     setIsLoading(false);
   };
@@ -68,7 +76,14 @@ const RecipeDetails = (props) => {
       />
       {!isLoading ?
         (<View style={{ marginBottom: 60 }}>
-          <ScrollView>
+          <ScrollView 
+           refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+          >
             <View style={{ paddingBottom: 65 }}>
             <View style={{ marginLeft: 15,marginTop: 2, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
                 <Text style={{textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "500" }}>{recipedetails?.title}</Text>
@@ -98,10 +113,10 @@ const RecipeDetails = (props) => {
                 <Text style={{ textAlign: 'left', fontSize: 18, color: '#000', fontWeight: "500" }} >{recipedetails?.recipe_title}</Text>
               </View>
 
-              <View style={{ backgroundColor: "white", borderRadius: 20, marginTop: 20, height: HEIGHT * 0.2, width: WIDTH * 0.9, marginHorizontal: 18, }}>
+              <View style={{ backgroundColor: "black", borderRadius: 20, marginTop: 20, height: HEIGHT * 0.2, width: WIDTH * 0.9, marginHorizontal: 18, }}>
                 <Image resizeMode='contain'
-                  source={{ uri: recipedetails?.image }}
-                  style={{ width: '100%', height: '100%', justifyContent: "center", alignItems: 'center', borderRadius: 20, backgroundColor: "lightgray" }}
+                  source={{ uri: recipedetails?.image !=  "" ? `${recipedetails?.image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
+                  style={{ width: '100%', height: '100%', justifyContent: "center", alignItems: 'center', borderRadius: 20, backgroundColor: "black" }}
                 />
               </View>
               <View style={{ marginHorizontal: 20, marginTop: 15, height: "auto", width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}>

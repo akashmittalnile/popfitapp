@@ -8,14 +8,14 @@ import { WebView } from 'react-native-webview';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomLoader from '../../Routes/CustomLoader';
 // import TrackPlayer, { State } from 'react-native-track-player';
-
+import { useTranslation } from 'react-i18next';
 
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
 const Audiolist = (props) => {
-
+    const { t } = useTranslation();
     const [trainingBlog_list, setTrainingBlog_list] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [audiobaseurl, setAudiobaseurl] = useState('');
@@ -55,7 +55,7 @@ const Audiolist = (props) => {
         catch (error) {
             console.log("......error.........", error.response.data.message);
             //Alert.alert("Something went wrong!", error.response.data.message);
-            Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+            Alert.alert("", t('Check_internet_connection'))
 
         } setIsLoading(false);
     };
@@ -91,7 +91,7 @@ const Audiolist = (props) => {
                                     {/* Training Audio */}
                                     <View style={{ marginTop: 10,  height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
                                         
-                                            <Text style={{ marginLeft: 15, fontSize: 16, color: 'black', fontWeight: "500" }}>Training Audio</Text>
+                                            <Text style={{ marginLeft: 15, fontSize: 16, color: 'black', fontWeight: "500" }}>{t('Training_Audio')}</Text>
                                        
 
 
@@ -147,7 +147,7 @@ const Audiolist = (props) => {
                                         width: 200,
                                         height: 120, alignSelf: 'center'
                                     }} />
-                                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>Oops! No data found</Text>
+                                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>{t('Oops_No_data_found')}</Text>
                             </View>)
                     }
                 </>)

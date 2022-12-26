@@ -12,8 +12,10 @@ import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
 import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 const AboutsUs = (props) => {
+    const { t } = useTranslation();
     const [aboutus, setAboutus] = useState([]);
     const [About_usimage, setAbout_usimage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +39,7 @@ const AboutsUs = (props) => {
             // setIsLoading(false)
         }
         catch (error) {
-            Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+            Alert.alert("", t('Check_internet_connection'))
             //console.log("Terms_condition_error:", error.response.data.message);
             // setIsLoading(false)
         }

@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, Modal, SafeAreaView, Dimensions, ActivityIndicator,KeyboardAvoidingView,Platform } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, Modal, SafeAreaView, Dimensions, ScrollView,KeyboardAvoidingView,Platform,RefreshControl } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
-import { ScrollView } from 'react-native-gesture-handler';
+// import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';
 import { RadioButton } from 'react-native-paper';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { Pages } from 'react-native-pages'; 
-import styles from '../../Routes/style'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
-import * as yup from 'yup'
-import { Formik } from 'formik'
+// import * as yup from 'yup'
+// import { Formik } from 'formik'
 import Headers from '../../Routes/Headers';
 import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 // let unsubscribe;
 var WIDTH = Dimensions.get('window').width;
@@ -22,6 +21,7 @@ const DATA = ['first row', 'second row'];
 
 
 const Address = (props) => {
+    const { t } = useTranslation();
     // const [producttoken, setproducttoken] = useState("");
     const [useraddress, setuseraddress] = useState([]);
     const [isSecureEntry, setisSecureEntry] = useState('false')
@@ -43,10 +43,12 @@ const Address = (props) => {
     const [phone, setphone] = useState('');
     const [pincode, setpincode] = useState('');
     const [state, setstate] = useState('');
-    // const [justUpdate, setjustUpdate] = useState(false);
-    // const [type, setType] = useState('');
-
-    // console.log('type&&&&&&&&', type);
+    const [refreshing, setrefreshing] = useState(false)
+    const onRefresh = () => {
+      setrefreshing(true)
+      GetShippingProducts();
+      setrefreshing(false)
+    }
 
     const validate = () => {
        
@@ -148,7 +150,7 @@ const Address = (props) => {
                     })
             } catch (error) {
                 // setIsLoading(false)
-                Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+                Alert.alert("",  t('Check_internet_connection'))
 
                 // console.log("gotocurrentpage_error in address ...", error)
 
@@ -201,7 +203,7 @@ const Address = (props) => {
             // setIsLoading(false);
         }
         catch (error) {
-            Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+            Alert.alert("", t('Check_internet_connection'))
             // console.log("ShippingProductserror::Address_screen:", error.response.data.message);
             // setIsLoading(false);
         }
@@ -227,7 +229,7 @@ const Address = (props) => {
             }
         }
         catch (error) {
-            Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+            Alert.alert("", t('Check_internet_connection'))
             // console.log("..ItemRemove....error.........", error.response.data.message);
             // setIsLoading(false);
         }
@@ -260,7 +262,7 @@ const Address = (props) => {
         }
 
         catch (error) {
-            Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+            Alert.alert("", t('Check_internet_connection'))
             // console.log("..ItemUpdate....error.........", error);
         }
         setIsLoading(false);
@@ -321,7 +323,7 @@ const Address = (props) => {
                     {
                         useraddress.length > 0 ?
                             (<View style={{ flex: 1 }}>
-                                <Text style={{ marginLeft: 15, marginTop: 15, textAlign: 'left', fontSize: 18, color: '#000000', fontWeight: "500" }}>Select a Delivery Address</Text>
+                                <Text style={{ marginLeft: 15, marginTop: 15, textAlign: 'left', fontSize: 17, color: '#000000', fontWeight: "500" }}>{t('Select_Delivery_Address')}</Text>
                                 <View
                                     style={{
                                         justifyContent: "center",
@@ -332,7 +334,14 @@ const Address = (props) => {
                                         marginTop: 10,
                                     }}>
                                     {/* Please Enter Your Shipping Address */}
-                                    <ScrollView nestedScrollEnabled={true}>
+                                    <ScrollView nestedScrollEnabled={true} 
+                                    refreshControl={
+                                        <RefreshControl
+                                          refreshing={refreshing}
+                                          onRefresh={onRefresh}
+                                        />
+                                      }
+                                    >
                                         <FlatList
                                             vertical
                                             data={useraddress}
@@ -355,7 +364,7 @@ const Address = (props) => {
                                                     borderColor: "#ffcc00",
                                                     borderWidth: 1,
                                                     // backgroundColor: 'red'
-                                                    marginTop: 10,
+                                                    marginTop: 8,
                                                     marginBottom: 10
                                                 }}>
                                                     <View style={{ flexDirection: 'column' }}>
@@ -420,7 +429,7 @@ const Address = (props) => {
                                                             <View style={{}}>
                                                                 {/* <Image source={require('../assets/buttonSave.png')}
                                                     /> */}
-                                                                <Text style={{ color: '#FFFFFF', fontWeight: "400", fontSize: 12, textAlign: 'left' }}>Select this Address</Text>
+                                                                <Text style={{ color: '#FFFFFF', fontWeight: "400", fontSize: 12, textAlign: 'left' }}>{t('Select_this_Address')}</Text>
                                                             </View>
                                                         </TouchableOpacity>
                                                     </View>
@@ -479,7 +488,7 @@ const Address = (props) => {
                                                 alignItems: "center", marginTop: 12
                                             }}>
                                                 < View style={{ justifyContent: "flex-start", alignItems: 'flex-start' }}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 17, color: 'black', fontWeight: '500', left: 34, marginTop: 5 }}>Add a new address</Text>
+                                                    <Text style={{ textAlign: 'left', fontSize: 17, color: 'black', fontWeight: '500', left: 34, marginTop: 5 }}>{t('Add_new_address')}</Text>
                                                 </View>
                                             </View>
                                         </View>
@@ -548,7 +557,7 @@ const Address = (props) => {
                                                     }}>
 
                                                         <View style={{ marginTop: 15, marginHorizontal: 20, height: 30, flexDirection: "row", justifyContent: "center", alignItems: 'center' }}>
-                                                            <Text style={{ marginTop: 2, marginLeft: 10, textAlign: 'center', fontSize: 20, color: '#000000', fontWeight: '500' }}>Add Address</Text>
+                                                            <Text style={{ marginTop: 2, marginLeft: 10, textAlign: 'center', fontSize: 20, color: '#000000', fontWeight: '500' }}>{t('Add_Address')}</Text>
 
 
                                                         </View>
@@ -564,35 +573,36 @@ const Address = (props) => {
                                                             />
                                                         </TouchableOpacity>
                                                         <TextInput style={styl.textInput}
-                                                            placeholder='Full Name(Required)*'
+                                                            placeholder={t('Full_Name')}
                                                             placeholderTextColor="#8F93A0"
                                                             label="Full Name"
                                                             value={full_name}
                                                             onChangeText={e => onChangeNameHandler(e)}
                                                         />
                                                         <TextInput style={styl.textInput}
-                                                            placeholder='Phone number(Required)*'
+                                                            placeholder={t('Phone_number_Required')}
                                                             placeholderTextColor="#8F93A0"
+                                                            maxLength={12}
                                                             label="phone"
                                                             value={phone}
                                                             onChangeText={e => onChangePhoneHandler(e)}
                                                         />
                                                         <TextInput style={styl.textInput}
-                                                            placeholder='Zip code(Required)*'
+                                                            placeholder={t('Zip_code_Required')}
                                                             placeholderTextColor="#8F93A0"
                                                             label="pin code"
                                                             value={pincode.toString()}
                                                             onChangeText={e => onChangePinHandler(e)}
                                                         />
                                                         <TextInput style={styl.textInput}
-                                                            placeholder='State(Required)*'
+                                                            placeholder={t('State_Required')}
                                                             placeholderTextColor="#8F93A0"
                                                             label="State"
                                                             value={state}
                                                             onChangeText={e => onChangeStateHandler(e)}
                                                         />
                                                         <TextInput style={styl.textInput}
-                                                            placeholder='City(Required)*'
+                                                            placeholder={t('City_Required')}
                                                             placeholderTextColor="#8F93A0"
                                                             label="city"
                                                             value={city}
@@ -600,7 +610,7 @@ const Address = (props) => {
                                                         />
 
                                                         <TextInput style={styl.textInput}
-                                                            placeholder='House number(Required)*'
+                                                            placeholder={t('House_number_Required')}
                                                             placeholderTextColor="#8F93A0"
                                                             label="house no"
                                                             value={house_no}
@@ -608,14 +618,14 @@ const Address = (props) => {
                                                         />
 
                                                         <TextInput style={styl.textInput}
-                                                            placeholder='Roard name,Area,Colony(Required)*'
+                                                            placeholder={t('Road_nameArea_Colony')}
                                                             placeholderTextColor="#8F93A0"
                                                             label="area village"
                                                             value={area_village}
                                                             onChangeText={e => onChangeAreaHandler(e)}
                                                         />
                                                         <TextInput style={styl.textInput}
-                                                            placeholder='Landmark(optional)'
+                                                            placeholder={t('Landmark_optional')}
                                                             placeholderTextColor="#8F93A0"
                                                             label="landmark"
                                                             value={landmark}
@@ -630,7 +640,7 @@ const Address = (props) => {
                                                         /> */}
                                                         <View style={{ height: 45, width: "98%", marginTop: 14, alignItems: 'flex-start', justifyContent: "flex-start", marginLeft: 10 }}>
 
-                                                            <Text style={{ color: 'black', textAlign: "left", fontSize: 16, fontWeight: "400" }}>Address Type</Text>
+                                                            <Text style={{ color: 'black', textAlign: "left", fontSize: 16, fontWeight: "400" }}>{t('Address_Type')}</Text>
 
                                                             <View style={{ height: 45, width: "90%", marginTop: 5, alignItems: 'center', justifyContent: "flex-start", flexDirection: "row" }}>
 
@@ -672,7 +682,7 @@ const Address = (props) => {
                                                                                     color: "black"
 
                                                                                 }}>
-                                                                                Home
+                                                                                {t('Home')}
                                                                             </Text>
                                                                         </View>
 
@@ -716,7 +726,7 @@ const Address = (props) => {
                                                                                     color: "black"
 
                                                                                 }}>
-                                                                                Work
+                                                                                {t('Work')}
                                                                             </Text>
                                                                         </View>
 
@@ -725,11 +735,11 @@ const Address = (props) => {
 
                                                             </View>
                                                         </View>
-                                                        <View style={{ justifyContent: "center", alignItems: "center", marginBottom: 20, flexDirection: 'row', height: 38, marginHorizontal: 20, marginTop: 60 }}>
+                                                        <View style={{ justifyContent: "center", alignItems: "center", marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 60 }}>
                                                             <TouchableOpacity
                                                                 onPress={() => { data == true ? ItemUpdate() : gotocurrentpage() }} >
                                                                 <View style={{ justifyContent: 'center', width: 110, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
-                                                                    <Text style={styl.text}>Save </Text>
+                                                                    <Text style={styl.text}>{t('Save')} </Text>
                                                                 </View>
                                                             </TouchableOpacity>
                                                         </View>
@@ -752,7 +762,7 @@ const Address = (props) => {
                                         width: 200,
                                         height: 120, alignSelf: 'center'
                                     }} />
-                                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>Oops! No data found</Text>
+                                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>{t('Oops_No_data_found')}</Text>
                             </View>)}
                 </>)
                 :
@@ -776,6 +786,6 @@ const styl = StyleSheet.create({
         fontWeight: '400',
         fontSize: 14,
     },
-    text: { textAlign: 'center', fontSize: 15, color: 'white', fontWeight: '500' }
+    text: { textAlign: 'center', fontSize: 13, color: 'white', fontWeight: '500' }
 })
 

@@ -1,36 +1,43 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, ActivityIndicator, Dimensions,PermissionsAndroid,Platform  } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity,ScrollView, Image, Alert, Pressable, SafeAreaView, ActivityIndicator, Dimensions, PermissionsAndroid, Platform,RefreshControl } from 'react-native'
 // import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, ActivityIndicator } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
-import { ScrollView } from 'react-native-gesture-handler';
-import { BackgroundImage } from 'react-native-elements/dist/config';
-import { RadioButton } from 'react-native-paper';
-import DropDownPicker from 'react-native-dropdown-picker';
-import { Pages } from 'react-native-pages';
-import styles from '../../Routes/style'
-import { DrawerActions,CommonActions } from '@react-navigation/native';
- 
+// import { ScrollView } from 'react-native-gesture-handler';
+
+import { DrawerActions, CommonActions } from '@react-navigation/native';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
 import RNFetchBlob from 'rn-fetch-blob';
 import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
+import { async } from 'regenerator-runtime';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
 const MyProfile = (props) => {
 
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [Userprofile, setUserprofile] = useState('');
     const [orderdata, setorderdata] = useState([]);
 
+    
+  const [refreshing, setrefreshing] = useState(false)
+  const onRefresh = () => {
+    setrefreshing(true)
+    // console.log('running');
+    StoresProductget();
+    setrefreshing(false)
+  }
     const gotoEditMyProfile = () => {
         props.navigation.navigate("EditMyProfile")
     }
     const gotoChangePassword = () => {
-      
+
         props.navigation.navigate("ChangePassword", {
             PhoneNo: Userprofile.phone
         })
@@ -47,18 +54,18 @@ const MyProfile = (props) => {
     function Orderstatus(status) {
 
         if (status == '1') {
-            return 'Order placed'
+            return <Text>{t('Order_placed')}</Text>
         }
         else if (status == '2') {
-            return 'Order dispatched'
+            return <Text>{t('Order_dispatched')}</Text>
         }
         else if (status == '3') {
-            return 'Out for delivery'
+            return <Text>{t('Out_for_delivery')}</Text>
         } else if (status == '4') {
-            return 'Order delivered'
+            return <Text>{t('Order_delivered')}</Text>
         }
         else if (status == '5') {
-            return 'Order cancelled'
+            return <Text>{t('Cancel_Order')}</Text>
         }
         else {
             return 'data not available'
@@ -92,105 +99,105 @@ const MyProfile = (props) => {
 
     // console.log("props.route.params::", props.route.params)
     // const { UserProfile } = props.route.params
- const checkPermission = async (download_url) => {
+    const checkPermission = async (download_url) => {
         if (Platform.OS === 'ios') {
         } else {
-          try {
-            const granted = await PermissionsAndroid.request(
-              PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-              {
-                title: 'Storage Permission Required',
-                message:
-                  'Application needs access to your storage to download File',
-              },
-            );
-            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-              downloadFile(download_url);
-              console.log('Storage Permission Granted.');
-            } else {
-              Alert.alert('Error', 'Storage Permission Not Granted');
+            try {
+                const granted = await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+                    {
+                        title: 'Storage Permission Required',
+                        message:
+                            'Application needs access to your storage to download File',
+                    },
+                );
+                if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                    downloadFile(download_url);
+                    console.log('Storage Permission Granted.');
+                } else {
+                    Alert.alert('Error', t('Storage_Permission_Not_Granted'));
+                }
+            } catch (err) {
+                // To handle permission related exception
+                console.log('ERROR' + err);
             }
-          } catch (err) {
-            // To handle permission related exception
-            console.log('ERROR' + err);
-          }
         }
-      };
-    const getInvoiceUrl = async (item)=>{
-        console.log("item in profile",item?.order_id);
+    };
+    const getInvoiceUrl = async (item) => {
+        console.log("item in profile", item?.order_id);
         // console.log("GetInvoiceUrl:In-api:",InvoiceMyorderid);
         const ordertoken = await AsyncStorage.getItem("authToken");
         try {
-            
-          const res = await axios.post(`${API.INVOICE}`, { "order_id":item?.order_id }, { headers: { "Authorization": ` ${ordertoken}` } });
-        
-          console.log('res', res.data)  
-          if(res.data.status == 1){
-            // checkPermission(res.data.url)
-            console.log('res status == 1', res.data.download_url)
-            checkPermission(res.data.download_url)
-          }
+
+            const res = await axios.post(`${API.INVOICE}`, { "order_id": item?.order_id }, { headers: { "Authorization": ` ${ordertoken}` } });
+
+            console.log('res', res.data)
+            if (res.data.status == 1) {
+                // checkPermission(res.data.url)
+                console.log('res status == 1', res.data.download_url)
+                checkPermission(res.data.download_url)
+            }
         } catch (error) {
-          console.log('errorinvoiceAPI', error)
-       }
-      }
- 
-const downloadFile = async (url) => {
-    let pdfUrl = url;
-    let DownloadDir =
-      Platform.OS == 'ios'
-        ? RNFetchBlob.fs.dirs.DocumentDir
-        : RNFetchBlob.fs.dirs.DownloadDir;
-    const {dirs} = RNFetchBlob.fs;
-    const dirToSave =
-      Platform.OS == 'ios' ? dirs.DocumentDir : dirs.DownloadDir;
-    const configfb = {
-      fileCache: true,
-      useDownloadManager: true,
-      notification: true,
-      mediaScannable: true,
-      title: 'Cosmologo',
-      path: `${dirToSave}.pdf`,
-    };
-    const configOptions = Platform.select({
-      ios: {
-        fileCache: configfb.fileCache,
-        title: configfb.title,
-        path: configfb.path,
-        appendExt: 'pdf',
-      },
-      android: configfb,
-    });
-    Platform.OS == 'android'
-      ? RNFetchBlob.config({
-          fileCache: true,
-          addAndroidDownloads: {
+            console.log('errorinvoiceAPI', error)
+        }
+    }
+
+    const downloadFile = async (url) => {
+        let pdfUrl = url;
+        let DownloadDir =
+            Platform.OS == 'ios'
+                ? RNFetchBlob.fs.dirs.DocumentDir
+                : RNFetchBlob.fs.dirs.DownloadDir;
+        const { dirs } = RNFetchBlob.fs;
+        const dirToSave =
+            Platform.OS == 'ios' ? dirs.DocumentDir : dirs.DownloadDir;
+        const configfb = {
+            fileCache: true,
             useDownloadManager: true,
             notification: true,
-            path: `${DownloadDir}/.pdf`,
-            description: 'Cosmologo',
-            title: `invoice.pdf`,
-            mime: 'application/pdf',
             mediaScannable: true,
-          },
-        })
-          .fetch('GET', `${pdfUrl}`)
-          .catch(error => {
-            console.warn(error.message);
-          })
-      : RNFetchBlob.config(configOptions)
-          .fetch('GET', `${pdfUrl}`, {})
-          .then(res => {
-            if (Platform.OS === 'ios') {
-              RNFetchBlob.fs.writeFile(configfb.path, res.data, 'base64');
-              RNFetchBlob.ios.previewDocument(configfb.path);
-            }
-            console.log('The file saved to ', res);
-          })
-          .catch(e => {
-            console.log('The file saved to ERROR', e.message);
-          });
-  };
+            title: 'Cosmologo',
+            path: `${dirToSave}.pdf`,
+        };
+        const configOptions = Platform.select({
+            ios: {
+                fileCache: configfb.fileCache,
+                title: configfb.title,
+                path: configfb.path,
+                appendExt: 'pdf',
+            },
+            android: configfb,
+        });
+        Platform.OS == 'android'
+            ? RNFetchBlob.config({
+                fileCache: true,
+                addAndroidDownloads: {
+                    useDownloadManager: true,
+                    notification: true,
+                    path: `${DownloadDir}/.pdf`,
+                    description: 'Cosmologo',
+                    title: `invoice.pdf`,
+                    mime: 'application/pdf',
+                    mediaScannable: true,
+                },
+            })
+                .fetch('GET', `${pdfUrl}`)
+                .catch(error => {
+                    console.warn(error.message);
+                })
+            : RNFetchBlob.config(configOptions)
+                .fetch('GET', `${pdfUrl}`, {})
+                .then(res => {
+                    if (Platform.OS === 'ios') {
+                        RNFetchBlob.fs.writeFile(configfb.path, res.data, 'base64');
+                        RNFetchBlob.ios.previewDocument(configfb.path);
+                    }
+                    console.log('The file saved to ', res);
+                })
+                .catch(e => {
+                    console.log('The file saved to ERROR', e.message);
+                });
+    };
     useEffect(() => {
         GetProfile();
     }, []);
@@ -204,24 +211,62 @@ const downloadFile = async (url) => {
             // console.log("", response);
             // console.log("ResponseProfile ::::", response.data.status);
             if (response.data.status == 1) {
-                
+
                 setUserprofile(response.data.data)
                 setorderdata(response.data.orders)
-                
+
                 // console.log("User_ordersdetails>>>", response.data.orders);
             } else {
-                Alert.alert('','Something went wrong please exit the app and try again.');
-                
+                Alert.alert('', t('Error_msg'));
+
             }
         }
         catch (error) {
             // console.log("Countryerror:", error.response.data.message);
             //Alert.alert('','Something went wrong please exit the app and try again.');
-            Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+            Alert.alert("",  t('Check_internet_connection'))
         }
         setIsLoading(false);
     };
+    const DeleteProfile = async () => {
+        console.log("user_ID:", Userprofile.id);
+        setIsLoading(true);
+        try {
+            const response = await axios.post(`${API.Delete_USER}`, { "user_id": Userprofile.id });
+            AsyncStorage.removeItem('authToken');
+            AsyncStorage.clear();
+            props.navigation.navigate("LoginMain");
+            // Alert.alert('', response.data.message);
 
+        }
+        catch (error) {
+            //  Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+            // console.log("......error.........", error.response.data.message);
+            Alert.alert('',  t('Error_msg'));
+
+        }
+        setIsLoading(false);
+    };
+     
+     const showAlert = ( ) =>
+    Alert.alert(
+      "",
+       t('Are_you_sure_you_want_to_delete_your_Profile'),
+      [
+        {
+          text:t('Cancel'),
+          style: "cancel",
+        },
+        {
+          text: "Ok",
+          onPress: () => { DeleteProfile() }
+
+        },
+      ],
+      {
+        cancelable: true,
+      }
+    );
     return (
         <SafeAreaView style={{
             flex: 1,
@@ -237,8 +282,8 @@ const downloadFile = async (url) => {
                         CommonActions.reset({
                             index: 0,
                             routes: [{ name: 'Home' }]
-                          })
-                        
+                        })
+
                     )
                 }}
                 // Drawericon={{
@@ -258,17 +303,50 @@ const downloadFile = async (url) => {
             />
             {!isLoading ?
                 (<>
-                    <ScrollView>
+                    <ScrollView 
+                     refreshControl={
+                        <RefreshControl
+                          refreshing={refreshing}
+                          onRefresh={onRefresh}
+                        />
+                      }
+                    >
                         <View style={{ paddingBottom: 0 }}>
 
                             <View style={{ marginHorizontal: 6, marginTop: 20, height: 150, borderRadius: 10, backgroundColor: 'white', flexDirection: 'row', width: WIDTH * 0.97 }}>
 
                                 <View style={{ margin: 5, flex: 1 / 3, borderRadius: 10 }}>
-                                    <Image source={{ uri: Userprofile?.user_profile }} resizeMode="contain"
+                                    <Image source={{ uri: Userprofile?.user_profile  != "" ? `${Userprofile?.user_profile}` :'https://dev.pop-fiit.com/images/logo.png' }} resizeMode="contain"
                                         style={{ alignSelf: 'center', width: '100%', height: '100%', borderRadius: 10, borderWidth: 1, backgroundColor: "#455A64" }} />
                                 </View>
+                                <TouchableOpacity style={{ position: "absolute", right: 6, top: 6, width: 130, borderRadius: 50, zIndex: 999, }} onPress={() => { showAlert() }}>
+                                    <View style={{ borderWidth: 1, borderColor: '#ffcc00', borderRadius: 50, backgroundColor: '#FFCC00', height: 30, flexDirection: 'row', alignItems: 'center', width: 130, }}>
+                                        <View style={{ width: 35, marginLeft: 13 }}>
+                                            <Image source={require('../assets/delete_account.png')}
+                                                style={{
+                                                    width: 15,
+                                                    height: 15,
+                                                }} />
+                                        </View>
+
+                                        <View style={{ marginLeft: -18, alignItems: 'center', justifyContent: "center", width: 90,height: 30, }}>
+
+                                            <Text numberOfLines={2} style={{ textAlign: 'left', fontSize: 10, color: '#fff', }}>
+                                                {t('Delete_Account')}
+                                                </Text>
+
+
+                                        </View>
+
+                                    </View>
+                                </TouchableOpacity>
+
                                 <View style={{ margin: 5, flex: 1 / 1.2, flexDirection: 'column', marginTop: 15, }}>
-                                    <Text style={{ fontSize: 16, color: 'black', fontWeight: "500" }}>{Userprofile?.first_name + "  " + Userprofile?.last_name}</Text>
+
+                                    <View style={{ width: WIDTH * 0.30, marginLeft: 4 }}>
+                                        <Text numberOfLines={2} style={{ textAlign: 'left', fontSize: 16, color: 'black', fontWeight: "500" }}>{Userprofile?.first_name + " " + Userprofile?.last_name}</Text>
+                                    </View>
+
                                     <View style={{ flex: 1 / 3, flexDirection: 'row', marginTop: 10 }}>
                                         <View style={{ flex: 1.5, flexDirection: 'row', }}>
                                             <View style={{ width: 30, height: 30, marginTop: 5 }} >
@@ -315,7 +393,7 @@ const downloadFile = async (url) => {
 
                                                 <View style={{ flex: 1, marginLeft: -6, }}>
 
-                                                    <Text style={{ textAlign: 'left', fontSize: 10, color: '#ffcc00', }}>Edit Profile</Text>
+                                                    <Text style={{ textAlign: 'left', fontSize: 10, color: '#ffcc00', }}>{t('Edit_Profile')}</Text>
 
 
                                                 </View>
@@ -334,7 +412,7 @@ const downloadFile = async (url) => {
                                                 </View>
                                                 <View style={{ flex: 1, marginLeft: -10, }}>
 
-                                                    <Text style={{ textAlign: 'left', fontSize: 10, color: '#ffcc00', }}>Change Password</Text>
+                                                    <Text style={{ textAlign: 'left', fontSize: 10, color: '#ffcc00', }}>{t('Change_Password')}</Text>
 
                                                 </View>
                                             </View>
@@ -347,12 +425,14 @@ const downloadFile = async (url) => {
 
                             <View style={{ marginTop: 20, height: 45, flexDirection: 'row' }}>
                                 <View style={{ flex: 1, marginLeft: 10, }}>
-                                    <Text style={{ fontSize: 18, color: 'white', fontWeight: "500" }}>Recent Orders</Text>
+                                    <Text style={{ fontSize: 16, color: 'white', fontWeight: "500" }}>{t('Recent_Orders')}</Text>
                                 </View>
                                 <View style={{ flex: 1.3 / 3, right: 10 }}>
                                     <TouchableOpacity onPress={() => { gotoMyOrder() }}>
-                                        <View style={{ borderRadius: 50, height: 34, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
-                                            <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 12, color: 'white', }}>View All Orders</Text>
+                                        <View style={{ borderRadius: 50, height: 34, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center',padding:3 }}>
+                                            <Text numberOfLines={2} style={{ alignSelf: 'center', textAlign: 'center', fontSize: 10, color: 'white', }}>
+                                                {t('View_All_Orders')}
+                                                </Text>
                                         </View>
                                     </TouchableOpacity>
                                 </View>
@@ -363,7 +443,7 @@ const downloadFile = async (url) => {
                             {orderdata.length > 0 ?
                                 orderdata.map((item, index) => {
                                     return (
-                                        <View key = {String(index)} style={{
+                                        <View key={String(index)} style={{
                                             marginHorizontal: 6,
                                             height: 240,
                                             width: WIDTH * 0.97,
@@ -385,12 +465,12 @@ const downloadFile = async (url) => {
 
                                                 <View style={{ height: 30, marginTop: 1, justifyContent: 'flex-start', alignItems: "flex-start", marginLeft: 1, }}>
 
-                                                    <Text style={{ fontSize: 14, color: '#455A64', fontWeight: "500" }}>Order No. : <Text style={{ fontSize: 14, color: '#FFCC00', }}> {item?.order_number}</Text></Text>
+                                                    <Text style={{ fontSize: 12, color: '#455A64', fontWeight: "500" }}>{t('Order_No')}. : <Text style={{ fontSize: 12, color: '#FFCC00', }}> {item?.order_number}</Text></Text>
 
                                                 </View>
 
-                                                <TouchableOpacity onPress={()=>{getInvoiceUrl(item)}}
-                                                style={{ backgroundColor: '#ffcc00', borderRadius: 20, height: 30, width: 140, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
+                                                <TouchableOpacity onPress={() => { getInvoiceUrl(item) }}
+                                                    style={{ backgroundColor: '#ffcc00', borderRadius: 20, height: 30, width: 140, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
                                                     <View style={{ width: 30, marginLeft: 6 }}>
                                                         <Image source={require('../assets/download1.png')}
                                                             style={{
@@ -400,7 +480,7 @@ const downloadFile = async (url) => {
                                                     </View>
                                                     <View>
                                                         <View style={{ marginLeft: -10 }}>
-                                                            <Text style={{ textAlign: 'left', fontSize: 10, color: 'white', }}>Download Invoice</Text>
+                                                            <Text numberOfLines={2} style={{ textAlign: 'left', fontSize: 9, color: 'white', }}>{t('Download_Invoice')}</Text>
                                                         </View>
                                                     </View>
                                                 </TouchableOpacity>
@@ -430,7 +510,7 @@ const downloadFile = async (url) => {
                                                             height: "100%", alignSelf: 'center',
 
                                                         }}
-                                                        source={{ uri: item?.product_image }} />
+                                                        source={{ uri: item?.product_image != "" ? `${item?.product_image}` : 'https://dev.pop-fiit.com/images/logo.png' }} />
 
                                                 </View>
 
@@ -444,7 +524,7 @@ const downloadFile = async (url) => {
 
                                                         <View style={{ marginTop: 1, flexDirection: 'row', marginLeft: 0 }}>
                                                             <View>
-                                                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Total Amount: <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#77869E', }}>${item?.order_price}</Text></Text>
+                                                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>{t('Total_Amount')}: <Text style={{ marginLeft: 20, textAlign: 'center', fontSize: 14, color: '#77869E', }}>{item?.order_price}</Text></Text>
                                                             </View>
 
                                                         </View>
@@ -499,13 +579,13 @@ const downloadFile = async (url) => {
                                             <View style={{
                                                 marginTop: 10, flexDirection: 'row', justifyContent: "flex-start", flex: 1, margin: 10, height: 70, width: WIDTH * 0.92
                                             }}>
-                                                <View style={{ marginTop: 9, height: 20, justifyContent: "center", alignItems: "center", flex: 0.3, }}>
-                                                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#353535', fontWeight: "500" }}>Order Status :</Text>
+                                                <View style={{ marginTop: 9, height: 50, justifyContent: "flex-start", alignItems: "center", flex: 0.35}}>
+                                                    <Text numberOfLines={2} style={{ textAlign: 'left', fontSize: 12, color: '#353535', fontWeight: "500" }}>{t('Order_Status')} :</Text>
                                                 </View>
 
                                                 {item?.order_status_id >= "1" ?
                                                     (<View style={{ flexDirection: 'column', height: 55, flex: 0.6, }}>
-                                                        <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "400" }}>{Orderstatus(item?.order_status_id)}</Text>
+                                                        <Text style={{ marginTop: 10, textAlign: 'left', fontSize: 12, color: '#455A64', fontWeight: "400" }}>{Orderstatus(item?.order_status_id)}</Text>
                                                         <View style={{ marginTop: 6, }}>
                                                             <Text style={{ textAlign: 'left', fontSize: 12, color: '#455A64', fontWeight: "400" }}>{OrderDATE(item)}</Text>
                                                         </View>
@@ -575,7 +655,7 @@ const downloadFile = async (url) => {
                                             width: 200,
                                             height: 120, alignSelf: 'center'
                                         }} />
-                                    <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>Oops, order list is empty !</Text>
+                                    <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>{t('Oops_order_list_empty')}</Text>
                                 </View>)}
 
                             {/* <View style={{ marginTop: 30, height: 45, flexDirection: 'row' }}>
@@ -615,10 +695,10 @@ const downloadFile = async (url) => {
 
 
                 :
-                (<CustomLoader showLoader={isLoading}/>
-                // <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
-                //     <ActivityIndicator size="large" color="#ffcc00" />
-                // </View>
+                (<CustomLoader showLoader={isLoading} />
+                    // <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
+                    //     <ActivityIndicator size="large" color="#ffcc00" />
+                    // </View>
                 )}
         </SafeAreaView>
     );

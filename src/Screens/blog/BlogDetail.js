@@ -11,9 +11,9 @@ import {
   Pressable,
   Modal,
   SafeAreaView,
-  Dimensions, Linking, ActivityIndicator,KeyboardAvoidingView,Platform
+  Dimensions, Linking, ActivityIndicator, KeyboardAvoidingView, Platform, RefreshControl,ScrollView
 } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+ 
 import { Pages } from 'react-native-pages';
 import styles from '../../Routes/style';
 import { API } from '../../Routes/Urls';
@@ -23,6 +23,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Share from 'react-native-share';
 import { WebView } from 'react-native-webview';
 import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -31,7 +32,7 @@ var HEIGHT = Dimensions.get('window').height;
 
 const BlogDetail = (props) => {
 
-
+  const { t } = useTranslation();
   const [subcategoryBlogdetailsitems, setsubcategoryBlogdetailsitems] = useState([]);
   const [apistatus, setApiStatus] = useState('0');
   const [subscriptiontoken, setsubscriptiontoken] = useState("");
@@ -41,7 +42,12 @@ const BlogDetail = (props) => {
   const [comments, setComments] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-
+  const [refreshing, setrefreshing] = useState(false)
+  const onRefresh = () => {
+    setrefreshing(true)
+    getCategoryblog_detail();
+    setrefreshing(false)
+  }
   // const buttonClickedHandler = () => {
   //   props.navigation.goBack();
   // };
@@ -95,7 +101,7 @@ const BlogDetail = (props) => {
   const Checkedtoken = () => {
     // console.log("Checkedtoken status::", subscriptiontoken);
     subscriptiontoken == null ?
-      Alert.alert('', 'Please login first')
+      Alert.alert('', t('Please_login_first'))
       :
       setComments(true);
 
@@ -104,7 +110,7 @@ const BlogDetail = (props) => {
   const MycustomonShare = async () => {
     let Usertoken = await AsyncStorage.getItem("authToken");
     if (Usertoken == null) {
-      Alert.alert('', 'Please login first')
+      Alert.alert('', t('Please_login_first'))
     } else if (Usertoken != null) {
       const shareOptions = {
         title: 'Popfiit Blog Contents',
@@ -115,9 +121,9 @@ const BlogDetail = (props) => {
       }
       try {
         const shareResponse = await Share.open(shareOptions);
-        
+
         // console.log(JSON.stringify(shareResponse));
-        
+
       }
       catch (error) {
         console.log('ERROR=>', error);
@@ -129,11 +135,8 @@ const BlogDetail = (props) => {
 
   const getCategoryblog_detail = async () => {
     let Token = await AsyncStorage.getItem("authToken");
-    
-
     setIsLoading(true);
     try {
-
       const response = await axios.post(`${API.BLOG_DETAILS}`, { "blog_id": blogdetail_id ? blogdetail_id : Categoryblogid ? Categoryblogid : homeblogid },
         { headers: { "Authorization": ` ${Token != null ? Token : null}` } });
       // console.log(":::::::::DetailsBLog_Response>>>", response.data.blog_detail);
@@ -149,18 +152,18 @@ const BlogDetail = (props) => {
       }
       else if (response.data.status == '0') {
         // setIsLoading(false);
-        Alert.alert('', 'Something went wrong please exit the app and try again');
+        Alert.alert('', t('Error_msg'));
         setApiStatus('0');
-      } 
-      // else {
-      //   // setIsLoading(false);
-      //   Alert.alert('', 'Something went wrong please exit the app and try again');
-      // }
+      }
+      else {
+        // setIsLoading(false);
+        Alert.alert('', t('Error_msg'));
+      }
 
 
     }
     catch (error) {
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", t('Check_internet_connection'))
       // Alert.alert('', 'Something went wrong please exit the app and try again');
       // console.log("......error.........", error.response.data.message);
       // setIsLoading(false);
@@ -182,7 +185,7 @@ const BlogDetail = (props) => {
       if (response.data.status == 1) {
         getCategoryblog_detail();
         setComments(false);
-        Alert.alert('', 'Comment send successfully');
+        Alert.alert('', t('Comment_send_successfully'));
         setUserComment('');
       }
       // else {
@@ -193,7 +196,7 @@ const BlogDetail = (props) => {
 
     }
     catch (error) {
-      Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert("", t('Check_internet_connection'))
       // Alert.alert('', 'Something went wrong please exit the app and try again');
       // console.log("......error.........", error.response.data.message);
       // setIsLoading(false);
@@ -204,10 +207,10 @@ const BlogDetail = (props) => {
     <SafeAreaView style={{
       flex: 1,
       width: WIDTH,
-      height: HEIGHT, flexGrow: 1,
+      height: "100%", flexGrow: 1,
     }} >
       <Headers
-      // navigation={props.navigation}
+        // navigation={props.navigation}
         Backicon={{
           visible: true,
         }}
@@ -222,8 +225,8 @@ const BlogDetail = (props) => {
           visible: true,
 
         }}
-        BelliconononClick={() => { 
-          props.navigation.navigate("Notifications") 
+        BelliconononClick={() => {
+          props.navigation.navigate("Notifications")
         }}
       />
       {!isLoading ?
@@ -231,7 +234,7 @@ const BlogDetail = (props) => {
           {
             apistatus == '1' ?
               (<View style={{
-                height: HEIGHT,
+                height: "100%",
                 width: WIDTH, flex: 1
               }}>
                 {/* <View style={styles.navigationBarColor}>
@@ -284,7 +287,12 @@ const BlogDetail = (props) => {
           </View> */}
 
                 <ScrollView
-                // style={{ marginTop: 10, marginBottom: 20 }}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
                 >
                   <View style={{ paddingBottom: 70 }}>
 
@@ -351,7 +359,7 @@ const BlogDetail = (props) => {
 
                       <View style={{ backgroundColor: "white", borderRadius: 20, marginTop: 6, height: HEIGHT * 0.2, width: WIDTH * 0.9, marginHorizontal: 18, }}>
                         <Image resizeMode='contain'
-                          source={{ uri: `${subcategoryBlogdetailsitems?.blog_detail?.image}` }}
+                          source={{ uri: subcategoryBlogdetailsitems?.blog_detail?.image != null ? `${subcategoryBlogdetailsitems?.blog_detail?.image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
                           style={{ width: '100%', height: '100%', justifyContent: "center", alignItems: 'center', borderRadius: 20 }}
                         />
                       </View>
@@ -371,14 +379,14 @@ const BlogDetail = (props) => {
                         fontSize: 16,
                         color: '#000000',
                         fontWeight: "bold"
-                      }}>{subcategoryBlogdetailsitems?.comment_count}  <Text>Comments</Text>
+                      }}>{subcategoryBlogdetailsitems?.comment_count}  <Text>{t('Comments')}</Text>
                     </Text>
 
                     <FlatList
                       vertical
                       keyExtractor={(item, index) => String(index)}
                       data={subcategoryBlogdetailsitems?.blog_comment}
-                      renderItem={({ item ,index}) => (
+                      renderItem={({ item, index }) => (
                         <View style={{
                           // backgroundColor: "red",
                           padding: 15,
@@ -413,7 +421,7 @@ const BlogDetail = (props) => {
                                 marginVertical: -20,
                                 borderRadius: 60, backgroundColor: "black"
                               }}
-                              source={{ uri: `${item.image}` }}
+                              source={{ uri: item.image != null ? `${item.image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
                             />
                           </View>
 
@@ -511,7 +519,7 @@ const BlogDetail = (props) => {
                             color: 'white',
 
                           }}>
-                          Share
+                          {t('Share')}
                         </Text>
                       </View>
                     </View>
@@ -556,7 +564,7 @@ const BlogDetail = (props) => {
                             color: 'white',
 
                           }}>
-                          Comment
+                          {t('Comment')}
                         </Text>
                       </View>
                     </View>
@@ -570,157 +578,157 @@ const BlogDetail = (props) => {
                   onRequestClose={() => {
                     setComments(false);
                   }}>
-                    <KeyboardAvoidingView
-                style={{ flex: 1 }}
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-                  <View
-                    style={{
-                      flex: 1,
-                      // justifyContent: 'flex-end',
-                      // alignItems: 'center',
-                      backgroundColor: 'rgba(140, 141, 142, 0.7)',
-                    }}>
-                       <TouchableOpacity
-                      onPress={() => setComments(false)}
-                      style={{ flex: 1 }}
-                    />
+                  <KeyboardAvoidingView
+                    style={{ flex: 1 }}
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
                     <View
                       style={{
-                        // margin: 10,
-                        backgroundColor: 'white',
-                        borderRadius: 20,
-                        //paddingTop:10,
-                        width: "100%",
-                        height: 300,
-                        alignItems: 'center',
-                        shadowColor: '#000',
-                        // shadowOffset: {
-                        //   width: 0,
-                        //   height: 2,
-                        // },
-                        shadowOpacity: 0.25,
-                        shadowRadius: 4,
-                        elevation: 5,
+                        flex: 1,
+                        // justifyContent: 'flex-end',
+                        // alignItems: 'center',
+                        backgroundColor: 'rgba(140, 141, 142, 0.7)',
                       }}>
+                      <TouchableOpacity
+                        onPress={() => setComments(false)}
+                        style={{ flex: 1 }}
+                      />
                       <View
                         style={{
+                          // margin: 10,
                           backgroundColor: 'white',
-                          height: 300,
-                          width: "100%",
-                          marginHorizontal: 85,
                           borderRadius: 20,
-                          marginBottom: 20,
+                          //paddingTop:10,
+                          width: "100%",
+                          height: 300,
                           alignItems: 'center',
-                          flexDirection: 'column',
+                          shadowColor: '#000',
+                          // shadowOffset: {
+                          //   width: 0,
+                          //   height: 2,
+                          // },
+                          shadowOpacity: 0.25,
+                          shadowRadius: 4,
+                          elevation: 5,
                         }}>
                         <View
                           style={{
-                            marginTop: 20,
-                            marginHorizontal: 20,
-                            height: 25,
-                            flexDirection: 'row',
+                            backgroundColor: 'white',
+                            height: 300,
+                            width: "100%",
+                            marginHorizontal: 85,
+                            borderRadius: 20,
+                            marginBottom: 20,
+                            alignItems: 'center',
+                            flexDirection: 'column',
                           }}>
                           <View
                             style={{
-                              backgroundColor: '#f2f2f2',
-                              width: 25,
+                              marginTop: 20,
+                              marginHorizontal: 20,
                               height: 25,
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              backgroundColor: 'white',
+                              flexDirection: 'row',
                             }}>
-                            <Image
-                              source={require('../assets/comment1.png')}
-                              style={{ height: 25, width: 25, backgroundColor: 'white' }}
-                            />
-                          </View>
-                          <Text
-                            style={{
-                              marginTop: 2,
-                              marginLeft: 10,
-                              textAlign: 'center',
-                              fontSize: 14,
-                              color: 'black',
-
-                            }}>
-                            Post Your Comment
-                          </Text>
-                        </View>
-
-                        <View
-                          style={{
-
-                            borderColor: "#bbbaba",
-                            borderWidth: 1,
-                            paddingHorizontal: 10,
-                            //marginHorizontal: 15,
-                            borderRadius: 15,
-                            backgroundColor: 'white',
-                            marginTop: 20,
-                            height: 140,
-                            width: '90%',
-                            justifyContent: "flex-start"
-                          }}>
-                          <View>
-                            <TextInput
-                              placeholder="Type Your comment here....."
-                              value={usercomment}
-                              onChangeText={(text) => setUserComment(text)}
-                              fontWeight="normal"
-                              placeholderTextColor="grey"
-                              numberOfLines={10}
-                              multiline={true}
-                              textAlignVertical='top'
-                              style={{
-                                // padding: 10,
-                                //  backgroundColor:"red",
-                                width: '99%',
-                                color: 'black',
-                                paddingHorizontal: 10,
-                                borderRadius: 10,
-                                height: "100%",
-                                justifyContent: "flex-start",
-                                //marginBottom:80
-                              }}
-                            />
-                          </View>
-                        </View>
-
-                        <View
-                          style={{
-                            marginLeft: 30,
-                            marginBottom: 20,
-                            flexDirection: 'row',
-                            height: 34,
-                            marginHorizontal: 20,
-                            marginTop: 30,
-                          }}>
-                          <TouchableOpacity onPress={() => { ShareCommentApi() }}>
                             <View
                               style={{
-                                alignItems: 'center',
+                                backgroundColor: '#f2f2f2',
+                                width: 25,
+                                height: 25,
                                 justifyContent: 'center',
-                                width: 120,
-                                flex: 1,
-                                backgroundColor: '#ffcc00',
-                                borderRadius: 35,
+                                alignItems: 'center',
+                                backgroundColor: 'white',
                               }}>
-                              <Text
-                                style={{
-                                  textAlign: 'center',
-                                  fontSize: 15,
-                                  color: 'white',
-
-                                }}>
-                                Post
-                              </Text>
+                              <Image
+                                source={require('../assets/comment1.png')}
+                                style={{ height: 25, width: 25, backgroundColor: 'white' }}
+                              />
                             </View>
-                          </TouchableOpacity>
+                            <Text
+                              style={{
+                                marginTop: 2,
+                                marginLeft: 10,
+                                textAlign: 'center',
+                                fontSize: 14,
+                                color: 'black',
+
+                              }}>
+                              {t('Post_Your_Comment')}
+                            </Text>
+                          </View>
+
+                          <View
+                            style={{
+
+                              borderColor: "#bbbaba",
+                              borderWidth: 1,
+                              paddingHorizontal: 10,
+                              //marginHorizontal: 15,
+                              borderRadius: 15,
+                              backgroundColor: 'white',
+                              marginTop: 20,
+                              height: 140,
+                              width: '90%',
+                              justifyContent: "flex-start"
+                            }}>
+                            <View>
+                              <TextInput
+                                placeholder="Type your comment here....."
+                                value={usercomment}
+                                onChangeText={(text) => setUserComment(text)}
+                                fontWeight="normal"
+                                placeholderTextColor="grey"
+                                numberOfLines={10}
+                                multiline={true}
+                                textAlignVertical='top'
+                                style={{
+                                  // padding: 10,
+                                  //  backgroundColor:"red",
+                                  width: '99%',
+                                  color: 'black',
+                                  paddingHorizontal: 10,
+                                  borderRadius: 10,
+                                  height: "100%",
+                                  justifyContent: "flex-start",
+                                  //marginBottom:80
+                                }}
+                              />
+                            </View>
+                          </View>
+
+                          <View
+                            style={{
+                              marginLeft: 30,
+                              marginBottom: 20,
+                              flexDirection: 'row',
+                              height: 34,
+                              marginHorizontal: 20,
+                              marginTop: 30,
+                            }}>
+                            <TouchableOpacity onPress={() => { ShareCommentApi() }}>
+                              <View
+                                style={{
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  width: 120,
+                                  flex: 1,
+                                  backgroundColor: '#ffcc00',
+                                  borderRadius: 35,
+                                }}>
+                                <Text
+                                  style={{
+                                    textAlign: 'center',
+                                    fontSize: 15,
+                                    color: 'white',
+
+                                  }}>
+                                  {t('Post')}
+                                </Text>
+                              </View>
+                            </TouchableOpacity>
+                          </View>
                         </View>
                       </View>
                     </View>
-                  </View>
-                  </KeyboardAvoidingView> 
+                  </KeyboardAvoidingView>
                 </Modal>
               </View>)
               :
@@ -734,13 +742,13 @@ const BlogDetail = (props) => {
                     width: 200,
                     height: 120, alignSelf: 'center'
                   }} />
-                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>Oops! No data found</Text>
+                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>{t('Oops_No_data_found')}</Text>
               </View>)
           }
         </>)
         :
         (
-         <CustomLoader showLoader={isLoading}/>
+          <CustomLoader showLoader={isLoading} />
         )}
     </SafeAreaView>
   );

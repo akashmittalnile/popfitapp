@@ -1,20 +1,14 @@
 import React, { useState, useEffect } from 'react'
 //import { StyleSheet } from 'react-native';
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, Modal, SafeAreaView, Dimensions, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native'
-import LinearGradient from 'react-native-linear-gradient';
-import { ScrollView } from 'react-native-gesture-handler';
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, Modal, SafeAreaView, Dimensions, ActivityIndicator, KeyboardAvoidingView, Platform,ScrollView,RefreshControl } from 'react-native'
+
+// import { ScrollView } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
-import * as yup from 'yup'
-import { Formik } from 'formik'
 import Headers from '../../Routes/Headers';
-import Address from './Address';
-import { useReducer } from 'react';
-import { parse } from '@babel/core';
 import CustomLoader from '../../Routes/CustomLoader';
-import { RadioButton } from 'react-native-paper';
-
+import { useTranslation } from 'react-i18next';
 
 // let unsubscribe;
 var WIDTH = Dimensions.get('window').width;
@@ -23,6 +17,7 @@ const DATA = ['first row', 'second row'];
 
 
 const ShippingDetail = (props) => {
+    const { t } = useTranslation();
     const [User, setuser] = useState('')
     const [producttoken, setproducttoken] = useState("");
     const [useraddress, setuseraddress] = useState([]);
@@ -36,7 +31,7 @@ const ShippingDetail = (props) => {
     const [optComment, setoptComment] = useState('')
     const [landmark, setlandmark] = useState('');
     const [address_type, setaddress_type] = useState('');
-
+    const [currenysymbol, setCurrenysymbol] = useState('');
     const [city, setCity] = useState('');
     const [full_name, setfull_name] = useState('');
     const [area_village, setarea_village] = useState('');
@@ -56,17 +51,23 @@ const ShippingDetail = (props) => {
     const [priorityChecked, setPriorityChecked] = useState('');
 
     const [shippingcost, setshipping_cost] = useState('');
-
+    const [arrayordername, setArrayordername] = useState('')
+    
+  const [refreshing, setrefreshing] = useState(false)
+  const onRefresh = () => {
+    setrefreshing(true)
+    GetShippingProducts();
+    setrefreshing(false)
+  }
+    // console.log("arrayordername", arrayordername);
     useEffect(() => {
         GetShippingProducts();
         // const unsubscribe = props.navigation.addListener('focus', () => {
 
-
+        //     GetShippingProducts();
         // });
         // return unsubscribe;
-
-
-    }, []);
+}, []);
     const validate = () => {
         if (pincode == '') {
             alert('please enter piccode')
@@ -126,14 +127,14 @@ const ShippingDetail = (props) => {
                         console.log('res----->', response)
                     })
                     .catch(function (error) {
-                        Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+                        Alert.alert("", t('Check_internet_connection'))
                         // alert("gotocurrentpage...error", error)
                         console.log("select-address::::::", error)
 
                     })
             } catch (error) {
                 console.log("add-address", error)
-                Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+                Alert.alert("", t('Check_internet_connection'))
             } setIsLoading(false)
         }
         else {
@@ -155,6 +156,8 @@ const ShippingDetail = (props) => {
         if (setselectaddress || address != undefined) {
             props.navigation.navigate("PaymentScreen", {
                 Instruction: optComment,
+                Coupomid:Selectcoupons?.id,
+                Orderlistname: arrayordername,
                 Totalprice: Selectcoupons == null ? ammont : total,
                 SetAddrs: setselectaddress == null ?
 
@@ -164,20 +167,42 @@ const ShippingDetail = (props) => {
             })
 
         } else {
-            // console.log("types::::", setselectaddress || address != undefined);
-            Alert.alert("", 'Choose Shipping Address')
+
+            Alert.alert("", t('Choose_Shipping_Address'))
         }
 
     }
     const gotoApplyCoupon = () => {
-        props.navigation.navigate("ApplyCoupon");
+        props.navigation.navigate("ApplyCoupon", {
+            Orderamount: ammont
+        });
     }
     const gotoProductDetailsview = (item) => {
         props.navigation.navigate("ProductDetail", {
             Isshippingview: item
         });
     }
+    const CouponDelete= async () => {
+        const usertkn = await AsyncStorage.getItem("authToken");
+       
+        console.warn('Coupon_id---REmove------->', Selectcoupons.id)
+        setIsLoading(true);
+        try {
 
+            const response = await axios.post(`${API.COUPON_REMOVE} `, { "coupon_id": Selectcoupons.id  }, {
+                'headers': { "Authorization": ` ${usertkn}` }
+            });
+            console.log("response_remove couon",response.data);
+            gotoApplyCoupon()
+
+        }
+        catch (error) {
+            console.log("couponRemovecart.....error.........", error.response.data.message);
+            Alert.alert("remove coupon", t('Check_internet_connection'))
+
+        }
+        setIsLoading(false);
+    };
     // const gotoCoupon = async () => {
     // const user = await AsyncStorage.getItem("item");
     //  console.log('999999999999999999999999999------------');
@@ -187,7 +212,9 @@ const ShippingDetail = (props) => {
     //  setSelectcoupons(a);
     // }
 
-    //console.log("Selectcoupon_item...............:", props?.route?.params?.Selectcoupon);
+    // console.log("Selectcoupon_item...............:", props?.route?.params?.Selectcoupon);
+    // console.log("Selectcoupon_item...............:", props?.route?.params?.coupon_id);
+    // let coupon_id = props?.route?.params?.coupon_id
     //console.warn("Selectcoupon_item...............:", address);
     let Selectcoupons = props?.route?.params?.Selectcoupon
     // console.log("Selectaddress_item.FRom Address..:", props?.route?.params?.setselectaddress);
@@ -217,9 +244,20 @@ const ShippingDetail = (props) => {
             const response = await axios.get(`${API.SHIPPING_DETAILS}`, {
                 'headers': { "Authorization": ` ${usertkn}` }
             });
-
+            // console.log("shipping::", response.data);
             if (response.data.status == '1') {
 
+
+                let ordernamelength = response.data.data.length
+                var arraylist = []
+
+                for (let i = 1; i <= ordernamelength; i++) {
+                    arraylist.push(response.data.data[i - 1].product_name)
+                }
+                console.log("arraylist", arraylist);
+                setArrayordername(arraylist.toString())
+
+                setCurrenysymbol(response.data.currency)
                 var address0 = response.data.address_lists[0];
                 // console.log('adreeesss----------->', address)
                 setuseraddress(response.data.address_lists);
@@ -235,7 +273,7 @@ const ShippingDetail = (props) => {
             }
         }
         catch (error) {
-            Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+            Alert.alert("", t('Check_internet_connection'))
 
 
         }
@@ -256,8 +294,8 @@ const ShippingDetail = (props) => {
 
         }
         catch (error) {
-            console.log(".ProductRemovecart.....error.........", error.response.data.message);
-            Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+            // console.log(".ProductRemovecart.....error.........", error.response.data.message);
+            Alert.alert("", t('Check_internet_connection'))
 
         }
         setIsLoading(false);
@@ -314,7 +352,14 @@ const ShippingDetail = (props) => {
                 BelliconononClick={() => { props.navigation.navigate("Notifications") }}
             />
             {!isLoading ?
-                (<ScrollView style={{ paddingTop: 10 }}>
+                (<ScrollView style={{ paddingTop: 10 }}
+                    refreshControl={
+                        <RefreshControl
+                          refreshing={refreshing}
+                          onRefresh={onRefresh}
+                        />
+                      }
+                >
 
                     {/* product flatlist   */}
                     {productdata.length > 0 ?
@@ -391,7 +436,7 @@ const ShippingDetail = (props) => {
                                                         alignSelf: 'center',
 
                                                     }}
-                                                    source={{ uri: `${item?.product_image}` }}
+                                                    source={{ uri: item?.product_image != "" ? `${item?.product_image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
                                                 />
 
                                             </View>
@@ -405,14 +450,14 @@ const ShippingDetail = (props) => {
                                                 // backgroundColor: 'pink'
                                             }}>
                                                 <Text style={{ textAlign: 'left', fontSize: 16, color: '#455A64', fontWeight: "500", }}>
-                                                    {item.product_name.slice(0, 20)}
+                                                    {item?.product_name?.length >=20 ? item?.product_name?.slice(0, 20)+' ...' : item?.product_name?.slice(0, 20)}
                                                 </Text>
                                                 <View style={{ width: WIDTH * 0.4, alignItems: "flex-start", justifyContent: "flex-start", marginTop: 6 }}>
                                                     <View>
-                                                        <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Price: <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', }}>${item.product_price}
+                                                        <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>{t('Price')}: <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', }}>{item?.product_price}
                                                         </Text></Text>
-                                                        <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Quantity: <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', }}>
-                                                            {item.qty}
+                                                        <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>{t('Quantity')}: <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', }}>
+                                                            {item?.qty}
                                                         </Text></Text>
                                                     </View>
                                                 </View>
@@ -430,12 +475,12 @@ const ShippingDetail = (props) => {
 
                     {/* Choose Shipping Address */}
 
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 12, marginRight: 15, marginTop: 10, }}>
-                        <Text style={{ textAlign: 'left', fontSize: 18, color: '#000000', fontWeight: '500' }}>Choose Shipping Address </Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 12, marginRight: 15, marginTop: 8, }}>
+                        <Text style={{ textAlign: 'left', fontSize: 16, color: '#000000', fontWeight: '500' }}>{t('Choose_Shipping_Address')}</Text>
                         <TouchableOpacity onPress={() => { setShippingAddressPopUp(true) }}><View>
                             <Text style={{
-                                fontWeight: '400', fontSize: 15, color: '#FFCC00'
-                            }} >Create Address</Text>
+                                fontWeight: '400', fontSize: 13, color: '#FFCC00',marginTop:2
+                            }} >{t('Create_Address')}</Text>
                         </View></TouchableOpacity>
                     </View>
 
@@ -502,7 +547,7 @@ const ShippingDetail = (props) => {
                                                         </View>
                                                         )
                                                         : <View style={{ justifyContent: "center", alignItems: "center", height: 100, }}>
-                                                            <Text style={{ fontSize: 15, textAlign: "center", color: "#455A64", fontWeight: "500" }}>Add a new address</Text>
+                                                            <Text style={{ fontSize: 15, textAlign: "center", color: "#455A64", fontWeight: "500" }}>{t('Add_new_address')}</Text>
                                                         </View>
                                                 }
                                             </>
@@ -594,7 +639,7 @@ const ShippingDetail = (props) => {
                                         </View>
 
                                         < View style={{ justifyContent: "center", alignItems: 'flex-start', width: WIDTH * 0.8, height: 80 }}>
-                                            <Text style={{ textAlign: 'left', fontSize: 16, color: 'black', fontWeight: "500" }}>Apply Coupon</Text>
+                                            <Text style={{ textAlign: 'left', fontSize: 16, color: 'black', fontWeight: "500" }}>{t('Apply_Coupon')}</Text>
                                         </View>
 
 
@@ -636,14 +681,14 @@ const ShippingDetail = (props) => {
 
                                         < View style={{ justifyContent: "center", alignItems: 'flex-start', width: WIDTH * 0.6, height: 80, marginLeft: 15 }}>
                                             <Text style={{ textAlign: 'left', fontSize: 16, color: 'black', fontWeight: "500" }}>{Selectcoupons?.name}</Text>
-                                            <Text style={{ textAlign: 'left', fontSize: 13, color: '#676767', fontWeight: "500" }}>- ${Selectcoupons?.discount}</Text>
+                                            <Text style={{ textAlign: 'left', fontSize: 13, color: '#676767', fontWeight: "500" }}>- {currenysymbol}{Selectcoupons?.discount}</Text>
                                         </View>
                                         <View style={{ paddingVertical: 20, justifyContent: "center", alignItems: 'center', height: 80, width: WIDTH * 0.2, }}>
                                             <TouchableOpacity
-                                                onPress={() => { props.navigation.navigate('ApplyCoupon') }}
+                                                onPress={() => { CouponDelete() }}
                                                 style={{ justifyContent: "center", alignItems: 'center', width: WIDTH * 0.15, height: 25, borderRadius: 50 }}>
 
-                                                <Text style={{ textAlign: 'left', fontSize: 13, color: '#FFCC00' }}>Change</Text>
+                                                <Text style={{ textAlign: 'left', fontSize: 13, color: '#FFCC00' }}>{t('Change')}</Text>
 
                                             </TouchableOpacity>
                                         </View>
@@ -696,7 +741,7 @@ const ShippingDetail = (props) => {
 
                             }}
                             multiline
-                            placeholder="Add Delivery Instruction ( Optional )"
+                            placeholder={t('Add_Delivery_Instruction')}
                             placeholderTextColor={'#C0C0C0'}
                             value={optComment}
                             onChangeText={(text) => (setoptComment(text)
@@ -720,28 +765,28 @@ const ShippingDetail = (props) => {
                     }}>
                         <View style={{ marginTop: 10, height: 30, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.9 }}>
                             <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
-                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Subtotal:</Text>
+                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>{t('Subtotal')}:</Text>
                             </View>
                             <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
-                                <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>${subtotal}</Text>
+                                <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>{subtotal}</Text>
                             </View>
                         </View>
 
                         <View style={{ marginTop: 10, height: 30, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.9 }}>
                             <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
-                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Tax:</Text>
+                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>{t('Tax')}:</Text>
                             </View>
                             <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
-                                <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>${tax}</Text>
+                                <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>{tax}</Text>
                             </View>
                         </View>
 
                         <View style={{ marginTop: 10, height: 30, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.9 }}>
                             <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
-                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Shipping charges:</Text>
+                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>{t('Shipping_charges')}:</Text>
                             </View>
                             <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
-                                <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>${shippingcost}</Text>
+                                <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>{shippingcost}</Text>
                             </View>
                         </View>
                         {
@@ -749,7 +794,7 @@ const ShippingDetail = (props) => {
                                 <>
                                     <View style={{ marginTop: 10, height: 30, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.9 }}>
                                         <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
-                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Coupon:</Text>
+                                            <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>{t('Coupon')}:</Text>
                                         </View>
                                         <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
                                             <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 40, fontWeight: "500" }}>-</Text>
@@ -762,7 +807,7 @@ const ShippingDetail = (props) => {
                                             <Text style={{ textAlign: 'left', fontSize: 14, color: '#FFCC00', fontWeight: "500" }}>{Selectcoupons?.name}</Text>
                                         </View>
                                         <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
-                                            <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 50, fontWeight: "500" }}>- ${Selectcoupons?.discount}</Text>
+                                            <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 60, fontWeight: "500" }}>- {currenysymbol}{Selectcoupons?.discount}</Text>
                                         </View>
                                     </View>
                                     {/* <View style={{ marginTop: 6, height: 30, flexDirection: 'row', marginLeft: 25 }}>
@@ -790,14 +835,14 @@ const ShippingDetail = (props) => {
                     }}>
                         <View style={{ marginTop: 10, height: 40, flexDirection: 'row', justifyContent: "space-between", alignItems: 'flex-start', marginLeft: 15, width: WIDTH * 0.94 }}>
                             <View style={{ width: WIDTH * 0.9, height: 30, justifyContent: "flex-start", alignItems: 'flex-start' }}>
-                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>Total Amount:</Text>
+                                <Text style={{ textAlign: 'left', fontSize: 14, color: '#455A64', fontWeight: "500" }}>{t('Total_Amount')}:</Text>
                             </View>
                             <View style={{ justifyContent: "flex-end", alignItems: 'flex-end' }}>
                                 {
                                     Selectcoupons == null ? <>
-                                        <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 54, fontWeight: "500" }}>${ammont}</Text></>
+                                        <Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 54, fontWeight: "500" }}>{ammont}</Text></>
                                         :
-                                        <><Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 54, fontWeight: "500" }}>${total}</Text></>
+                                        <><Text style={{ textAlign: 'center', fontSize: 14, color: '#77869E', right: 54, fontWeight: "500" }}>{total}</Text></>
                                 }
                             </View>
                         </View>
@@ -806,10 +851,10 @@ const ShippingDetail = (props) => {
                     {/* footer button   */}
 
                     <TouchableOpacity onPress={() => { gotoCardPayment() }}
-                        style={{ justifyContent: "center", marginBottom: 30, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 20, marginHorizontal: 120 }}
+                        style={{ justifyContent: "center", marginBottom: 30, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 20, marginHorizontal: 110 }}
                     >
-                        <View style={{ justifyContent: 'center', flex: 1, backgroundColor: '#ffcc00', borderRadius: 50, width: 150, alignItems: "center" }}>
-                            <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Proceed to Pay</Text>
+                        <View style={{ justifyContent: 'center', flex: 1, backgroundColor: '#ffcc00', borderRadius: 50, width: 160, alignItems: "center" }}>
+                            <Text style={{ textAlign: 'center', fontSize: 13, color: 'white', }}>{t('Proceed_to_Pay')}</Text>
                         </View>
                         {/* <View style={{justifyContent:"flex-end",alignItems:"flex-end" ,    }}>
                                 {
@@ -884,7 +929,7 @@ const ShippingDetail = (props) => {
                                         }}>
 
                                             <View style={{ marginTop: 15, marginHorizontal: 20, height: 30, flexDirection: "row", justifyContent: "center", alignItems: 'center' }}>
-                                                <Text style={{ marginTop: 2, marginLeft: 10, textAlign: 'center', fontSize: 20, color: '#000000', fontWeight: '500' }}>Add Address</Text>
+                                                <Text style={{ marginTop: 2, marginLeft: 10, textAlign: 'center', fontSize: 20, color: '#000000', fontWeight: '500' }}>{t('Add_Address')}</Text>
 
 
                                             </View>
@@ -900,22 +945,22 @@ const ShippingDetail = (props) => {
                                                 />
                                             </TouchableOpacity>
                                             <TextInput style={styles.textInput}
-                                                placeholder='Full Name(Required)*'
+                                                placeholder={t('Full_Name')}
                                                 placeholderTextColor="#8F93A0"
                                                 label="full_name"
                                                 value={full_name}
                                                 onChangeText={e => onChangeNameHandler(e)}
                                             />
                                             <TextInput style={styles.textInput}
-                                                placeholder='Phone number(Required)*'
+                                                placeholder={t('Phone_number_Required')}
                                                 placeholderTextColor="#8F93A0"
-                                                maxLength={10}
+                                                maxLength={12}
                                                 label="phone"
                                                 value={phone}
                                                 onChangeText={e => onChangePhoneHandler(e)}
                                             />
                                             <TextInput style={styles.textInput}
-                                                placeholder='Zip code(Required)*'
+                                                placeholder={t('Zip_code_Required')}
                                                 placeholderTextColor="#8F93A0"
                                                 label="pincode"
 
@@ -924,35 +969,35 @@ const ShippingDetail = (props) => {
                                                 onChangeText={e => onChangePinHandler(e)}
                                             />
                                             <TextInput style={styles.textInput}
-                                                placeholder='State(Required)*'
+                                                placeholder={t('State_Required')}
                                                 placeholderTextColor="#8F93A0"
                                                 label="state"
                                                 value={state}
                                                 onChangeText={e => onChangeStateHandler(e)}
                                             />
                                             <TextInput style={styles.textInput}
-                                                placeholder='City(Required)*'
+                                                placeholder={t('City_Required')}
                                                 placeholderTextColor="#8F93A0"
                                                 label="ity"
                                                 value={city}
                                                 onChangeText={e => onChangeCityHandler(e)}
                                             />
                                             <TextInput style={styles.textInput}
-                                                placeholder='House number(Required)*'
+                                                placeholder={t('House_number_Required')}
                                                 placeholderTextColor="#8F93A0"
                                                 label="house_no"
                                                 value={house_no}
                                                 onChangeText={e => onChangeHouseHandler(e)}
                                             />
                                             <TextInput style={styles.textInput}
-                                                placeholder='Road name,Area,Colony(Required)*'
+                                                placeholder={t('Road_nameArea_Colony')}
                                                 placeholderTextColor="#8F93A0"
                                                 label="area_village"
                                                 value={area_village}
                                                 onChangeText={e => onChangeAreaHandler(e)}
                                             />
                                             <TextInput style={styles.textInput}
-                                                placeholder='Landmark(optional)'
+                                                placeholder={t('Landmark_optional')}
                                                 placeholderTextColor="#8F93A0"
                                                 label="landmark"
                                                 value={landmark}
@@ -967,7 +1012,7 @@ const ShippingDetail = (props) => {
                                                 /> */}
                                             <View style={{ height: 45, width: "98%", marginTop: 14, alignItems: 'flex-start', justifyContent: "flex-start", marginLeft: 10 }}>
 
-                                                <Text style={{ color: 'black', textAlign: "left", fontSize: 16, fontWeight: "400" }}>Address Type</Text>
+                                                <Text style={{ color: 'black', textAlign: "left", fontSize: 16, fontWeight: "400" }}>{t("Address_Type")}</Text>
 
                                                 <View style={{ height: 45, width: "90%", marginTop: 5, alignItems: 'center', justifyContent: "flex-start", flexDirection: "row" }}>
 
@@ -1009,7 +1054,7 @@ const ShippingDetail = (props) => {
                                                                         color: "black"
 
                                                                     }}>
-                                                                    Home
+                                                                    {t('Home')}
                                                                 </Text>
                                                             </View>
 
@@ -1053,7 +1098,7 @@ const ShippingDetail = (props) => {
                                                                         color: "black"
 
                                                                     }}>
-                                                                    Work
+                                                                    {t('Work')}
                                                                 </Text>
                                                             </View>
 
@@ -1093,11 +1138,11 @@ const ShippingDetail = (props) => {
                                                         </TouchableOpacity> */}
                                                 </View>
                                             </View>
-                                            <View style={{ justifyContent: "center", alignItems: "center", marginBottom: 20, flexDirection: 'row', height: 38, marginHorizontal: 20, marginTop: 60 }}>
+                                            <View style={{ justifyContent: "center", alignItems: "center", marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 60 }}>
                                                 <TouchableOpacity
                                                     onPress={() => { gotocurrentpage() }} >
                                                     <View style={{ justifyContent: 'center', width: 110, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
-                                                        <Text style={styles.text}>Save</Text>
+                                                        <Text style={styles.text}>{t('Save')}</Text>
                                                     </View>
                                                 </TouchableOpacity>
                                             </View>
@@ -1132,6 +1177,6 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         fontSize: 14,
     },
-    text: { textAlign: 'center', fontSize: 15, color: 'white', fontWeight: '500' }
+    text: { textAlign: 'center', fontSize: 13, color: 'white', fontWeight: '500' }
 })
 

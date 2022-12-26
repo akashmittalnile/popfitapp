@@ -1,18 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { View, SafeAreaView, Text, TouchableOpacity, Dimensions, TextInput, Image, Alert, Pressable, Keyboard, ActivityIndicator } from 'react-native'
+import { View, SafeAreaView, Text, TouchableOpacity,TextInput, Image, Alert, Pressable, Keyboard, ActivityIndicator } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';
 import LinearGradient from 'react-native-linear-gradient';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
-var WIDTH = Dimensions.get('window').width;
-var HEIGHT = Dimensions.get('window').height;
+ 
 
 
 const VerificationCode = (props) => {
 
+    const { t } = useTranslation();
     const firstCodeRef = useRef();
     const secondCodeRef = useRef();
     const thirdCodeRef = useRef();
@@ -73,7 +74,7 @@ const VerificationCode = (props) => {
             // console.log("off");
         }
         catch (error) {
-            Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+            Alert.alert("", t('Check_internet_connection'))
 //  console.log("......error.........", error.response.data);
            }
         setIsLoading(false);
@@ -115,7 +116,7 @@ const VerificationCode = (props) => {
 
             }
             catch (error) {
-                Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+                Alert.alert("", t('Check_internet_connection'))
                 }
             setIsLoading(false);
         } setIsLoading(false);
@@ -158,13 +159,13 @@ const VerificationCode = (props) => {
                                     />
                                 </TouchableOpacity>
                             </View>
-                            <Text style={{ textAlign: 'left', fontSize: 19, color: 'white', marginLeft: 30, alignItems: 'center', justifyContent: "center" }}>Verification Code</Text>
+                            <Text style={{ textAlign: 'left', fontSize: 19, color: 'white', marginLeft: 30, alignItems: 'center', justifyContent: "center" }}>{t('Verification_Code')}</Text>
 
 
                         </View>
 
                         <View style={{ alignItems: 'center', flexDirection: 'row', marginHorizontal: 20, height: 60 }}>
-                            <Text style={{ textAlign: 'left', fontSize: 12, color: 'white', }}>Enter the code sent to</Text>
+                            <Text style={{ textAlign: 'left', fontSize: 12, color: 'white', }}>{t('Enter_the_code_sent')}</Text>
                             <Text style={{ marginLeft: 5, textAlign: 'left', fontSize: 14, color: 'white' }}>{'('+countrycod + ") -" + phoneNumber + "  " + pin}</Text>
                         </View>
 
@@ -316,7 +317,7 @@ const VerificationCode = (props) => {
                         <View style={{ flexDirection: 'column', alignItems: 'center' }}>
                             <TouchableOpacity onPress={() => { VerifyOtp() }}>
                                 <View style={{ marginTop: 40, borderRadius: 25, width: 150, height: 40, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
-                                    <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'white', }}>Next</Text>
+                                    <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'white', }}>{t('Next')}</Text>
                                 </View>
                             </TouchableOpacity>
 
@@ -324,7 +325,7 @@ const VerificationCode = (props) => {
 
                         <TouchableOpacity onPress={() => { getMobileNumber() }} style={{ flexDirection: 'column', alignItems: 'center' }}>
                             <View style={{ marginTop: 10, width: 200, height: 30, alignItems: 'center', justifyContent: 'center' }}>
-                                <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 16, color: '#ffcc00', textDecorationLine: 'underline' }}>Resend Otp</Text>
+                                <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 16, color: '#ffcc00', textDecorationLine: 'underline' }}>{t('Resend_Otp')}</Text>
                             </View>
                         </TouchableOpacity>
 

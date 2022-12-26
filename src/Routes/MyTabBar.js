@@ -44,8 +44,11 @@ import Audiolist from '../Screens/training/Audiolist';
 import Videolist from '../Screens/training/Videolist';
 import ViewInvoice from '../Screens/myorder/Invoicedwn';
 import ChangePassword from '../Screens/Profile/ChangePassword';
- 
+ import  '../../i18n';
 import CancelSubscription from '../Screens/subscription Plan/CancelSubscription';
+import Selector from '../translations/Selectlang';
+import { useTranslation } from 'react-i18next';
+import Exploreshop from '../Screens/shop/Exploreshop';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -91,6 +94,11 @@ const HomeBottomTab = props => {
         component={DumbleSet}
       />
       <Stack.Screen
+        options={{ headerShown: false }}
+        name="Exploreshop"
+        component={Exploreshop}
+      />
+       <Stack.Screen
         options={{ headerShown: false }}
         name="Recipecategory"
         component={Recipecategory}
@@ -226,6 +234,11 @@ const HomeBottomTab = props => {
         name="CancelSubscription"
         component={CancelSubscription}
       />
+       <Stack.Screen
+        options={{ headerShown: false }}
+        name="Selector"
+        component={Selector}
+      />
 
     </Stack.Navigator>
   );
@@ -283,6 +296,7 @@ const TrainingBottomTab = props => {
         name="Videolist"
         component={Videolist}
       />
+     
     </Stack.Navigator>
   );
 };
@@ -377,7 +391,9 @@ export const Hidemytab = props => {
     </Stack.Navigator>
   )
 }
-const MyTabBar = props => {
+const MyTabBar = (props) => {
+  const { t } = useTranslation();
+   
   return (
     <SafeAreaView
       style={{
@@ -441,7 +457,7 @@ const MyTabBar = props => {
                     fontSize: 12,
                     color: 'white',
                   }}>
-                  Home
+                 {t('Home')}
                 </Text>
               </View>
             ),
@@ -485,7 +501,7 @@ const MyTabBar = props => {
                     fontSize: 12,
                     color: 'white',
                   }}>
-                  Training
+                  {t('Training')}
                 </Text>
               </View>
             ),
@@ -528,7 +544,7 @@ const MyTabBar = props => {
                     fontSize: 12,
                     color: 'white',
                   }}>
-                  Shop
+                  {t('Shop')}
                 </Text>
               </View>
             ),
@@ -572,7 +588,7 @@ const MyTabBar = props => {
                     fontSize: 12,
                     color: 'white',
                   }}>
-                  Blogs
+                  {t('Blogs')}
                 </Text>
               </View>
             ),
