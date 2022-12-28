@@ -228,7 +228,7 @@ const Home = (props) => {
   }, []);
 
   const gotoCategory = async (item) => {
-
+    // console.log("blogcategory-home",item);
     const usertkn = await AsyncStorage.getItem("authToken");
     if (usertkn == null) {
       Alert.alert('', t('Please_login_first'))

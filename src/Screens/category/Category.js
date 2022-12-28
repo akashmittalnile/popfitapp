@@ -62,7 +62,7 @@ const Category = (props) => {
     // const categoryitem = ITEMS;
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.BLOG_SUBCATEGORY}`, { "category_id": ITEMS }, { headers: { "Authorization": ` ${Token != null ? Token : null}` } });
+      const response = await axios.post(`${API.BLOG_SUBCATEGORY}`, { "category_id": ITEMS }, { headers: { "Authorization": ` ${Token}` } });
       // console.log(":::::::::category_Response>>>", response.data.blog_subcategory);
       // console.log("status category:", response.data.status);
       if (response.data.status == 1) {

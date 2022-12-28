@@ -175,7 +175,7 @@ const TrainingDetail = (props) => {
         try {
 
             const response = await axios.get(`${API.TRAINING_WORKOUT_CATEGORY}`,
-                { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } }
+                { headers: { "Authorization": ` ${usertkn}` } }
             );
             // console.log("::::Traing_Workout_Response>>>::", response.data);
             // console.log("Traing_Workout_data:::>:::", response.data.data);

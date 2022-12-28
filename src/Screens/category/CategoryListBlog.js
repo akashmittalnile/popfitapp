@@ -63,7 +63,7 @@ const SubCategoryBlog = (props) => {
     const subcategoryid = subcategoryITEM;
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.BLOG_LISTBLOG}`, { "category_id": categoryitem, "subcategory_id": subcategoryid }, { headers: { "Authorization": ` ${Token != null ? Token : null}` } });
+      const response = await axios.post(`${API.BLOG_LISTBLOG}`, { "category_id": categoryitem, "subcategory_id": subcategoryid }, { headers: { "Authorization": ` ${Token}` } });
       // console.log(":::::::::listBLog_Response>>>", response.data.blog_list);
       // console.log("status _listBLog:", response.data.status);
       if (response.data.status == 1) {

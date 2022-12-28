@@ -239,6 +239,16 @@ const HomeBottomTab = props => {
         name="Selector"
         component={Selector}
       />
+       <Stack.Screen
+        options={{ headerShown: false }}
+        name="Category"
+        component={Category}
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name="SubCategoryBlog"
+        component={SubCategoryBlog}
+      />
 
     </Stack.Navigator>
   );

@@ -147,7 +147,7 @@ const Training = (props) => {
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.TRAINING_LIST}`, { "category_id": Tainingcat_id, "subcategory_id": Trainingsubcat_data },
-        { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } }
+        { headers: { "Authorization": ` ${usertkn}` } }
       );
       // console.log(":::::::::TrainingCategoryListAPI_Response>>>", response.data);
 
@@ -245,7 +245,7 @@ const Training = (props) => {
                               }}>
                               <Image
                                 source={{ uri: `${imagebaseurl + itm}` }}
-                                resizeMode="contain"
+                                // resizeMode="stretch"
                                 style={{
                                   width: "100%",
                                   height: "100%",
@@ -480,7 +480,8 @@ const Training = (props) => {
               (<View style={{
                 justifyContent: "center", alignItems: "center", backgroundColor: "white", flex: 1,
               }}>
-                <Image resizeMode='contain'
+                <Image 
+                resizeMode='contain'
                   source={require('../assets/Nodatafound.png')}
                   style={{
                     width: 200,

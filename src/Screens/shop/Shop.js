@@ -103,7 +103,7 @@ const Shop = (props) => {
     setIsLoading(true);
     try {
       const response = await axios.get(`${API.SHOP_MAIN}`,
-        { headers: { "Authorization": ` ${Token != null ? Token : null}` } }
+        { headers: { "Authorization": ` ${Token}` } }
       );
       // console.log(":::::::::Shop_Store_Response>>>", response.data.best_seller);
       // console.log("status _SHOP", response.data.status);

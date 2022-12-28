@@ -11,7 +11,7 @@ import {
   Pressable,
   Modal,
   SafeAreaView,
-  Dimensions, Linking, ActivityIndicator, KeyboardAvoidingView, Platform, RefreshControl,ScrollView
+  Dimensions,KeyboardAvoidingView, Platform, RefreshControl,ScrollView
 } from 'react-native';
  
 import { Pages } from 'react-native-pages';
@@ -62,14 +62,14 @@ const BlogDetail = (props) => {
   //   props.navigation.navigate('ContactUs');
   // };
 
-  // console.log("Blog_id_item ...............:", props?.route?.params?.blogdetail_id?.id);
+  console.log("Blog_id_item ...............:", props?.route?.params?.blogdetail_id?.id);
   const blogdetail_id = props?.route?.params?.blogdetail_id?.id;
 
-  // console.log("CategoryBlog_id_item ...............:", props?.route?.params?.Categoryblogid?.id);
+  console.log("CategoryBlog_id_item ...............:", props?.route?.params?.Categoryblogid?.id);
   const Categoryblogid = props?.route?.params?.Categoryblogid?.id;
 
   // console.log("homeblogid_item ...............:", props?.route?.params?.homeblogid?.id);
-  const homeblogid = props?.route?.params?.homeblogid?.id;
+  // const homeblogid = props?.route?.params?.homeblogid?.id;
   // let BLOGId = blogdetail_id ? blogdetail_id : Categoryblogid ? Categoryblogid : homeblogid ? homeblogid : null;
 
   useEffect(() => {
@@ -85,7 +85,7 @@ const BlogDetail = (props) => {
         // console.log(".....usertoken ..........................");
       }
       else {
-        getCategoryblog_detail();
+        // getCategoryblog_detail();
         // console.log("..........usertoken_null/////:");
       }
     };
@@ -116,8 +116,8 @@ const BlogDetail = (props) => {
         title: 'Popfiit Blog Contents',
         icon: 'data:<data_type>/<file_extension>;base64,<base64_data>',
         // type: 'data:image/png;base64,<imageInBase64>',
-        message: "Popfiit Blog Post !!!",
-        url: 'https://www.youtube.com/embed/ml6cT4AZdqI',
+        // message: "Popfiit App",
+        url: 'https://play.google.com/store/apps/details?id=com.popfit',
       }
       try {
         const shareResponse = await Share.open(shareOptions);
@@ -137,8 +137,8 @@ const BlogDetail = (props) => {
     let Token = await AsyncStorage.getItem("authToken");
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.BLOG_DETAILS}`, { "blog_id": blogdetail_id ? blogdetail_id : Categoryblogid ? Categoryblogid : homeblogid },
-        { headers: { "Authorization": ` ${Token != null ? Token : null}` } });
+      const response = await axios.post(`${API.BLOG_DETAILS}`, { "blog_id": blogdetail_id != undefined ? blogdetail_id : Categoryblogid   },
+        { headers: { "Authorization": ` ${Token}` } });
       // console.log(":::::::::DetailsBLog_Response>>>", response.data.blog_detail);
       // console.log("status _DetailsBLog:", response.data.status);
       // console.log("status _comment_count:", response.data.comment_count);
@@ -165,7 +165,7 @@ const BlogDetail = (props) => {
     catch (error) {
       Alert.alert("", t('Check_internet_connection'))
       // Alert.alert('', 'Something went wrong please exit the app and try again');
-      // console.log("......error.........", error.response.data.message);
+      console.log("......error.........", error.response.data.message);
       // setIsLoading(false);
 
     }
@@ -173,13 +173,13 @@ const BlogDetail = (props) => {
   };
 
   const ShareCommentApi = async () => {
-
+    let Token = await AsyncStorage.getItem("authToken");
     // console.log("User commented_STATUS:::::::::::::::::::::::", subscriptiontoken);
     const EnterComment = usercomment;
     setIsLoading(true);
     try {
       // setIsLoading(false);
-      const response = await axios.post(`${API.SEND_COMMENTS}`, { "blog_id": blogdetail_id ? blogdetail_id : Categoryblogid ? Categoryblogid : homeblogid ? homeblogid : null, "comment": EnterComment }, { headers: { "Authorization": ` ${subscriptiontoken}` } })
+      const response = await axios.post(`${API.SEND_COMMENTS}`, { "blog_id": blogdetail_id != undefined ? blogdetail_id : Categoryblogid, "comment": EnterComment }, { headers: { "Authorization": ` ${Token}` } })
       // console.log("User commented_STATUS::", response.data.status);
       // console.log("User commented_Message::", response.data.message);
       if (response.data.status == 1) {
@@ -297,7 +297,7 @@ const BlogDetail = (props) => {
                   <View style={{ paddingBottom: 70 }}>
 
 
-                    <View>
+                    <>
                       <View style={{ marginLeft: 20, marginTop: 6, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
                         <Text style={{ textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "500" }}>{subcategoryBlogdetailsitems?.blog_detail?.youtube_title.slice(0, 36)}</Text>
                       </View>
@@ -349,7 +349,7 @@ const BlogDetail = (props) => {
 
                   </TouchableOpacity> */}
                       </View>
-                      <View style={{ marginHorizontal: 20, marginTop: 15, height: "auto", width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}>
+                      <View style={{ marginHorizontal: 20, marginTop: 15,width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6, alignSelf:"center" }}>
                         <Text style={{ textAlign: 'left', fontSize: 12, color: '#000', fontWeight: "400" }}>{subcategoryBlogdetailsitems?.blog_detail?.youtube_description}</Text>
                       </View>
 
@@ -367,7 +367,7 @@ const BlogDetail = (props) => {
                       <View style={{ marginHorizontal: 20, marginTop: 15, height: "auto", width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}>
                         <Text style={{ textAlign: 'left', fontSize: 12, color: '#000', fontWeight: "400" }}>{subcategoryBlogdetailsitems?.blog_detail?.image_description}</Text>
                       </View>
-                    </View>
+                    </>
 
                     {/* //Comment//  */}
 
@@ -386,8 +386,9 @@ const BlogDetail = (props) => {
                       vertical
                       keyExtractor={(item, index) => String(index)}
                       data={subcategoryBlogdetailsitems?.blog_comment}
-                      renderItem={({ item, index }) => (
-                        <View style={{
+                      renderItem={({ item, index }) => {
+                        return(
+                        <View key={index} style={{
                           // backgroundColor: "red",
                           padding: 15,
                           marginHorizontal: 10,
@@ -466,7 +467,7 @@ const BlogDetail = (props) => {
                             </Text>
                           </View>
                         </View>
-                      )}
+                      )}}
                     />
 
                   </View>

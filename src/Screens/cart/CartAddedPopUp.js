@@ -224,7 +224,7 @@ const CartAdded = (props) => {
         try {
 
             const response = await axios.post(`${API.PRODUCT_DETAILS_REMOVE_ITEM}`, { "cart_id": cartaddid }, {
-                'headers': { "Authorization": ` ${usertkn != null ? usertkn : null}` }
+                'headers': { "Authorization": ` ${usertkn}` }
             },);
             Alert.alert('', t('Removed_item_successfully'));
             // console.log(":::::::::ProductRemovecart_Response>>>", response.data.message);

@@ -64,6 +64,7 @@ const Blog = (props) => {
 
   };
   const gotoCategory = async (item) => {
+    console.log("blogcategory",item);
 
     const usertkn = await AsyncStorage.getItem("authToken");
     if (usertkn == null) {
@@ -253,7 +254,7 @@ const Blog = (props) => {
     try {
 
       const response = await axios.get(`${API.BLOG_MAIN_SCREEN}`,
-        { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } }
+        { headers: { "Authorization": ` ${usertkn}` } }
       );
       // console.log(":::::::::Traing_Workout_Response>>>", response.data);
       // console.log("Traing_Workout_data::::::", response.data.status);

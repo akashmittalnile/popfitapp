@@ -99,7 +99,7 @@ const OutdoorTrainning = (props) => {
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.TRAINING_SUB_CATERORY}`, { "category_id": checkplanid != undefined ? checkplanid?.id : hometrainingid?.id },
-        { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } }
+        { headers: { "Authorization": ` ${usertkn}` } }
       );
       // console.log(":::::::::workoutSubCategoryAPI_Response>>>", response?.data?.message);
       // console.log("workoutSubCategoryAPI_data::::::", response.data.data);

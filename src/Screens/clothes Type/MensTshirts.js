@@ -265,7 +265,7 @@ const MenTshirts = (props) => {
                                 fontSize: 12,
                                 color: 'black', fontWeight: "500"
 
-                              }}>$ {item.product_price}
+                              }}>{item.product_price}
                             </Text>
 
 

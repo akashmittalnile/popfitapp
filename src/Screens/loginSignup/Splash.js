@@ -22,7 +22,7 @@ const Splash = (props) => {
       const usertkn = await AsyncStorage.getItem("authToken");
       //  setIsLoading(true)
       try {
-        const response = await axios.get(`${API.NOTIFICATION}`, { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } });
+        const response = await axios.get(`${API.NOTIFICATION}`, { headers: { "Authorization": ` ${usertkn}` } });
         let count = response.data.length
         let notidata = 0;
         for (let i = 0; i <= count; i++) {
@@ -54,7 +54,7 @@ const Splash = (props) => {
       // setIsLoading(true)
       try {
         const response = await axios.get(`${API.SHIPPING_DETAILS}`, {
-          'headers': { "Authorization": ` ${usertkn != null ? usertkn : null}` }
+          'headers': { "Authorization": ` ${usertkn}` }
         },
         );
         // console.log("", response);

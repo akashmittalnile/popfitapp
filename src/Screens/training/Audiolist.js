@@ -35,7 +35,7 @@ const Audiolist = (props) => {
         const usertkn = await AsyncStorage.getItem("authToken");
         setIsLoading(true);
         try {
-            const response = await axios.post(`${API.TRAINING_LIST}`, { "category_id": Tainingcat_id, "subcategory_id": Trainingsubcat_data }, { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } });
+            const response = await axios.post(`${API.TRAINING_LIST}`, { "category_id": Tainingcat_id, "subcategory_id": Trainingsubcat_data }, { headers: { "Authorization": ` ${usertkn}` } });
             console.log(":::::::::TrainingCategoryListAPI_Response>>>", response.data.message);
 
             console.log("TrainingCategoryListAPI_data::::::", response.data.blog_list);

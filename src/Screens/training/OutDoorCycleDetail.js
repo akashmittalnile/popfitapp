@@ -49,7 +49,7 @@ const OutDoorCycleDetails = (props) => {
     const usertkn = await AsyncStorage.getItem("authToken");
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.TRAINING_LIST_DETAILS}`, { "training_id": TrainingDATA }, { headers: { "Authorization": ` ${usertkn != null ? usertkn : null}` } });
+      const response = await axios.post(`${API.TRAINING_LIST_DETAILS}`, { "training_id": TrainingDATA }, { headers: { "Authorization": ` ${usertkn}` } });
       // console.log(":::::::::TrainingDetails_ResponseMessage>>>", response.data.message);
       // console.log("TrainingDetails__data::::::", response.data.training_detail);
       ;
