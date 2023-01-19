@@ -1,28 +1,26 @@
-import TrackPlayer from 'react-native-track-player';
+// import TrackPlayer from 'react-native-track-player';
+// module.exports = async function () {
 
+//   try {
+//     TrackPlayer.addEventListener('remote-play', () => {
+//       TrackPlayer.play()
+//     })
 
-module.exports = async function () {
+//     TrackPlayer.addEventListener('remote-pause', () => {
+//       TrackPlayer.pause()
+//     });
 
-  try {
-    TrackPlayer.addEventListener('remote-play', () => {
-      TrackPlayer.play()
-    })
+//     TrackPlayer.addEventListener('remote-next', () => {
+//       TrackPlayer.skipToNext()
+//     });
 
-    TrackPlayer.addEventListener('remote-pause', () => {
-      TrackPlayer.pause()
-    });
+//     TrackPlayer.addEventListener('remote-previous', () => {
+//       TrackPlayer.skipToPrevious()
+//     });
 
-    TrackPlayer.addEventListener('remote-next', () => {
-      TrackPlayer.skipToNext()
-    });
+//     TrackPlayer.addEventListener('remote-stop', () => {
+//       TrackPlayer.destroy()
+//     });
+//   } catch (error) { console.log("ServiceFile:",error);}
 
-    TrackPlayer.addEventListener('remote-previous', () => {
-      TrackPlayer.skipToPrevious()
-    });
-
-    TrackPlayer.addEventListener('remote-stop', () => {
-      TrackPlayer.destroy()
-    });
-  } catch (error) { }
-
-}
+// }

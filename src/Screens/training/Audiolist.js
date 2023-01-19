@@ -39,10 +39,10 @@ const Audiolist = (props) => {
             console.log(":::::::::TrainingCategoryListAPI_Response>>>", response.data.message);
 
             console.log("TrainingCategoryListAPI_data::::::", response.data.blog_list);
-            
-            
+
+
             console.log("AUDIO_url::", response.data.training_audio);
-            
+
 
             setAudiobaseurl(response.data.training_audio);
 
@@ -89,48 +89,46 @@ const Audiolist = (props) => {
                             (<ScrollView>
                                 <View style={{ justifyContent: "flex-start", flex: 1, alignItems: "flex-start" }}>
                                     {/* Training Audio */}
-                                    <View style={{ marginTop: 10,  height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
-                                        
-                                            <Text style={{ marginLeft: 15, fontSize: 16, color: 'black', fontWeight: "500" }}>{t('Training_Audio')}</Text>
-                                       
+                                    <View style={{ marginTop: 10, height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
+
+                                        <Text style={{ marginLeft: 15, fontSize: 16, color: 'black', fontWeight: "500" }}>{t('Training_Audio')}</Text>
+
 
 
                                     </View>
                                     {/* //flastlist  for AUDIO */}
                                     <FlatList
-
-                                        // numColumns={2}
                                         data={trainingBlog_list}
                                         keyExtractor={(item, index) => String(index)}
                                         renderItem={({ item, index }) => {
                                             console.log("1st flastlist video:", item.id)
                                             return (
-                                                
-                                                    <View style={{
-                                                        marginVertical: 10,
-                                                        height: 200,
-                                                        // padding:10,
-                                                        overflow: "hidden",
-                                                        backgroundColor: "gray",
-                                                        width: WIDTH * 0.95,
-                                                        borderRadius: 20,
-                                                        marginHorizontal: 10,
-                                                        justifyContent: 'center',
-                                                        // alignSelf: "auto"
-                                                        // alignItems:"center"
 
-                                                    }}>
-                                                        <WebView
-                                                            style={{ justifyContent: 'center', alignItems: 'flex-start', marginTop: -10, backgroundColor: "lightgray", }}
-                                                            source={{
-                                                                uri: `${audiobaseurl + item?.training_audio}`
-                                                                // "https://dev.pop-fiit.com/upload/training_video/20220929_1664457751_54648.mp4" 
-                                                            }}
-                                                        />
+                                                <View style={{
+                                                    marginVertical: 10,
+                                                    height: 200,
+                                                    // padding:10,
+                                                    overflow: "hidden",
+                                                    backgroundColor: "gray",
+                                                    width: WIDTH * 0.95,
+                                                    borderRadius: 20,
+                                                    marginHorizontal: 10,
+                                                    justifyContent: 'center',
+                                                    // alignSelf: "auto"
+                                                    // alignItems:"center"
+
+                                                }}>
+                                                    <WebView
+                                                        style={{ justifyContent: 'center', alignItems: 'flex-start', marginTop: -10, backgroundColor: "lightgray", }}
+                                                        source={{
+                                                            uri: `${audiobaseurl + item?.training_audio}`
+                                                            // "https://dev.pop-fiit.com/upload/training_video/20220929_1664457751_54648.mp4" 
+                                                        }}
+                                                    />
 
 
-                                                    </View>
-                                                
+                                                </View>
+
                                             )
                                         }}
                                     />
@@ -152,7 +150,7 @@ const Audiolist = (props) => {
                     }
                 </>)
                 :
-                ( <CustomLoader showLoader={isLoading}/>)}
+                (<CustomLoader showLoader={isLoading} />)}
         </SafeAreaView >
 
     );

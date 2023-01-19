@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity,ScrollView, Image, Alert, Pressable, SafeAreaView, ActivityIndicator, Dimensions, PermissionsAndroid, Platform,RefreshControl } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity, ScrollView, Image, Alert, Linking, SafeAreaView, ActivityIndicator, Dimensions, PermissionsAndroid, Platform, RefreshControl } from 'react-native'
 // import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, ActivityIndicator } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
 // import { ScrollView } from 'react-native-gesture-handler';
@@ -25,14 +25,14 @@ const MyProfile = (props) => {
     const [Userprofile, setUserprofile] = useState('');
     const [orderdata, setorderdata] = useState([]);
 
-    
-  const [refreshing, setrefreshing] = useState(false)
-  const onRefresh = () => {
-    setrefreshing(true)
-    // console.log('running');
-    StoresProductget();
-    setrefreshing(false)
-  }
+
+    const [refreshing, setrefreshing] = useState(false)
+    const onRefresh = () => {
+        setrefreshing(true)
+        // console.log('running');
+        StoresProductget();
+        setrefreshing(false)
+    }
     const gotoEditMyProfile = () => {
         props.navigation.navigate("EditMyProfile")
     }
@@ -224,7 +224,7 @@ const MyProfile = (props) => {
         catch (error) {
             // console.log("Countryerror:", error.response.data.message);
             //Alert.alert('','Something went wrong please exit the app and try again.');
-            Alert.alert("",  t('Check_internet_connection'))
+            Alert.alert("", t('Check_internet_connection'))
         }
         setIsLoading(false);
     };
@@ -242,31 +242,31 @@ const MyProfile = (props) => {
         catch (error) {
             //  Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
             // console.log("......error.........", error.response.data.message);
-            Alert.alert('',  t('Error_msg'));
+            Alert.alert('', t('Error_msg'));
 
         }
         setIsLoading(false);
     };
-     
-     const showAlert = ( ) =>
-    Alert.alert(
-      "",
-       t('Are_you_sure_you_want_to_delete_your_Profile'),
-      [
-        {
-          text:t('Cancel'),
-          style: "cancel",
-        },
-        {
-          text: "Ok",
-          onPress: () => { DeleteProfile() }
 
-        },
-      ],
-      {
-        cancelable: true,
-      }
-    );
+    const showAlert = () =>
+        Alert.alert(
+            "",
+            t('Are_you_sure_you_want_to_delete_your_Profile'),
+            [
+                {
+                    text: t('Cancel'),
+                    style: "cancel",
+                },
+                {
+                    text: "Ok",
+                    onPress: () => { DeleteProfile() }
+
+                },
+            ],
+            {
+                cancelable: true,
+            }
+        );
     return (
         <SafeAreaView style={{
             flex: 1,
@@ -303,20 +303,20 @@ const MyProfile = (props) => {
             />
             {!isLoading ?
                 (<>
-                    <ScrollView 
-                     refreshControl={
-                        <RefreshControl
-                          refreshing={refreshing}
-                          onRefresh={onRefresh}
-                        />
-                      }
+                    <ScrollView
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                            />
+                        }
                     >
                         <View style={{ paddingBottom: 0 }}>
 
                             <View style={{ marginHorizontal: 6, marginTop: 20, height: 150, borderRadius: 10, backgroundColor: 'white', flexDirection: 'row', width: WIDTH * 0.97 }}>
 
                                 <View style={{ margin: 5, flex: 1 / 3, borderRadius: 10 }}>
-                                    <Image source={{ uri: Userprofile?.user_profile  != "" ? `${Userprofile?.user_profile}` :'https://dev.pop-fiit.com/images/logo.png' }} resizeMode="contain"
+                                    <Image source={{ uri: Userprofile?.user_profile != "" ? `${Userprofile?.user_profile}` : 'https://dev.pop-fiit.com/images/logo.png' }} resizeMode="contain"
                                         style={{ alignSelf: 'center', width: '100%', height: '100%', borderRadius: 10, borderWidth: 1, backgroundColor: "#455A64" }} />
                                 </View>
                                 <TouchableOpacity style={{ position: "absolute", right: 6, top: 6, width: 130, borderRadius: 50, zIndex: 999, }} onPress={() => { showAlert() }}>
@@ -329,11 +329,11 @@ const MyProfile = (props) => {
                                                 }} />
                                         </View>
 
-                                        <View style={{ marginLeft: -18, alignItems: 'center', justifyContent: "center", width: 90,height: 30, }}>
+                                        <View style={{ marginLeft: -18, alignItems: 'center', justifyContent: "center", width: 90, height: 30, }}>
 
                                             <Text numberOfLines={2} style={{ textAlign: 'left', fontSize: 10, color: '#fff', }}>
                                                 {t('Delete_Account')}
-                                                </Text>
+                                            </Text>
 
 
                                         </View>
@@ -422,17 +422,33 @@ const MyProfile = (props) => {
 
                                 </View>
                             </View>
-
+                            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 34,   marginHorizontal: 10 ,marginTop:20 ,alignSelf:"center" }}>
+                            <TouchableOpacity onPress={() => { Linking.openURL('https://dev.pop-fiit.com/terms-of-use') }}  >
+                                <View style={{ borderRadius: 50, height: 34, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center', padding: 3, width: 170 ,marginHorizontal: 10 }}>
+                                    <Text numberOfLines={1} style={{ alignSelf: 'center', textAlign: 'center', fontSize: 12, color: 'white',fontWeight:"bold" }}>
+                                        {t('Terms_of_use')}
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => { Linking.openURL('https://dev.pop-fiit.com/privacy-policy') }}  >
+                                <View style={{ borderRadius: 50, height: 34, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center', padding: 3, width:170  , }}>
+                                    <Text numberOfLines={1} style={{ alignSelf: 'center', textAlign: 'center', fontSize: 12, color: 'white', fontWeight:"bold"}}>
+                                        {t('Privacy_Policy')}
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+                            </View>
+                            
                             <View style={{ marginTop: 20, height: 45, flexDirection: 'row' }}>
                                 <View style={{ flex: 1, marginLeft: 10, }}>
                                     <Text style={{ fontSize: 16, color: 'white', fontWeight: "500" }}>{t('Recent_Orders')}</Text>
                                 </View>
                                 <View style={{ flex: 1.3 / 3, right: 10 }}>
                                     <TouchableOpacity onPress={() => { gotoMyOrder() }}>
-                                        <View style={{ borderRadius: 50, height: 34, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center',padding:3 }}>
+                                        <View style={{ borderRadius: 50, height: 34, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center', padding: 3 }}>
                                             <Text numberOfLines={2} style={{ alignSelf: 'center', textAlign: 'center', fontSize: 10, color: 'white', }}>
                                                 {t('View_All_Orders')}
-                                                </Text>
+                                            </Text>
                                         </View>
                                     </TouchableOpacity>
                                 </View>
@@ -579,7 +595,7 @@ const MyProfile = (props) => {
                                             <View style={{
                                                 marginTop: 10, flexDirection: 'row', justifyContent: "flex-start", flex: 1, margin: 10, height: 70, width: WIDTH * 0.92
                                             }}>
-                                                <View style={{ marginTop: 9, height: 50, justifyContent: "flex-start", alignItems: "center", flex: 0.35}}>
+                                                <View style={{ marginTop: 9, height: 50, justifyContent: "flex-start", alignItems: "center", flex: 0.35 }}>
                                                     <Text numberOfLines={2} style={{ textAlign: 'left', fontSize: 12, color: '#353535', fontWeight: "500" }}>{t('Order_Status')} :</Text>
                                                 </View>
 

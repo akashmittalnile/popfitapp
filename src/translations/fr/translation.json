@@ -237,5 +237,17 @@
   "Hold_on":"Attendez!",
   "Are_you_sure_you_want_back":"Êtes-vous sûr de vouloir y retourner?",
   "Yes":"OUI",
-  "Are_you_sure_you_want_cancel_order":"Êtes-vous sûr de vouloir annuler la commande?"
+  "Are_you_sure_you_want_cancel_order":"Êtes-vous sûr de vouloir annuler la commande?",
+  "Terms_of_use":"Conditions d'utilisation",
+  "Subscription_Details":"Détails de l’abonnement",
+  "Payment_iTunes_Account_confirmation_purchase":"Le paiement sera débité du compte iTunes lors de la confirmation de l’achat.",
+  "Subscription_automatically_current_period":"L’abonnement se renouvelle automatiquement à moins que le renouvellement automatique ne soit désactivé au moins 24 heures avant la fin de la période en cours.",
+  "Account_will_charged":"Le compte sera facturé pour le renouvellement dans les 24 heures avant la fin de la période en cours, et identifier le coût du renouvellement.",
+  "Subscriptions_Settings_after_purchase":"Les abonnements peuvent être gérés par l’utilisateur et le renouvellement automatique peut être désactivé en accédant aux paramètres du compte de l’utilisateur après l’achat.",
+  "Any_unused_portion_free_trial_period_applicable":"Toute portion inutilisée d’une période d’essai gratuite, si elle est offerte, sera perdue lorsque l’utilisateur achète un abonnement à cette publication, le cas échéant.",
+  "Also_look_our_Privacy_Policy_here":"Consultez également notre politique de confidentialité ici",
+  "Continue":"Continuer",
+  "Subscription_Plans":"Plan d’abonnement",
+  "Price_of_the_plan":"Prix du plan :-",
+  "Duration":"Durée:-"
 }

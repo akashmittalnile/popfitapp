@@ -50,7 +50,7 @@ const OutdoorTrainning = (props) => {
   }, []);
 
   const gotoOutdoorCycle = (item) => {
-    console.log("checkdataa:::::", item)
+     
     if (checkplanid?.plan_status == "Active" || checkplanid?.plan_id >= 2) {
       if (tokenuser != null) {
         // console.log("ACTIVE plan::::::");

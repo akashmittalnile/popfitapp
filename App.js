@@ -88,7 +88,7 @@ const App = (props) => {
     <>
       <Provider store={store}>
         <StripeProvider
-          publishableKey="pk_test_51LpuUGHSmonu9QOMZ3kCDTDCWWflMSt29FZoPoe0Z2n8RqlewqKIYDIZ9gnMWX7UvvVMMGjgjAVgUnn7ncfeoQY100nPkmMIZB"
+          publishableKey="pk_live_51Ltt5jHhczs35VE5QAci3mDtv1RtMCmWQpfV1G21I1BBT1t92FpTCojBYZ9WiLHFVhwTB5utZtvwSe7mCzdH7Z2b00a7x8Zy1O"
           merchantIdentifier="merchant.identifier" // required for Apple Pay
           urlScheme="your-url-scheme" // required for 3D Secure and bank redirects
         >

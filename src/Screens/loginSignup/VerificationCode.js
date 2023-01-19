@@ -166,7 +166,7 @@ const VerificationCode = (props) => {
 
                         <View style={{ alignItems: 'center', flexDirection: 'row', marginHorizontal: 20, height: 60 }}>
                             <Text style={{ textAlign: 'left', fontSize: 12, color: 'white', }}>{t('Enter_the_code_sent')}</Text>
-                            <Text style={{ marginLeft: 5, textAlign: 'left', fontSize: 14, color: 'white' }}>{'('+countrycod + ") -" + phoneNumber + "  " + pin}</Text>
+                            <Text style={{ marginLeft: 5, textAlign: 'left', fontSize: 14, color: 'white' }}>{'('+countrycod + ") -" + phoneNumber}</Text>
                         </View>
 
                         <View style={{

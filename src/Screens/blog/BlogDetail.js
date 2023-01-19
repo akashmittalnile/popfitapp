@@ -11,9 +11,9 @@ import {
   Pressable,
   Modal,
   SafeAreaView,
-  Dimensions,KeyboardAvoidingView, Platform, RefreshControl,ScrollView
+  Dimensions, KeyboardAvoidingView, Platform, RefreshControl, ScrollView
 } from 'react-native';
- 
+
 import { Pages } from 'react-native-pages';
 import styles from '../../Routes/style';
 import { API } from '../../Routes/Urls';
@@ -38,7 +38,7 @@ const BlogDetail = (props) => {
   const [subscriptiontoken, setsubscriptiontoken] = useState("");
 
   const [usercomment, setUserComment] = useState("");
-  // const [blog_comment, setblog_comment] = useState([]);
+  const [blog_comment, setblog_comment] = useState([]);
   const [comments, setComments] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -82,11 +82,11 @@ const BlogDetail = (props) => {
         // props.navigation.navigate('LoginMain', {
         //   screen: 'LoginSignUp',
         // });
-        // console.log(".....usertoken ..........................");
+        console.log(".....usertoken ..........................");
       }
       else {
         // getCategoryblog_detail();
-        // console.log("..........usertoken_null/////:");
+        console.log("..........usertoken_null/////:");
       }
     };
     checklogin();
@@ -137,20 +137,20 @@ const BlogDetail = (props) => {
     let Token = await AsyncStorage.getItem("authToken");
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.BLOG_DETAILS}`, { "blog_id": blogdetail_id != undefined ? blogdetail_id : Categoryblogid   },
+      const response = await axios.post(`${API.BLOG_DETAILS}`, { "blog_id": blogdetail_id != undefined ? blogdetail_id : Categoryblogid },
         { headers: { "Authorization": ` ${Token}` } });
-      // console.log(":::::::::DetailsBLog_Response>>>", response.data.blog_detail);
+      console.log(":::::::::DetailsBLog_Response>>>", response.data);
       // console.log("status _DetailsBLog:", response.data.status);
       // console.log("status _comment_count:", response.data.comment_count);
-      // console.log("status _blog_comment:", response.data.blog_comment);
-      if (response.data.status == '1') {
+      // console.log("status _blog_comment:", response.data.blog_detail.youtube_description);
+      if (response.data.status === 1) {
         setApiStatus('1');
         setsubcategoryBlogdetailsitems(response.data);
         // setcomment_count(response.data.comment_count);
-        // setblog_comment(response.data.blog_comment);
+        setblog_comment(response.data.blog_comment);
         // setIsLoading(false);
       }
-      else if (response.data.status == '0') {
+      else if (response.data.status === 0) {
         // setIsLoading(false);
         Alert.alert('', t('Error_msg'));
         setApiStatus('0');
@@ -165,7 +165,7 @@ const BlogDetail = (props) => {
     catch (error) {
       Alert.alert("", t('Check_internet_connection'))
       // Alert.alert('', 'Something went wrong please exit the app and try again');
-      console.log("......error.........", error.response.data.message);
+      console.log("getCategoryblog_detail......error.........", error.response.data.message);
       // setIsLoading(false);
 
     }
@@ -229,145 +229,63 @@ const BlogDetail = (props) => {
           props.navigation.navigate("Notifications")
         }}
       />
+
       {!isLoading ?
         (<>
           {
             apistatus == '1' ?
               (<View style={{
                 height: "100%",
-                width: WIDTH, flex: 1
+                width: WIDTH,flex: 1 
               }}>
-                {/* <View style={styles.navigationBarColor}>
-            <View style={styles.navigationBarLeftContainer}>
-              <TouchableOpacity onPress={() => { buttonClickedHandler() }}>
-                <Image
-                  source={require('../assets/leftArrowWhite.png')}
-                  style={{
-                    width: 30,
-                    height: 25,
-                    alignSelf: 'center',
-                  }}
-                />
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.navigationBarCenterContainer}>
-              <TouchableOpacity>
-                <Image resizeMode='contain'
-                  source={require('../assets/layerCenter.png')}
-                  style={{
-                    width: 80,
-                    height: 50,
-                    alignSelf: 'center',
-                  }}
-                />
-              </TouchableOpacity>
-            </View>
-            <View style={{
-              flex: 1,
-              flexDirection: 'row',
-              justifyContent: 'flex-end',
-              alignItems: 'center',
-            }}>
-              <TouchableOpacity
-                onPress={() => {
-                  gotoNotification();
-                }}>
-                <Image
-                  source={require('../assets/bellRight.png')}
-                  style={{
-                    width: 20,
-                    height: 25,
-                    alignSelf: 'center',
-                    marginRight: 10,
-                  }}
-                />
-              </TouchableOpacity>
-            </View>
-          </View> */}
-
-                <ScrollView
-                refreshControl={
-                  <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={onRefresh}
-                  />
-                }
+                <ScrollView 
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={onRefresh}
+                    />
+                  }
                 >
-                  <View style={{ paddingBottom: 70 }}>
-
-
-                    <>
-                      <View style={{ marginLeft: 20, marginTop: 6, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
-                        <Text style={{ textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "500" }}>{subcategoryBlogdetailsitems?.blog_detail?.youtube_title.slice(0, 36)}</Text>
-                      </View>
-                      <View style={{
-                        marginHorizontal: 20, marginTop: 6, height: 200, borderRadius: 20, marginVertical: 1, width: WIDTH * 0.9,
-                      }}>
-                        <View style={{
-                          height: '100%',
-                          overflow: "hidden",
-                          width: WIDTH * 0.9,
-                          borderRadius: 20,
-                          justifyContent: 'center',
-                          // alignSelf: "auto"
-
-                        }}>
-                          <WebView
-                            source={{ uri: subcategoryBlogdetailsitems?.blog_detail?.youtube_link }}
-                          />
-
-
-                        </View>
-                        {/* <TouchableOpacity onPress={() => { Linking.openURL(subcategoryBlogdetailsitems?.youtube_link) }}
-                    style={{ justifyContent: 'space-around', height: '100%', resizeMode: "center", alignItems: "center", width: WIDTH * 0.9 }}>
-
-                    <Image
-                      source={{ uri: subcategoryBlogdetailsitems?.image }}
-                      style={{
-                        width: '100%', height: '100%', justifyContent: "center",
-                        alignItems: 'center',
-
-                        //  borderWidth: 1, 
-                        // borderColor: "red",
-                        borderRadius: 20,
-                      }}>
-                    </Image>
-                    <View
-                      style={{
-                        height: 50,
-                        backgroundColor: 'red',
-                        width: 50, height: 50,
-                        justifyContent: "center",
-                        alignItems: 'center',
-                        borderRadius: 50 / 2, top: -90
-                      }}>
-                      <Image
-                        source={require('../assets/play.png')}
-                      />
+                  <View style={{ paddingBottom: 60 }}>
+                    <View style={{ marginLeft: 20, marginTop: 6, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
+                      <Text style={{ textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "500" }}>{subcategoryBlogdetailsitems?.blog_detail?.youtube_title.slice(0, 36)}</Text>
                     </View>
+                    <View style={{
+                      marginHorizontal: 20, marginTop: 6, height: 222, borderRadius: 20, marginVertical: 1, width: WIDTH * 0.9,
+                    }}>
+                      <View style={{
+                        height: '100%',
+                        overflow: "hidden",
+                        width: WIDTH * 0.9,
+                        borderRadius: 20,
+                        justifyContent: 'center',
+                        // alignSelf: "auto"
 
-                  </TouchableOpacity> */}
-                      </View>
-                      <View style={{ marginHorizontal: 20, marginTop: 15,width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6, alignSelf:"center" }}>
-                        <Text style={{ textAlign: 'left', fontSize: 12, color: '#000', fontWeight: "400" }}>{subcategoryBlogdetailsitems?.blog_detail?.youtube_description}</Text>
-                      </View>
-
-                      <View style={{ marginLeft: 20, marginTop: 5, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
-                        <Text style={{ textAlign: 'left', fontSize: 18, color: '#000', fontWeight: "500" }} >{subcategoryBlogdetailsitems?.blog_detail?.image_title}</Text>
-                      </View>
-
-                      <View style={{ backgroundColor: "white", borderRadius: 20, marginTop: 6, height: HEIGHT * 0.2, width: WIDTH * 0.9, marginHorizontal: 18, }}>
-                        <Image resizeMode='contain'
-                          source={{ uri: subcategoryBlogdetailsitems?.blog_detail?.image != null ? `${subcategoryBlogdetailsitems?.blog_detail?.image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
-                          style={{ width: '100%', height: '100%', justifyContent: "center", alignItems: 'center', borderRadius: 20 }}
+                      }}>
+                        <WebView
+                          source={{ uri: `${subcategoryBlogdetailsitems?.blog_detail?.youtube_link}` }}
                         />
                       </View>
 
-                      <View style={{ marginHorizontal: 20, marginTop: 15, height: "auto", width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}>
-                        <Text style={{ textAlign: 'left', fontSize: 12, color: '#000', fontWeight: "400" }}>{subcategoryBlogdetailsitems?.blog_detail?.image_description}</Text>
-                      </View>
-                    </>
+                    </View>
+                    <View style={{ marginHorizontal: 20, marginTop: 15, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6, alignSelf: "center", }}>
+                      <Text style={{ textAlign: 'left', fontSize: 12, color: '#000', fontWeight: "400" }}>{subcategoryBlogdetailsitems?.blog_detail?.youtube_description}</Text>
+                    </View>
+
+                    <View style={{ marginLeft: 20, marginTop: 5, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
+                      <Text style={{ textAlign: 'left', fontSize: 18, color: '#000', fontWeight: "500" }} >{subcategoryBlogdetailsitems?.blog_detail?.image_title}</Text>
+                    </View>
+
+                    <View style={{ backgroundColor: "white", borderRadius: 20, marginTop: 6, height: HEIGHT * 0.2, width: WIDTH * 0.9, marginHorizontal: 18, }}>
+                      <Image resizeMode='contain'
+                        source={{ uri: subcategoryBlogdetailsitems?.blog_detail?.image != null ? `${subcategoryBlogdetailsitems?.blog_detail?.image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
+                        style={{ width: '100%', height: '100%', justifyContent: "center", alignItems: 'center', borderRadius: 20 }}
+                      />
+                    </View>
+
+                    <View style={{ marginHorizontal: 20, marginTop: 15, height: "auto", width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}>
+                      <Text style={{ textAlign: 'left', fontSize: 12, color: '#000', fontWeight: "400" }}>{subcategoryBlogdetailsitems?.blog_detail?.image_description}</Text>
+                    </View>
 
                     {/* //Comment//  */}
 
@@ -382,93 +300,182 @@ const BlogDetail = (props) => {
                       }}>{subcategoryBlogdetailsitems?.comment_count}  <Text>{t('Comments')}</Text>
                     </Text>
 
-                    <FlatList
-                      vertical
-                      keyExtractor={(item, index) => String(index)}
-                      data={subcategoryBlogdetailsitems?.blog_comment}
-                      renderItem={({ item, index }) => {
-                        return(
-                        <View key={index} style={{
-                          // backgroundColor: "red",
-                          padding: 15,
-                          marginHorizontal: 10,
-                          borderRadius: 10,
-                          height: 100,
-                          width: WIDTH * 0.94,
-                          borderWidth: 1,
-                          borderColor: "lightgrey",
-                          borderRadius: 30,
-                          marginVertical: 6,
-                          marginTop: 10,
-                          justifyContent: "center",
+                    {blog_comment.length > 0 ?
+                      subcategoryBlogdetailsitems?.blog_comment.map((item, index) => {
+                        return (
+                          <View key={String(index)} style={{
+                            // backgroundColor: "red",
+                            padding: 15,
+                            marginHorizontal: 10,
+                            borderRadius: 10,
+                            height: 100,
+                            width: WIDTH * 0.94,
+                            borderWidth: 1,
+                            borderColor: "lightgrey",
+                            borderRadius: 30,
+                            marginVertical: 6,
+                            marginTop: 10,
+                            justifyContent: "center",
 
-                        }}>
-                          <View
-                            style={{
-                              marginHorizontal: 6,
-                              marginVertical: 15,
-                              height: 60,
-                              width: 60,
-                              justifyContent: 'center',
-                              position: 'absolute',
-                              alignItems: 'center',
-                              borderRadius: 60 / 2,
-
-                            }}>
-                            <Image resizeMode='contain'
+                          }}>
+                            <View
                               style={{
+                                marginHorizontal: 6,
+                                marginVertical: 15,
                                 height: 60,
                                 width: 60,
-                                marginVertical: -20,
-                                borderRadius: 60, backgroundColor: "black"
-                              }}
-                              source={{ uri: item.image != null ? `${item.image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
-                            />
-                          </View>
+                                justifyContent: 'center',
+                                position: 'absolute',
+                                alignItems: 'center',
+                                borderRadius: 60 / 2,
 
-                          <View
-                            style={{
-                              marginTop: -6,
-                              marginLeft: 60,
-                              flex: 1,
-                              flexDirection: 'row',
-                            }}>
-                            <View style={{ flex: 0.5 }}>
+                              }}>
+                              <Image resizeMode='contain'
+                                style={{
+                                  height: 60,
+                                  width: 60,
+                                  marginVertical: -20,
+                                  borderRadius: 60, backgroundColor: "black"
+                                }}
+                                source={{ uri: item?.image != "" ? `${item?.image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
+                              />
+                            </View>
+
+                            <View
+                              style={{
+                                marginTop: -6,
+                                marginLeft: 60,
+                                flex: 1,
+                                flexDirection: 'row',
+                              }}>
+                              <View style={{ flex: 0.5 }}>
+                                <Text
+                                  style={{
+                                    textAlign: 'left',
+                                    fontSize: 12,
+                                    color: '#000000',
+                                    fontWeight: "500"
+                                  }}>
+                                  {item?.user_name}
+                                </Text>
+                              </View>
+                              <View style={{ flex: 0.8 }}>
+                                <Text
+                                  style={{
+                                    textAlign: 'right',
+                                    fontSize: 12,
+                                    color: '#000000',
+
+                                  }}>
+                                  {item?.created_at}
+                                </Text>
+                              </View>
+                            </View>
+
+                            <View style={{ marginLeft: 60, flex: 3.2, justifyContent: "center", alignItems: "flex-start", marginTop: 10, marginVertical: -5, height: "auto" }}>
                               <Text
                                 style={{
                                   textAlign: 'left',
-                                  fontSize: 12,
+                                  fontSize: 10,
                                   color: '#000000',
-                                  fontWeight: "500"
-                                }}>
-                                {item.user_name}
+                                }}>{item?.comment}
                               </Text>
                             </View>
-                            <View style={{ flex: 0.8 }}>
+                          </View>
+                        )
+                      })
+
+                      : null}
+
+                    {/* <FlatList
+                      vertical
+                      scrollEnabled={false}
+                      keyExtractor={(item, index) => String(index)}
+                      data={subcategoryBlogdetailsitems?.blog_comment}
+                      renderItem={({ item, index }) => {
+                        return (
+                          <View key={index} style={{
+                            // backgroundColor: "red",
+                            padding: 15,
+                            marginHorizontal: 10,
+                            borderRadius: 10,
+                            height: 100,
+                            width: WIDTH * 0.94,
+                            borderWidth: 1,
+                            borderColor: "lightgrey",
+                            borderRadius: 30,
+                            marginVertical: 6,
+                            marginTop: 10,
+                            justifyContent: "center",
+
+                          }}>
+                            <View
+                              style={{
+                                marginHorizontal: 6,
+                                marginVertical: 15,
+                                height: 60,
+                                width: 60,
+                                justifyContent: 'center',
+                                position: 'absolute',
+                                alignItems: 'center',
+                                borderRadius: 60 / 2,
+
+                              }}>
+                              <Image resizeMode='contain'
+                                style={{
+                                  height: 60,
+                                  width: 60,
+                                  marginVertical: -20,
+                                  borderRadius: 60, backgroundColor: "black"
+                                }}
+                                source={{ uri: item.image != null ? `${item.image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
+                              />
+                            </View>
+
+                            <View
+                              style={{
+                                marginTop: -6,
+                                marginLeft: 60,
+                                flex: 1,
+                                flexDirection: 'row',
+                              }}>
+                              <View style={{ flex: 0.5 }}>
+                                <Text
+                                  style={{
+                                    textAlign: 'left',
+                                    fontSize: 12,
+                                    color: '#000000',
+                                    fontWeight: "500"
+                                  }}>
+                                  {item.user_name}
+                                </Text>
+                              </View>
+                              <View style={{ flex: 0.8 }}>
+                                <Text
+                                  style={{
+                                    textAlign: 'right',
+                                    fontSize: 12,
+                                    color: '#000000',
+
+                                  }}>
+                                  {item.created_at}
+                                </Text>
+                              </View>
+                            </View>
+
+                            <View style={{ marginLeft: 60, flex: 3.2, justifyContent: "center", alignItems: "flex-start", marginTop: 10, marginVertical: -5, height: "auto" }}>
                               <Text
                                 style={{
-                                  textAlign: 'right',
-                                  fontSize: 12,
+                                  textAlign: 'left',
+                                  fontSize: 10,
                                   color: '#000000',
-
-                                }}>
-                                {item.created_at}
+                                }}>{item.comment}
                               </Text>
                             </View>
                           </View>
-
-                          <View style={{ marginLeft: 60, flex: 3.2, justifyContent: "center", alignItems: "flex-start", marginTop: 10, marginVertical: -5, height: "auto" }}>
-                            <Text
-                              style={{
-                                textAlign: 'left',
-                                fontSize: 10,
-                                color: '#000000',
-                              }}>{item.comment}
-                            </Text>
-                          </View>
-                        </View>
-                      )}}
-                    />
+                        )
+                      }}
+                    /> */}
 
                   </View>
                 </ScrollView>
@@ -751,6 +758,7 @@ const BlogDetail = (props) => {
         (
           <CustomLoader showLoader={isLoading} />
         )}
+
     </SafeAreaView>
   );
 };

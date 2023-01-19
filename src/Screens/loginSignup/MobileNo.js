@@ -149,29 +149,32 @@ const MobileNo = (props) => {
 
                       <View style={{ height: 70, marginTop: 40, }} >
 
-                        <View style={{ flexDirection: 'row', width: 290, alignItems: 'center', borderRadius: 30, marginTop: 10, alignSelf: 'center', backgroundColor: "white", }}>
+                        <View style={{ flexDirection: 'row', width: 280, alignItems: 'center', borderRadius: 30, marginTop: 10, alignSelf: 'center', backgroundColor: "white", }}>
 
                           <View style={{ width: 120, height: 49, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, zIndex: 999, }}>
                             {isvisuable ?
                               Mypicker()
                               : null
                             }
-                            <View style={{ position: 'absolute', height: 49, backgroundColor: "white", alignItems: 'center', zIndex: 999, flexDirection: 'row', width: 130, borderRadius: 30, padding: 10 }}>
+                            <View style={{ position: 'absolute', height: 49, backgroundColor: "white", alignItems: 'center', zIndex: 999, flexDirection: 'row', width: 100, borderRadius: 30, padding: 10 }}>
                               <TouchableOpacity onPress={() => { setisvisuable(true) }}
-                                style={{ width: 50, height: 27, flexDirection: 'row', alignItems: 'center' }}>
-                                <SvgCssUri 
+                                style={{ width: 15, height: 27, flexDirection: 'row', alignItems: 'center' }}>
+                                {/* <SvgCssUri 
                                   width="100%"
                                   height="100%"
                                   uri={flag}
-                                />
+                                /> */}
                                 <Image style={{ width: 12, height: 12, }} source={"white" == '#fff' ? require('../assets/arrow-point-to-down.png') : require('../assets/arrow-point-to-down.png')} />
                               </TouchableOpacity>
-                              <ScrollView style={{ left: 5 }}>
-                                <Text style={{ color: "black", fontWeight: 'bold', alignSelf: 'flex-end', marginLeft: 10 }}>{code}</Text>
-                              </ScrollView>
+                              {/* <ScrollView style={{   }}> */}
+                              <View style={{justifyContent:"center",alignSelf:"center",alignItems:"center",marginLeft:10}}>
+                              <Text style={{ color: "black", fontWeight: 'bold', alignSelf: 'flex-end',  }}>{code}</Text>
+                              </View>
+                                
+                              {/* </ScrollView> */}
                             </View>
                           </View>
-                          <View style={{ paddingLeft: 8, backgroundColor: "white", height: 49, width: 170, borderRadius: 30 }}>
+                          <View style={{   backgroundColor: "white", height: 49, width: 170, borderRadius: 30,marginLeft:-20 }}>
                             <TextInput
                               ref={lastdigitRef}
                               style={{
@@ -179,7 +182,7 @@ const MobileNo = (props) => {
                                 // width: '100%',
                                 borderRadius: 10,
                                 color: "black",
-                                paddingLeft: 10,
+                                // paddingLeft: 10,
                                 paddingRight: 10,
                                 top: 2,
                                 borderRadius: 30

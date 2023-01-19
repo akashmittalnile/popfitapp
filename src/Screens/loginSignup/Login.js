@@ -125,11 +125,11 @@ const Login = props => {
 
       } else if (response.data.status == 0) {
 
-        Alert.alert('',  t('Login_email_pass_incorrect'));
+        Alert.alert('', response.data.message);
       }
     } catch (error) {
       Alert.alert("",t('Check_internet_connection'))
-      console.log("error??login????", error);
+      // console.log("error??login????", error);
       // Alert.alert('', 'Something went wrong please exit the app and try again');
     }
     setIsLoading(false);
@@ -340,10 +340,10 @@ const Login = props => {
           <ScrollView>
             <BackgroundImage
               source={require('../assets/ellipse4.png')}
-              style={{ height: 280 }}>
+              style={{ height: 280,width: WIDTH }}>
               <BackgroundImage
                 source={require('../assets/ellipse.png')}
-                style={{ height: 274 }}>
+                style={{ height: 274 ,width: WIDTH}}>
                 <View
                   style={{
                     height: 80,

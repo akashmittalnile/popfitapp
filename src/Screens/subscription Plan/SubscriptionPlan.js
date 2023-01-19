@@ -8,9 +8,9 @@ import {
   TextInput,
   Image,
   Alert,
-  Pressable, SafeAreaView, Dimensions, ScrollView, RefreshControl, Platform, Modal
+  Pressable, SafeAreaView, Dimensions, ScrollView, RefreshControl, Platform, Modal, Linking
 } from 'react-native';
- 
+
 import { BackgroundImage } from 'react-native-elements/dist/config';
 import { RadioButton } from 'react-native-paper';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -23,7 +23,7 @@ import Headers from '../../Routes/Headers';
 import CustomLoader from '../../Routes/CustomLoader';
 import CancelSubscription from './CancelSubscription';
 import { useTranslation } from 'react-i18next';
-import * as IAP from 'react-native-iap';
+// import * as IAP from 'react-native-iap';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -36,6 +36,8 @@ const SubscriptionPlan = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showCancelSubscription, setShowCancelSubscription] = useState(false);
   const [subscriptionData, SetSubscriptionData] = useState([]);
+  const [subdetails, setSubdetails] = useState(false);
+  const [iosbuyitem, setIosbuyitem] = useState('');
 
   //data : subscription data
   const items = Platform.select({
@@ -120,8 +122,8 @@ const SubscriptionPlan = (props) => {
   }
   useEffect(() => {
     GetSubscriptionPlan();
-    Ioscheckplan();
-}, []);
+    // Ioscheckplan();
+  }, []);
 
 
 
@@ -147,7 +149,8 @@ const SubscriptionPlan = (props) => {
   };
 
   const purchasePlan = async (item, offerToken) => {
-
+    // console.log("purchase item:",item);
+    setSubdetails(false);
     setIsLoading(true)
     {
       const index = subscriptionData.findIndex(e => e.title.toUpperCase() == item.title.toUpperCase());
@@ -172,7 +175,7 @@ const SubscriptionPlan = (props) => {
         }
       } else {
         Alert.alert("", 'This plan does not exist');
-         
+
         setIsLoading(false);
       }
     }
@@ -220,7 +223,7 @@ const SubscriptionPlan = (props) => {
       // console.log("ResponseSUBscribtion_plan ::::", response.data);
       if (response.data.status == 1) {
         props.navigation.goBack();
-        Alert.alert("",  t('Subscription_canceled_successfully'))
+        Alert.alert("", t('Subscription_canceled_successfully'))
         // console.log("SUBSCRIPTION_plan_data!!!>>>", response.data);
 
       }
@@ -234,7 +237,7 @@ const SubscriptionPlan = (props) => {
   const showAlert = (subs_id) =>
     Alert.alert(
       "",
-       t('Are_you_sure_you_want_to_cancel_subscription'),
+      t('Are_you_sure_you_want_to_cancel_subscription'),
       [
         {
           text: t('Cancel'),
@@ -276,13 +279,13 @@ const SubscriptionPlan = (props) => {
         }}
         BelliconononClick={() => { props.navigation.navigate("Notifications") }}
       />
-      <ScrollView 
-       refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-        />
-      }
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
       >
         {!isLoading ?
           (<View>
@@ -908,7 +911,11 @@ const SubscriptionPlan = (props) => {
                                   </View>
                                 </TouchableOpacity>)
                                 :
-                                (<TouchableOpacity onPress={() => { Platform.OS === 'android' ? checklogin(item) : purchasePlan(item) }}
+                                (<TouchableOpacity onPress={() => {
+                                  Platform.OS === 'android' ? checklogin(item) :
+                                    setSubdetails(true),
+                                    setIosbuyitem(item)
+                                }}
                                   style={{ borderRadius: 50, }}>
                                   <View
                                     style={{
@@ -945,11 +952,140 @@ const SubscriptionPlan = (props) => {
                 }
               />
             </View>
-            
             <CancelSubscription
               visible={showCancelSubscription}
               setVisibility={setShowCancelSubscription}
             />
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={subdetails}
+              onRequestClose={() => {
+                setSubdetails(false);
+              }}>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                  backgroundColor: 'rgba(140, 141, 142, 0.7)'
+
+                }}>
+
+                <View
+                  style={{
+                    width: "100%",
+                    height: HEIGHT * 0.99,
+                    // backgroundColor: 'red',
+                    // backgroundColor: '#FFFFFF',
+                    borderRadius: 20,
+                    justifyContent: "flex-end",
+                    alignItems: "center",
+                  }}>
+
+                  <View style={{
+                    backgroundColor: '#FFFFFF',
+                    height: 640,
+
+                    width: WIDTH * 0.98,
+
+                    marginHorizontal: 10,
+                    borderRadius: 20,
+                    //marginBottom: 10,
+                    alignItems: 'center',
+                    flexDirection: 'column'
+                  }}>
+                    <TouchableOpacity onPress={() => { setSubdetails(false) }}
+                      style={{ position: "absolute", width: 30, backgroundColor: 'red', borderRadius: 35, height: 35, right: 10, top: 10 }}>
+                      <Image
+                        source={require('../assets/cancelWhite.png')}
+                        style={{
+                          width: 35,
+                          height: 35, alignSelf: 'center'
+                        }}
+
+                      />
+                    </TouchableOpacity>
+                    <View style={{ marginTop: 15, marginHorizontal: 20, height: 30, flexDirection: "row", justifyContent: "center", alignItems: 'center' }}>
+                      <Text style={{ marginTop: 2, textAlign: 'center', fontSize: 19, color: '#000000', fontWeight: '500' }}>{t('Subscription_Details')}</Text>
+
+                    </View>
+                    <View
+                      style={{
+                        borderBottomWidth: 0.5,
+                        marginVertical: 10,
+                        borderColor: "gray",
+                        width: "90%",
+                      }}
+                    />
+                    <View style={{ height: 485, width: "100%", alignItems: 'flex-start', justifyContent: "flex-start", padding: 18}}>
+
+                      {/* <Text style={{ color: '#77869E', textAlign: "left", fontSize: 17, fontWeight: "400", marginBottom: 20 }}>PaymentScreen</Text> */}
+                      <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6, }}>
+                        • PopFiit {iosbuyitem.title } {t('Subscription_Plans')}</Text>
+                        <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6, }}>
+                        • {t('Price_of_the_plan')} {iosbuyitem.price+ "/" + iosbuyitem.title}  </Text>
+                        <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6, }}>
+                        • {t('Duration')} {iosbuyitem.type }  </Text>
+                      <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6, }}>
+                        • {t('Payment_iTunes_Account_confirmation_purchase')}</Text>
+                     
+
+                      <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6 }}> • {t('Subscription_automatically_current_period')}</Text>
+
+                      <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6 }}>• {t('Account_will_charged')}</Text>
+
+                      <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6 }}>• {t('Subscriptions_Settings_after_purchase')}</Text>
+
+                      <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6 }}>• {t('Any_unused_portion_free_trial_period_applicable')}
+                      </Text>
+                      <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6 }}>• {t('Also_look_our_Privacy_Policy_here')} </Text>
+                      <TouchableOpacity onPress={() => {
+                        Linking.openURL('https://dev.pop-fiit.com/privacy-policy')
+                      }}>
+                        <Text style={{ color: '#ffcc00', textAlign: "left", fontSize: 14, fontWeight: "bold", }}> https://dev.pop-fiit.com/privacy-policy
+                        </Text>
+                      </TouchableOpacity>
+
+
+                    </View>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 30, width: "85%", marginHorizontal: 20, }} >
+                      <TouchableOpacity onPress={() => {
+                        Linking.openURL('https://dev.pop-fiit.com/privacy-policy')
+                      }}>
+                        <Text style={{ color: '#ffcc00', textAlign: "left", fontSize: 14, fontWeight: "bold", marginBottom: 10 }} >{t('Privacy_Policy')}</Text>
+                      </TouchableOpacity>
+                      {/* <View
+                        style={{
+                          height: 20,
+                          width: 0.5,
+                          backgroundColor: '#909090',
+                          // borderBottomWidth: 0.5,
+                          // marginVertical: 10,
+                          // borderColor: "red",
+                          // width: "20%",
+                        }}
+                      /> */}
+                      <TouchableOpacity onPress={() => {
+                        Linking.openURL('https://dev.pop-fiit.com/terms-of-use')
+                      }}>
+                        <Text style={{ color: '#ffcc00', textAlign: "left", fontSize: 14, fontWeight: "bold", marginBottom: 10 }} >{t('Terms_of_use')}</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <View style={{ justifyContent: "center", alignItems: "center", flexDirection: 'row', height: 34, marginHorizontal: 20, }}>
+                      <TouchableOpacity
+                        onPress={() => { purchasePlan(iosbuyitem) }} >
+                        <View style={{ justifyContent: 'center', width: 110, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
+                          <Text style={{ color: 'white', textAlign: "center", fontSize: 12, fontWeight: "400" }}>{t('Continue')}</Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+
+              </View>
+
+            </Modal>
           </View>)
           :
           (<CustomLoader showLoader={isLoading} />)}

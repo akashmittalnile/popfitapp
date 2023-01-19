@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import React, { useState } from "react";
 import {
-  ScrollView, View, Text, TouchableOpacity, TextInput, Image, Dimensions, Modal, ActivityIndicator, BackHandler, SafeAreaView, Alert, KeyboardAvoidingView,
+  ScrollView, View, Text, TouchableOpacity, TextInput, Image, Dimensions, Modal, ActivityIndicator, BackHandler, SafeAreaView, Alert, KeyboardAvoidingView, Linking,
   Platform,
 } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -180,7 +180,46 @@ const CustomDrawerrender = (props) => {
       }
     } else return Alert.alert('', t('All_the_fields_are_required'));
   };
+  const DeleteProfile = async () => {
+    console.log("user_ID:", profiledata.id);
+    setIsLoading(true);
+    try {
+      const response = await axios.post(`${API.Delete_USER}`, { "user_id": profiledata.id });
+      console.log("deleteaccount:", response.data);
+      AsyncStorage.removeItem('authToken');
+      AsyncStorage.clear();
+      props.navigation.navigate("LoginMain");
+      // Alert.alert('', response.data.message);
 
+    }
+    catch (error) {
+      //  Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+      console.log("......error.........", error.response.data.message);
+      Alert.alert('', t('Error_msg'));
+
+    }
+    setIsLoading(false);
+  };
+
+  const showAlert = () =>
+    Alert.alert(
+      "",
+      t('Are_you_sure_you_want_to_delete_your_Profile'),
+      [
+        {
+          text: t('Cancel'),
+          style: "cancel",
+        },
+        {
+          text: "Ok",
+          onPress: () => { DeleteProfile() }
+
+        },
+      ],
+      {
+        cancelable: true,
+      }
+    );
   return (
     <SafeAreaView style={{
       flex: 1,
@@ -216,8 +255,8 @@ const CustomDrawerrender = (props) => {
 
             </TouchableOpacity>
 
-            <View style={{ width: 50, height: 34, alignItems: 'flex-end', justifyContent: 'flex-end', right: 10, marginTop: 10, }}>
-              <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 13, color: '#ffcc00', fontWeight: "400" }}>V <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 13, color: '#ffcc00', fontWeight: "400" }}>1.02</Text></Text>
+            <View style={{ width: 55, height: 34, alignItems: 'flex-end', justifyContent: 'flex-end', right: 10, marginTop: 10, }}>
+              <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 13, color: '#ffcc00', fontWeight: "400" }}>V <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 13, color: '#ffcc00', fontWeight: "400" }}>1.0.6</Text></Text>
             </View>
           </View>
           {
@@ -295,8 +334,8 @@ const CustomDrawerrender = (props) => {
                         height: 20, marginLeft: 5
                       }} />
                   </View>
-                  <View style={{ height: 50,}} >
-                    <View style={{  height: 50, marginLeft: -10 }} >
+                  <View style={{ height: 50, }} >
+                    <View style={{ height: 50, marginLeft: -10 }} >
                       <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Home')}</Text>
                     </View>
                   </View>
@@ -325,6 +364,28 @@ const CustomDrawerrender = (props) => {
                   <></>
 
               }
+              {
+                loginbtn != null ?
+                  (<TouchableOpacity onPress={() => { showAlert() }}>
+                    <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
+                      <View style={{ width: 50, height: 50, marginLeft: 5 }} >
+                        <Image source={require('../Screens/assets/delete_account.png')}
+                          style={{
+                            width: 20,
+                            height: 20,
+                          }} />
+                      </View>
+                      <View style={{ height: 50 }} >
+                        <View style={{ height: 50, marginLeft: -14 }} >
+                          <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Delete_Account')}</Text>
+                        </View>
+                      </View>
+                    </View>
+                  </TouchableOpacity>)
+                  :
+                  (null)
+
+              }
               <TouchableOpacity onPress={() => props.navigation.navigate("Selector")}>
                 <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
                   <View style={{ width: 50, height: 50, marginLeft: 5 }} >
@@ -335,7 +396,7 @@ const CustomDrawerrender = (props) => {
                       }} />
                   </View>
 
-                  <View style={{ height: 50, marginLeft: -14,  }} >
+                  <View style={{ height: 50, marginLeft: -14, }} >
                     <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Choose_Language')}</Text>
                   </View>
 
@@ -354,7 +415,7 @@ const CustomDrawerrender = (props) => {
                           }} />
                       </View>
                       <View style={{ height: 30, }} >
-                        <View style={{   height: 30, marginLeft: -10 }} >
+                        <View style={{ height: 30, marginLeft: -10 }} >
                           <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('My_Order')}</Text>
                         </View>
                       </View>
@@ -429,7 +490,7 @@ const CustomDrawerrender = (props) => {
                   </View>
                 </View>
               </TouchableOpacity>
-              {/* <TouchableOpacity onPress={() => props.navigation.navigate("TermsAndCondition")}>
+              <TouchableOpacity onPress={() => { Linking.openURL('https://dev.pop-fiit.com/terms-of-use') }}>
                 <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
                   <View style={{ width: 50, height: 50, marginLeft: 5 }} >
                     <Image source={require('../Screens/assets/menu5.png')}
@@ -439,12 +500,12 @@ const CustomDrawerrender = (props) => {
                       }} />
                   </View>
                   <View style={{ height: 50 }} >
-                    <View style={{ height: 50, marginLeft: -10 }} >
-                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Terms & Conditions</Text>
+                    <View style={{ height: 50, marginLeft: -15 }} >
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Terms_of_use')}</Text>
                     </View>
                   </View>
                 </View>
-              </TouchableOpacity> */}
+              </TouchableOpacity>
               {/* <TouchableOpacity onPress={() => props.navigation.navigate("CancellationPolicy")}>
                 <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
                   <View style={{ width: 50, height: 50, marginLeft: 5, }} >
@@ -461,7 +522,9 @@ const CustomDrawerrender = (props) => {
                   </View>
                 </View>
               </TouchableOpacity> */}
-              <TouchableOpacity onPress={() => props.navigation.navigate("RefundPolicy")}>
+              <TouchableOpacity onPress={() => { Linking.openURL('https://dev.pop-fiit.com/privacy-policy') }
+                // props.navigation.navigate("RefundPolicy")
+              }>
                 <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
                   <View style={{ width: 50, height: 50, marginLeft: 5 }} >
                     <Image source={require('../Screens/assets/menu7.png')}

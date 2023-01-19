@@ -98,7 +98,7 @@ export default function PaymentScreen(props) {
     //   }
     // };
     console.log('Apply coupon id::', props?.route?.params?.Coupomid)
-    console.log('Plan data status::', props?.route?.params?.SubscriptionPlan)
+    // console.log('Plan data status::', props?.route?.params?.SubscriptionPlan)
     console.log("Order_Amount:", props?.route?.params?.Totalprice);
     console.log("ADDRESS seleted::", props?.route?.params?.SetAddrs);
     console.log("order_item_name:", props?.route?.params?.Orderlistname);

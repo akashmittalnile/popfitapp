@@ -237,5 +237,17 @@
   "Hold_on":"Hold on!",
   "Are_you_sure_you_want_back":"Are you sure you want to go back?",
   "Yes":"YES",
-  "Are_you_sure_you_want_cancel_order":"Are you sure you want to cancel order."
+  "Are_you_sure_you_want_cancel_order":"Are you sure you want to cancel order.",
+  "Terms_of_use":"Terms of Use",
+  "Subscription_Details":"Subscription Details",
+  "Payment_iTunes_Account_confirmation_purchase":"Payment will be charged to iTunes Account at confirmation of purchase.",
+  "Subscription_automatically_current_period":"Subscription automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period'.",
+  "Account_will_charged":"Account will be charged for renewal within 24-hours prior to the end of the current period, and identify the cost of the renewal.",
+  "Subscriptions_Settings_after_purchase":"Subscriptions may be managed by the user and auto-renewal may be turned off by going to the user's Account Settings after purchase.",
+  "Any_unused_portion_free_trial_period_applicable":"Any unused portion of a free trial period, if offered, will be forfeited when the user purchases a subscription to that publication, where applicable.",
+  "Also_look_our_Privacy_Policy_here":"Also, look at our Privacy Policy here",
+  "Continue":"Continue",
+  "Subscription_Plans":"Subscription Plan",
+  "Price_of_the_plan":"Price of the plan :-",
+  "Duration":"Duration:-"
 }
