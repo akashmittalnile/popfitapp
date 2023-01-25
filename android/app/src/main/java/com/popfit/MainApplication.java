@@ -1,5 +1,5 @@
 package com.popfit;
-
+import com.dooboolab.RNIap.RNIapPackage;
 import com.brentvatne.react.ReactVideoPackage; 
 import android.app.Application;
 import android.content.Context;
@@ -38,7 +38,7 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
-
+          new RNIapPackage()
           // firbae package
             
           //  packages.add(new RNFirebaseMessagingPackage());

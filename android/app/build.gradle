@@ -135,6 +135,18 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    flavorDimensions "appstore"
+    productFlavors {
+    googlePlay {
+    dimension "appstore"
+     missingDimensionStrategy "store", "play"
+    }
+
+    amazon {
+     dimension "appstore"
+     missingDimensionStrategy "store", "amazon"
+    }
+    }
     defaultConfig {
 // configurations.all {
 //           resolutionStrategy {
@@ -145,7 +157,7 @@ android {
     //     configurations.all {
     // resolutionStrategy { force 'androidx.core:core-ktx:1.6.0' }
     //    }
-       
+       missingDimensionStrategy "store", "play"
         applicationId "com.popfit"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
@@ -272,7 +284,8 @@ android {
 }
 
 dependencies {
-     implementation project(':react-native-vector-icons')
+    implementation project(':react-native-iap')
+    implementation project(':react-native-vector-icons')
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'com.stripe:stripe-java:22.1.0'

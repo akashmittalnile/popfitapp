@@ -8,7 +8,7 @@ import {
   TextInput,
   Image,
   Alert,
-  Pressable, SafeAreaView, Dimensions, ScrollView, RefreshControl, Platform, Modal, Linking
+  Pressable, SafeAreaView, Dimensions, ScrollView, RefreshControl, Platform, Modal, Linking, NativeModules, NativeEventEmitter, Button
 } from 'react-native';
 
 import { BackgroundImage } from 'react-native-elements/dist/config';
@@ -23,7 +23,8 @@ import Headers from '../../Routes/Headers';
 import CustomLoader from '../../Routes/CustomLoader';
 import CancelSubscription from './CancelSubscription';
 import { useTranslation } from 'react-i18next';
-// import * as IAP from 'react-native-iap';
+import * as IAP from 'react-native-iap';
+// import  RNIap from 'react-native-iap';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -38,6 +39,16 @@ const SubscriptionPlan = (props) => {
   const [subscriptionData, SetSubscriptionData] = useState([]);
   const [subdetails, setSubdetails] = useState(false);
   const [iosbuyitem, setIosbuyitem] = useState('');
+
+  // const { RNIapIos } = NativeModules;
+  // const RNIapEmitter = new NativeEventEmitter(RNIapIos);
+
+  useEffect(() => {
+    GetSubscriptionPlan();
+    Ioscheckplan();
+
+
+  }, []);
 
   //data : subscription data
   const items = Platform.select({
@@ -79,7 +90,6 @@ const SubscriptionPlan = (props) => {
       let purchaseUpdatedListener;
       let purchaseErrorListener;
 
-
       IAP.initConnection()
         .catch(() => {
           console.error('error connecting to store..');
@@ -98,6 +108,19 @@ const SubscriptionPlan = (props) => {
 
         });
 
+      // RNIapEmitter.addListener('iap-promoted-product', async () => {
+      //   // Check if there's a persisted promoted product
+      //   const productId = await IAP.getPromotedProductIOS();
+      //   console.log("123", productId);
+      //   if (productId !== null) { // You may want to validate the product ID against your own SKUs
+      //     try {
+      //       const IAPPROMO = await IAP.buyPromotedProductIOS(); // This will trigger the App Store purchase process
+      //       console.log("123", IAPPROMO);
+      //     } catch (error) {
+      //       console.log(error);
+      //     }
+      //   }
+      // });
 
       purchaseErrorListener = IAP.purchaseErrorListener(error => {
         if (error['responseCode'] === '2') {
@@ -108,22 +131,21 @@ const SubscriptionPlan = (props) => {
       purchaseUpdatedListener = IAP.purchaseUpdatedListener(purchase => {
         try {
           const receipt = purchase.transactionReceipt;
+          console.log(receipt);
         } catch (error) {
           console.log('error', error);
         }
       });
     }
   }
+
   const [refreshing, setrefreshing] = useState(false)
   const onRefresh = () => {
     setrefreshing(true)
     GetSubscriptionPlan();
     setrefreshing(false)
   }
-  useEffect(() => {
-    GetSubscriptionPlan();
-    // Ioscheckplan();
-  }, []);
+
 
 
 
@@ -150,6 +172,7 @@ const SubscriptionPlan = (props) => {
 
   const purchasePlan = async (item, offerToken) => {
     // console.log("purchase item:",item);
+
     setSubdetails(false);
     setIsLoading(true)
     {
@@ -1018,18 +1041,18 @@ const SubscriptionPlan = (props) => {
                         width: "90%",
                       }}
                     />
-                    <View style={{ height: 485, width: "100%", alignItems: 'flex-start', justifyContent: "flex-start", padding: 18}}>
+                    <View style={{ height: 485, width: "100%", alignItems: 'flex-start', justifyContent: "flex-start", padding: 18 }}>
 
                       {/* <Text style={{ color: '#77869E', textAlign: "left", fontSize: 17, fontWeight: "400", marginBottom: 20 }}>PaymentScreen</Text> */}
                       <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6, }}>
-                        • PopFiit {iosbuyitem.title } {t('Subscription_Plans')}</Text>
-                        <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6, }}>
-                        • {t('Price_of_the_plan')} {iosbuyitem.price+ "/" + iosbuyitem.title}  </Text>
-                        <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6, }}>
-                        • {t('Duration')} {iosbuyitem.type }  </Text>
+                        • PopFiit {iosbuyitem.title} {t('Subscription_Plans')}</Text>
+                      <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6, }}>
+                        • {t('Price_of_the_plan')} {iosbuyitem.price + "/" + iosbuyitem.title}  </Text>
+                      <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6, }}>
+                        • {t('Duration')} {iosbuyitem.type}  </Text>
                       <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6, }}>
                         • {t('Payment_iTunes_Account_confirmation_purchase')}</Text>
-                     
+
 
                       <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6 }}> • {t('Subscription_automatically_current_period')}</Text>
 

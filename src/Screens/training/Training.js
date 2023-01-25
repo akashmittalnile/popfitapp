@@ -37,6 +37,7 @@ const Training = (props) => {
   const [trainingBlog_list, setTrainingBlog_list] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [imagebaseurl, setImagebaseurl] = useState("");
+  const [youtubelinks, setyoutubelinks] = useState([]);
   // const [audiobaseurl, setAudiobaseurl] = useState("");
   const [reload, setReload] = useState(false)
   const [audio, setAudio] = useState([]);
@@ -207,7 +208,7 @@ const Training = (props) => {
         //   artist: 'popfiit',
         // }
         // console.log('addAudio(musicData)', musicData);
-        // setyoutubelinks(response?.data?.blog_list[0].youtube_link)
+        setyoutubelinks(response?.data?.blog_list[0].youtube_link)
 
       }
       else {
@@ -339,27 +340,9 @@ const Training = (props) => {
                     <Text style={{ textAlign: 'left', fontSize: 12, color: '#000' }}>{trainingBlog_list[0]?.image_description}</Text>
                   </View>
 
-                  {/* Training video */}
-                  <View style={{ marginTop: 30, height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
-                    <View style={{ flex: 0.8 }}>
-                      <Text style={{ marginLeft: 20, fontSize: 17, color: 'black', fontWeight: "500" }}>{t('Training_Videos')}</Text>
-                    </View>
-                    <View style={{ flex: 0.25, right: 10, }}>
-                      <TouchableOpacity onPress={() => {
-                        gotoVideolist()
-                      }}>
-                        <View style={{ borderRadius: 50, height: 30, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center', }}>
-                          <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 12, color: 'white', fontWeight: "500" }}>{t('View_All')}</Text>
-                        </View>
-                      </TouchableOpacity>
-                    </View>
-
-                  </View>
-
-                  {/* //flastlist  for videos */}
-                  {/* <FlatList
+                  <FlatList
                     horizontal
-                    // showsHorizontalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
                     // ref={ref}
                     data={youtubelinks}
                     keyExtractor={(item, index) => String(index)}
@@ -374,7 +357,7 @@ const Training = (props) => {
                             width: WIDTH * 0.7,
                             borderRadius: 20,
                             marginHorizontal: 10,
-                            marginVertical: 10,
+                            marginTop: 10,
                             justifyContent: 'center',
 
 
@@ -390,7 +373,30 @@ const Training = (props) => {
                         </>
                       )
                     }}
-                  /> */}
+                  />
+                  {/* Training video */}
+                  {videobaseurl.length > 0 ?
+                    <View style={{ marginTop: 30, height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
+                      <View style={{ flex: 0.8 }}>
+                        <Text style={{ marginLeft: 20, fontSize: 17, color: 'black', fontWeight: "500" }}>{t('Training_Videos')}</Text>
+                      </View>
+                      <View style={{ flex: 0.25, right: 10, }}>
+                        <TouchableOpacity onPress={() => {
+                          gotoVideolist()
+                        }}>
+                          <View style={{ borderRadius: 50, height: 30, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center', }}>
+                            <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 12, color: 'white', fontWeight: "500" }}>{t('View_All')}</Text>
+                          </View>
+                        </TouchableOpacity>
+                      </View>
+
+                    </View>
+                    :
+                    null
+                  }
+
+                  {/* //flastlist  for videos */}
+
                   {showModal.isVisible ? (
                     <VideoModel
                       isVisible={showModal.isVisible}
@@ -400,7 +406,7 @@ const Training = (props) => {
                     />
                   ) : null}
 
-                  <View style={{ width: WIDTH * 0.99, alignSelf: 'flex-start', marginTop: 20, marginBottom: 10, height: 200 }}>
+                  <View style={{ width: WIDTH * 0.99, alignSelf: 'flex-start', marginTop: 10, marginBottom: 0, height: 200 }}>
                     <FlatList
                       // ref={songSlider}
                       data={videobaseurl}
@@ -432,7 +438,7 @@ const Training = (props) => {
                                 // theme={theme}
                                 source={{ uri: 'https://dev.pop-fiit.com/images/logo.png' }}
                                 // source={{ uri: item?.thumbnail }}
-                                resizeMode={'contain'}
+                                resizeMode={'stretch'}
                               />
                             </TouchableOpacity>
                             {/* <LinearGradient
@@ -461,11 +467,12 @@ const Training = (props) => {
                   </View>
 
                   {/* Training Audio */}
-                  <View style={{ marginTop: 1, height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
-                    <View style={{ flex: 0.8 }}>
-                      <Text style={{ marginLeft: 20, fontSize: 17, color: 'black', fontWeight: "500" }}>Training Audio</Text>
-                    </View>
-                    {/* <View style={{ flex: 0.25, right: 10, }}>
+                  {audio.length > 0 ?
+                    <View style={{ marginTop: 1, height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
+                      <View style={{ flex: 0.8 }}>
+                        <Text style={{ marginLeft: 20, fontSize: 17, color: 'black', fontWeight: "500" }}>Training Audio</Text>
+                      </View>
+                      {/* <View style={{ flex: 0.25, right: 10, }}>
                       <TouchableOpacity onPress={() => {
                         gotoAudiolist()
                       }}>
@@ -475,7 +482,9 @@ const Training = (props) => {
                       </TouchableOpacity>
                     </View> */}
 
-                  </View>
+                    </View>
+                    : null
+                  }
                   {/* //flastlist  for AUDIO */}
                   <FlatList
                     horizontal={true}
@@ -495,11 +504,18 @@ const Training = (props) => {
                               paddingVertical: 10,
                               marginHorizontal: 10,
                               borderRadius: 15,
-                              backgroundColor: '#ffcc00',
+                              backgroundColor: '#313131',
                               justifyContent: 'center',
+                              alignSelf:"center",
+                              shadowColor:'#000',
+                              shadowOffset: {width: 0,height: 3},
+                              shadowRadius: 1,
+                              shadowOpacity: 0.03,
+                              elevation: 4,
                             }}>
                             <AudioPlayer
                               url={item.url}
+                              
                             />
                           </View>
                           {/* <View style={{ position: "absolute", top: 20, left: 70, overflow: 'hidden', zIndex: 999 }}><Text style={{ color: 'black', fontSize: 14, fontWeight: "400" }}>{item.title}</Text></View> */}
@@ -612,15 +628,15 @@ const styles = StyleSheet.create({
     // marginRight: 8,
     marginBottom: 4,
     marginHorizontal: 10,
-    width: WIDTH / 2.3,
+    width: WIDTH / 2.22,
     height: 190,
     marginRight: 10,
     borderRadius: 15,
-    // shadowColor:'#000',
-    // shadowOffset: {width: 0,height: 3},
-    // shadowRadius: 1,
-    // shadowOpacity: 0.03,
-    // elevation: 1,
+    shadowColor:'#000',
+    shadowOffset: {width: 0,height: 3},
+    shadowRadius: 1,
+    shadowOpacity: 0.03,
+    elevation: 4,
   },
   PlayIconContainer: {
     position: 'absolute',

@@ -96,6 +96,7 @@
              data: null,
            })
          }
+         ignoreSilentSwitch="ignore"
          resizeMode="contain"
          toggleResizeModeOnFullscreen={false}
          onEnterFullscreen={() => {

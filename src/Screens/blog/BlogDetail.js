@@ -82,11 +82,11 @@ const BlogDetail = (props) => {
         // props.navigation.navigate('LoginMain', {
         //   screen: 'LoginSignUp',
         // });
-        console.log(".....usertoken ..........................");
+        // console.log(".....usertoken ..........................");
       }
       else {
         // getCategoryblog_detail();
-        console.log("..........usertoken_null/////:");
+        // console.log("..........usertoken_null/////:");
       }
     };
     checklogin();
@@ -139,7 +139,7 @@ const BlogDetail = (props) => {
     try {
       const response = await axios.post(`${API.BLOG_DETAILS}`, { "blog_id": blogdetail_id != undefined ? blogdetail_id : Categoryblogid },
         { headers: { "Authorization": ` ${Token}` } });
-      console.log(":::::::::DetailsBLog_Response>>>", response.data);
+      // console.log(":::::::::DetailsBLog_Response>>>", response.data);
       // console.log("status _DetailsBLog:", response.data.status);
       // console.log("status _comment_count:", response.data.comment_count);
       // console.log("status _blog_comment:", response.data.blog_detail.youtube_description);
@@ -165,7 +165,7 @@ const BlogDetail = (props) => {
     catch (error) {
       Alert.alert("", t('Check_internet_connection'))
       // Alert.alert('', 'Something went wrong please exit the app and try again');
-      console.log("getCategoryblog_detail......error.........", error.response.data.message);
+      // console.log("getCategoryblog_detail......error.........", error.response.data.message);
       // setIsLoading(false);
 
     }

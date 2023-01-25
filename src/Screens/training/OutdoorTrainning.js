@@ -251,7 +251,7 @@ const OutdoorTrainning = (props) => {
                                 }}
                               />
                               <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
-                                <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.subcat_name.slice(0, 13) + '...'}</Text>
+                                <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.subcat_name?.lenght >= 18 ? item?.subcat_name.slice(0, 18) + '...' : item?.subcat_name.slice(0, 18)}</Text>
 
                               </View>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ScrollView,RefreshControl } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ScrollView, RefreshControl } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
 // import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';
@@ -9,6 +9,7 @@ import axios from 'axios';
 import { API } from '../../Routes/Urls';
 import { WebView } from 'react-native-webview';
 import CustomLoader from '../../Routes/CustomLoader';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
 
 var WIDTH = Dimensions.get('window').width;
@@ -35,13 +36,14 @@ const RecipeDetails = (props) => {
   const RecipeID = props?.route?.params?.RecipeID?.id
 
   const PostRecipecategoryDetail = async () => {
+    const Token = await AsyncStorage.getItem("authToken");
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.RECIPE_DETAILS}`, { "recipe_id": RecipeID });
+      const response = await axios.post(`${API.RECIPE_DETAILS}`, { "recipe_id": RecipeID }, { headers: { "Authorization": ` ${Token}` } });
       // console.log("::::Recipe_List_Response:::::", response.data.recipe_details);
       // console.log("Recipe_List....", response.data.recipe_details)
       setRecipeDetails(response.data.recipe_details)
-     
+
     }
     catch (error) {
       // console.log("......error.........", error.response.data.message);
@@ -76,20 +78,20 @@ const RecipeDetails = (props) => {
       />
       {!isLoading ?
         (<View style={{ marginBottom: 60 }}>
-          <ScrollView 
-           refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-            />
-          }
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+              />
+            }
           >
             <View style={{ paddingBottom: 65 }}>
-            <View style={{ marginLeft: 15,marginTop: 2, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
-                <Text style={{textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "500" }}>{recipedetails?.title}</Text>
+              <View style={{ marginLeft: 15, marginTop: 2, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
+                <Text style={{ textAlign: 'left', fontSize: 18, color: 'black', fontWeight: "500" }}>{recipedetails?.title}</Text>
               </View>
               <View style={{
-                marginHorizontal: 20, height: 200, borderRadius: 20, marginVertical: 1, width: WIDTH * 0.9
+                marginHorizontal: 20, height: 200, borderRadius: 20, marginVertical: 1, width: WIDTH * 0.9,  
               }}>
                 <View style={{
                   height: '100%',
@@ -97,10 +99,10 @@ const RecipeDetails = (props) => {
                   width: WIDTH * 0.9,
                   borderRadius: 20,
                   justifyContent: 'center',
-                  alignSelf: "auto",
+                  alignSelf: "auto", 
                 }}>
-                  <WebView
-                    source={{ uri: recipedetails?.youtube_link }}
+                  <WebView  
+                    source={{ uri: `${recipedetails?.youtube_link}`}}
                   />
                 </View>
 
@@ -115,18 +117,18 @@ const RecipeDetails = (props) => {
 
               <View style={{ backgroundColor: "black", borderRadius: 20, marginTop: 20, height: HEIGHT * 0.2, width: WIDTH * 0.9, marginHorizontal: 18, }}>
                 <Image resizeMode='contain'
-                  source={{ uri: recipedetails?.image !=  "" ? `${recipedetails?.image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
+                  source={{ uri: recipedetails?.image != "" ? `${recipedetails?.image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
                   style={{ width: '100%', height: '100%', justifyContent: "center", alignItems: 'center', borderRadius: 20, backgroundColor: "black" }}
                 />
               </View>
               <View style={{ marginHorizontal: 20, marginTop: 15, height: "auto", width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}>
-                <Text style={{ textAlign: 'left', fontSize: 12, color: '#000',fontWeight:"400" }}>{recipedetails?.recipe_description}</Text>
+                <Text style={{ textAlign: 'left', fontSize: 12, color: '#000', fontWeight: "400" }}>{recipedetails?.recipe_description}</Text>
               </View>
             </View>
           </ScrollView>
         </View>)
         :
-        ( <CustomLoader showLoader={isLoading}/>)}
+        (<CustomLoader showLoader={isLoading} />)}
     </SafeAreaView>
   );
 }
