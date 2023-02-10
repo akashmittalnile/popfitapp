@@ -330,7 +330,7 @@ const CustomDrawerrender = (props) => {
                   <View style={{ width: 50, height: 50 }} >
                     <Image source={require('../Screens/assets/menu1.png')}
                       style={{
-                        width: 20,
+                        width: 21,
                         height: 20, marginLeft: 5
                       }} />
                   </View>
@@ -490,6 +490,26 @@ const CustomDrawerrender = (props) => {
                   </View>
                 </View>
               </TouchableOpacity>
+              { Platform.OS === 'ios' ?
+                <TouchableOpacity onPress={() => { Linking.openURL('https://apps.apple.com/redeem?ctx=offercodes&id=6444639543&code=') }}>
+                <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
+                  <View style={{ width: 50, height: 50, marginLeft: 2,marginTop:-6 }} >
+                    <Image source={require('../Screens/assets/redeem-code.png')}
+                      style={{
+                        width: 28,
+                        height: 28,
+                      }} />
+                  </View>
+                  <View style={{ height: 50 }} >
+                    <View style={{ height: 50, marginLeft: -10 }} >
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('RedeemCode')}</Text>
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
+              : null
+              }
+
               <TouchableOpacity onPress={() => { Linking.openURL('https://dev.pop-fiit.com/terms-of-use') }}>
                 <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
                   <View style={{ width: 50, height: 50, marginLeft: 5 }} >
@@ -507,25 +527,7 @@ const CustomDrawerrender = (props) => {
                 </View>
               </TouchableOpacity>
 
-              {/* { Platform.OS === 'ios' ?
-                <TouchableOpacity onPress={() => { Linking.openURL('https://apps.apple.com/redeem?ctx=offercodes&id=6444639543&code=CODE') }}>
-                <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
-                  <View style={{ width: 50, height: 50, marginLeft: 2,marginTop:-6 }} >
-                    <Image source={require('../Screens/assets/redeem-code.png')}
-                      style={{
-                        width: 26,
-                        height: 28,
-                      }} />
-                  </View>
-                  <View style={{ height: 50 }} >
-                    <View style={{ height: 50, marginLeft: -10 }} >
-                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Redeem Code</Text>
-                    </View>
-                  </View>
-                </View>
-              </TouchableOpacity>
-              : null
-              } */}
+              
               {/* <TouchableOpacity onPress={() => props.navigation.navigate("CancellationPolicy")}>
                 <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
                   <View style={{ width: 50, height: 50, marginLeft: 5, }} >
@@ -549,7 +551,7 @@ const CustomDrawerrender = (props) => {
                   <View style={{ width: 50, height: 50, marginLeft: 5 }} >
                     <Image source={require('../Screens/assets/menu7.png')}
                       style={{
-                        width: 20,
+                        width: 22,
                         height: 20,
                       }} />
                   </View>

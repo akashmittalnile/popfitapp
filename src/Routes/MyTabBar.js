@@ -444,7 +444,7 @@ const MyTabBar = (props) => {
                   <Image
                     source={require('../Screens/assets/tab1.png')}
                     style={{
-                      width: 20,
+                      width: 22,
                       height: 20,
                       tintColor: '#ffcc00',
                     }}
@@ -453,7 +453,7 @@ const MyTabBar = (props) => {
                   <Image
                     source={require('../Screens/assets/tab1.png')}
                     style={{
-                      width: 20,
+                      width: 22,
                       height: 20,
                       tintColor: 'white',
                     }}
@@ -486,19 +486,19 @@ const MyTabBar = (props) => {
               }}>
                 {focused ? (
                   <Image
-                    source={require('../Screens/assets/tab3.png')}
+                    source={require('../Screens/assets/workout-icon.png')}
                     style={{
-                      width: 20,
-                      height: 20,
+                      width: 30,
+                      height: 22,
                       tintColor: '#ffcc00',
                     }}
                   />
                 ) : (
                   <Image
-                    source={require('../Screens/assets/tab3.png')}
+                    source={require('../Screens/assets/workout-icon.png')}
                     style={{
-                      width: 20,
-                      height: 20,
+                      width: 30,
+                      height: 22,
                       tintColor: 'white',
                     }}
                   />
@@ -532,7 +532,7 @@ const MyTabBar = (props) => {
                   <Image
                     source={require('../Screens/assets/tab5.png')}
                     style={{
-                      width: 20,
+                      width: 23,
                       height: 20,
                       tintColor: '#ffcc00',
                     }}
@@ -541,7 +541,7 @@ const MyTabBar = (props) => {
                   <Image
                     source={require('../Screens/assets/tab5.png')}
                     style={{
-                      width: 20,
+                      width: 23,
                       height: 20,
                       tintColor: 'white',
                     }}

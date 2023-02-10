@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, FlatList, SafeAreaView } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, FlatList, SafeAreaView,Dimensions} from 'react-native'
 import axios from 'axios';
 import { API } from '../../Routes/Urls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
 import { incrementCounter, CartCounter } from '../../Redux/actions/UpdateCounter';
+import Video from 'react-native-video';
+
+var WIDTH = Dimensions.get('window').width;
+var HEIGHT = Dimensions.get('window').height;
 
 const Splash = (props) => {
 
@@ -81,7 +85,7 @@ const Splash = (props) => {
     setTimeout(() => {
       GetShippingProducts();
       Cartproducts()
-    }, 3000)
+    }, 10000)
 
 
   }, [incrementCounter, CartCounter])
@@ -91,11 +95,26 @@ const Splash = (props) => {
   return (
     <SafeAreaView style={{
       flex: 1,
-      width: "100%",
-      height: "100%", flexGrow: 1, backgroundColor: 'black'
+      width: WIDTH,
+      height: HEIGHT, flexGrow: 1, backgroundColor:"black"
     }} >
-
-      <View style={{ height: "100%", backgroundColor: 'red' }}>
+      <View style={{flex:1,alignItems: 'center', justifyContent: 'center'}}>
+      <Video 
+      source={require('../assets/Splash-Video.mp4')}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          opacity: 1
+        }}
+        muted={false}
+        repeat={true}
+        resizeMode="contain"
+      />
+      </View>
+      {/* <View style={{ height: "100%", backgroundColor: 'red' }}>
         <View style={{ flex: 1, flexDirection: 'row', backgroundColor: 'green', justifyContent: 'center', alignItems: 'center' }}>
           <View style={{ height: "100%", width: '50%', backgroundColor: '#e7bd16', flexDirection: 'column' }}></View>
           <View style={{
@@ -124,7 +143,7 @@ const Splash = (props) => {
           </View>
 
         </View>
-      </View>
+      </View> */}
     </SafeAreaView>
   )
 }

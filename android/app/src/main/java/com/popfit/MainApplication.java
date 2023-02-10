@@ -38,7 +38,7 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
-          new RNIapPackage()
+          new RNIapPackage();
           // firbae package
             
           //  packages.add(new RNFirebaseMessagingPackage());
