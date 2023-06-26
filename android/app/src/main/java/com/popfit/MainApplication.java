@@ -1,5 +1,5 @@
 package com.popfit;
-import com.dooboolab.RNIap.RNIapPackage;
+import com.dooboolab.rniap.RNIapPackage;
 import com.brentvatne.react.ReactVideoPackage; 
 import android.app.Application;
 import android.content.Context;

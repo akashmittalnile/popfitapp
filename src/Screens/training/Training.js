@@ -24,7 +24,7 @@ import VideoPlayer from 'react-native-video-player'
 // import { createThumbnail } from "react-native-create-thumbnail";
 import { VideoModel } from '../../Routes/VideoModel';
 import { useTranslation } from 'react-i18next';
-import { AudioPlayer } from 'react-native-simple-audio-player';
+import {AudioPlayer} from 'react-native-simple-audio-player';
 
 
 var WIDTH = Dimensions.get('window').width;
@@ -34,7 +34,7 @@ const Training = (props) => {
 
   const { t } = useTranslation();
 
-  const [trainingBlog_list, setTrainingBlog_list] = useState([]);
+  const [trainingBlog_list, setTrainingBlog_list] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [imagebaseurl, setImagebaseurl] = useState("");
   const [youtubelinks, setyoutubelinks] = useState([]);
@@ -172,34 +172,38 @@ const Training = (props) => {
   // }
   const gotoVideolist = () => {
     props.navigation.navigate("Videolist", {
-      catgid: props?.route?.params?.Tainingcat_id,
-      subcatid: Trainingsubcat_data
-    })
+      Id: props?.route?.params?.Tainingcat_item})
   }
-
+  
   // console.log("Tainingcat_id_item...............:", props?.route?.params?.Tainingcat_id);
-  const Tainingcat_id = props?.route?.params?.Tainingcat_id
+  // const Tainingcat_id = props?.route?.params?.Tainingcat_id
   // console.log("Trainingsubcat_Data...............:", props?.route?.params?.Trainingsubcat_data?.id);
-  const Trainingsubcat_data = props?.route?.params?.Trainingsubcat_data?.id
+  // const Trainingsubcat_data = props?.route?.params?.Trainingsubcat_data?.id
+
+
+   console.log("Tainingcat_idssssssssssssss..........:", props?.route?.params?.Tainingcat_item);
+  const Tainingcat_item = props?.route?.params?.Tainingcat_item;
 
   const WorkoutSubCategorytraininglist = async () => {
 
     const usertkn = await AsyncStorage.getItem("authToken");
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.TRAINING_LIST}`, { "category_id": Tainingcat_id, "subcategory_id": Trainingsubcat_data },
+      const response = await axios.post(`${API.TRAINING_LIST_GET_DETAILS}`, { "id": Tainingcat_item},
         { headers: { "Authorization": ` ${usertkn}` } }
       );
-      // console.log("TrainingCategoryListAPI_Response>>>", response.data);
+   
       // console.log("AUDIO_url::", response.data.blog_list[0].training_audio[0].url);
-      // console.log("Video_url::", response.data.blog_list[0].training_video);
+      // console.log("Video_url::", response.data.blog_list);
 
-      if (response.data.status == 1) {
-        setImagebaseurl(response.data.training_image);
+      if (response?.data?.status == '1') {
+        console.log("TrainingCategoryListAPI_Response>>>", response.data.blog_list);
+        setTrainingBlog_list(response?.data?.blog_list);
+        setImagebaseurl(response?.data?.training_image);
         // setAudiobaseurl(response?.data.training_audio);
-        setVideobaseurl(response.data.blog_list[0].training_video);
-        setTrainingBlog_list(response.data.blog_list);
-        setAudio(response.data.blog_list[0].training_audio);
+        setVideobaseurl(response?.data.blog_list?.training_video);
+       
+        setAudio(response?.data?.blog_list?.training_audio);
         setReload(!reload)
         // const musicData = {
         //   id: 1,
@@ -227,6 +231,33 @@ const Training = (props) => {
     setIsLoading(false);
   };
 
+ 
+
+//   const GetworkoutCategoryAPI = async (id) => {
+//     const usertkn = await AsyncStorage.getItem("authToken");
+//     setIsLoading(true);
+//     try {
+
+//         const response = await axios.get(`${API.TRAINING_LIST_GET_DETAILS + id}`,
+//             { headers: { "Authorization": ` ${usertkn}` } }
+//         );
+//         // console.log("::::GetworkoutCategoryAPI_Response>>>::", response.data);
+        
+//         setImagebaseurl(response.data.training_image);
+//         // setAudiobaseurl(response?.data.training_audio);
+//         setVideobaseurl(response.data.blog_list[0].training_video);
+//         setTrainingBlog_list(response.data.blog_list);
+//         setAudio(response.data.blog_list[0].training_audio);
+//         setReload(!reload)
+
+//     }
+//     catch (error) {
+//         // console.log(".....TrainingDetails.error.........", error.response.data.message);
+//         Alert.alert("", t('Check_internet_connection'))
+
+//     }
+//     setIsLoading(false);
+// };
   const toggleModal = state => {
     setShowModal({
       isVisible: state.isVisible,
@@ -286,9 +317,10 @@ const Training = (props) => {
       />
       {!isLoading ?
         (<>
-          {
-            trainingBlog_list?.length != 0 ?
-              (<ScrollView
+        {
+          console.log(".................",trainingBlog_list)
+        }
+          <ScrollView
                 refreshControl={
                   <RefreshControl
                     refreshing={refreshing}
@@ -311,7 +343,8 @@ const Training = (props) => {
 
                     <Pages indicatorColor='#ffcc00'>
                       {
-                        trainingBlog_list[0]?.training_image.map((itm, index) => {
+                        trainingBlog_list?.training_image?.map((itm, index) => {
+                         
                           return (
                             <View key={String(index)}
                               style={{
@@ -333,11 +366,11 @@ const Training = (props) => {
 
                   </View>
                   <View style={{ marginLeft: 15, height: 50, width: WIDTH * 0.92, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
-                    <Text style={{ textAlign: 'left', fontSize: 17, color: '#000', fontWeight: "500" }} >{trainingBlog_list[0]?.training_title}</Text>
+                    <Text style={{ textAlign: 'left', fontSize: 17, color: '#000', fontWeight: "500" }} >{trainingBlog_list?.training_title}</Text>
                   </View>
 
                   <View style={{ marginHorizontal: 20, marginTop: 1, height: "auto", width: WIDTH * 0.92, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}>
-                    <Text style={{ textAlign: 'left', fontSize: 12, color: '#000' }}>{trainingBlog_list[0]?.image_description}</Text>
+                    <Text style={{ textAlign: 'left', fontSize: 12, color: '#000' }}>{trainingBlog_list?.image_description}</Text>
                   </View>
 
                   <FlatList
@@ -596,9 +629,8 @@ const Training = (props) => {
 
               </ScrollView>
 
-              )
-              :
-              (<View style={{
+              
+              {/* (<View style={{
                 justifyContent: "center", alignItems: "center", backgroundColor: "white", flex: 1,
               }}>
                 <Image
@@ -609,8 +641,8 @@ const Training = (props) => {
                     height: 120, alignSelf: 'center'
                   }} />
                 <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>{t('Oops_No_data_found')}</Text>
-              </View>)
-          }
+              </View>) */}
+          
 
 
 

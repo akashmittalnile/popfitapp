@@ -96,9 +96,9 @@ const Splash = (props) => {
     <SafeAreaView style={{
       flex: 1,
       width: WIDTH,
-      height: HEIGHT, flexGrow: 1, backgroundColor:"black"
+      height: HEIGHT, flexGrow: 1, backgroundColor:"#000000"
     }} >
-      <View style={{flex:1,alignItems: 'center', justifyContent: 'center'}}>
+      <View style={{flex:1,alignItems: 'center', justifyContent: 'center',backgroundColor:"#000000"}}>
       <Video 
       source={require('../assets/Splash-Video.mp4')}
         style={{

@@ -54,7 +54,7 @@ const OutdoorTrainning = (props) => {
     if (checkplanid?.plan_status == "Active" || checkplanid?.plan_id >= 2) {
       if (tokenuser != null) {
         // console.log("ACTIVE plan::::::");
-        props.navigation.navigate("Training", {
+        props.navigation.navigate("SubCategorylist2", {
           Tainingcat_id: checkplanid != undefined ? checkplanid?.id : hometrainingid?.id,
           Trainingsubcat_data: item
         })
@@ -67,7 +67,7 @@ const OutdoorTrainning = (props) => {
     }
     else if (checkplanid?.plan_status == "Inactive" || checkplanid?.plan_id == 1) {
       // console.log("ACTIVE plan::::::");
-      props.navigation.navigate("Training", {
+      props.navigation.navigate("SubCategorylist2", {
         Tainingcat_id: checkplanid != undefined ? checkplanid?.id : hometrainingid?.id,
         Trainingsubcat_data: item
       })
@@ -76,7 +76,7 @@ const OutdoorTrainning = (props) => {
 
     }
     else if (checkplanid?.plan_status == null) {
-      props.navigation.navigate("Training", {
+      props.navigation.navigate("SubCategorylist2", {
         Tainingcat_id: checkplanid != undefined ? checkplanid?.id : hometrainingid?.id,
         Trainingsubcat_data: item
       })
@@ -94,8 +94,7 @@ const OutdoorTrainning = (props) => {
 
   const workoutSubCategoryAPI = async () => {
     const usertkn = await AsyncStorage.getItem("authToken");
-    // console.log("plain id :", checkplanid?.id);
-    // console.log("training home id::", hometrainingid?.id);
+    
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.TRAINING_SUB_CATERORY}`, { "category_id": checkplanid != undefined ? checkplanid?.id : hometrainingid?.id },
@@ -124,7 +123,7 @@ const OutdoorTrainning = (props) => {
     <SafeAreaView style={{
       flex: 1,
       width: WIDTH,
-      height: HEIGHT, flexGrow: 1, backgroundColor: 'black'
+      height: HEIGHT, flexGrow: 1, backgroundColor: '#000000'
     }} >
       <Headers
         Backicon={{
@@ -192,7 +191,7 @@ const OutdoorTrainning = (props) => {
         </View>
       </View> */}
           {
-            TrainingSUBCatgry?.length != 0 ?
+            TrainingSUBCatgry?.length > 0 ?
               (<ScrollView
                 refreshControl={
                   <RefreshControl

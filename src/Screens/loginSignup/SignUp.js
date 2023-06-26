@@ -120,7 +120,7 @@ const Signup = (props, navigation) => {
   }
 
   useEffect(() => {
-
+    SelectCountry()
     const unsubscribe = props.navigation.addListener('focus', () => {
       setIsLoading(true);
       setIsLoading(false);
@@ -732,6 +732,7 @@ const Signup = (props, navigation) => {
                           //   console.log("yoyo value:",value,);
                           // }}
                           onSelectItem={(itm) => {
+                             
                             setCountrycode(itm.id)
                             setMsgCountry(false)
                             console.log("yoyo item:", itm);

@@ -187,6 +187,7 @@
   "The_phone_number_must": "The phone number must be 10 digits",
   "Verified_otp_enter": "Please enter verification code received in your registered mobile number",
   "Login_email_pass_incorrect": "Login Failed: Your email Id or password is incorrect",
+  "Deal":"Deal on the product",
   "Error_msg": "Something went wrong please exit the app and try again.",
   "Check_internet_connection": "Internet connection appears to be offline. Please check your internet connection and try again.",
   "Please_login_first": "Please login first",

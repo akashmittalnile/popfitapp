@@ -17,7 +17,7 @@ var HEIGHT = Dimensions.get('window').height;
 const Videolist = (props) => {
 
     const { t } = useTranslation();
-    const [trainingBlog_list, setTrainingBlog_list] = useState([]);
+    // const [trainingBlog_list, setTrainingBlog_list] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
     const [youtubelinks, setyoutubelinks] = useState([]);
@@ -39,27 +39,27 @@ const Videolist = (props) => {
             data: state.data,
         });
     };
-    console.log("Tainingcat_id_item...............:", props?.route?.params?.catgid);
-    const Tainingcat_id = props?.route?.params?.catgid
+    console.log("Tainingcat_id_item...............:", props?.route?.params?.Id);
+    const Tainingcat_id = props?.route?.params?.Id
 
-    console.log("Trainingsubcat_Data...............:", props?.route?.params?.subcatid);
-    const Trainingsubcat_data = props?.route?.params?.subcatid
+    // console.log("Trainingsubcat_Data...............:", props?.route?.params?.subcatid);
+    // const Trainingsubcat_data = props?.route?.params?.subcatid
 
     const WorkoutSubCategorytraininglist = async () => {
         const usertkn = await AsyncStorage.getItem("authToken");
         setIsLoading(true);
         try {
-            const response = await axios.post(`${API.TRAINING_LIST}`, { "category_id": Tainingcat_id, "subcategory_id": Trainingsubcat_data },
-                { headers: { "Authorization": ` ${usertkn}` } }
-            );
+            const response = await axios.post(`${API.TRAINING_LIST_GET_DETAILS}`, { "id": Tainingcat_id},
+            { headers: { "Authorization": ` ${usertkn}` } }
+          );
             // console.log(":::::::::TrainingCategoryListAPI_Response>>>", response.data.message);
 
             // console.log("TrainingCategoryListAPI_data::::::", response.data);
             setIsLoading(false);
             // console.log("Video_url::", response.data.training_video);
-            setyoutubelinks(response.data.blog_list[0].training_video);
+            setyoutubelinks(response.data.blog_list.training_video);
             // setVideobaseurl(response.data.training_video);
-            setTrainingBlog_list(response.data.blog_list);
+            // setTrainingBlog_list(response.data.blog_list);
             // setyoutubelink(response.data.blog_list.youtube_link)
 
 
@@ -97,9 +97,7 @@ const Videolist = (props) => {
             />
             {!isLoading ?
                 (<>
-                    {
-                        trainingBlog_list.length != 0 ?
-                            (<ScrollView
+                    <ScrollView
                                 refreshControl={
                                     <RefreshControl
                                         refreshing={refreshing}
@@ -181,20 +179,8 @@ const Videolist = (props) => {
                                     />
 
                                 </View>
-                            </ScrollView>)
-                            :
-                            (<View style={{
-                                justifyContent: "center", alignItems: "center", backgroundColor: "white", flex: 1,
-                            }}>
-                                <Image resizeMode='contain'
-                                    source={require('../assets/Nodatafound.png')}
-                                    style={{
-                                        width: 200,
-                                        height: 120, alignSelf: 'center'
-                                    }} />
-                                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>{t('Oops_No_data_found')}</Text>
-                            </View>)
-                    }
+                            </ScrollView>
+                            
                 </>)
                 :
                 (<CustomLoader showLoader={isLoading} />)}

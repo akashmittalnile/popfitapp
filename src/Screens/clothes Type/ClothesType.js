@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, ScrollView, Dimensions,RefreshControl } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, ScrollView, Dimensions, RefreshControl } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
 // import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';
@@ -32,7 +32,7 @@ const ClothesType = (props) => {
   }
 
   const { t } = useTranslation();
-  
+
   const gotoMensTshirts = (item) => {
     props.navigation.navigate('MenTshirts', {
       categoryID: item.id,
@@ -110,120 +110,137 @@ const ClothesType = (props) => {
       {!isLoading ?
         (<View>
 
-          <ScrollView 
-           refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-            />
-          }
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+              />
+            }
           >
-
-            <View style={{ height: 50, flexDirection: 'row', justifyContent: "flex-start", alignItems: "flex-start", width: "95%", marginHorizontal: 15 }}>
-              <View style={{ justifyContent: "center", alignItems: "center", height: 50,}}>
-                <Text
-                  style={{
-                    // marginLeft: 10,
-                    marginTop: 15,
-                    textAlign: 'left',
-                    fontSize: 17,
-                    color: 'black',
-                    fontWeight: "500"
-                  }}>
-                  {t('Store_Categories')}
-                </Text>
-              </View>
-
-              {/* <View style={{ flexDirection: 'row', justifyContent: "center", alignItems: "center", position: "absolute", right: 20, top: 18, flex: 1, width: 40, height: 30 }}>
-                <TouchableOpacity
-                  style={{
-                    justifyContent: 'center',
-                    alignItems: 'center', flex: 0.5
-                    // marginRight: 5,
-                  }}
-                  onPress={() => {
-                    setFilterPopUp(true);
-                  }}>
-                  <View
-                    style={{
-                      backgroundColor: '#ffcc00',
-                      width: 30,
-                      height: 30,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      borderRadius: 30 / 2,
-                    }}>
-                    <Image source={require('../assets/filter.png')} />
-                  </View>
-                </TouchableOpacity>
-
-              </View> */}
-            </View>
-
-            <FlatList
-              vertical
-              // showsHorizontalScrollIndicator={false}
-              numColumns={2}
-              columnWrapperStyle={{
-                flex: 1,
-                justifyContent: "space-between"
-              }}
-              // style={{ margin: 10 }}
-              keyExtractor={(item, index) => String(index)}
-              data={shopitems}
-              renderItem={({ item, index }) => (
-                <TouchableOpacity onPress={() => {
-                  gotoMensTshirts(item)
-                }}>
-                  <View
-                    style={{
-                      marginBottom: 6,
-                      marginTop: 15,
-                      marginHorizontal: 10,
-                      height: 180,
-                      width: WIDTH * 0.45,
-                      overflow: 'hidden',
-                      borderRadius: 20,
-                      backgroundColor: '#f7f7f7',
-                      backgroundColor: "lightgray",
-                      shadowColor: '#000000',
-                      shadowRadius: 5,
-                      shadowOpacity: 0.4,
-                      elevation: 6,
-                    }}>
-
-                    <View
-                      style={{
-                        width: WIDTH * 0.45, height: 180, borderTopRightRadius: 20,
-                        borderTopLeftRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
-                      }}>
-                      <Image
-                        source={{ uri: item?.image != null ? `${imagepath + item?.image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
-                        resizeMode="stretch"
+            {
+              shopitems.length > 0 ?
+                (<>
+                  <View style={{ height: 50, flexDirection: 'row', justifyContent: "flex-start", alignItems: "flex-start", width: "95%", marginHorizontal: 15 }}>
+                    <View style={{ justifyContent: "center", alignItems: "center", height: 50, }}>
+                      <Text
                         style={{
-                          width: "100%",
-                          height: "100%",
-                          borderTopLeftRadius: 20,
-                          borderTopRightRadius: 20,
-                          alignSelf: 'center',
-                          backgroundColor:"black"
-                        }}
-                      />
-                      <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
-                        <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "500" }}>{item?.name?.slice(0, 15) + '...'}</Text>
-
-                      </View>
-
+                          // marginLeft: 10,
+                          marginTop: 15,
+                          textAlign: 'left',
+                          fontSize: 17,
+                          color: 'black',
+                          fontWeight: "500"
+                        }}>
+                        {t('Store_Categories')}
+                      </Text>
                     </View>
 
+                    {/* <View style={{ flexDirection: 'row', justifyContent: "center", alignItems: "center", position: "absolute", right: 20, top: 18, flex: 1, width: 40, height: 30 }}>
+      <TouchableOpacity
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center', flex: 0.5
+          // marginRight: 5,
+        }}
+        onPress={() => {
+          setFilterPopUp(true);
+        }}>
+        <View
+          style={{
+            backgroundColor: '#ffcc00',
+            width: 30,
+            height: 30,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 30 / 2,
+          }}>
+          <Image source={require('../assets/filter.png')} />
+        </View>
+      </TouchableOpacity>
 
+    </View> */}
                   </View>
-                </TouchableOpacity>
-              )}
-            />
+
+                  <FlatList
+                    vertical
+                    // showsHorizontalScrollIndicator={false}
+                    numColumns={2}
+                    columnWrapperStyle={{
+                      flex: 1,
+                      justifyContent: "space-between"
+                    }}
+                    // style={{ margin: 10 }}
+                    keyExtractor={(item, index) => String(index)}
+                    data={shopitems}
+                    renderItem={({ item, index }) => (
+                      <TouchableOpacity onPress={() => {
+                        gotoMensTshirts(item)
+                      }}>
+                        <View
+                          style={{
+                            marginBottom: 6,
+                            marginTop: 15,
+                            marginHorizontal: 10,
+                            height: 180,
+                            width: WIDTH * 0.45,
+                            overflow: 'hidden',
+                            borderRadius: 20,
+                            backgroundColor: '#f7f7f7',
+                            backgroundColor: "lightgray",
+                            shadowColor: '#000000',
+                            shadowRadius: 5,
+                            shadowOpacity: 0.4,
+                            elevation: 6,
+                          }}>
+
+                          <View
+                            style={{
+                              width: WIDTH * 0.45, height: 180, borderTopRightRadius: 20,
+                              borderTopLeftRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
+                            }}>
+                            <Image
+                              source={{ uri: item?.image != null ? `${imagepath + item?.image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
+                              resizeMode="stretch"
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                borderTopLeftRadius: 20,
+                                borderTopRightRadius: 20,
+                                alignSelf: 'center',
+                                backgroundColor: "black"
+                              }}
+                            />
+                            <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
+                              <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "500" }}>{item?.name?.slice(0, 15) + '...'}</Text>
+
+                            </View>
+
+                          </View>
 
 
-            {FilterPopup ? (
+                        </View>
+                      </TouchableOpacity>
+                    )}
+                  />
+
+                </>)
+                :
+                (<View style={{
+                  flex: 1, justifyContent: "center", alignItems: "center", width: "100%",
+                  height:  HEIGHT *0.85
+                }}>
+                  <Image resizeMode='contain'
+                    source={require('../assets/Nodatafound.png')}
+                    style={{
+                      width: 200,
+                      height: 120, alignSelf: 'center'
+                    }} />
+                  <Text style={{ fontSize: 14, fontWeight: "bold" }}>{t('Oops_No_data_found')}</Text>
+                </View>)
+            }
+
+            {/* {FilterPopup ? (
               <Modal
                 animationType="fade"
                 transparent={true}
@@ -455,7 +472,7 @@ const ClothesType = (props) => {
                   </View>
                 </View>
               </Modal>
-            ) : null}
+            ) : null} */}
           </ScrollView>
         </View>)
         :

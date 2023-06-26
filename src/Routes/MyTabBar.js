@@ -49,6 +49,7 @@ import CancelSubscription from '../Screens/subscription Plan/CancelSubscription'
 import Selector from '../translations/Selectlang';
 import { useTranslation } from 'react-i18next';
 import Exploreshop from '../Screens/shop/Exploreshop';
+import SubCategorylist2 from '../Screens/training/SubCategorylist2';
  
 
 const Tab = createBottomTabNavigator();
@@ -307,7 +308,11 @@ const TrainingBottomTab = props => {
         name="Videolist"
         component={Videolist}
       />
-      
+      <Stack.Screen 
+      options={{headerShown:false}}
+      name='SubCategorylist2'
+      component={SubCategorylist2}
+      />
     </Stack.Navigator>
   );
 };

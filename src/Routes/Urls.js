@@ -18,6 +18,8 @@ export const API = {
     SHOP_MAIN: BaseUrl + '/api/shop',
     TRAINING_WORKOUT_CATEGORY: BaseUrl + '/api/workout_category',
     TRAINING_SUB_CATERORY: BaseUrl + '/api/workout_subcategory',
+    TRAINING_LIST_GET_DETAILS: BaseUrl + '/api/trainingSubList',
+
     SUBSCRIPTION_PLAN: BaseUrl + '/api/subscription_plan',
     NEWS_LETTER_SUBSCRIPTION: BaseUrl + '/api/subscribe_to_newsletter',
     NEWSLETTER_UNSUBSCRIBE: BaseUrl + '/api/unsubscribeNewsletter',

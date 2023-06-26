@@ -131,7 +131,7 @@ const MenTshirts = (props) => {
       {!isLoading ?
         (<>
           {
-            shopitems.length != 0 ?
+            shopitems.length > 0 ?
               (<ScrollView
                 refreshControl={
                   <RefreshControl

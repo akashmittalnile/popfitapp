@@ -25,7 +25,7 @@ const ProductDetail = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [productdata, setproductdata] = useState([]);
   const [useraddress, setuseraddress] = useState([]);
-
+  const [isdiscount, setDiscount] = useState('');
   const [Productitems, setProductitems] = useState("");
 
   const [ImageBaseUrl, setImageBaseUrl] = useState('');
@@ -101,12 +101,12 @@ const ProductDetail = (props) => {
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.STORE_PRODUCT_DETAIL}`, { "product_id": productids });
-      // console.log(":::::::::Shop_product_Response>>>", response.data.data);
+      console.log(":::::::::Shop_product_Response>>>", response.data.data);
       // console.log("status _SHOP:", response.data.status);
       SetCurrenysymbol(response.data.currency)
       setProductitems(response.data.data);
       setImageBaseUrl(response.data.product_url);
-
+      discountPercentage(response.data.data.reg_price, response.data.data.price)
     }
     catch (error) {
       Alert.alert("", t('Check_internet_connection'))
@@ -193,6 +193,19 @@ const ProductDetail = (props) => {
   //   }
 
   // };
+  // Discount = Marked Price - Selling price
+  // Discount Percentage = (Discount / Marked Price) * 100
+   
+
+  function discountPercentage(M, S) {
+    console.log("S,M", S, M);
+    let fraction = S / M;
+    let discount_fraction = 1 - fraction;
+    let percentage = discount_fraction * 100;
+    setDiscount(percentage)
+    return percentage.toFixed(2) + "%";
+}
+
   return (
     <SafeAreaView style={{
       flex: 1,
@@ -340,15 +353,19 @@ const ProductDetail = (props) => {
 
                 <Text style={{ marginLeft: 20, marginTop: 20, textAlign: 'left', fontSize: 18, color: '#000000', fontWeight: "500" }}>{Productitems?.name?.slice(0, 40)}</Text>
 
-                <View style={{ marginTop: 10, flex: 1, flexDirection: 'row', width: "95%", height: 50, justifyContent: "center", alignItems: "center" }}>
+                <View style={{ marginTop: 20, flex: 1, flexDirection: 'row', width: "95%", height: 50, justifyContent: "center", alignItems: "center" }}>
 
                   <View style={{ flex: 1, marginLeft: 20, height: 30, width: 100, justifyContent: "center", alignItems: "flex-start" }}>
-                    <Text style={{ textAlign: 'left', fontSize: 15, color: '#000000', fontWeight: "500" }}>{t('Price')}: <Text style={{ textAlign: 'left', fontSize: 14, color: '#77869E', fontWeight: "500" }}>{currenysymbol}{Productitems?.price}</Text></Text>
+                    <View style={{height:32,width:"auto",backgroundColor:'#FF0000',justifyContent:'center',paddingHorizontal:7,borderRadius:5,}}
+                    ><Text numberOfLines={1} style={{ textAlign: 'left', fontSize: 14, color: '#ffff', fontWeight: "400",  }}>{t('Deal')}</Text></View>
+                  
+                    <Text style={{ textAlign: 'left', fontSize: 18, color: '#FF0000', fontWeight: "500",lineHeight:30 }}>-{Number(isdiscount).toFixed(0)}% <Text style={{ textAlign: 'left', fontSize: 18, color: '#000000', fontWeight: "500" }}>{currenysymbol}{Productitems?.price}</Text></Text>
+                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#77869E', fontWeight: "500" }}>M.R.P.: <Text style={{ textAlign: 'left', fontSize: 14, color: '#77869E', fontWeight: "500", textDecorationLine: 'line-through', textDecorationStyle: 'solid' }}>{currenysymbol}{Productitems?.reg_price}</Text></Text>
                   </View>
 
                 </View>
 
-                <View style={{ justifyContent: "flex-start", alignItems: "flex-start", width: "90%", marginLeft: 20, height: "auto", marginBottom: 20, marginTop: 4, }}>
+                <View style={{ justifyContent: "flex-start", alignItems: "flex-start", width: "90%", marginLeft: 20, height: "auto", marginBottom: 20, marginTop: 20, }}>
                   <Text style={{ textAlign: 'left', fontSize: 15, color: '#000000', fontWeight: "500" }}>{t('Product_Details')}</Text>
                   <Text style={{ marginTop: 8, textAlign: 'left', fontSize: 14, color: '#000000', }}>{Productitems?.description}</Text>
                 </View>

@@ -231,7 +231,7 @@ const MobileNo = (props) => {
                               <Text style={{ textAlign: 'center', fontSize: 14, color: '#ffcc00', textDecorationLine: 'underline' }}>{t('Login')}</Text>
                             </TouchableOpacity>
 
-                            <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'white', justifyContent: 'center' }}>?</Text>
+                            {/* <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'white', justifyContent: 'center' }}>?</Text> */}
 
 
                           </View>
