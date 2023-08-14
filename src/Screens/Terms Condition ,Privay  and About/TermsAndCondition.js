@@ -11,11 +11,13 @@ import { DrawerActions } from '@react-navigation/native';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
-
+import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 
 const TermsAndCondition = (props) => {
-
+    const { t } = useTranslation();
+    const [isLoading, setIsLoading] = useState(false);
     const [Termsandcnddata, setTermsandcnddata] = useState([]);
 
     // const openDrawer = () => props.navigation.dispatch(DrawerActions.openDrawer());
@@ -23,25 +25,26 @@ const TermsAndCondition = (props) => {
     useEffect(() => {
         GetTerms_Cnd();
 
-    }, [props]);
+    }, []);
 
     const GetTerms_Cnd = async () => {
 
         // console.log(".....usertoken.....ProfileIN...", userprofile);
 
-        // setIsLoading(true)
+        setIsLoading(true);
         try {
             const response = await axios.get(`${API.TERMS_CONDITION}`);
             // console.log("", response);
             console.log("ResponseTerms_condition ::::", response.data.data);
             setTermsandcnddata(response.data.data)
-            // setIsLoading(false)
+            
         }
         catch (error) {
-            console.log("Terms_condition_error:", error.response.data.message);
-            // setIsLoading(false)
+            Alert.alert("",t('Check_internet_connection'))
+            // console.log("Terms_condition_error:", error.response.data.message);
+             
         }
-
+        setIsLoading(false);
 
     };
 
@@ -69,7 +72,10 @@ const TermsAndCondition = (props) => {
                 }}
                 BelliconononClick={() => { props.navigation.navigate("Notifications") }}
             />
-            <ScrollView>
+                <ScrollView>
+             {!isLoading ?
+           ( <>
+        
                 <View style={{ justifyContent: "center", padding: 10, height: "100%", width: "99%", }}>
 
                     <Text style={{ marginLeft: 10, marginTop: 10, textAlign: 'left', fontSize: 17, color: 'black', fontWeight: "bold" }}>{Termsandcnddata.title}</Text>
@@ -79,7 +85,11 @@ const TermsAndCondition = (props) => {
 
 
                 </View>
-            </ScrollView>
+            
+            </>)
+            :
+            (<CustomLoader showLoader={isLoading} />)
+           }</ScrollView>
         </SafeAreaView>
     );
 }

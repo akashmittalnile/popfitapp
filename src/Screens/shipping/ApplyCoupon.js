@@ -7,25 +7,24 @@ import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 
 const ApplyCoupon = (props) => {
+    const { t } = useTranslation();
     const [coupondata, setCoupondata] = useState([]);
     const [response, setRespone] = useState([]);
     const [visible, setVisible] = useState(true);
     const [Id, setId] = useState()
-    const setSelectedcoupon = (item) => {
-        props.navigation.navigate("ShippingDetail", {
-            Selectcoupon: item
-        });
-    }
-    const buttonClickedHandler1 = () => {
-        props.navigation.goBack();
-    }
-    const gotoNotification = () => {
-        props.navigation.navigate("Notifications");
-    }
+    const [isLoading, setIsLoading] = useState(false);
+
+    // const setSelectedcoupon = (item) => {
+    //     props.navigation.navigate("ShippingDetail", {
+    //         Selectcoupon: item
+    //     });
+    // }
+
     useEffect(() => {
         CouponListApi();
         setVisible(true);
@@ -45,7 +44,7 @@ const ApplyCoupon = (props) => {
     // }
     const CouponListApi = async () => {
         const usertkn = await AsyncStorage.getItem("authToken");
-
+        setIsLoading(true);
         try {
             const response = await axios.get(`${API.COUPON_LIST}`, {
                 'headers': { "Authorization": ` ${usertkn}` }
@@ -53,56 +52,68 @@ const ApplyCoupon = (props) => {
             // console.log("", response);
             // console.log("Response_CouponListApi ::::", response.data.data);
             setCoupondata(response.data.data);
-            let result = coupondata.map(a => a.id)
-            setId(result);
+            // let result = coupondata.map(a => a.id)
+            // setId(result);
             // console.log("");
 
             // setIsLoading(false)
         }
         catch (error) {
+            Alert.alert("", t('Check_internet_connection'))
             // console.log("ShippingProductserror:::", error.response.data.message);
             // setIsLoading(false)
         }
-
+        setIsLoading(false)
     };
 
+    //   console.log("Orderamount_item...............:", props?.route?.params?.Orderamount);
+    let Orderamount = props?.route?.params?.Orderamount
+
+
     const CouponApplyed = async (item) => {
-        console.log("CouponApplyed innn....%%%%%%%%%%%%", item.id);
-        // setIsLoading(true);
+        // console.log(item);
+        // const Orderamt = Orderamount.substring(1, 14)
+        console.log("CouponApplyed Price....%%%%%%%%%%%%", Orderamount.substring(1, 14));
+        setIsLoading(true);
         try {
             const usertkn = await AsyncStorage.getItem("authToken");
-            const response = await axios.post(`${API.COUPON_APPLYED}`, { "coupon_id": item.id, },
+            const response = await axios.post(`${API.COUPON_APPLYED}`, { "coupon_id": item.id, "order_amount": Orderamount.substring(1, 14) },
                 {
                     'headers': { "Authorization": ` ${usertkn}` }
                 }
             );
             // console.log(":::::::::CouponApplyed_Response-----------$$$$$$$$$$$$$$>>>", response.data.message);
-            setRespone(response.data.message);
-            //  alert("CouponApplyed Sussesfully....")
-            // console.log("status _CouponRemove:", response.data.status);
+            // setRespone(response?.data?.message);
+
+            // console.log("status _CouponRemove:", response.data);
             if (response.data.message == "Coupon Added Successfully") {
-                AsyncStorage.setItem("cupon", JSON.stringify(item));
+                // AsyncStorage.setItem("cupon", JSON.stringify(item));
                 //  resetStacks('ShippingDetail', item)
+                // Alert.alert("CouponApplyed Sussesfully....");
                 props.navigation.navigate("ShippingDetail", {
-                    Selectcoupon: item
+                    Selectcoupon: item,
+
 
                 });
             }
+            else if (response.data.status == 1) {
+                Alert.alert("",response.data.message)
+                console.log("Coupon", response.data.message);
+            }
             else {
                 setVisible(false);
-                alert("your order is below 2000")
+                Alert.alert("",response.data.message)
             }
+            // setProductitems(response.data.data)
 
-
-            setProductitems(response.data.data)
-            setIsLoading(false);
         }
         catch (error) {
-            // console.log("......error.........", error.response.data.message);
-            // setIsLoading(false);
+            // Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+            console.log("......error.........", error.response.data.message);
+            setIsLoading(false);
 
         }
-
+        setIsLoading(false)
     };
     return (
         <SafeAreaView style={{
@@ -128,13 +139,24 @@ const ApplyCoupon = (props) => {
                 }}
                 BelliconononClick={() => { props.navigation.navigate("Notifications") }}
             />
-            <ScrollView>
+
+            {!isLoading ?
                 <View style={{ paddingBottom: 80, justifyContent: "center" }}>
-                    <Text style={{ marginLeft: 15, marginTop: 20, textAlign: 'left', fontSize: 18, color: '#000000' }}>Select Coupons</Text>
+
+                    {
+                        coupondata.length > 0 ?
+                            (<View style={{ marginTop: 20, marginLeft: 15, }}>
+                                <Text numberOfLines={1} style={{ textAlign: 'left', fontSize: 17, color: '#000000', fontWeight: "500" }}>{t('Select_Coupons')}</Text>
+                            </View>)
+                            :
+                            null
+                    }
+
 
                     <FlatList
                         data={coupondata}
-                        renderItem={({ item }) =>
+                        keyExtractor={(item, index) => String(index)}
+                        renderItem={({ item, index }) =>
                             <TouchableOpacity
                                 style={{
                                     marginHorizontal: 10,
@@ -147,7 +169,7 @@ const ApplyCoupon = (props) => {
                                     shadowOpacity: 0.2,
                                     elevation: 3,
                                     borderRadius: 25,
-                                    marginBottom: 10,
+                                    marginBottom: 4,
                                     flexDirection: 'row'
 
                                 }}>
@@ -175,15 +197,15 @@ const ApplyCoupon = (props) => {
                                     <View style={{ flex: 0.6, marginTop: 25, justifyContent: "flex-start" }}>
 
                                         <Text style={{ textAlign: 'left', fontSize: 15, color: 'black' }}>{item.name}</Text>
-                                        <Text style={{ marginTop: 5, textAlign: 'center', fontSize: 12, color: '#c9bca0', textAlign: 'left', }}>Expiry Date: <Text style={{ marginTop: 5, textAlign: 'center', fontSize: 12, color: 'black', textAlign: 'left', }}>{item.end_date}</Text> </Text>
+                                        <Text style={{ marginTop: 5, textAlign: 'center', fontSize: 12, color: '#c9bca0', textAlign: 'left', }}>{t('Expiry_Date')}: <Text style={{ marginTop: 5, textAlign: 'center', fontSize: 12, color: 'black', textAlign: 'left', }}>{item.end_date}</Text> </Text>
                                     </View>
                                 </View>
-                                <View style={{ marginRight: 50, marginTop: 28, width: 25, height: 35, justifyContent: "center", alignItems: 'center', borderRadius: 20 / 2 }}>
+                                <View style={{ marginRight: 50, marginTop: 28, width: 25, height: 34, justifyContent: "center", alignItems: 'center', borderRadius: 20 / 2 }}>
                                     <TouchableOpacity onPress={() => {
                                         CouponApplyed(item)
                                     }}>
                                         <View style={{ width: 80, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35, justifyContent: "center" }}>
-                                            <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Apply</Text>
+                                            <Text style={{ textAlign: 'center', fontSize: 13, color: 'white', }}>{t('Apply')}</Text>
 
                                         </View>
                                     </TouchableOpacity>
@@ -192,7 +214,9 @@ const ApplyCoupon = (props) => {
                         }
                     />
                 </View>
-            </ScrollView>
+                :
+                (<CustomLoader showLoader={isLoading} />)}
+
         </SafeAreaView>
     )
 }

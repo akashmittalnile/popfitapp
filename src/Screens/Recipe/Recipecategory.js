@@ -12,52 +12,125 @@ import {
   Modal,
   SafeAreaView,
   Dimensions,
-  ActivityIndicator
+  ScrollView,
+  RefreshControl
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { ScrollView } from 'react-native-gesture-handler';
-import { BackgroundImage } from 'react-native-elements/dist/config';
-import { RadioButton } from 'react-native-paper';
-import DropDownPicker from 'react-native-dropdown-picker';
-import { Pages } from 'react-native-pages';
-import styles from '../../Routes/style';
-import { DrawerActions } from '@react-navigation/native';
-import { Divider } from 'react-native-elements';
+// import { ScrollView } from 'react-native-gesture-handler';
+
 import Headers from '../../Routes/Headers';
 import axios from 'axios';
 import { API } from '../../Routes/Urls';
+import CustomLoader from '../../Routes/CustomLoader';
+import { async } from 'regenerator-runtime';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
 const Recipecategory = props => {
 
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [recipecategory, setRecipecategory] = useState([]);
-  const gotoRecipeDetails = (item) => {
-    props.navigation.navigate('Recipesubcategory', {
-      RecipecategoryID: item
-    });
+  const [planid, setPlanId] = useState("");
+  
+
+  const [refreshing, setrefreshing] = useState(false)
+  const onRefresh = () => {
+    setrefreshing(true)
+    GetRecipecategory()
+    setrefreshing(false)
+  }
+  const gotoRecipeDetails = async (item) => {
+    const usertkn = await AsyncStorage.getItem("authToken");
+    if (usertkn == null) {
+      Alert.alert('', t('Please_login_first'))
+    }
+    else if (usertkn != null) {
+      if (planid.plan_status == "Inactive" || planid.plan_id == "0") {
+        if (item.plan_id.includes('1')) {
+          props.navigation.navigate('Recipesubcategory', {
+            RecipecategoryID: item
+          });
+        }
+        else if (item.plan_id.includes('2')) {
+          props.navigation.navigate("SubscriptionPlan")
+          // console.log("ncludes+2:",item.plan_id.includes('2'));
+
+        }
+        else if (item.plan_id.includes('3')) {
+          props.navigation.navigate("SubscriptionPlan")
+          // console.log("ncludes+3:",item.plan_id.includes('3'));
+
+        }
+
+        else {
+          //   console.log("Buy+plan" );
+          props.navigation.navigate("SubscriptionPlan")
+        }
+
+      }
+      else if (planid.plan_status == "Active" && planid.plan_id == "1") {
+        if (item.plan_id.includes("1")) {
+          props.navigation.navigate('Recipesubcategory', {
+            RecipecategoryID: item
+          });
+        } else if (item.plan_id.includes("2")) {
+          props.navigation.navigate('Recipesubcategory', {
+            RecipecategoryID: item
+          });
+        } else {
+          // console.log("123");
+          props.navigation.navigate("SubscriptionPlan")
+        }
+
+      }
+      else if (planid.plan_status == "Active" && planid.plan_id == "2") {
+        if (item.user_plan_id == "2" && item.plan_id.includes("1")) {
+          props.navigation.navigate('Recipesubcategory', {
+            RecipecategoryID: item
+          });
+        } else if (item.plan_id.includes("2")) {
+          props.navigation.navigate('Recipesubcategory', {
+            RecipecategoryID: item
+          });
+        } else {
+          props.navigation.navigate("SubscriptionPlan")
+        }
+
+      }
+      else if (planid.plan_status == "Active" && planid.plan_id == "3") {
+        props.navigation.navigate('Recipesubcategory', {
+          RecipecategoryID: item
+        });
+      }
+
+
+    }
+
   };
 
   useEffect(() => {
     GetRecipecategory()
-
-  }, []);
+    }, []);
   const GetRecipecategory = async () => {
     setIsLoading(true);
     try {
       const response = await axios.get(`${API.RECIPE_CATEGORY}`);
-      console.log(":::::::::Recipe_Category_Response>>>", response.data.recipeData);
-      console.log(".....Recipe_category....", response.data.recipeData)
-      setRecipecategory(response.data.recipeData)
-      setIsLoading(false);
+      // console.log(":::::::::Recipe_Category_Response>>>", response.data.recipeData);
+      // console.log(".....Recipe_category....", response.data.recipeData)
+      setRecipecategory(response.data.recipeData);
+      setPlanId(response.data);
+
     }
     catch (error) {
-      console.log("......error.........", error.response.data.message);
-      Alert.alert("Something went wrong!", error.response.data.message);
-      setIsLoading(false);
+      // console.log("......error.........", error.response.data.message);
+      //Alert.alert("Something went wrong!", error.response.data.message);
+      Alert.alert("", t('Check_internet_connection'))
     }
+    setIsLoading(false);
   };
 
   return (
@@ -86,74 +159,83 @@ const Recipecategory = props => {
       />
 
       {!isLoading ?
-        (<View style={{ marginBottom: 60 }}>
-          <ScrollView >
+        (<View style={{ paddingBottom: 60 }}>
+          <ScrollView 
+           refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+          >
 
 
-            <View style={{ marginTop: 20, height: 45, flexDirection: 'row' }}>
+            <View style={{ marginTop: 15, height: 30, flexDirection: 'row' }}>
               <View style={{ flex: 1 }}>
                 <Text
                   style={{
-                    marginLeft: 20,
-                    fontSize: 18,
+                    marginLeft: 15,
+                    fontSize: 17,
                     color: 'white'
                   }}>
-                  Recipes Category
+                  {t('Recipes_Categories')}
                 </Text>
               </View>
             </View>
             <FlatList
               vertical
               numColumns={2}
-              style={{ margin: 6 }}
+              // style={{ margin: 0 }}
+              keyExtractor={(item, index) => String(index)}
               data={recipecategory}
-              renderItem={({ item }) => (
+              renderItem={({ item, index }) => (
                 <TouchableOpacity
                   onPress={() => {
                     gotoRecipeDetails(item);
                   }}>
+                  <View
+                    style={{
+                      marginBottom: 10,
+                      marginTop: 10,
+                      marginHorizontal: 10,
+                      height: 180,
+                      width: WIDTH * 0.45,
+                      overflow: 'hidden',
+                      borderRadius: 20,
+                      backgroundColor: '#f7f7f7',
+                      backgroundColor: "lightgray",
+                      shadowColor: '#000000',
+                      shadowRadius: 5,
+                      shadowOpacity: 1.0,
+                      elevation: 6,
+                    }}>
+
                     <View
                       style={{
-                        marginBottom: 6,
-                        marginTop: 6,
-                        marginHorizontal: 6,
-                        height: 180,
-                        width: WIDTH * 0.45,
-                        overflow: 'hidden',
-                        borderRadius: 25,
-                        backgroundColor: '#f7f7f7',
-                        backgroundColor: "lightgray",
-                        shadowColor: '#000000',
-                        shadowRadius: 5,
-                        shadowOpacity: 1.0,
-                        elevation: 6,
+                        width: WIDTH * 0.45, height: 180, borderTopRightRadius: 20,
+                        borderTopLeftRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
                       }}>
-
-                      <View
+                      <Image
+                        source={{ uri: item?.recipe_image != "" ? `${item?.recipe_image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
+                        resizeMode="stretch"
                         style={{
-                          width: WIDTH * 0.45, height: 180, borderTopRightRadius: 20,
-                          borderTopLeftRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
-                        }}>
-                        <Image
-                          source={{ uri: `${item?.recipe_image}` }}
-                          resizeMode="contain"
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            borderTopLeftRadius: 20,
-                            borderTopRightRadius: 20,
-                            alignSelf: 'center',
-                          }}
-                        />
-                        <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
-                          <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name?.slice(0, 13) + '...'}</Text>
-
-                        </View>
+                          width: "100%",
+                          height: "100%",
+                          borderTopLeftRadius: 20,
+                          borderTopRightRadius: 20,
+                          alignSelf: 'center',
+                          backgroundColor: "black"
+                        }}
+                      />
+                      <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
+                        <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name?.slice(0, 13) + '...'}</Text>
 
                       </View>
 
-
                     </View>
+
+
+                  </View>
                   {/* <BackgroundImage
                     resizeMode='stretch'
                     source={{ uri: `${item.recipe_image}` }}
@@ -215,9 +297,7 @@ const Recipecategory = props => {
           </ScrollView>
         </View>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        (<CustomLoader showLoader={isLoading} />)}
 
     </SafeAreaView>
   );

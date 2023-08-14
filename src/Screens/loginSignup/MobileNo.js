@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { View, TouchableHighlight, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, ActivityIndicator, StatusBar, } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler';
+import { View, TouchableHighlight, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, ActivityIndicator, StatusBar,ScrollView } from 'react-native'
+// import { ScrollView } from 'react-native-gesture-handler';
 // import { BackgroundImage } from 'react-native-elements/dist/config';
 // import LinearGradient from 'react-native-linear-gradient';
 // import style from '../../Routes/style';
@@ -12,8 +12,9 @@ import axios from 'axios';
 import * as yup from 'yup';
 import { Formik } from 'formik';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 
-// react-native-country-picker-modal
+ 
 
 const MobileNo = (props) => {
 
@@ -25,24 +26,29 @@ const MobileNo = (props) => {
   //   });
   //   return unsubscribe;
   // }, [props, navigation]);
+  // const[mobilevalidation,setMobilevalidation]=useState(t('Enter_Mobile_Number'))
+ 
+  const { t } = useTranslation();
 
+  const mobilevalidation = t('Phone_number_Required');
+  const vldnumbermsg = t('Enter_the_valid_mobile_number')
 
-  const [flag, setFlag] = useState('http://purecatamphetamine.github.io/country-flag-icons/3x2/US.svg ');
+  const [flag, setFlag] = useState('http://purecatamphetamine.github.io/country-flag-icons/3x2/US.svg');
   const [code, setcode] = useState('+1');
   //ISOCode PAss on SignUp Screen
   const [code1, setcode1] = useState('')
   AsyncStorage.setItem('Country_code', code1);
-  console.log("......store", code1);
+  // console.log("......store", code1);
 
   const [isvisuable, setisvisuable] = useState(false)
-  const firstCodeRef = useRef();
-
+  // const firstCodeRef = useRef();
+  const lastdigitRef = useRef();
 
   const [alertVisibility, setAlertVisibility] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
   //const phoneInput = useRef(null);
-  const PHONE_NO_REGEX = /^[0-9\- ]{10,12}$/
+  const PHONE_NO_REGEX = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/
 
   const gotoLogin = () => {
     props.navigation.navigate("Login")
@@ -50,15 +56,15 @@ const MobileNo = (props) => {
   const countryselect = (cod) => {
     setcode('+' + cod.callingCode.toString())
     var unc = ''
-    console.log('the cca=>', unc)
+    // console.log('the cca=>', unc)
     setIsLoading(true);
     const url = "http://purecatamphetamine.github.io/country-flag-icons/3x2/" + cod.cca2 + ".svg"
     // setFlag(unc) //cca2
-    console.log('URL==>', url)
+    // console.log('URL==>', url)
     setFlag(url) //cca2
     setIsLoading(false);
-    console.log('My flage is', url)
-    console.log("CCA.....", cod.cca2)
+    // console.log('My flage is', url)
+    // console.log("CCA.....", cod.cca2)
 
     setcode1(cod.cca2)
   }
@@ -84,7 +90,7 @@ const MobileNo = (props) => {
     const phone_number = values.phoneNumber;
     AsyncStorage.setItem("phnNumber", phone_number);
     const country_code = code;
-    console.log("country_code.................", code);
+    console.log("country_code.................", code,phone_number);
     if (phone_number == "") {
       setIsLoading(true);
       setAlertVisibility(true);
@@ -98,12 +104,13 @@ const MobileNo = (props) => {
         Countrycode: response.data.country_code,
         codeotp: response.data.code,
         phone: phone_number,
+        
       })
       setAlertVisibility(false);
       setIsLoading(false);
     }
     catch (error) {
-
+      Alert.alert("", t('Check_internet_connection'))
       console.log("......error.........", error.response.data);
       setIsLoading(false);
       setAlertVisibility(false);
@@ -128,8 +135,8 @@ const MobileNo = (props) => {
                   validationSchema={yup.object().shape({
                     phoneNumber: yup
                       .string()
-                      .matches(PHONE_NO_REGEX, { message: "Please, Enter the valid mobile number ", excludeEmptyString: true })
-                      .required('Phone number is a required field'),
+                      .matches(PHONE_NO_REGEX, { message: vldnumbermsg , excludeEmptyString: true })
+                      .required(mobilevalidation),
 
 
                   })}
@@ -137,42 +144,45 @@ const MobileNo = (props) => {
                   {({ values, handleChange, errors, setFieldTouched, touched, isValid, handleSubmit }) => (
 
                     <View style={{ height: 200 }}>
-                      <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 19, color: 'white', }}>What's Your Mobile Number?</Text>
+                      <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 19, color: 'white', }}>{t('What_Your_Mobile_Number')}</Text>
 
 
                       <View style={{ height: 70, marginTop: 40, }} >
 
-                        <View style={{ flexDirection: 'row', width: 290, alignItems: 'center', borderRadius: 30, marginTop: 10, alignSelf: 'center', backgroundColor: "white", }}>
+                        <View style={{ flexDirection: 'row', width: 280, alignItems: 'center', borderRadius: 30, marginTop: 10, alignSelf: 'center', backgroundColor: "white", }}>
 
                           <View style={{ width: 120, height: 49, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, zIndex: 999, }}>
                             {isvisuable ?
                               Mypicker()
                               : null
                             }
-                            <View style={{ position: 'absolute', height: 49, backgroundColor: "white", alignItems: 'center', zIndex: 999, flexDirection: 'row', width: 130, borderRadius: 30, padding: 10 }}>
+                            <View style={{ position: 'absolute', height: 49, backgroundColor: "white", alignItems: 'center', zIndex: 999, flexDirection: 'row', width: 100, borderRadius: 30, padding: 10 }}>
                               <TouchableOpacity onPress={() => { setisvisuable(true) }}
-                                style={{ width: 50, height: 27, flexDirection: 'row', alignItems: 'center' }}>
-                                <SvgCssUri
+                                style={{ width: 15, height: 27, flexDirection: 'row', alignItems: 'center' }}>
+                                {/* <SvgCssUri 
                                   width="100%"
                                   height="100%"
                                   uri={flag}
-                                />
+                                /> */}
                                 <Image style={{ width: 12, height: 12, }} source={"white" == '#fff' ? require('../assets/arrow-point-to-down.png') : require('../assets/arrow-point-to-down.png')} />
                               </TouchableOpacity>
-                              <ScrollView style={{ left: 5 }}>
-                                <Text style={{ color: "black", fontWeight: 'bold', alignSelf: 'flex-end', marginLeft: 10 }}>{code}</Text>
-                              </ScrollView>
+                              {/* <ScrollView style={{   }}> */}
+                              <View style={{justifyContent:"center",alignSelf:"center",alignItems:"center",marginLeft:10}}>
+                              <Text style={{ color: "black", fontWeight: 'bold', alignSelf: 'flex-end',  }}>{code}</Text>
+                              </View>
+                                
+                              {/* </ScrollView> */}
                             </View>
                           </View>
-                          <View style={{ paddingLeft: 8, backgroundColor: "white", height: 49, width: 170, borderRadius: 30 }}>
+                          <View style={{   backgroundColor: "white", height: 49, width: 170, borderRadius: 30,marginLeft:-20 }}>
                             <TextInput
-                              ref={firstCodeRef}
+                              ref={lastdigitRef}
                               style={{
                                 height: 45,
                                 // width: '100%',
                                 borderRadius: 10,
                                 color: "black",
-                                paddingLeft: 10,
+                                // paddingLeft: 10,
                                 paddingRight: 10,
                                 top: 2,
                                 borderRadius: 30
@@ -183,6 +193,7 @@ const MobileNo = (props) => {
                               placeholder={'Phone Number'}
                               placeholderTextColor="#8F93A0"
                               value={values.phoneNumber}
+                              onSubmitEditing={() => lastdigitRef.current.focus()}
                               onChangeText={handleChange('phoneNumber')}
                               onBlur={() => setFieldTouched('phoneNumber')}
                               keyboardType="number-pad"
@@ -207,21 +218,21 @@ const MobileNo = (props) => {
                             handleSubmit()
                           }}
                             disabled={!isValid}>
-                            <View style={{ marginTop: 30, borderRadius: 25, width: 200, height: 50, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
-                              <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'white', }}>Next</Text>
+                            <View style={{ marginTop: 30, borderRadius: 50, width: 150, height: 40, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center' }}>
+                              <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'white', }}>{t('Next')}</Text>
                             </View>
                           </TouchableOpacity>
 
-                          <View style={{ marginTop: 15,   width: "100%", height: 40, alignItems: 'center', justifyContent: 'center' , flexDirection:"row"}}>
-                            <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'white',justifyContent: 'center' ,}}>Already have an account </Text>
-                            
-                              <TouchableOpacity  
+                          <View style={{ marginTop: 15, width: "100%", height: 40, alignItems: 'center', justifyContent: 'center', flexDirection: "row" }}>
+                            <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'white', justifyContent: 'center', }}>{t('Already_have_an_account')} </Text>
+
+                            <TouchableOpacity
                               onPress={() => { gotoLogin() }}>
-                                <Text style={{   textAlign: 'center', fontSize: 14, color: '#ffcc00',textDecorationLine: 'underline'}}> Login </Text>
-                              </TouchableOpacity>
-                              
-                              <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'white',justifyContent: 'center'}}>?</Text>
-                           
+                              <Text style={{ textAlign: 'center', fontSize: 14, color: '#ffcc00', textDecorationLine: 'underline' }}>{t('Login')}</Text>
+                            </TouchableOpacity>
+
+                            {/* <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 14, color: 'white', justifyContent: 'center' }}>?</Text> */}
+
 
                           </View>
 

@@ -4,58 +4,52 @@ import {
   FlatList,
   Text,
   TouchableOpacity,
-  StyleSheet,
-  TextInput,
   Image,
   Alert,
-  Pressable,
   Modal,
   SafeAreaView,
-  ActivityIndicator, Dimensions
+  Dimensions, ScrollView, RefreshControl
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-import { ScrollView } from 'react-native-gesture-handler';
-import { BackgroundImage } from 'react-native-elements/dist/config';
-import { RadioButton } from 'react-native-paper';
-import DropDownPicker from 'react-native-dropdown-picker';
-import { Pages } from 'react-native-pages';
-import styles from '../../Routes/style';
+
 import Headers from '../../Routes/Headers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { API } from '../../Routes/Urls';
+import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
-const MenTshirts = props => {
+const MenTshirts = (props) => {
 
+  const { t } = useTranslation();
   const [FilterPopup, setFilterPopUp] = useState(false);
   const [ischecked, setChecked] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
   const [shopitems, setshopitems] = useState([]);
 
+  const [refreshing, setrefreshing] = useState(false)
+  const onRefresh = () => {
+    setrefreshing(true)
+    CLOTHStoresProduct();
+    setrefreshing(false)
+  }
   const gotoShippingDetail = (item) => {
+    // console.log("product filter api:", item);
     props.navigation.navigate('ProductDetail', {
-      ITEM: item
+      MENSITEM: item
     });
   };
 
-  console.log("Cloth_storeId......:", props?.route?.params?.SHOPID);
+  // console.log("Cloth_storeId......:", props?.route?.params?.SHOPID);
   const FitnessID = props?.route?.params?.SHOPID;
-  console.log("CLoth_categoryID......:", props?.route?.params?.categoryID);
+  // console.log("CLoth_categoryID......:", props?.route?.params?.categoryID);
   const categoryID = props?.route?.params?.categoryID;
 
   useEffect(() => {
     CLOTHStoresProduct();
-
-    // const unsubscribe = props.navigation.addListener('focus', () => {
-    //   FitnessStoresProduct();
-
-    // });
-    // return unsubscribe;
-
   }, []);
 
   const CLOTHStoresProduct = async () => {
@@ -63,46 +57,53 @@ const MenTshirts = props => {
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.SHOP_PRODUCTLIST}`, { 'shop_id': FitnessID, "category_id": categoryID }, { headers: { "Authorization": ` ${Token}` } });
-      console.log(":::::::::SHOP_PRODUCTLISTStore_Response>>>", response.data.products);
-      console.log("status _SHOP_PRODUCTLIST", response.data.status);
-
-      setshopitems(response.data.products)
-      setIsLoading(false);
-
-    }
-    catch (error) {
-      console.log("......error.........", error.response.data.message);
-      Alert.alert("Catch error msg FitnessEquipment !!!!")
-      setIsLoading(false);
-    }
-
-  };
-  const ShopFilter = async () => {
-    const Token = await AsyncStorage.getItem("authToken");
-    console.log("SHOP filter...........>>>", ischecked);
-    setIsLoading(true);
-    try {
-      const response = await axios.post(`${API.SHOP_FILTER}`, { "search": ischecked, "shop_id": FitnessID }, { headers: { "Authorization": ` ${Token}` } });
-      console.log(":::::Shop_FIlter>>>", response.data.data);
-      console.log("SHOP_Status", response.data.status);
+      // console.log(":::::::::SHOP_PRODUCTLISTStore_Response>>>", response.data.products);
+      // console.log("status _SHOP_PRODUCTLIST", response.data.status);
       if (response.data.status == 1) {
-        setFilterPopUp(false)
-        setshopitems(response.data.data)
-        setIsLoading(false);
-
-
-      } else {
-        Alert.alert(" If-else status 0 !");
-        setIsLoading(false);
+        setshopitems(response.data.products)
+        // setIsLoading(false);
+      }
+      else {
+        // setIsLoading(false);
+        Alert.alert('', t('Error_msg'));
       }
 
     }
     catch (error) {
-      // console.log("......error.........", error.response.data.message);
-      Alert.alert(" Error in filter api catch part!");
-      setIsLoading(false);
+      Alert.alert("", t('Check_internet_connection'))
+      // console.log("CLOTHStores_Producterror.........", error.response.data.message);
+      // Alert.alert('', 'Something went wrong please exit the app and try again');
+      // setIsLoading(false);
     }
+    setIsLoading(false);
+  };
 
+  const ShopFilter = async () => {
+    const Token = await AsyncStorage.getItem("authToken");
+    // console.log("SHOP filter...........>>>", ischecked, FitnessID);
+    setIsLoading(true);
+    try {
+      const response = await axios.post(`${API.SHOP_FILTER}`, { "search": ischecked, "shop_id": FitnessID, "category_id": categoryID }, { headers: { "Authorization": ` ${Token}` } });
+      // console.log(":::::Shop_FIlter>>>", response.data.data);
+      // console.log("SHOP_Status", response.data.status);
+      if (response.data.status == 1) {
+        setFilterPopUp(false);
+        setshopitems(response.data.data)
+        // setIsLoading(false);
+      } else {
+        setFilterPopUp(false);
+        Alert.alert('', t('Error_msg'));
+        // setIsLoading(false);
+      }
+
+    }
+    catch (error) {
+      // console.log(".....ShopFilter.error.........", error.response.data.message);
+      Alert.alert("", t('Check_internet_connection'))
+      // Alert.alert('', 'Something went wrong please exit the app and try again');
+      // setIsLoading(false);
+    }
+    setIsLoading(false);
   };
   return (
     <SafeAreaView style={{
@@ -130,20 +131,27 @@ const MenTshirts = props => {
       {!isLoading ?
         (<>
           {
-            shopitems.length != 0 ?
-              (<ScrollView>
-                <View style={{ height: 60, flexDirection: 'row', flex: 1, justifyContent: "flex-start", alignItems: "flex-start", width: "95%", marginHorizontal: 18 }}>
-                  <View style={{ justifyContent: "flex-start", alignItems: "flex-start", flex: 0.45, }}>
+            shopitems.length > 0 ?
+              (<ScrollView
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+              >
+                <View style={{ height: 50, flexDirection: 'row', flex: 1, justifyContent: "flex-start", alignItems: "flex-start", width: "100%" }}>
+                  <View style={{ justifyContent: "flex-start", alignItems: "flex-start", flex: 0.8, height: 50, marginLeft: 15, }}>
                     <Text
                       style={{
-                        // marginLeft: 1,
+
                         marginTop: 20,
                         textAlign: 'left',
-                        fontSize: 18,
+                        fontSize: 17,
                         color: 'black',
-                        fontWeight: "bold"
+                        fontWeight: "500"
                       }}>
-                      Clothing Store
+                      {t('Store_Categories')}
                     </Text>
                   </View>
 
@@ -175,108 +183,115 @@ const MenTshirts = props => {
 
                 <FlatList
                   vertical
-                  style={{ margin: 10 }}
+
                   numColumns={2}
+                  columnWrapperStyle={{
+                    flex: 1,
+                    justifyContent: "space-between"
+                  }}
                   data={shopitems}
-                  renderItem={({ item }) => (
+                  keyExtractor={(item, index) => String(index)}
+                  renderItem={({ item, index }) => {
+                    return (
 
-                    <TouchableOpacity
-                      onPress={() => {
-                        // gotoShippingDetail(item) 
-                      }}
-                      style={{
-                        marginBottom: 6,
-                        backgroundColor: '#f7f7f7',
-                        height: 200,
-                        width: WIDTH * 0.45,
-                        marginTop: 10,
-                        borderRadius: 25,
-                        alignItems: 'center',
-                        justifyContent: "center",
-                        marginHorizontal: 6,
-                        shadowColor: '#000000',
-                        shadowOffset: {
-                          width: 0,
-                          height: 3
-                        },
-                        shadowRadius: 5,
-                        shadowOpacity: 1.0,
-                        elevation: 5,
-                        zIndex: 999,
-
-
-                      }}>
-
-                      <View
+                      <TouchableOpacity
+                        onPress={() => {
+                          gotoShippingDetail(item)
+                        }}
                         style={{
+                          marginBottom: 6,
+                          backgroundColor: '#f7f7f7',
+                          height: 200,
                           width: WIDTH * 0.45,
-                          height: 155,
-                          borderTopLeftRadius: 20,
-                          borderTopRightRadius: 20,
-                          backgroundColor: 'white',
-                        }}>
-                        <Image
-                          source={{ uri: item.product_image }}
-                          resizeMode="contain"
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            borderTopLeftRadius: 20,
-                            borderTopRightRadius: 20,
-                            alignSelf: 'center',
-                          }}
-                        />
-                      </View>
-                      <View
-                        style={{
-                          width: WIDTH * 0.45, flexDirection: 'column', justifyContent: "center", alignItems: 'stretch', height: 45, backgroundColor: '#fceeb5', borderBottomRightRadius: 20, borderBottomLeftRadius: 20
-                        }}>
-                        <Text
-                          style={{
-                            marginLeft: 16,
-                            fontSize: 12,
-                            color: 'black', fontWeight: "bold"
+                          marginTop: 15,
+                          borderRadius: 20,
+                          alignItems: 'center',
+                          justifyContent: "center",
+                          marginHorizontal: 10,
+                          shadowColor: '#000000',
+                          shadowOffset: {
+                            width: 0,
+                            height: 3
+                          },
+                          shadowRadius: 5,
+                          shadowOpacity: 1.0,
+                          elevation: 5,
+                          zIndex: 999,
 
-                          }}>
-                          {item.product_name.slice(0, 15) + '...'}
-                        </Text>
+
+                        }}>
 
                         <View
                           style={{
-                            marginLeft: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: -3,
+                            width: WIDTH * 0.45,
+                            height: 155,
+                            borderTopLeftRadius: 20,
+                            borderTopRightRadius: 20,
+                            backgroundColor: 'white',
                           }}>
-
+                          <Image
+                            source={{ uri: item?.product_image != null ? item?.product_image : 'https://dev.pop-fiit.com/images/logo.png' }}
+                            resizeMode="stretch"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              borderTopLeftRadius: 20,
+                              borderTopRightRadius: 20,
+                              alignSelf: 'center',
+                            }}
+                          />
+                        </View>
+                        <View
+                          style={{
+                            width: WIDTH * 0.45, flexDirection: 'column', justifyContent: "center", alignItems: 'stretch', height: 45, backgroundColor: '#fceeb5', borderBottomRightRadius: 20, borderBottomLeftRadius: 20
+                          }}>
                           <Text
                             style={{
-                              fontSize: 12,
-                              color: 'black', fontWeight: "bold"
+                              marginLeft: 16,
+                              fontSize: 14,
+                              color: 'black', fontWeight: "500"
 
-                            }}>$ {item.product_price}
+                            }}>
+                            {item.product_name.slice(0, 15) + '...'}
                           </Text>
-
-
 
                           <View
                             style={{
-                              alignItems: 'center', justifyContent: 'center', marginRight: 6, width: 30, height: 30, borderRadius: 20 / 2, backgroundColor: '#ffcc00', bottom: 6
+                              marginLeft: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: -3,
                             }}>
-                            <Image
-                              resizeMode="contain"
+
+                            <Text
                               style={{
-                                width: 15,
-                                height: 20,
-                                alignSelf: 'center',
-                              }}
-                              source={require('../assets/bag1.png')}
-                            />
+                                fontSize: 12,
+                                color: 'black', fontWeight: "500"
+
+                              }}>{item.product_price}
+                            </Text>
+
+
+
+                            <View
+                              style={{
+                                alignItems: 'center', justifyContent: 'center', marginRight: 6, width: 30, height: 30, borderRadius: 20 / 2, backgroundColor: '#ffcc00', bottom: 6
+                              }}>
+                              <Image
+                                resizeMode="contain"
+                                style={{
+                                  width: 15,
+                                  height: 20,
+                                  alignSelf: 'center',
+                                }}
+                                source={require('../assets/bag1.png')}
+                              />
+                            </View>
+
+
                           </View>
-
-
                         </View>
-                      </View>
-                    </TouchableOpacity>
+                      </TouchableOpacity>
 
-                  )}
+                    )
+                  }}
                 />
 
 
@@ -291,10 +306,13 @@ const MenTshirts = props => {
                   <View
                     style={{
                       flex: 1,
-                      justifyContent: 'flex-end',
-                      alignItems: 'center',
+                      // justifyContent: 'flex-end',
+                      // alignItems: 'center',
                       backgroundColor: 'rgba(140, 141, 142, 0.7)',
                     }}>
+                    <TouchableOpacity onPress={() => setFilterPopUp(false)}
+                      style={{ flex: 1, }}
+                    />
                     <View
                       style={{
                         // margin: 10,
@@ -302,7 +320,7 @@ const MenTshirts = props => {
                         borderRadius: 20,
                         // paddingTop: 20,
                         width: "100%",
-                        height: "35%",
+                        height: 220,
                         // height: "60%",
                         justifyContent: "center",
                         alignItems: 'center',
@@ -317,11 +335,12 @@ const MenTshirts = props => {
                       }}>
                       <View
                         style={{
-                          backgroundColor: 'white',
-                          // height: 480,
-                          height: "100%",
-                          width: "99%",
+                          // backgroundColor: 'red',
+                          height: 220,
+                          // height: "100%",
+                          width: "100%",
                           // marginHorizontal: 20,
+                          // justifyContent: "center",
                           alignItems: 'center',
                           borderRadius: 20,
                           flexDirection: 'column',
@@ -357,10 +376,10 @@ const MenTshirts = props => {
                               textAlign: 'center',
                               fontSize: 16,
                               color: 'black',
-
+                              fontWeight: "400",
                               marginTop: 2,
                             }}>
-                            Filter
+                            {t('Filter')}
                           </Text>
                         </View>
 
@@ -370,6 +389,7 @@ const MenTshirts = props => {
                             height: 60,
                             flexDirection: 'row',
                             marginTop: 30,
+                            justifyContent: 'center'
                           }}>
                           <View
                             style={{
@@ -406,12 +426,13 @@ const MenTshirts = props => {
 
                                   <Text
                                     style={{
+                                      fontWeight: "500",
                                       textAlign: 'left',
-                                      fontSize: 9,
+                                      fontSize: 11,
                                       color: ischecked == 'high_to_low' ? '#ffcc00' : '#8F93A0'
 
                                     }}>
-                                    Higher to Lower Price
+                                    {t('Higher_to_Lower_Price')}
                                   </Text>
                                 </View>
                               </View>
@@ -453,12 +474,13 @@ const MenTshirts = props => {
 
                                   <Text
                                     style={{
+                                      fontWeight: "500",
                                       textAlign: 'left',
-                                      fontSize: 9,
+                                      fontSize: 11,
                                       color: ischecked == 'low_to_high' ? '#ffcc00' : '#8F93A0'
 
                                     }}>
-                                    Lower to Higher Price
+                                    {t('Lower_to_Higher_Price')}
                                   </Text>
                                 </View>
                               </View>
@@ -466,11 +488,216 @@ const MenTshirts = props => {
                           </View>
                         </View>
 
+                        {/* <Text
+                      style={{
+                        marginTop: 20,
+                        marginHorizontal: 20,
+                        textAlign: 'left',
+                        fontSize: 14,
+                        color: 'black',
+
+                      }}>
+                      Select From Category & Sub-Category
+                    </Text> */}
+
+                        {/* <View
+                      style={{
+                        width: '90%',
+                        marginTop: 20,
+                        height: 50,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'flex-start',
+                        alignItems: 'center',
+                      }}>
+                      <TouchableOpacity>
+                        <View
+                          style={{
+                            borderColor: '#8F93A0',
+                            borderWidth: 1,
+                            borderRadius: 25,
+                            width: 120,
+                            height: 40,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                          <Text
+                            style={{
+                              textAlign: 'left',
+                              fontSize: 9,
+                              color: '#bbbaba',
+
+                            }}>
+                            Fitness Dumble
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                      <TouchableOpacity>
+                        <View
+                          style={{
+                            marginLeft: 10,
+                            borderColor: '#8F93A0',
+                            borderWidth: 1,
+                            borderRadius: 25,
+                            width: 120,
+                            height: 40,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                          <Text
+                            style={{
+                              textAlign: 'left',
+                              fontSize: 9,
+                              color: '#bbbaba',
+
+                            }}>
+                            Workout Equipment
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View> */}
+
+                        {/* <View
+                      style={{
+                        marginTop: 10,
+                        height: 50,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}>
+                      <TouchableOpacity>
+                        <View
+                          style={{
+                            borderColor: '#8F93A0',
+                            borderWidth: 1,
+                            borderRadius: 25,
+                            width: 100,
+                            height: 40,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                          <Text
+                            style={{
+                              textAlign: 'left',
+                              fontSize: 9,
+                              color: '#bbbaba',
+
+                            }}>
+                            Clothes
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                      <TouchableOpacity>
+                        <View
+                          style={{
+                            marginLeft: 10,
+                            borderColor: '#8F93A0',
+                            borderWidth: 1,
+                            borderRadius: 25,
+                            width: 100,
+                            height: 40,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                          <Text
+                            style={{
+                              textAlign: 'left',
+                              fontSize: 9,
+                              color: '#bbbaba',
+
+                            }}>
+                            Barbel Set
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                      <TouchableOpacity>
+                        <View
+                          style={{
+                            marginLeft: 10,
+                            borderColor: '#8F93A0',
+                            borderWidth: 1,
+                            borderRadius: 25,
+                            width: 100,
+                            height: 40,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                          <Text
+                            style={{
+                              textAlign: 'left',
+                              fontSize: 9,
+                              color: '#bbbaba',
+
+                            }}>
+                            Training Bench
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View> */}
+
+                        {/* <View
+                      style={{
+                        width: '90%',
+                        marginTop: 10,
+                        height: 50,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'flex-start',
+                        alignItems: 'center',
+                      }}>
+                      <TouchableOpacity>
+                        <View
+                          style={{
+                            borderColor: '#8F93A0',
+                            borderWidth: 1,
+                            borderRadius: 25,
+                            width: 120,
+                            height: 40,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                          <Text
+                            style={{
+                              textAlign: 'left',
+                              fontSize: 9,
+                              color: '#bbbaba',
+
+                            }}>
+                            Pull-Up Frame & Bar
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                      <TouchableOpacity>
+                        <View
+                          style={{
+                            marginLeft: 10,
+                            borderColor: '#8F93A0',
+                            borderWidth: 1,
+                            borderRadius: 25,
+                            width: 120,
+                            height: 40,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                          <Text
+                            style={{
+                              textAlign: 'left',
+                              fontSize: 9,
+                              color: '#bbbaba',
+
+                            }}>
+                            Kettlebell Set
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View> */}
 
                         <View
                           style={{
                             height: 200,
-                            marginTop: 20,
+                            marginTop: 2,
                           }}>
                           <View
                             style={{
@@ -485,10 +712,10 @@ const MenTshirts = props => {
                               }}>
                               <View
                                 style={{
-                                  marginTop: 30,
-                                  borderRadius: 25,
-                                  width: 200,
-                                  height: 45,
+                                  marginTop: 20,
+                                  borderRadius: 50,
+                                  width: 150,
+                                  height: 34,
                                   backgroundColor: '#ffcc00',
                                   alignItems: 'center',
                                   justifyContent: 'center',
@@ -501,7 +728,7 @@ const MenTshirts = props => {
                                     color: 'white',
 
                                   }}>
-                                  Apply
+                                  {t('Apply')}
                                 </Text>
                               </View>
                             </TouchableOpacity>
@@ -527,15 +754,13 @@ const MenTshirts = props => {
                     width: 200,
                     height: 120, alignSelf: 'center'
                   }} />
-                <Text style={{fontSize:14,fontWeight:"bold"}}>No data found</Text>
+                <Text style={{ fontSize: 14, fontWeight: "bold" }}>{t('Oops_No_data_found')}</Text>
               </View>)
           }
 
         </>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        (<CustomLoader showLoader={isLoading} />)}
     </SafeAreaView>
   );
 };

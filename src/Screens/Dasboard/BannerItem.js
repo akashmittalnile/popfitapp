@@ -3,7 +3,7 @@ import React from 'react';
 import {View, Text, Image, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 //globals
-import {ScreensName, Server} from '../../global/Index';
+// import {ScreensName, Server} from '../../global/Index';
 //styles
 import {styles} from './BannerStyle';
 const BannerItem = ({item}) => {

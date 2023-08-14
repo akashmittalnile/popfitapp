@@ -7,6 +7,8 @@ import { WebView } from 'react-native-webview';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -15,6 +17,7 @@ const OutDoorCycleDetails = (props) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [trainingdetails, setTrainingDetails] = useState([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     TrainingDetailsAPI();
@@ -30,16 +33,16 @@ const OutDoorCycleDetails = (props) => {
     }
     try {
       const shareResponse = await Share.open(shareOptions);
-      console.log('====================================');
-      console.log(JSON.stringify(shareResponse));
-      console.log('====================================');
+      
+      // console.log(JSON.stringify(shareResponse));
+     
     }
     catch (error) {
-      console.log('ERROR=>', error);
+      // console.log('ERROR=>', error);
     }
   };
 
-  console.log("TainingDATA_...............:", props?.route?.params?.TrainingDATA?.id);
+  // console.log("TainingDATA_...............:", props?.route?.params?.TrainingDATA?.id);
   const TrainingDATA = props?.route?.params?.TrainingDATA?.id
 
   const TrainingDetailsAPI = async () => {
@@ -47,19 +50,17 @@ const OutDoorCycleDetails = (props) => {
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.TRAINING_LIST_DETAILS}`, { "training_id": TrainingDATA }, { headers: { "Authorization": ` ${usertkn}` } });
-      console.log(":::::::::TrainingDetails_ResponseMessage>>>", response.data.message);
-      console.log("TrainingDetails__data::::::", response.data.training_detail);
+      // console.log(":::::::::TrainingDetails_ResponseMessage>>>", response.data.message);
+      // console.log("TrainingDetails__data::::::", response.data.training_detail);
       ;
       setTrainingDetails(response.data.training_detail)
-      setIsLoading(false);
+   
 
     }
     catch (error) {
-      console.log("......error.........", error.response.data.message);
-      Alert.alert("Something went wrong!", error.response.data.message);
-      setIsLoading(false);
-
-    }
+      // console.log("......error.........", error.response.data.message);
+      Alert.alert("",t('Check_internet_connection'))
+      } setIsLoading(false);
   };
   return (
     <SafeAreaView style={{
@@ -155,7 +156,7 @@ const OutDoorCycleDetails = (props) => {
 
               <View style={{ backgroundColor: "white", borderRadius: 20, marginTop: 20, height: HEIGHT * 0.2, width: WIDTH * 0.9, marginHorizontal: 18, }}>
                 <Image resizeMode='contain'
-                  source={{ uri: trainingdetails?.image }} style={{ width: '100%', height: '100%', justifyContent: "center", alignItems: 'center', borderRadius: 20, }}
+                  source={{ uri: trainingdetails?.image != "" ? `${trainingdetails?.image}` : 'https://dev.pop-fiit.com/images/logo.png' }} style={{ width: '100%', height: '100%', justifyContent: "center", alignItems: 'center', borderRadius: 20, }}
                 />
               </View>
 
@@ -261,9 +262,7 @@ const OutDoorCycleDetails = (props) => {
           </View> */}
         </>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        ( <CustomLoader showLoader={isLoading}/>)}
     </SafeAreaView>
   );
 }

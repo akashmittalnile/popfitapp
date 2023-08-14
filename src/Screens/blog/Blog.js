@@ -13,11 +13,10 @@ import {
   SafeAreaView,
   Dimensions,
   ImageBackground,
-  Linking, ActivityIndicator
+  KeyboardAvoidingView, Platform, RefreshControl,ScrollView
 
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';
 import { RadioButton } from 'react-native-paper';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -31,6 +30,8 @@ import * as yup from 'yup';
 import { Formik } from 'formik';
 import Headers from '../../Routes/Headers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
+import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -40,144 +41,387 @@ const Blog = (props) => {
   // const [UserEmail, setUserEmail] = useState("");
   const [Blogvideolist, setBlogvideolist] = useState([]);
   const [Blogcategorylist, setBlogcategorylist] = useState([]);
-
+  const [blogbanner, setBlogbanner] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [NewsletterPopup, setNewsletterPopup] = useState(false);
+  const [newsletteremail, setNewsletteremail] = useState("");
+
+  const { t } = useTranslation();
+  const Validemail = t('Enter_valid_email_id')
+
+  const gotoBlogDetail = async (item) => {
+    const usertkn = await AsyncStorage.getItem("authToken");
+    if (usertkn == null) {
+      Alert.alert('', t('Please_login_first'))
+    }
+    else if (usertkn != null) {
+      props.navigation.navigate('BlogDetail', {
+        blogdetail_id: item
+      });
+    }
 
 
-  const gotoBlogDetail = (item) => {
-    props.navigation.navigate('BlogDetail', {
-      blogdetail_id: item
-    });
+
   };
-  const gotoCategory = (item) => {
-    props.navigation.navigate('Category', {
-      ITEMS: item
-    });
+  const gotoCategory = async (item) => {
+    console.log("blogcategory",item);
+
+    const usertkn = await AsyncStorage.getItem("authToken");
+    if (usertkn == null) {
+      Alert.alert('', t('Please_login_first'))
+    }
+    else if (usertkn != null) {
+      if (blogbanner.plan_status == "Inactive" || blogbanner.plan_id == "0") {
+        if (item.plan_id.includes('1')) {
+          props.navigation.navigate('Category', {
+            ITEMS: item
+          });
+        }
+        else if (item.plan_id.includes('2')) {
+          props.navigation.navigate("SubscriptionPlan")
+          // console.log("ncludes+2:",item.plan_id.includes('2'));
+
+        }
+        else if (item.plan_id.includes('3')) {
+          props.navigation.navigate("SubscriptionPlan")
+          // console.log("ncludes+3:",item.plan_id.includes('3'));
+
+        }
+
+        else {
+          //   console.log("Buy+plan" );
+          props.navigation.navigate("SubscriptionPlan")
+        }
+
+      }
+      else if (blogbanner.plan_status == "Active" && blogbanner.plan_id == "1") {
+        if (item.plan_id.includes("1")) {
+          props.navigation.navigate('Category', {
+            ITEMS: item
+          });
+        } else if (item.plan_id.includes("2")) {
+          props.navigation.navigate('Category', {
+            ITEMS: item
+          });
+        } else {
+          props.navigation.navigate("SubscriptionPlan")
+        }
+
+      }
+      else if (blogbanner.plan_status == "Active" && blogbanner.plan_id == "2") {
+        if (item.user_plan_id == "2" && item.plan_id.includes("1")) {
+          props.navigation.navigate('Category', {
+            ITEMS: item
+          });
+        } else if (item.plan_id.includes("2")) {
+          props.navigation.navigate('Category', {
+            ITEMS: item
+          });
+        } else {
+          props.navigation.navigate("SubscriptionPlan")
+        }
+
+      }
+      else if (blogbanner.plan_status == "Active" && blogbanner.plan_id == "3") {
+        props.navigation.navigate('Category', {
+          ITEMS: item
+        });
+      }
+    }
+
   };
 
+  const [refreshing, setrefreshing] = useState(false);
+
+  const onRefresh = () => {
+    setrefreshing(true)
+    GetCategoryBlogApi();
+    setrefreshing(false)
+  }
 
   useEffect(() => {
     GetCategoryBlogApi();
+    // const unsubscribe = props.navigation.addListener('focus', () => {
+    //   GetCategoryBlogApi();
+    // })
+    // return unsubscribe;
 
-  }, [props]);
+
+  }, []);
 
 
 
   const GetNewsletterApi = async (values) => {
     const usertkn = await AsyncStorage.getItem("authToken");
+    setNewsletteremail(values.Checkemail)
+    // const newsletteremail = await AsyncStorage.getItem('useremail');
     // const EnterEmail = UserEmail;
     const data = {
+      // email: newsletteremail
       email: values.Checkemail,
-    }
-    // console.log("......userenteremail::", EnterEmail);
-    setIsLoading(true);
-    try {
 
-      const response = await axios.post(`${API.NEWS_LETTER_SUBSCRIPTION}`, data, { headers: { "Authorization": ` ${usertkn}` } });
-      // console.log(":::::::::Traing_Workout_Response>>>", response.data);
-      // console.log("Traing_Workout_data::::::", response.data.status);
-      if (response.data.status == 1) {
-        props.navigation.goBack()
-        setIsLoading(false);
-      } else if (response.data.status == 0) {
-        Alert.alert("Not access before Login this, first go and login your id")
+    }
+    // await AsyncStorage.setItem('useremail', values.Checkemail);
+    // console.log("blog newsletter:", data);
+    if (usertkn != null) {
+      // console.log("......userenteremail::", EnterEmail);
+      setIsLoading(true);
+      try {
+
+        const response = await axios.post(`${API.NEWS_LETTER_SUBSCRIPTION}`, data, { headers: { "Authorization": ` ${usertkn}` } });
+        // console.log(":::::::::Traing_Workout_Response>>>", response.data);
+        // console.log("Traing_Workout_data::::::", response.data.status);
+        if (response.data.status == 1) {
+          // props.navigation.goBack()
+          GetCategoryBlogApi();
+          // Alert.alert('', 'Already subscribed',)
+          // [
+          //   {
+          //     text: "Unsubscribe",
+          //     onPress: () => null,
+          //     style: "cancel"
+          //   },
+          //   { text: "Cancel", onPress: () => null }
+          // ])
+          setNewsletterPopup(false);
+          setIsLoading(false);
+        }
+
+
       }
-
-    }
-    catch (error) {
-      // console.log("......error.........", error.response.data.message);
-      setIsLoading(false);
-
-    }
+      catch (error) {
+        Alert.alert("", t('Check_internet_connection'))
+        // Alert.alert('', 'Something went wrong please exit the app and try again');
+        // console.log("......error.........", error.response.data.message);
+      }
+    } else {
+      Alert.alert('', t('Please_login_first'))
+    } setIsLoading(false);
   };
 
+  const GetNewsletterUnsubscribe = async () => {
+    const usertkn = await AsyncStorage.getItem("authToken");
+
+    // const newsletteremail = await AsyncStorage.getItem('useremail');
+    // const EnterEmail = UserEmail;
+    const data = {
+      email: newsletteremail
+      // email: values.Checkemail,
+    }
+    // console.log("newsletter:", data);
+    if (usertkn != null) {
+
+      setIsLoading(true);
+      try {
+
+        const response = await axios.post(`${API.NEWSLETTER_UNSUBSCRIBE}`, data, { headers: { "Authorization": ` ${usertkn}` } });
+        // console.log("::Unsubscribe_Response>>>", response.data);
+        // console.log("Unsubscribe_data::::::", response.data.status);
+        if (response.data.status == 1) {
+          // props.navigation.goBack()
+          GetCategoryBlogApi();
+          setNewsletteremail('')
+          Alert.alert('', t('Unsubscribe_Newsletter'),)
+          // [
+          //   {
+          //     text: "Unsubscribe",
+          //     onPress: () => null,
+          //     style: "cancel"
+          //   },
+          //   { text: "Cancel", onPress: () => null }
+          // ])
+          // setNewsletterPopup(false);
+          // setIsLoading(false);
+        }
+
+
+      }
+      catch (error) {
+        Alert.alert("", t('Check_internet_connection'))
+        // Alert.alert('', 'Something went wrong please exit the app and try again');
+        // console.log("......error.........", error.response.data.message);
+      }
+    }
+    else {
+      Alert.alert('', t('Error_msg'))
+    }
+    setIsLoading(false);
+  };
   const GetCategoryBlogApi = async () => {
     const usertkn = await AsyncStorage.getItem("authToken");
+    // console.log('token::::::', usertkn);
     setIsLoading(true);
     try {
 
-      const response = await axios.get(`${API.BLOG_MAIN_SCREEN}`, { headers: { "Authorization": ` ${usertkn}` } });
+      const response = await axios.get(`${API.BLOG_MAIN_SCREEN}`,
+        { headers: { "Authorization": ` ${usertkn}` } }
+      );
       // console.log(":::::::::Traing_Workout_Response>>>", response.data);
       // console.log("Traing_Workout_data::::::", response.data.status);
+
       setBlogvideolist(response.data.blog)
       setBlogcategorylist(response.data.blogcategory)
-      setIsLoading(false);
+      setBlogbanner(response.data)
 
     }
     catch (error) {
+      Alert.alert("", t('Check_internet_connection'))
+      // Alert.alert('', 'Something went wrong please exit the app and try again')
       // console.log("......error.........", error.response.data.message);
-      setIsLoading(false);
+      // setIsLoading(false);
 
     }
+    setIsLoading(false);
   };
   return (
     <SafeAreaView style={{
       flex: 1,
       width: WIDTH,
-      height: HEIGHT, backgroundColor: 'black', flexGrow: 1
+      height: "100%", backgroundColor: 'black', flexGrow: 1
     }} >
+      <Headers
+        // navigation={props.navigation}
+        Drawericon={{
+          visible: true,
+        }}
+        DrawericononClick={() => { props.navigation.dispatch(DrawerActions.openDrawer()) }}
+
+        CartIcon={{
+          visible: true,
+        }}
+        CartIconononClick={() => { props.navigation.navigate("CartAdded") }}
+
+        Bellicon={{
+          visible: true,
+
+        }}
+        BelliconononClick={() => {
+          props.navigation.navigate('Notifications')
+        }}
+      />
       {!isLoading ?
-        (<View style={{ width: WIDTH, height: HEIGHT, paddingBottom: 50 }}>
-          <Headers
-            Drawericon={{
-              visible: true,
-            }}
-            DrawericononClick={() => { props.navigation.dispatch(DrawerActions.openDrawer()) }}
+        (<View style={{ width: WIDTH, height: "100%", flex: 1 }}>
 
-            CartIcon={{
-              visible: true,
-            }}
-            CartIconononClick={() => { props.navigation.navigate("CartAdded") }}
-
-            Bellicon={{
-              visible: true,
-
-            }}
-            BelliconononClick={() => { props.navigation.navigate('Notifications') }}
-          />
-          <ScrollView  >
+          <ScrollView nestedScrollEnabled={true}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+              />
+            }
+          >
             <Divider color="#393939" width={1.2} />
 
             {/*// btn navigate Newsletterpopup/// */}
             <View
               style={{
-                height: 185,
+                height: 140,
                 width: "100%",
                 borderBottomLeftRadius: 20,
                 borderBottomRightRadius: 20,
-                backgroundColor: '#262626',
-                paddingBottom: 15,
+                // backgroundColor: '#262626',
+                paddingBottom: 10,
                 justifyContent: "center",
                 alignItems: "center",
 
               }}>
-              <TouchableOpacity
-                onPress={() => {
-                  setNewsletterPopup(true);
-                }}>
-                <View
+              {
+                blogbanner.newsletter_status == 0 ?
+                  (<>
+                    <TouchableOpacity style={{
+                      height: 140,
+                      width: "95%",
+                      // flexDirection: 'row',
+                      // backgroundColor: 'white',
+                      borderRadius: 20,
+                      // marginHorizontal: 25,
+                      marginTop: 10,
+                      // flex: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                      onPress={() => {
+                        // GetNewsletterApi()
+                        setNewsletterPopup(true);
+                      }}
+                    >
+
+
+                      <Image
+                        resizeMode='contain'
+                        source={{ uri: blogbanner?.banner_blog != "" ? `${blogbanner?.banner_blog}` : 'https://dev.pop-fiit.com/images/logo.png' }}
+                        style={{
+
+                          alignSelf: 'center',
+                          width: "100%",
+                          height: "100%",
+                          backgroundColor: "black"
+                          // borderBottomLeftRadius: 20,
+                          // borderTopLeftRadius: 20,
+                        }}
+                      />
+                    </TouchableOpacity>
+                  </>)
+                  :
+                  (<>
+                    <TouchableOpacity style={{
+                      height: 140,
+                      width: "95%",
+                      // flexDirection: 'row',
+                      // backgroundColor: 'white',
+                      borderRadius: 20,
+                      // marginHorizontal: 25,
+                      marginTop: 10,
+                      // flex: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                      onPress={() => {
+                        GetNewsletterUnsubscribe()
+                        // setNewsletterPopup(true);
+                      }}
+                    >
+
+
+                      <Image
+                        resizeMode='contain'
+                        source={{ uri: blogbanner?.banner_blog != "" ? `${blogbanner?.banner_blog}` : 'https://dev.pop-fiit.com/images/logo.png' }}
+                        style={{
+
+                          alignSelf: 'center',
+                          width: "100%",
+                          height: "100%",
+                          backgroundColor: "black"
+                          // borderBottomLeftRadius: 20,
+                          // borderTopLeftRadius: 20,
+                        }}
+                      />
+                    </TouchableOpacity></>)
+              }
+
+              {/* <View
                   style={{
-                    height: 120,
-                    width: "90%",
-                    flexDirection: 'row',
-                    backgroundColor: 'white',
-                    borderRadius: 15,
-                    // marginHorizontal: 25,
-                    marginTop: 20,
-                    flex: 1,
+                    height: 40,
+                    width: 100,
+                    bottom: 16,
+                    right: 80,
+                    position: "absolute",
+                    backgroundColor: '#ffcc00',
+                    borderRadius: 8,
                     justifyContent: "center",
                     alignItems: "center",
                   }}>
-                  <View
+                  <Text style={{ color: 'white', fontSize: 12 }}>Subscribe</Text>
+                </View> */}
+              {/* <View
                     style={{
                       // width:120,
-                      height: 150,
+                      height: 140,
                       // marginLeft: 20,
                       flex: 0.4,
-                      borderRadius: 15,
+                      borderRadius: 20,
                       marginRight: 10,
-                      backgroundColor: 'white',
+                      backgroundColor: 'whiredte',
                     }}>
                     <Image
                       resizeMode='cover'
@@ -186,8 +430,8 @@ const Blog = (props) => {
                         alignSelf: 'center',
                         width: "100%",
                         height: "100%",
-                        borderBottomLeftRadius: 15,
-                        borderTopLeftRadius: 15,
+                        borderBottomLeftRadius: 20,
+                        borderTopLeftRadius: 20,
                       }}
                     />
                   </View>
@@ -197,20 +441,20 @@ const Blog = (props) => {
                       height: 151,
                       // width:"100%",
                       // marginLeft: 20,
-                      borderRadius: 15,
+                      borderRadius: 20,
                       flex: 0.6,
                       justifyContent: 'center',
                       flexDirection: 'column',
                       // backgroundColor: 'white',
                     }}>
                     <View
-                      style={{ flex: 0.7, justifyContent: 'center', marginTop: 20, marginLeft: 10, }}>
+                      style={{ flex: 0.6, justifyContent: 'center', marginTop: 30, marginLeft: 0, right: 2, alignItems: "center" }}>
                       <Text
                         style={{
                           textAlign: 'left',
-                          fontSize: 15,
+                          fontSize: 16,
                           color: 'black',
-                          fontWeight: "bold"
+                          fontWeight: "600"
                         }}>
                         Subscribe to Newsletter
                       </Text>
@@ -218,10 +462,11 @@ const Blog = (props) => {
                     <View style={{ flex: 0.9, alignItems: 'flex-end', justifyContent: 'flex-end', }}>
                       <View
                         style={{
-                          height: 48,
-                          width: 70,
+                          height: 45,
+                          width: 60,
+                          // right:-1,
                           //  backgroundColor: '#ffcc00', 
-                          borderRadius: 35,
+                          borderRadius: 50,
                         }}>
                         <Image
                           source={require('../assets/arrowWhiteBack.png')}
@@ -230,148 +475,157 @@ const Blog = (props) => {
                             height: "100%",
                             alignSelf: 'center',
                             justifyContent: 'center',
-                            borderBottomRightRadius: 17,
+                            borderBottomRightRadius: 20,
                           }}
                         />
                       </View>
                     </View>
-                  </View>
-                </View>
-              </TouchableOpacity>
+                  </View> */}
+
+
             </View>
 
             {/* Trending New Blogs */}
-            <View style={{ marginTop: 30, height: 35, flexDirection: 'row', flex: 1 }}>
+            <View style={{ marginTop: 15, height: 30, flexDirection: 'row', flex: 1 }}>
               <View style={{ flex: 1 }}>
                 <Text
                   style={{
-                    marginLeft: 20,
-                    fontSize: 15,
+                    marginLeft: 15,
+                    fontSize: 17,
                     color: 'white',
-                    fontWeight: "bold"
+                    fontWeight: "500"
                   }}>
-                  Trending New Blogs
+                  {t('Trending_New_Blogs')}
                 </Text>
               </View>
             </View>
             <FlatList
               horizontal
+              // nestedScrollEnabled={true}
               showsHorizontalScrollIndicator={false}
-              style={{ margin: 10 }}
+              // style={{ margin: 10 }}
+              keyExtractor={(item, index) => String(index)}
               data={Blogvideolist}
-              renderItem={({ item }) => (
+              renderItem={({ item, index }) => (
                 <TouchableOpacity onPress={() => { gotoBlogDetail(item) }}
                   style={{
                     backgroundColor: 'white',
-                    height: 200,
+                    height: 180,
                     width: WIDTH * 0.45,
                     marginTop: 10,
-                    marginHorizontal: 6,
+                    marginHorizontal: 10,
                     borderRadius: 20,
                     justifyContent: "center",
                   }}>
                   <View style={{
-                    height: 100,
+                    height: 150,
                     borderRadius: 20,
                     width: WIDTH * 0.45,
                     alignItems: "center",
                     justifyContent: 'space-around',
                   }}>
                     <Image
-                      resizeMode='contain'
-                      source={{ uri: item.blog_image }}
-                      style={{ justifyContent: 'center', borderTopLeftRadius: 20, borderTopRightRadius: 20, alignItems: 'center', backgroundColor: 'white', width: '100%', height: '100%', }} />
+                      resizeMode='stretch'
+                      source={{ uri: item?.blog_image != "" ? `${item?.blog_image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
+                      style={{ justifyContent: 'center', borderTopLeftRadius: 20, borderTopRightRadius: 20, alignItems: 'center', backgroundColor: 'black', width: '100%', height: '100%', }} />
                   </View>
                   <View
-                    style={{ height: 100, backgroundColor: '#fceeb5', borderBottomLeftRadius: 16, borderBottomRightRadius: 16, width: WIDTH * 0.45, justifyContent: "flex-start", alignItems: "flex-start", }}>
+                    style={{ height: 30, backgroundColor: '#fceeb5', borderBottomLeftRadius: 16, borderBottomRightRadius: 16, width: WIDTH * 0.45, justifyContent: "flex-start", alignItems: "center", paddingTop: 5, paddingLeft: 0, }}>
 
-                    <Text style={{ marginLeft: 10, marginTop: 5, textAlign: 'left', fontSize: 12, color: '#000000', fontWeight: "bold" }}>{item.youtube_title.slice(0, 20) + '...'}</Text>
+                    <Text numberOfLines={1}
+                      style={{ textAlign: 'left', fontSize: 14, color: '#000000', fontWeight: "500" }}>{item?.youtube_title?.length >= 18 ? item?.youtube_title?.slice(0, 18) + '...' : item?.youtube_title?.slice(0, 15)}</Text>
 
-                    <View style={{ height: 65, alignItems: "flex-start", marginTop: 2, justifyContent: "flex-start", width: WIDTH * 0.45, marginTop: 2 }}>
-                      <Text
-                        style={{ marginHorizontal: 10, textAlign: 'left', fontSize: 7, color: '#000000', justifyContent: "center", alignItems: "center" }}>{item.youtube_description.slice(0, 308) + '...'}</Text>
-                    </View>
+                    {/* <View style={{ height: 30, alignItems: "flex-start", paddingTop: 4, justifyContent: "flex-start", width: WIDTH * 0.42, marginBottom:4, }}>
+                      <Text  numberOfLines={1}
+                        style={{textAlign: 'left', fontSize: 8, color: '#000000',fontWeight: "300"  }}>{item.youtube_description.slice(0, 200) + '...'}</Text>
+                    </View> */}
                   </View>
                 </TouchableOpacity>
 
               )}
             />
             {/* ///Category Blogs/ */}
-            <View style={{ marginTop: 15, height: 35, flexDirection: 'row' }}>
+            <View style={{ marginTop: 25, height: 30, flexDirection: 'row' }}>
               <View style={{ flex: 1 }}>
                 <Text
                   style={{
-                    marginLeft: 20,
-                    fontSize: 15,
+                    marginLeft: 15,
+                    fontSize: 17,
                     color: 'white',
-                    fontWeight: "bold"
+                    fontWeight: "500"
                   }}>
-                  Category Blogs
+                  {t('Category_Blogs')}
                 </Text>
               </View>
             </View>
             <FlatList
               numColumns={2}
               showsHorizontalScrollIndicator={true}
+              keyExtractor={(item, index) => String(index)}
               data={Blogcategorylist}
-              style={{ margin: 10 }}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    gotoCategory(item);
-                  }}>
-                  <View
-                    style={{
-                      marginTop: 10,
-                      backgroundColor: 'white',
-                      height: 180,
-                      width: WIDTH * 0.45,
-                      borderRadius: 15,
-                      marginBottom: 20,
-                      marginHorizontal: 6,
-                      justifyContent: "center",
-                      alignItems: 'center',
+              // style={{ margin: 0}}
+              renderItem={({ item, index }) => {
+                return (
+                  <TouchableOpacity
+                    onPress={() => {
+                      gotoCategory(item)
                     }}>
-
                     <View
                       style={{
-                        width: WIDTH * 0.45, height: 180, borderRadius: 15,
-                        justifyContent: "flex-start", alignItems: "flex-start"
+                        marginTop: 10,
+                        backgroundColor: 'white',
+                        height: 180,
+                        width: WIDTH * 0.45,
+                        borderRadius: 20,
+                        marginBottom: 10,
+                        marginHorizontal: 10,
+                        justifyContent: "center",
+                        alignItems: 'center',
                       }}>
-                      <Image
-                        source={{ uri: `${item?.image}` }}
-                        resizeMode="stretch"
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          borderRadius: 15,
-                          alignSelf: 'center',
-                        }}
-                      />
-                      <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 15 }}>
-                        <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.cat_name}</Text>
+                      <View style={{ width: WIDTH * 0.45, backgroundColor: '#c9bca0', height: 25, justifyContent: 'center', alignItems: "center", borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
+                        <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "500" }}>{item?.cat_name?.length >= 26 ? item?.cat_name?.slice(0, 26) + '...' : item?.cat_name?.slice(0, 26)}</Text>
 
+                      </View>
+                      <View
+                        style={{
+                          width: WIDTH * 0.45,
+                          height: 155,
+                          // borderRadius: 20,
+
+                          justifyContent: "flex-start", alignItems: "flex-start"
+                        }}>
+                        <Image
+                          source={{ uri: item?.image != "" ? `${item?.image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
+                          resizeMode="stretch"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            borderBottomLeftRadius: 20, borderBottomRightRadius: 20,
+                            alignSelf: 'center', backgroundColor: "black"
+                          }}
+                        />
+
+
+                      </View>
+                      <View style={{
+                        justifyContent: "flex-end",
+                        alignItems: 'flex-end',
+                        position: "absolute", width: 40, height: 30, bottom: 0, right: 0
+                      }}>
+                        <Image resizeMode='contain'
+                          source={require('../assets/arrowWhiteBack.png')}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            alignSelf: 'center',
+                            borderBottomRightRadius: 20,
+
+                          }}
+                        />
                       </View>
 
                     </View>
-                    <View style={{
-                      justifyContent: "center",
-                      alignItems: 'center', position: "absolute", width: 40, height: 30, bottom: 0, right: 0
-                    }}>
-                      <Image resizeMode='contain'
-                        source={require('../assets/arrowWhiteBack.png')}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          alignSelf: 'center',
-                          borderBottomRightRadius: 15,
-
-                        }}
-                      />
-                    </View>
-
-                  </View>
-                  {/* <BackgroundImage
+                    {/* <BackgroundImage
                     resizeMode=''
                     source={{ uri: `${item.image}` }}
                     style={{
@@ -424,8 +678,9 @@ const Blog = (props) => {
                       </View>
                     </View>
                   </BackgroundImage> */}
-                </TouchableOpacity>
-              )}
+                  </TouchableOpacity>
+                )
+              }}
             />
 
             {NewsletterPopup ? (
@@ -436,129 +691,140 @@ const Blog = (props) => {
                 onRequestClose={() => {
                   setNewsletterPopup(false);
                 }}>
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: 'flex-end',
-                    alignItems: 'center',
-                    backgroundColor: 'rgba(140, 141, 142, 0.7)',
-                  }}>
+                <KeyboardAvoidingView
+                  style={{ flex: 1 }}
+                  behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+
+
                   <View
                     style={{
-                      // margin: 10,
-                      backgroundColor: 'white',
-                      borderRadius: 20,
-                      //paddingTop: 40,
-                      width: "100%",
-                      justifyContent: "flex-end",
-                      alignItems: 'center',
-                      shadowColor: '#000',
-                      shadowOffset: {
-                        width: 0,
-                        height: 2,
-                      },
-                      shadowOpacity: 0.25,
-                      shadowRadius: 4,
-                      elevation: 6,
+                      flex: 1,
+                      // justifyContent: 'flex-end',
+                      // alignItems: 'center',
+                      backgroundColor: 'rgba(140, 141, 142, 0.7)',
                     }}>
-                    <Formik
-                      initialValues={{
-                        Checkemail: '',
-                      }}
-                      onSubmit={values => GetNewsletterApi(values)}
+                    <TouchableOpacity
+                      onPress={() => setNewsletterPopup(false)}
+                      style={{ flex: 1 }}
+                    />
+                    <View
+                      style={{
+                        // margin: 10,
+                        backgroundColor: 'white',
+                        borderRadius: 20,
+                        //paddingTop: 40,
+                        width: "100%",
+                        justifyContent: "flex-end",
+                        alignItems: 'center',
+                        // shadowColor: '#000',
+                        // shadowOffset: {
+                        //   width: 0,
+                        //   height: 2,
+                        // },
+                        // shadowOpacity: 0.25,
+                        // shadowRadius: 4,
+                        // elevation: 6,
+                      }}>
+                      <Formik
+                        initialValues={{
+                          Checkemail: '',
+                        }}
+                        onSubmit={values => GetNewsletterApi(values)}
 
-                      validationSchema={yup.object().shape({
-                        Checkemail: yup
-                          .string()
-                          .required('The email field is required.*'),
-                      })}
-                    >
-                      {({ values, handleChange, errors, setFieldTouched, touched, isValid, handleSubmit }) => (
-                        <View style={{
-                          backgroundColor: 'white',
-                          height: 340,
-                          //marginHorizontal: 10,
-                          // marginTop: 20,
-                          width: "100%",
-                          alignItems: 'center',
-                          flexDirection: 'column',
-                          // padding: 15,
-                          marginHorizontal: 15,
-                          borderRadius: 20,
-                          marginBottom: 20,
-                          alignItems: 'center',
-                          flexDirection: 'column'
-                        }}>
-
-
+                        validationSchema={yup.object().shape({
+                          Checkemail: yup
+                            .string()
+                            .required(Validemail),
+                        })}
+                      >
+                        {({ values, handleChange, errors, setFieldTouched, touched, isValid, handleSubmit }) => (
                           <View style={{
-                            height: 150,
+                            backgroundColor: 'white',
+                            height: 340,
+                            //marginHorizontal: 10,
+                            // marginTop: 20,
                             width: "100%",
+                            alignItems: 'center',
+                            flexDirection: 'column',
+                            // padding: 15,
+                            marginHorizontal: 15,
+                            borderRadius: 20,
+                            marginBottom: 20,
+                            alignItems: 'center',
+                            flexDirection: 'column'
                           }}>
-                            <Image
-                              source={require('../assets/newslogo.png')}
-                              style={{ width: "100%", height: 190, borderTopLeftRadius: 20, borderTopRightRadius: 20, justifyContent: "center", alignSelf: "center" }} />
 
-                            <View style={{ position: "absolute", marginLeft: 110, justifyContent: "center", alignItems: "center" }}>
-                              <Text style={{ marginTop: 15, textAlign: 'center', fontSize: 15, color: 'white', fontWeight: "bold" }}>Subscribe News Letter</Text>
+
+                            <View style={{
+                              height: 150,
+                              width: "100%",
+                            }}>
+                              <Image
+                                source={require('../assets/newslogo.png')}
+                                style={{ width: "100%", height: 190, borderTopLeftRadius: 20, borderTopRightRadius: 20, justifyContent: "center", alignSelf: "center" }} />
+
+                              <View style={{ marginTop: 20, position: "absolute", marginLeft: 110, justifyContent: "center", alignItems: "center" }}>
+                                <Text style={{ textAlign: 'center', fontSize: 17, color: 'white', fontWeight: "600" }}>{t('Subscribe_News_Letter')}</Text>
+                              </View>
+
+                            </View>
+
+
+                            <View style={{
+                              // backgroundColor: "#F3FFFF",
+
+                              // shadowColor: '#11032586',
+                              // borderRadius: 30,
+                              marginTop: 65,
+                              height: 55,
+                              width: "99%",
+
+                            }}>
+                              <TextInput
+                                placeholder="Please enter your email ID"
+                                value={values.Checkemail}
+                                // onChangeText={(text) => setUserEmail(text)}
+                                onChangeText={handleChange('Checkemail')}
+                                onBlur={() => setFieldTouched('Checkemail')}
+                                fontWeight='normal'
+                                placeholderTextColor='#41BDB9'
+                                style={{
+                                  backgroundColor: "#F3FFFF",
+                                  marginHorizontal: 20,
+                                  shadowColor: '#11032586',
+                                  borderRadius: 30,
+                                  // marginTop: 10,
+                                  borderColor: "#41BDB9",
+                                  borderWidth: 0.5,
+                                  height: 45,
+                                  width: "90%",
+                                  justifyContent: 'center', alignItems: 'center',
+                                  paddingLeft: 14, color: '#41BDB9'
+                                }} />
+
+                              {
+                                touched.Checkemail && errors.Checkemail &&
+                                <Text style={{ fontSize: 12, color: '#FF0D10', paddingLeft: 35, marginTop: 6 }}>{errors.Checkemail}</Text>
+                              }
+                            </View>
+
+
+                            <View style={{ marginLeft: 30, marginBottom: 15, flexDirection: 'row', height: 36, marginHorizontal: 20, marginTop: 30, justifyContent: "center", alignItems: 'center', }}>
+                              <TouchableOpacity disabled={!isValid}
+                                onPress={() => {
+                                  handleSubmit(values)
+                                }}>
+                                <View style={{ alignItems: 'center', justifyContent: 'center', width: 150, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
+
+                                  <Text style={{ textAlign: 'center', fontSize: 15, color: 'white' }}>Subscribe</Text>
+
+                                </View>
+                              </TouchableOpacity>
                             </View>
 
                           </View>
-
-
-                          <View style={{
-                            // backgroundColor: "#F3FFFF",
-
-                            // shadowColor: '#11032586',
-                            // borderRadius: 30,
-                            marginTop: 65,
-                            height: 55,
-                            width: "99%",
-
-                          }}>
-                            <TextInput
-                              placeholder="Please enter your email ID"
-                              value={values.Checkemail}
-                              // onChangeText={(text) => setUserEmail(text)}
-                              onChangeText={handleChange('Checkemail')}
-                              onBlur={() => setFieldTouched('Checkemail')}
-                              fontWeight='normal'
-                              placeholderTextColor='#41BDB9'
-                              style={{
-                                backgroundColor: "#F3FFFF",
-                                marginHorizontal: 20,
-                                shadowColor: '#11032586',
-                                borderRadius: 30,
-                                // marginTop: 10,
-                                borderColor: "#41BDB9",
-                                borderWidth: 0.5,
-                                height: 45,
-                                width: "90%",
-                                justifyContent: 'center', alignItems: 'center',
-                                paddingLeft: 14, color: '#41BDB9'
-                              }} />
-
-                            {
-                              touched.Checkemail && errors.Checkemail &&
-                              <Text style={{ fontSize: 12, color: '#FF0D10', paddingLeft: 35, marginTop: 6 }}>{errors.Checkemail}</Text>
-                            }
-                          </View>
-
-
-                          <View style={{ marginLeft: 30, marginBottom: 15, flexDirection: 'row', height: 48, marginHorizontal: 20, marginTop: 30, justifyContent: "center", alignItems: 'center', }}>
-                            <TouchableOpacity disabled={!isValid}
-                              onPress={() => { handleSubmit(values) }}>
-                              <View style={{ alignItems: 'center', justifyContent: 'center', width: 150, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
-
-                                <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Subscribe</Text>
-
-                              </View>
-                            </TouchableOpacity>
-                          </View>
-
-                        </View>
-                      )}
-                    </Formik>
+                        )}
+                      </Formik>
 
 
 
@@ -567,17 +833,20 @@ const Blog = (props) => {
 
 
 
+                    </View>
                   </View>
-                </View>
+                </KeyboardAvoidingView>
               </Modal>
             ) : null}
           </ScrollView>
         </View>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          {/* <Text style={{color:"white",textAlign: 'center',fontSize: 15,marginBottom:4,fontWeight:"bold"}}>Loading.....</Text> */}
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        (<CustomLoader showLoader={isLoading} />
+          // <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+
+          //   <ActivityIndicator size="large" color="#ffcc00" />
+          // </View>
+        )}
     </SafeAreaView>
   );
 };

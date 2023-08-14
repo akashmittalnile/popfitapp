@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ActivityIndicator } from 'react-native'
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ActivityIndicator,ScrollView,RefreshControl } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
-import { ScrollView } from 'react-native-gesture-handler';
+// import { ScrollView } from 'react-native-gesture-handler';
 import { BackgroundImage } from 'react-native-elements/dist/config';
 import { RadioButton } from 'react-native-paper';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -11,6 +11,8 @@ import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -20,8 +22,14 @@ const Category = (props) => {
   const [subcategoryitems, setsubcategoryitems] = useState([]);
   const [subscriptiontoken, setsubscriptiontoken] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const DATA = ['first row', 'second row', 'third row', 'first row', 'second row', 'third row'];
-
+ 
+  const [refreshing, setrefreshing] = useState(false)
+  const onRefresh = () => {
+    setrefreshing(true)
+    getCategoryApi();
+    setrefreshing(false)
+  }
+  const { t } = useTranslation();
   // const buttonClickedHandler = () => {
   //   props.navigation.goBack()
   // }
@@ -32,7 +40,7 @@ const Category = (props) => {
     });
   }
 
-  console.log("item.category_id..............:", props.route.params.ITEMS.id);
+  // console.log("item.category_id..............:", props.route.params.ITEMS.id);
   const ITEMS = props.route.params.ITEMS.id
 
   useEffect(() => {
@@ -41,46 +49,37 @@ const Category = (props) => {
     getusertoken();
 
   }, []);
+
   const getusertoken = async () => {
     const usertoken = await AsyncStorage.getItem("authToken");
-    console.log("check_roken in comment button:::>>>>>..", usertoken);
+    // console.log("check_roken in comment button:::>>>>>..", usertoken);
     setsubscriptiontoken(usertoken);
   }
-  const Checkedtoken = () => {
 
-    subscriptiontoken == "" ?
-      props.navigation.navigate('LoginMain', {
-        screen: 'LoginSignUp',
-      })
-      :
-      setComments(true);
-    // ShareCommentApi()
-
-  };
   const getCategoryApi = async () => {
     const Token = await AsyncStorage.getItem("authToken");
-    console.log("category_id get.....;;;;;", ITEMS);
+    // console.log("category_id get.....;;;;;", ITEMS);
     // const categoryitem = ITEMS;
     setIsLoading(true);
     try {
       const response = await axios.post(`${API.BLOG_SUBCATEGORY}`, { "category_id": ITEMS }, { headers: { "Authorization": ` ${Token}` } });
-      console.log(":::::::::category_Response>>>", response.data.blog_subcategory);
-      console.log("status category:", response.data.status);
+      // console.log(":::::::::category_Response>>>", response.data.blog_subcategory);
+      // console.log("status category:", response.data.status);
       if (response.data.status == 1) {
         setsubcategoryitems(response.data.blog_subcategory)
-        setIsLoading(false);
+        // setIsLoading(false);
       } else {
-        Alert.alert("data not found")
-        setIsLoading(false);
+        // Alert.alert("data not found",'')
+        // setIsLoading(false);
       }
 
     }
     catch (error) {
-      console.log("......error.........", error.response.data.message);
-      setIsLoading(false);
-
+      // Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
+      Alert.alert('', t('Error_msg'))
+      // console.log("......error.........", error.response.data.message);
     }
-
+    setIsLoading(false);
   };
 
   return (
@@ -111,57 +110,69 @@ const Category = (props) => {
 
           {
             subcategoryitems.length != 0 ?
-              (<ScrollView >
-                <View style={{ height: 60, flexDirection: 'row' }}>
-                  <View style={{ flex: 1 }}>
-                    <Text style={{ marginLeft: 25, marginTop: 20, textAlign: 'left', fontSize: 14, color: 'white', fontWeight: "bold" }}>Sub-Category Blogs</Text>
+              (<ScrollView  refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                />
+              }>
+                <View style={{ height: 50, flexDirection: 'row' }}>
+                  <View style={{ flex: 1, marginLeft: 15, marginTop: 20, }}>
+                    <Text style={{ textAlign: 'left', fontSize: 17, color: 'white', fontWeight: "500" }}>{t('Sub_Category_Blogs')}</Text>
                   </View>
 
                 </View>
 
                 <FlatList
                   numColumns={2}
-                  style={{ margin: 10 }}
+                  showsHorizontalScrollIndicator={true}
+                  // style={{ margin: 10 }}
                   data={subcategoryitems}
-                  renderItem={({ item }) => (
-                    <TouchableOpacity onPress={() => { gotoCategoryListBlog(item) }}>
+                  keyExtractor={(item, index) => String(index)}
+                  renderItem={({ item, index }) => {
+                    return (<TouchableOpacity onPress={() => { gotoCategoryListBlog(item) }}>
                       <View
                         style={{
                           marginTop: 10,
                           backgroundColor: 'white',
                           height: 180,
                           width: WIDTH * 0.45,
-                          borderRadius: 15,
-                          marginBottom: 20,
-                          marginHorizontal: 6,
+                          borderRadius: 20,
+                          marginBottom: 10,
+                          marginHorizontal: 10,
                           justifyContent: "center",
                           alignItems: 'center',
                         }}>
+                        <View style={{ width: WIDTH * 0.45, backgroundColor: '#c9bca0', height: 25, justifyContent: 'center', alignItems: "center", borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
+                          <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "500" }}>{item?.subcat_name?.length >= 18 ? item?.subcat_name?.slice(0, 18) + '...' : item?.subcat_name?.slice(0, 15)}</Text>
 
+                        </View>
                         <View
                           style={{
-                            width: WIDTH * 0.45, height: 180, borderRadius: 15,
+                            width: WIDTH * 0.45,
+                            height: 155,
+
+
                             justifyContent: "flex-start", alignItems: "flex-start"
                           }}>
                           <Image
-                            source={{ uri: `${item.image}` }}
+                            source={{ uri: item?.image != "" ? `${item?.image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
                             resizeMode="stretch"
                             style={{
                               width: "100%",
                               height: "100%",
-                              borderRadius: 15,
-                              alignSelf: 'center',
+                              borderBottomLeftRadius: 20, borderBottomRightRadius: 20,
+                              alignSelf: 'center', backgroundColor: "black"
                             }}
                           />
-                          <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 15 }}>
-                            <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.subcat_name?.slice(0, 13) + '...'}</Text>
 
-                          </View>
 
                         </View>
                         <View style={{
-                          justifyContent: "center",
-                          alignItems: 'center', position: "absolute", width: 40, height: 30, bottom: 0, right: 0
+                          justifyContent: "flex-end",
+                          alignItems: 'flex-end',
+                          position: "absolute", width: 40, height: 30,
+                          bottom: -1, right: 0
                         }}>
                           <Image resizeMode='contain'
                             source={require('../assets/arrowWhiteBack.png')}
@@ -169,7 +180,7 @@ const Category = (props) => {
                               width: "100%",
                               height: "100%",
                               alignSelf: 'center',
-                              borderBottomRightRadius: 15,
+                              borderBottomRightRadius: 20,
 
                             }}
                           />
@@ -209,8 +220,8 @@ const Category = (props) => {
                           </View>
                         </View>
                       </BackgroundImage> */}
-                    </TouchableOpacity>
-                  )}
+                    </TouchableOpacity>)
+                  }}
                 />
               </ScrollView>)
               :
@@ -224,15 +235,17 @@ const Category = (props) => {
                     width: 200,
                     height: 120, alignSelf: 'center'
                   }} />
-                <Text style={{ fontSize: 14, fontWeight: "bold" }}>No data found</Text>
+                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>{t('Oops_No_data_found')}</Text>
               </View>)
           }
 
         </>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        (<CustomLoader showLoader={isLoading} />
+          // <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          //   <ActivityIndicator size="large" color="#ffcc00" />
+          // </View>
+        )}
     </SafeAreaView>
   );
 }

@@ -7,42 +7,29 @@ import { NavigationContainer } from '@react-navigation/native';
 import 'react-native-reanimated'
 import Home from './src/Screens/Dasboard/Home';
 import LoginSignUp from './src/Screens/loginSignup/LoginSignUp';
-//import { requestUserPermission, notificationListner, createChannel, notificationListne } from './src/Screens/notificationServices';
+import { requestUserPermission, notificationListner, createChannel, notificationListne } from './src/Screens/notificationServices';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NotificationManagerAndroid } from './NotificationManagerAndroid';
 import { NotificationManagerIOS } from './NotificationManagerIOS';
 import { Alert } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
-//import ForegroundHandler from './src/Screens/ForegroundHandler';
-const App = (props) => {
-  LogBox.ignoreAllLogs()
-  // useEffect(() => {
-  //   const unsubscribe = messaging().onMessage(async remoteMessage => {
-  //     console.log('foreground message', JSON.stringify(remoteMessage));
-  //     Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage.notification)
-  //     );
-  //   });
+ 
+import { Provider } from 'react-redux';
+import modifyCounterReducer from './src/Redux/reducers/modifyCounter';
+import store from "./src/store";
+import { StripeProvider } from '@stripe/stripe-react-native';
+ 
 
-  //   return unsubscribe;
-  // }, []);
-  async function requestUserPermission() {
-    const authorizationStatus = await messaging().requestPermission({
-      sound: false,
-      announcement: true,
-    });
-  }
-  async function requestUserPermissionIos() {
-    const authStatus = await messaging().requestPermission();
-    const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-    if (enabled) {
-      console.log('Authorization status:', authStatus);
-    }
-  }
+
+const App = (props) => {
+
+  LogBox.ignoreAllLogs()
+   
   useEffect(() => {
+    
+     
     // requestUserPermission();
-    // notificationListner()
+    notificationListner()
     NotificationManagerAndroid.createChannel();
     NotificationManagerAndroid.configure();
     try {
@@ -99,8 +86,16 @@ const App = (props) => {
   }, [])
   return (
     <>
-      {/* <ForegroundHandler /> */}
-      <AppNavigation />
+      <Provider store={store}>
+        <StripeProvider
+          publishableKey="pk_live_51Ltt5jHhczs35VE5QAci3mDtv1RtMCmWQpfV1G21I1BBT1t92FpTCojBYZ9WiLHFVhwTB5utZtvwSe7mCzdH7Z2b00a7x8Zy1O"
+          merchantIdentifier="merchant.identifier" // required for Apple Pay
+          urlScheme="your-url-scheme" // required for 3D Secure and bank redirects
+        >
+          <AppNavigation />
+        </StripeProvider>
+      </Provider>
+
     </>
   )
 }

@@ -2,6 +2,7 @@ import PushNotification from 'react-native-push-notification'
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
 import { Alert, Linking, Platform } from 'react-native'
 import React from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 class NotificationManager extends React.Component {
 
@@ -19,7 +20,10 @@ class NotificationManager extends React.Component {
 	configure = () => {
 		PushNotification.configure({
 			onRegister: function (param) {
-				console.log("TOKEN:", param.token);
+				const Iosfirebasetoken = param.token;
+				console.log("fire-baseToken_IOS:", Iosfirebasetoken);
+				AsyncStorage.setItem('NotiManIOS', Iosfirebasetoken);
+				// console.log("TOKEN:", param.token);
 			},
 				onNotification: function (notification) {
 					notification.finish(PushNotificationIOS.FetchResult.NoData);

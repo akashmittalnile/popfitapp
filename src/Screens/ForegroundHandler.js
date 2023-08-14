@@ -1,7 +1,8 @@
 import PushNotification from "react-native-push-notification";
 import messaging, { firebase } from '@react-native-firebase/messaging';
 import React, { useEffect } from 'react';
-const ForegroundHandler = () => {
+
+const ForegroundHandler = (props) => {
     useEffect(() => {
         const unsubscribe = messaging.onMessage((remoteMessage) => {
             console.log("hanle in foreground", remoteMessage)

@@ -1,5 +1,6 @@
 import PushNotification from "react-native-push-notification";
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class NotificationManager {
 
@@ -31,8 +32,11 @@ class NotificationManager {
 
 			// (optional) Called when Token is generated (iOS and Android)
 			onRegister: function (param) {
-				
-				console.log("TOKEN:", param.token);
+				const Androidfirebasetoken = param.token;
+				console.log("fire-base_Token_ANDROID:", Androidfirebasetoken);
+				AsyncStorage.setItem('NotiManAndroid', Androidfirebasetoken);
+				// console.log("TOKEN:", param.token);
+
 			},
 
 			// (required) Called when a remote is received or opened, or local notification is opened

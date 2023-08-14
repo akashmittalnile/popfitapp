@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, TouchableOpacity, TextInput, Image, Alert, SafeAreaView, ActivityIndicator, Dimensions } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler';
+import { View, Text, TouchableOpacity, TextInput, Image, Alert, SafeAreaView, ActivityIndicator, Dimensions, KeyboardAvoidingView, Platform,ScrollView,RefreshControl } from 'react-native'
+// import { ScrollView } from 'react-native-gesture-handler';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Pages } from 'react-native-pages';
 import { Divider } from 'react-native-elements';
@@ -9,6 +9,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Headers from '../../Routes/Headers';
 import Share from 'react-native-share';
+import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 
 
@@ -17,6 +19,7 @@ var HEIGHT = Dimensions.get('window').height;
 
 const TrainingPersonaDetail = (props) => {
 
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [fitnessdata, setFitnessData] = useState("");
     const [isMale, setIsMale] = useState("");
@@ -35,10 +38,18 @@ const TrainingPersonaDetail = (props) => {
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState("");
     const [onsubmiterrormsg, steOnsubmiterrormsg] = useState(false);
+    const [copyDdownValue, setcopyDdownValue] = useState('');
 
-    const gotoSubscriptionPlan = () => {
-        props.navigation.navigate("SubscriptionPlan")
+
+    const [refreshing, setrefreshing] = useState(false)
+    const onRefresh = () => {
+      setrefreshing(true);
+      SetTrainingPlan();
+      setrefreshing(false);
     }
+    // const gotoSubscriptionPlan = () => {
+    //     props.navigation.navigate("SubscriptionPlan")
+    // }
 
     useEffect(() => {
         SetTrainingPlan();
@@ -88,31 +99,34 @@ const TrainingPersonaDetail = (props) => {
 
         }
         setIsLoading(true);
-        console.log("karan_basicdetails...", data);
+        // console.log("karan_basicdetails...", data);
         try {
             const response = await axios.post(`${API.SET_TRAINING}`, data, { headers: { "Authorization": ` ${Usertoken1}` } });
-            // console.log("Response_SetTrainingPlan::::", response.data.data);
+            console.log("Response_SetTrainingPlan::::", response.data);
 
             // console.log("SetTrainingPlan_data!!!>>>", response.data.message);
             if (response.data.status == 1) {
-                setIsLoading(false);
-                props.navigation.navigate("TrainingDetail")
-                // alert("Training update sucessfully")
 
-            } else if (response.data.status == 0) {
+                props.navigation.navigate("TrainingDetail")
+                // Alert.alert("","Training update sucessfully")
+
+            } else
+            //  if (response.data.status == 0) 
+            {
                 setFitnessData(response.data.data);
                 Usertrndata(response.data.data);
                 // alert("Training set allready");
-                setIsLoading(false);
+
             }
 
         }
         catch (error) {
-            // console.log("SUBSCRIPTION_error:", error.response.data.message);
-            Alert.alert("Something went wrong !", error.response.data.message);
-            setIsLoading(false);
-        }
+            Alert.alert("",  t('Check_internet_connection'))
+            console.log("SUBSCRIPTION_error:", error.response.data.message);
+            // Alert.alert("Something went wrong !", error.response.data.message);
 
+        }
+        setIsLoading(false);
     };
 
     const MycustomonShare = async () => {
@@ -156,12 +170,21 @@ const TrainingPersonaDetail = (props) => {
                 }}
                 BelliconononClick={() => { props.navigation.navigate("Notifications") }}
             />
+            <ScrollView nestedScrollEnabled={true}  
+                style={{ backgroundColor: 'white' }}
+                refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={onRefresh}
+                    />
+                  }
+                 >
+                {!isLoading ?
+                    (< View style={{ flex: 1 }} >
+                        <Divider color='#393939' width={1.2} />
 
-            {!isLoading ?
-                (< View style={{ paddingBottom: 80 }} >
-                    <Divider color='#393939' width={1.2} />
-                    <ScrollView>
-                        <View style={{ backgroundColor: '#262626', height: 180, borderBottomLeftRadius: 20, borderBottomRightRadius: 20, width: "100%" }}>
+
+                        {/* <View style={{ backgroundColor: '#262626', height: 180, borderBottomLeftRadius: 20, borderBottomRightRadius: 20, width: "100%" }}>
 
                             <Pages indicatorColor='#ffcc00' >
                                 <View style={{ marginTop: 20, height: 130, flexDirection: 'row', marginHorizontal: 20, borderRadius: 20 }}>
@@ -175,9 +198,9 @@ const TrainingPersonaDetail = (props) => {
                                             <Text style={{ textAlign: 'center', fontSize: 12, color: 'black', }}>Set Up Your Training Workout</Text>
                                         </View>
 
-                                        <View style={{ marginHorizontal: 20, flexDirection: 'row', height: 35, justifyContent: 'center' }}>
+                                        <View style={{ marginHorizontal: 20, flexDirection: 'row', height: 30, justifyContent: 'center' }}>
                                             <TouchableOpacity onPress={() => { }}>
-                                                <View style={{ borderWidth: 1, borderColor: '#ffcc00', justifyContent: 'center', width: 90, flex: 1, backgroundColor: 'white', borderRadius: 35 }}>
+                                                <View style={{ borderWidth: 1, borderColor: '#ffcc00', justifyContent: 'center', width: 90, flex: 1, backgroundColor: 'white', borderRadius: 50 }}>
                                                     <Text style={{ textAlign: 'center', fontSize: 8, color: '#ffcc00', }}>Save Detail</Text>
                                                 </View>
                                             </TouchableOpacity>
@@ -214,22 +237,25 @@ const TrainingPersonaDetail = (props) => {
                                 </View>
 
                             </Pages>
-                        </View>
+                        </View> */}
 
                         {/* Please Enter Your Basic Details */}
-                        <View style={{ paddingBottom: 30, width: "99.9%", flex: 1, justifyContent: "flex-start", alignItems: "flex-start" }}>
-                            <Text style={{ marginTop: 30, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000', fontWeight: "bold" }}>Please Enter Your Basic Details</Text>
 
-                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 12, color: '#000', }}>Select Gender</Text>
 
-                            <View style={{ marginHorizontal: 20, flexDirection: 'row', height: 40, marginTop: 20, justifyContent: "flex-start", alignItems: "center" }}>
+
+                        <View style={{ paddingBottom: 30, width: "100%", height: "100%", justifyContent: "flex-start", alignItems: "flex-start", paddingBottom: 10 }}>
+                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 17, color: '#000', fontWeight: "500" }}>{t('Please_Enter_Your_Basic_Details')}</Text>
+
+                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000', }}>{t('Select_Gender')}</Text>
+
+                            <View style={{ marginHorizontal: 20, flexDirection: 'row', height: 40, marginTop: 10, justifyContent: "flex-start", alignItems: "center" }}>
 
                                 <TouchableOpacity onPress={() => {
 
                                     setIsMale("Male")
                                 }}>
                                     <View style={{ borderWidth: 1, borderColor: isMale == 'Male' ? '#ffcc00' : '#bbbaba', justifyContent: 'center', width: 90, height: 40, flex: 1, backgroundColor: 'white', borderRadius: 35, alignItems: 'center', }}>
-                                        <Text style={{ textAlign: 'center', fontSize: 9, color: isMale == 'Male' ? '#ffcc00' : '#bbbaba', }}>Male</Text>
+                                        <Text style={{ textAlign: 'center', fontSize: 9, color: isMale == 'Male' ? '#ffcc00' : '#bbbaba', }}>{t('Male')}</Text>
                                     </View>
                                 </TouchableOpacity>
 
@@ -238,22 +264,22 @@ const TrainingPersonaDetail = (props) => {
                                     setIsMale('Female')
                                 }}>
                                     <View style={{ marginLeft: 10, borderWidth: 1, borderColor: isMale == 'Female' ? '#ffcc00' : '#bbbaba', justifyContent: 'center', width: 90, flex: 1, backgroundColor: 'white', borderRadius: 35 }}>
-                                        <Text style={{ textAlign: 'center', fontSize: 9, color: isMale == 'Female' ? '#ffcc00' : '#bbbaba', }}>Female</Text>
+                                        <Text style={{ textAlign: 'center', fontSize: 9, color: isMale == 'Female' ? '#ffcc00' : '#bbbaba', }}>{t('Female')}</Text>
                                     </View>
                                 </TouchableOpacity>
                             </View>
                             {
                                 isMale == "" && onsubmiterrormsg ?
-                                    <View style={{ justifyContent: "center", alignItems: "flex-start", marginTop: 15, paddingLeft: 30, }}>
+                                    <View style={{ justifyContent: "center", alignItems: "flex-start", marginTop: 10, paddingLeft: 30, }}>
                                         <Text style={{
                                             fontSize: 12,
                                             color: '#FF0D10',
 
-                                        }}>Please, select gender *</Text>
+                                        }}>{t('Select_Gender_msg')}</Text>
                                     </View>
                                     : <></>
                             }
-                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 12, color: '#000', }}>Fitness Goal</Text>
+                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000', }}>{t('Fitness_Goal')}</Text>
 
                             {/* <View style={{ height: 40, marginHorizontal: 20, marginTop: 20, borderColor: '#bbbaba', borderWidth: 1, borderRadius: 35, flexDirection: 'row', alignItems: 'center', justifyContent: "center" }}>
                                 <MenuField
@@ -270,35 +296,36 @@ const TrainingPersonaDetail = (props) => {
                                     }}
                                 />
                             </View> */}
-                            <View style={{ height: 50, marginHorizontal: 10, marginVertical: 20, width: WIDTH * 0.9 }}>
+                            <View style={{ height: 50, marginHorizontal: 10, marginVertical: 10, width: WIDTH * 0.9 }}>
                                 <DropDownPicker
                                     items={[
-                                        { label: 'Get out of comfort zone', value: 'Weight_Gain' },
-                                        { label: 'Lifting Weight', value: 'Lifting Weight' },
-                                        { label: 'Physical Strength', value: 'Physical Strength' },
-                                        { label: 'Pull-Up', value: 'Pull-Up' },
-                                        { label: 'Improve our immune system', value: 'Improve our immune system' }
+                                        { label: t('Weight_loss'), value: 'weight_loss' },
+                                        { label: t('Muscle_Gain'), value: 'muscle_gain' },
+                                        { label: t('Healthy'), value: 'healthy' },
+                                        { label: t('Toning'), value: 'toning' },
+                                        
 
                                     ]}
                                     listParentContainerStyle={{
                                         justifyContent: "center",
-                                        alignItems: "center", paddingLeft: 25
+                                        alignItems: "center", paddingLeft: 22
                                     }}
                                     listParentLabelStyle={{
-                                        fontWeight: "600", fontSize: 16
+                                        fontWeight: "400", fontSize: 15, 
                                     }}
 
                                     backgroundColor='white'
                                     // loading={loading}
-                                    placeholder={value == "" ? "Goal Name" : value}
+                                    placeholder={value == "" ? t('Goal_Name') : value}
                                     containerStyle={{ height: 70 }}
                                     dropDownDirection="BOTTOM"
+                                    bottomOffset={100}
                                     // defaultValue={changeCountry}
                                     itemStyle={{ justifyContent: 'flex-start', }}
                                     textStyle={{
                                         fontSize: 14
                                     }}
-                                    listMode="MODAL"
+                                    // listMode="MODAL"
                                     open={open}
                                     setOpen={setOpen}
                                     value={value}
@@ -306,35 +333,71 @@ const TrainingPersonaDetail = (props) => {
                                     scrollViewProps={{
                                         decelerationRate: "medium", ScrollView: "#ffcc00"
                                     }}
-                                    onChangeText={(item) => setValue(item)}
+                                    onChangeValue={(values) => {
+                                        // console.log('djfnjdjfd', 'copyDdownValue:- ', copyDdownValue, 'Wvalue:- ', Wvalue);
+                                        // console.log('if', copyDdownValue != '' , copyDdownValue != Wvalue , copyDdownValue != null);
+                                        if (values == '') {
+
+                                            // console.log('empty');
+
+                                            return
+                                        }
+
+                                        if (values == null) {
+                                            // console.log('null');
+                                            return
+                                        }
+
+                                        if (copyDdownValue == values) {
+                                            // console.log('Wvalue');
+                                            return
+                                        }
+
+                                        setcopyDdownValue(values)
+
+                                        console.log('Else')
+                                        setValue(values)
+
+                                    }}
+                                    // onChangeText={(item) => setValue(item)}
                                     defaultValue={null}
                                     dropDownContainerStyle={{
-                                        // backgroundColor:"red",
-                                        borderColor: '#8F93A0',
-                                        color: '#8F93A0',
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        fontSize: 16,
-                                        borderWidth: 1,
-                                        borderRadius: 10,
-                                        shadowColor: '#000000',
-                                        shadowOffset: {
-                                            width: 0,
-                                            height: 3
-                                        },
-                                        shadowRadius: 5,
-                                        shadowOpacity: 1.0,
-                                        elevation: 5,
+                                        backgroundColor: 'white',
                                         zIndex: 999,
+                                        elevation: 10,
+                                        borderColor: '#8F93A0',
+                                        borderRadius: 15,
+                                        marginTop: 6,
+                                        // backgroundColor:"red",
+                                        // borderColor: '#8F93A0',
+                                        // color: '#8F93A0',
+                                        // alignItems: "center",
+                                        // justifyContent: "center",
+                                        // fontSize: 16,
+                                        // borderWidth: 1,
+                                        // borderRadius: 10,
+                                        // shadowColor: '#000000',
+                                        // shadowOffset: {
+                                        //     width: 0,
+                                        //     height: 3
+                                        // },
+                                        // shadowRadius: 5,
+                                        // shadowOpacity: 1.0,
+                                        // elevation: 5,
+                                        // zIndex: 999,
 
                                     }}
                                     style={{
-                                        borderColor: 'white', backgroundColor: 'white', borderRadius: 25, shadowColor: '#000',
+                                        borderColor: 'white',
+                                        backgroundColor: 'white',
+                                        borderRadius: 25, shadowColor: '#000',
                                         shadowOffset: { width: 0, height: 2 },
                                         shadowOpacity: 0.2,
                                         elevation: 2,
                                         alignItems: "center"
-                                        , justifyContent: "center", zIndex: 3, paddingLeft: 20
+                                        , justifyContent: "center", 
+                                        zIndex: 3, 
+                                        paddingLeft: 20
                                     }}
                                 />
 
@@ -346,20 +409,20 @@ const TrainingPersonaDetail = (props) => {
                                             fontSize: 12,
                                             color: '#FF0D10',
 
-                                        }}>Please, select fitness goal *</Text>
+                                        }}>{t('Select_Fitness_Goal_msg')}</Text>
                                     </View>
                                     : <></>
                             }
-                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 12, color: '#000', }}>Current Fitness Level</Text>
+                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000', zIndex: -999 }}>{t('Current_Fitness_Level')}</Text>
 
-                            <View style={{ marginHorizontal: 20, flexDirection: 'row', height: 40, marginTop: 20, justifyContent: "flex-start", alignItems: "center" }}>
+                            <View style={{ marginHorizontal: 20, flexDirection: 'row', height: 40, marginTop: 10, justifyContent: "flex-start", alignItems: "center",zIndex: -999  }}>
 
                                 <TouchableOpacity onPress={() => {
 
                                     setCurrentLevel('Beginners')
                                 }}>
                                     <View style={{ borderWidth: 1, borderColor: isCurrentlevel == 'Beginners' ? '#ffcc00' : '#bbbaba', justifyContent: 'center', width: 90, flex: 1, backgroundColor: 'white', borderRadius: 35, alignItems: 'center', }}>
-                                        <Text style={{ textAlign: 'center', fontSize: 9, color: isCurrentlevel == 'Beginners' ? '#ffcc00' : '#bbbaba', }}>Beginners</Text>
+                                        <Text style={{ textAlign: 'center', fontSize: 9, color: isCurrentlevel == 'Beginners' ? '#ffcc00' : '#bbbaba', }}>{t('Beginners')}</Text>
                                     </View>
                                 </TouchableOpacity>
 
@@ -368,7 +431,7 @@ const TrainingPersonaDetail = (props) => {
                                     setCurrentLevel('Average')
                                 }}>
                                     <View style={{ marginLeft: 10, borderWidth: 1, borderColor: isCurrentlevel != 'Average' ? '#bbbaba' : '#ffcc00', justifyContent: 'center', width: 90, flex: 1, backgroundColor: 'white', borderRadius: 35 }}>
-                                        <Text style={{ textAlign: 'center', fontSize: 9, color: isCurrentlevel != 'Average' ? '#bbbaba' : '#ffcc00', }}>Average</Text>
+                                        <Text style={{ textAlign: 'center', fontSize: 9, color: isCurrentlevel != 'Average' ? '#bbbaba' : '#ffcc00', }}>{t('Average')}</Text>
                                     </View>
                                 </TouchableOpacity>
 
@@ -377,33 +440,33 @@ const TrainingPersonaDetail = (props) => {
                                     setCurrentLevel('Advance')
                                 }}>
                                     <View style={{ marginLeft: 10, borderWidth: 1, borderColor: isCurrentlevel != 'Advance' ? '#bbbaba' : '#ffcc00', justifyContent: 'center', width: 90, flex: 1, backgroundColor: 'white', borderRadius: 35 }}>
-                                        <Text style={{ textAlign: 'center', fontSize: 9, color: isCurrentlevel != 'Advance' ? '#bbbaba' : '#ffcc00', }}>Advance</Text>
+                                        <Text style={{ textAlign: 'center', fontSize: 9, color: isCurrentlevel != 'Advance' ? '#bbbaba' : '#ffcc00', }}>{t('Advance')}</Text>
                                     </View>
                                 </TouchableOpacity>
 
                             </View>
                             {
                                 isCurrentlevel == "" && onsubmiterrormsg ?
-                                    <View style={{ justifyContent: "center", alignItems: "flex-start", paddingLeft: 30, marginTop: 15 }}>
+                                    <View style={{ justifyContent: "center", alignItems: "flex-start", paddingLeft: 30, marginTop: 10 }}>
                                         <Text style={{
                                             fontSize: 12,
                                             color: '#FF0D10',
 
-                                        }}>Please , select surrent fitness level *</Text>
+                                        }}>{t('Select_Current_Fitness_Level_msg')}</Text>
                                     </View>
-                                    : <></>
+                                    : null
                             }
-                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 12, color: '#000', }}>Date of Birth</Text>
+                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000',zIndex: -999  }}>{t('Date_of_birth')}</Text>
 
-                            <View style={{ marginHorizontal: 20, flexDirection: 'row', height: 40, marginTop: 20, justifyContent: 'flex-start', alignItems: "center", width: "100%", flex: 1 }}>
+                            <View style={{ marginHorizontal: 20, flexDirection: 'row', height: 40, marginTop: 10, justifyContent: 'flex-start', alignItems: "center", width: "100%", flex: 1,zIndex: -999  }}>
 
                                 <View style={{ borderWidth: 1, borderColor: '#bbbaba', justifyContent: 'center', width: 70, backgroundColor: 'white', borderRadius: 35, alignItems: 'center' }}>
                                     <TextInput
-                                        style={{ textAlign: 'center', fontSize: 15, color: 'black', justifyContent: 'center', alignItems: 'center' }}
+                                        style={{ textAlign: 'center', fontSize: 15, color: 'black', justifyContent: 'center', alignItems: 'center' ,height:'100%'}}
                                         keyboardType={'number-pad'}
                                         maxLength={4}
                                         placeholderTextColor="#bbbaba"
-                                        placeholder="Year"
+                                        placeholder={t('Year')}
                                         onChangeText={(Year) => setYear(Year)}
                                         value={Year}
                                     />
@@ -411,17 +474,17 @@ const TrainingPersonaDetail = (props) => {
 
                                 <View style={{ marginLeft: 10, borderWidth: 1, borderColor: '#bbbaba', justifyContent: 'center', width: 70, backgroundColor: 'white', borderRadius: 35 }}>
                                     <TextInput
-                                        style={{ textAlign: 'center', fontSize: 15, color: 'black', justifyContent: 'center', alignItems: 'center', }}
+                                        style={{ textAlign: 'center', fontSize: 15, color: 'black', justifyContent: 'center', alignItems: 'center',height:'100%' }}
                                         onChangeText={(Month) => {
-                                            // if (Month > 12) {
-                                            //     Alert.alert('', 'Please enter valid month!')
-                                            //     return
-                                            // }
+                                            if (Month > 12) {
+                                                Alert.alert('', 'Please enter valid month!')
+                                                return
+                                            }
                                             setMonth(Month)
                                         }}
                                         value={Month}
 
-                                        placeholder="Month"
+                                        placeholder={t('Month')}
                                         placeholderTextColor="#bbbaba"
                                         keyboardType={'number-pad'}
                                         maxLength={2}
@@ -429,7 +492,7 @@ const TrainingPersonaDetail = (props) => {
                                 </View>
                                 <View style={{ marginLeft: 10, borderWidth: 1, borderColor: '#bbbaba', justifyContent: 'center', width: 70, borderRadius: 35 }}>
                                     <TextInput
-                                        style={{ textAlign: 'center', fontSize: 15, color: 'black', justifyContent: 'center', alignItems: 'center' }}
+                                        style={{ textAlign: 'center', fontSize: 15, color: 'black', justifyContent: 'center', alignItems: 'center',height:'100%' }}
                                         onChangeText={(Date) => {
                                             if (Date > 31) {
                                                 Alert.alert('', 'Please enter valid date !')
@@ -446,10 +509,21 @@ const TrainingPersonaDetail = (props) => {
                                 </View>
 
                             </View>
+                            {
+                                Date == "" && onsubmiterrormsg ?
+                                    <View style={{ justifyContent: "center", alignItems: "flex-start", paddingLeft: 30, marginTop: 10 }}>
+                                        <Text style={{
+                                            fontSize: 12,
+                                            color: '#FF0D10',
 
-                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 12, color: '#000', }}>Weight</Text>
+                                        }}>{t('Enter_Your_DOB_msg')}</Text>
+                                    </View>
+                                    : null
+                            }
 
-                            <View style={{ width: "80%", flexDirection: 'row', height: 40, marginTop: 20, marginLeft: 20, justifyContent: "space-between", }}>
+                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000',zIndex: -999  }}>{t('Weight')}</Text>
+
+                            <View style={{ width: "80%", flexDirection: 'row', height: 40, marginTop: 10, marginLeft: 20, justifyContent: "space-between", }}>
                                 {
                                     weightkg === "kg" ?
                                         (<View style={{ borderWidth: 1, borderColor: '#bbbaba', height: 40, borderRadius: 35, flexDirection: 'row', alignItems: "center", width: 90 }}>
@@ -476,7 +550,7 @@ const TrainingPersonaDetail = (props) => {
                                         (<View style={{ borderWidth: 1, borderColor: '#bbbaba', height: 40, borderRadius: 35, flexDirection: 'row', alignItems: "center", width: 90 }}>
 
                                             <TextInput
-                                                style={{ fontSize: 15, color: 'black', marginLeft: 10, height: 40, width: 65, }} 
+                                                style={{ fontSize: 15, color: 'black', marginLeft: 10, height: 40, width: 65, }}
                                                 placeholder="Lb"
                                                 placeholderTextColor="#bbbaba"
                                                 keyboardType={'number-pad'}
@@ -518,98 +592,132 @@ const TrainingPersonaDetail = (props) => {
                                     </TouchableOpacity>
                                 </View>
                             </View>
+                            {
+                                weightkg == "" && onsubmiterrormsg ?
+                                    <View style={{ justifyContent: "center", alignItems: "flex-start", paddingLeft: 30, marginTop: 10 }}>
+                                        <Text style={{
+                                            fontSize: 12,
+                                            color: '#FF0D10',
 
-                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 12, color: '#000', }}>Heights</Text>
+                                        }}>{t('Enter_Weight_KGLB_msg')}</Text>
+                                    </View>
+                                    : null
+                            }
+                            <Text style={{ marginTop: 20, marginLeft: 20, textAlign: 'left', fontSize: 14, color: '#000', }}>{t('Height')}</Text>
+                            <KeyboardAvoidingView
+                                style={{ flex: 1 }}
+                                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+                                <>
+                                    <View style={{ flexDirection: 'column', width: "100%" }}>
+                                        <View style={{ width: "80%", flexDirection: 'row', height: 40, marginTop: 10, marginLeft: 20, justifyContent: "space-between", }}>
 
-                            <View style={{ width: "80%", flexDirection: 'row', height: 40, marginTop: 20, marginLeft: 20, justifyContent: "space-between", }}>
+                                            {
+                                                selectheight === "cm" ?
+                                                    (<View style={{ borderWidth: 1, borderColor: '#bbbaba', height: 40, borderRadius: 35, flexDirection: 'row', alignItems: "center", width: 90 }}>
+                                                        <TextInput
+                                                            style={{ fontSize: 15, color: 'black', marginLeft: 10, height: 40, width: 110 }} placeholder="170 CM"
+                                                            maxLength={3}
+                                                            placeholderTextColor="#bbbaba"
+                                                            keyboardType={'number-pad'}
+                                                            onChangeText={(text) => setHeight(text)}
+                                                            value={Height}
+                                                        >
 
-                                {
-                                    selectheight === "cm" ?
-                                        (<View style={{ borderWidth: 1, borderColor: '#bbbaba', height: 40, borderRadius: 35, flexDirection: 'row', alignItems: "center", width: 90 }}>
-                                            <TextInput
-                                                style={{ fontSize: 15, color: 'black', marginLeft: 10, height: 40, width: 110 }} placeholder="170 CM"
-                                                maxLength={3}
-                                                placeholderTextColor="#bbbaba"
-                                                keyboardType={'number-pad'}
-                                                onChangeText={(text) => setHeight(text)}
-                                                value={Height}
-                                            >
+                                                        </TextInput>
 
-                                            </TextInput>
+                                                    </View>)
+                                                    :
+                                                    (<View style={{ width: "60%", flexDirection: 'row', height: 40, justifyContent: "space-between", }}>
+                                                        <View style={{ borderWidth: 1, borderColor: '#bbbaba', height: 40, borderRadius: 35, flexDirection: 'row', alignItems: "center", width: 90 }}>
+                                                            <TextInput
+                                                                style={{ fontSize: 15, color: 'black', marginLeft: 10, height: 40, width: 110 }} placeholder="5 FT"
+                                                                placeholderTextColor="#bbbaba"
+                                                                keyboardType={'number-pad'}
+                                                                maxLength={1}
+                                                                onChangeText={(values) => setHeightfeet(values)}
+                                                                value={heightfeet}
+                                                            >
 
-                                        </View>)
-                                        :
-                                        (<View style={{ width: "60%", flexDirection: 'row', height: 40, justifyContent: "space-between", }}>
-                                            <View style={{ borderWidth: 1, borderColor: '#bbbaba', height: 40, borderRadius: 35, flexDirection: 'row', alignItems: "center", width: 90 }}>
-                                                <TextInput
-                                                    style={{ fontSize: 15, color: 'black', marginLeft: 10, height: 40, width: 110 }} placeholder="5 FT"
-                                                    placeholderTextColor="#bbbaba"
-                                                    keyboardType={'number-pad'}
-                                                    maxLength={1}
-                                                    onChangeText={(values) => setHeightfeet(values)}
-                                                    value={heightfeet}
-                                                >
+                                                            </TextInput>
 
-                                                </TextInput>
+                                                        </View>
+                                                        <View style={{ borderWidth: 1, borderColor: '#bbbaba', height: 40, borderRadius: 35, flexDirection: 'row', alignItems: "center", width: 90 }}>
+                                                            <TextInput
+                                                                style={{ fontSize: 15, color: 'black', marginLeft: 10, height: 40, width: 110 }} placeholder="5 IN"
+                                                                placeholderTextColor="#bbbaba"
+                                                                keyboardType={'number-pad'}
+                                                                maxLength={2}
+                                                                onChangeText={(values) => setHeightInch(values)}
+                                                                value={heightinch}
+                                                            >
 
+                                                            </TextInput>
+
+
+                                                        </View>
+                                                    </View>)
+                                            }
+
+                                            <View style={{ marginHorizontal: 1, flexDirection: 'row', height: 40, justifyContent: "flex-end", alignItems: "flex-end", }}>
+
+                                                <TouchableOpacity onPress={() => {
+
+                                                    setselectheight("cm")
+                                                }}>
+                                                    <View style={{ borderWidth: 1, borderColor: selectheight == 'cm' ? '#ffcc00' : '#bbbaba', justifyContent: 'center', width: 50, height: 40, flex: 1, backgroundColor: 'white', borderRadius: 15, alignItems: 'center', }}>
+                                                        <Text style={{ textAlign: 'center', fontSize: 9, color: selectheight == 'cm' ? '#ffcc00' : '#bbbaba', }}>CM</Text>
+                                                    </View>
+                                                </TouchableOpacity>
+
+                                                <TouchableOpacity onPress={() => {
+
+                                                    setselectheight('in')
+                                                }}>
+                                                    <View style={{ marginLeft: 10, borderWidth: 1, borderColor: selectheight == 'in' ? '#ffcc00' : '#bbbaba', justifyContent: 'center', width: 50, flex: 1, backgroundColor: 'white', borderRadius: 15 }}>
+                                                        <Text style={{ textAlign: 'center', fontSize: 9, color: selectheight == 'in' ? '#ffcc00' : '#bbbaba', }}>IN</Text>
+                                                    </View>
+                                                </TouchableOpacity>
                                             </View>
-                                            <View style={{ borderWidth: 1, borderColor: '#bbbaba', height: 40, borderRadius: 35, flexDirection: 'row', alignItems: "center", width: 90 }}>
-                                                <TextInput
-                                                    style={{ fontSize: 15, color: 'black', marginLeft: 10, height: 40, width: 110 }} placeholder="5 IN"
-                                                    placeholderTextColor="#bbbaba"
-                                                    keyboardType={'number-pad'}
-                                                    maxLength={2}
-                                                    onChangeText={(values) => setHeightInch(values)}
-                                                    value={heightinch}
-                                                >
+                                        </View>
 
-                                                </TextInput>
+                                        {
+                                            selectheight == "" && onsubmiterrormsg ?
+                                                <View style={{ justifyContent: "center", alignItems: "flex-start", paddingLeft: 30, marginTop: 10 }}>
+                                                    <Text style={{
+                                                        fontSize: 12,
+                                                        color: '#FF0D10',
 
+                                                    }}>{t('Enter_Height_CM_msg')}</Text>
+                                                </View>
+                                                : null
 
+                                        }
+                                    </View>
+                                    <View style={{ flexDirection: 'row', height: 34, justifyContent: 'center', width: "100%", alignItems: "center", marginTop: 50,marginBottom:90 }}>
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                SetTrainingPlan(),
+                                                    steOnsubmiterrormsg(true);
+                                            }}>
+                                            <View style={{ borderWidth: 1, borderColor: '#ffcc00', justifyContent: 'center', alignItems: "center", width: 130, height: 36, backgroundColor: '#ffcc00', borderRadius: 35 }}>
+                                                <Text style={{ textAlign: 'center', fontSize: 12, color: 'white', }}>{t('Save_Detail')}</Text>
                                             </View>
-                                        </View>)
-                                }
-
-                                <View style={{ marginHorizontal: 1, flexDirection: 'row', height: 40, justifyContent: "flex-end", alignItems: "flex-end", }}>
-
-                                    <TouchableOpacity onPress={() => {
-
-                                        setselectheight("cm")
-                                    }}>
-                                        <View style={{ borderWidth: 1, borderColor: selectheight == 'cm' ? '#ffcc00' : '#bbbaba', justifyContent: 'center', width: 50, height: 40, flex: 1, backgroundColor: 'white', borderRadius: 15, alignItems: 'center', }}>
-                                            <Text style={{ textAlign: 'center', fontSize: 9, color: selectheight == 'cm' ? '#ffcc00' : '#bbbaba', }}>CM</Text>
-                                        </View>
-                                    </TouchableOpacity>
-
-                                    <TouchableOpacity onPress={() => {
-
-                                        setselectheight('in')
-                                    }}>
-                                        <View style={{ marginLeft: 10, borderWidth: 1, borderColor: selectheight == 'in' ? '#ffcc00' : '#bbbaba', justifyContent: 'center', width: 50, flex: 1, backgroundColor: 'white', borderRadius: 15 }}>
-                                            <Text style={{ textAlign: 'center', fontSize: 9, color: selectheight == 'in' ? '#ffcc00' : '#bbbaba', }}>IN</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
+                                        </TouchableOpacity>
+                                    </View>
+                                </>
+                            </KeyboardAvoidingView>
                         </View>
 
-                        <View style={{ flexDirection: 'row', height: 45, justifyContent: 'center', width: "100%", alignItems: "center", flex: 1 }}>
-                            <TouchableOpacity
-                                onPress={() => {
-                                    SetTrainingPlan(),
-                                        steOnsubmiterrormsg(true);
-                                }}>
-                                <View style={{ borderWidth: 1, borderColor: '#ffcc00', justifyContent: 'center', alignItems: "center", width: 120, height: 45, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
-                                    <Text style={{ textAlign: 'center', fontSize: 12, color: 'white', }}>Save Detail</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    </ScrollView>
-                </View>)
-                :
-                (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                    <ActivityIndicator size="large" color="#ffcc00" />
-                </View>)}
+
+
+                        {/* </KeyboardAvoidingView> */}
+
+
+
+                    </View>)
+                    :
+                    (<CustomLoader showLoader={isLoading} />)}
+            </ScrollView>
         </SafeAreaView>
     );
 }

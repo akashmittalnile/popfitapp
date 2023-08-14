@@ -3,21 +3,26 @@ import {
   View,
   FlatList,
   Text,
+  KeyboardAvoidingView,
+  Platform,
   TouchableOpacity,
   StyleSheet,
   TextInput,
   Image,
   Alert,
   Modal, SafeAreaView, Dimensions,
-  ActivityIndicator
+  ScrollView,
+  RefreshControl
 } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+// import { ScrollView } from 'react-native-gesture-handler';
 import { DrawerActions } from '@react-navigation/native';
 import { API } from '../../Routes/Urls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
-import { Divider } from 'react-native-elements';
+import { useTranslation } from 'react-i18next';
+import { async } from 'regenerator-runtime';
+import CustomLoader from '../../Routes/CustomLoader';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -31,71 +36,92 @@ const Shop = (props) => {
   const [CartAddedPopUp, setCartAddedPopUp] = useState(false);
   const [shopitems, setshopitems] = useState([]);
 
-  const openDrawer = () => props.navigation.dispatch(DrawerActions.openDrawer());
-
+  // const openDrawer = () => props.navigation.dispatch(DrawerActions.openDrawer());
+  const { t } = useTranslation();
   const gotoShippingDetail = (item) => {
+    // console.log("filter product id:", item);
+    // const Token = await AsyncStorage.getItem("authToken")
+    // if (Token == null) {
+    //   Alert.alert('Shop', 'Login First!')
+    // } else if (Token != null) {
     props.navigation.navigate('ProductDetail', {
       ITEM: item
-    });
-  };
-  const gotoshippingdetails = () => {
-    props.navigation.navigate('ShippingDetail');
-  };
+    })
+    // }
 
+  };
+  // const gotoshippingdetails = () => {
+  //   props.navigation.navigate('ShippingDetail');
+  // };
+
+  const [refreshing, setrefreshing] = useState(false)
+  const onRefresh = () => {
+    setrefreshing(true)
+
+    StoresProductget();
+    setrefreshing(false)
+  }
   useEffect(() => {
+    StoresProductget();
 
-    const unsubscribe = props.navigation.addListener('focus', () => {
-      StoresProductget();
-
-    });
-    return unsubscribe;
 
   }, []);
 
 
   const ShopFilter = async () => {
     const Token = await AsyncStorage.getItem("authToken");
-    console.log("SHOP filter...........>>>", ischecked);
+    // console.log("SHOP filter...........>>>", ischecked);
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.SHOP_FILTER}`, { "search": ischecked ,"shop_id": '' }, { headers: { "Authorization": ` ${Token}` } });
-      console.log(":::::::::Shop_FIlter>>>", response.data.data);
-      console.log("SHOP_Status", response.data.status);
+      const response = await axios.post(`${API.SHOP_FILTER}`, { "search": ischecked, "shop_id": '', "category_id": '' },
+        { headers: { "Authorization": ` ${Token}` } }
+      );
+      // console.log(":::::::::Shop_FIlter>>>", response.data.data);
+      // console.log("SHOP_Status", response.data.status);
       if (response.data.status == 1) {
         setshopitems(response.data.data)
-        setIsLoading(false);
+
         setFilterPopUp(false)
 
       } else {
-        Alert.alert(" If-else status 0 !");
-        setIsLoading(false);
+        setFilterPopUp(false);
+        Alert.alert('', t('Error_msg'));
       }
 
     }
     catch (error) {
-      // console.log("......error.........", error.response.data.message);
-      Alert.alert(" Error in filter api catch part!");
-      setIsLoading(false);
+      Alert.alert("", t('Check_internet_connection'))
+      // Alert.alert('', 'Something went wrong please exit the app and try again');
+      // Alert.alert("filter",error.response.data.message);
     }
-
+    setIsLoading(false)
   };
   const StoresProductget = async () => {
     const Token = await AsyncStorage.getItem("authToken");
+    // console.log("in SHOP Check token:", Token);
 
     setIsLoading(true);
     try {
-      const response = await axios.get(`${API.SHOP_MAIN}`, { headers: { "Authorization": ` ${Token}` } });
+      const response = await axios.get(`${API.SHOP_MAIN}`,
+        { headers: { "Authorization": ` ${Token}` } }
+      );
       // console.log(":::::::::Shop_Store_Response>>>", response.data.best_seller);
       // console.log("status _SHOP", response.data.status);
-      setshopitems(response.data.best_seller)
-      setIsLoading(false);
+      if (response.data.status == 1) {
+        setshopitems(response.data.best_seller)
+
+      }
+      else {
+
+        Alert.alert('', t('Error_msg'));
+      }
+
     }
     catch (error) {
-      // console.log("......error.........", error.response.data.message);
-      Alert.alert("Please login First !!!!")
-      setIsLoading(false);
-    }
+      Alert.alert("", t('Check_internet_connection'))
 
+    }
+    setIsLoading(false)
   };
   return (
     <SafeAreaView style={{
@@ -103,7 +129,7 @@ const Shop = (props) => {
       width: WIDTH,
       height: HEIGHT, flexGrow: 1
     }} >
-       <Headers
+      <Headers
         Drawericon={{
           visible: true,
         }}
@@ -183,23 +209,29 @@ const Shop = (props) => {
               </TouchableOpacity>
             </View>
       </View> */}
-     
+
       {/* <Divider color="#393939" width={1.2} /> */}
       {!isLoading ?
-        (<ScrollView >
+        (<ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          } >
 
-          <View style={{ height: 60, flexDirection: 'row', flex: 1, justifyContent: "flex-start", alignItems: "flex-start", width: "100%" }}>
-            <View style={{ justifyContent: "center", alignItems: "center", flex: 0.3, }}>
+          <View style={{ height: 50, flexDirection: 'row', flex: 1, justifyContent: "flex-start", alignItems: "flex-start", width: "100%" }}>
+            <View style={{ justifyContent: "center", alignItems: "flex-start", flex: 0.4, height: 50, marginLeft: 15, }}>
               <Text
                 style={{
-                  // marginLeft: 1,
+
                   marginTop: 20,
                   textAlign: 'left',
-                  fontSize: 18,
+                  fontSize: 17,
                   color: 'black',
-                  fontWeight: "bold"
+                  fontWeight: "500"
                 }}>
-                Best Seller
+                {t('Shop')}
               </Text>
             </View>
 
@@ -277,111 +309,105 @@ const Shop = (props) => {
 
           <FlatList
             vertical
-            style={{ margin: 10 }}
+            showsHorizontalScrollIndicator={true}
+            style={{ margin: 0, paddingBottom: 10 }}
             numColumns={2}
-            // columnWrapperStyle={{
-            //   flex: 1,
-            //   justifyContent: "space-around"
-            // }}
 
+            columnWrapperStyle={{
+              flex: 1,
+              // justifyContent: "space-around"
+            }}
+            keyExtractor={(item, index) => String(index)}
             data={shopitems}
-            renderItem={({ item }) => (
-
-              <TouchableOpacity
-                onPress={() => { gotoShippingDetail(item) }}
-                style={{
-                  marginBottom: 6,
-                  backgroundColor: '#f7f7f7',
-                  height: 200,
-                  width: WIDTH * 0.45,
-                  marginTop: 10,
-                  borderRadius: 25,
-                  alignItems: 'center',
-                  justifyContent: "center",
-                  marginHorizontal: 6,
-                  shadowColor: '#000000',
-                  shadowOffset: {
-                    width: 0,
-                    height: 3
-                  },
-                  shadowRadius: 5,
-                  shadowOpacity: 1.0,
-                  elevation: 5,
-                  zIndex: 999,
-
-
-                }}>
-
-                <View
+            renderItem={({ item, index }) => {
+              return (
+                <TouchableOpacity onPress={() => { gotoShippingDetail(item) }}
                   style={{
+                    marginBottom: 5,
+                    backgroundColor: '#f7f7f7',
+                    height: 200,
                     width: WIDTH * 0.45,
-                    height: 155,
-                    borderTopLeftRadius: 20,
-                    borderTopRightRadius: 20,
-                    backgroundColor: 'white',
+                    marginTop: 15,
+                    borderRadius: 20,
+                    alignItems: 'center',
+                    justifyContent: "center",
+                    marginHorizontal: 10,
+                    shadowColor: '#000000',
+                    shadowRadius: 5,
+                    shadowOpacity: 0.3,
+                    elevation: 5,
+                    zIndex: 999,
                   }}>
-                  <Image
-                    source={{ uri: item?.image ? item?.image : item?.product_image}}
-                    resizeMode="contain"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      borderTopLeftRadius: 20,
-                      borderTopRightRadius: 20,
-                      alignSelf: 'center',
-                    }}
-                  />
-                </View>
-                <View
-                  style={{
-                    width: WIDTH * 0.45, flexDirection: 'column', justifyContent: "center", alignItems: 'stretch', height: 45, backgroundColor: '#fceeb5', borderBottomRightRadius: 20, borderBottomLeftRadius: 20
-                  }}>
-                  <Text
-                    style={{
-                      marginLeft: 16,
-                      fontSize: 12,
-                      color: 'black', fontWeight: "bold"
-
-                    }}>
-                    {item?.name?.slice(0, 15) + '...' ? item?.name?.slice(0, 15) + '...' :item?.product_name?.slice(0, 15) + '...'}
-                  </Text>
 
                   <View
                     style={{
-                      marginLeft: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: -3,
+                      width: WIDTH * 0.45,
+                      height: 155,
+                      borderTopLeftRadius: 20,
+                      borderTopRightRadius: 20,
+                      backgroundColor: 'black',
                     }}>
-
+                    <Image
+                      source={{ uri: item?.image != "" ? `${item?.image}` : 'https://dev.pop-fiit.com/images/logo.png' }}
+                      resizeMode="stretch"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        borderTopLeftRadius: 20,
+                        borderTopRightRadius: 20,
+                        alignSelf: 'center',
+                      }}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      width: WIDTH * 0.45, flexDirection: 'column', justifyContent: "center", alignItems: 'stretch', height: 45, backgroundColor: '#fceeb5', borderBottomRightRadius: 20, borderBottomLeftRadius: 20
+                    }}>
                     <Text
                       style={{
-                        fontSize: 12,
-                        color: 'black', fontWeight: "bold"
+                        marginLeft: 15,
+                        fontSize: 14,
+                        color: 'black', fontWeight: "500"
 
-                      }}>$ {item?.price ? item?.price :item?.product_price}
+                      }}>
+                      {item?.name != null ? item?.name?.slice(0, 15) : item?.product_name?.slice(0, 15)}
                     </Text>
-
-
 
                     <View
                       style={{
-                        alignItems: 'center', justifyContent: 'center', marginRight: 6, width: 30, height: 30, borderRadius: 20 / 2, backgroundColor: '#ffcc00', bottom: 6
+                        marginLeft: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: -3,
                       }}>
-                      <Image
-                        resizeMode="contain"
+
+                      <Text
                         style={{
-                          width: 15,
-                          height: 20,
-                          alignSelf: 'center',
-                        }}
-                        source={require('../assets/bag1.png')}
-                      />
+                          fontSize: 12,
+                          color: 'black', fontWeight: "500"
+
+                        }}>{item?.price != null ? item?.price : item?.product_price}
+                      </Text>
+
+                      <View
+                        style={{
+                          alignItems: 'center', justifyContent: 'center', marginRight: 6, width: 30, height: 30, borderRadius: 20 / 2, backgroundColor: '#ffcc00', bottom: 6
+                        }}>
+                        <Image
+                          resizeMode="contain"
+                          style={{
+                            width: 15,
+                            height: 20,
+                            alignSelf: 'center',
+                          }}
+                          source={require('../assets/bag1.png')}
+                        />
+                      </View>
+
+
                     </View>
-
-
                   </View>
-                </View>
-              </TouchableOpacity>
-
-            )}
+                </TouchableOpacity>
+              )
+            }
+            }
           />
           {/* <Text
           style={{
@@ -466,15 +492,19 @@ const Shop = (props) => {
               transparent={true}
               visible={FilterPopup}
               onRequestClose={() => {
-                setFilterPopUp(false);
+                setFilterPopUp(false)
               }}>
+
               <View
                 style={{
                   flex: 1,
-                  justifyContent: 'flex-end',
-                  alignItems: 'center',
+                  // justifyContent: 'flex-end',
+                  // alignItems: 'center',
                   backgroundColor: 'rgba(140, 141, 142, 0.7)',
                 }}>
+                <TouchableOpacity onPress={() => setFilterPopUp(false)}
+                  style={{ flex: 1, }}
+                />
                 <View
                   style={{
                     // margin: 10,
@@ -482,7 +512,7 @@ const Shop = (props) => {
                     borderRadius: 20,
                     // paddingTop: 20,
                     width: "100%",
-                    height: "35%",
+                    height: 220,
                     // height: "60%",
                     justifyContent: "center",
                     alignItems: 'center',
@@ -497,11 +527,12 @@ const Shop = (props) => {
                   }}>
                   <View
                     style={{
-                      backgroundColor: 'white',
-                      // height: 480,
-                      height: "100%",
-                      width: "99%",
+                      // backgroundColor: 'red',
+                      height: 220,
+                      // height: "100%",
+                      width: "100%",
                       // marginHorizontal: 20,
+                      // justifyContent: "center",
                       alignItems: 'center',
                       borderRadius: 20,
                       flexDirection: 'column',
@@ -540,7 +571,7 @@ const Shop = (props) => {
 
                           marginTop: 2,
                         }}>
-                        Filter
+                        {t('Filter')}
                       </Text>
                     </View>
 
@@ -550,6 +581,7 @@ const Shop = (props) => {
                         height: 60,
                         flexDirection: 'row',
                         marginTop: 30,
+                        justifyContent: 'center'
                       }}>
                       <View
                         style={{
@@ -586,12 +618,13 @@ const Shop = (props) => {
 
                               <Text
                                 style={{
+                                  fontWeight: "500",
                                   textAlign: 'left',
-                                  fontSize: 9,
+                                  fontSize: 11,
                                   color: ischecked == 'high_to_low' ? '#ffcc00' : '#8F93A0'
 
                                 }}>
-                                Higher to Lower Price
+                                {t('Higher_to_Lower_Price')}
                               </Text>
                             </View>
                           </View>
@@ -633,12 +666,13 @@ const Shop = (props) => {
 
                               <Text
                                 style={{
+                                  fontWeight: "500",
                                   textAlign: 'left',
-                                  fontSize: 9,
+                                  fontSize: 11,
                                   color: ischecked == 'low_to_high' ? '#ffcc00' : '#8F93A0'
 
                                 }}>
-                                Lower to Higher Price
+                                {t('Lower_to_Higher_Price')}
                               </Text>
                             </View>
                           </View>
@@ -855,7 +889,7 @@ const Shop = (props) => {
                     <View
                       style={{
                         height: 200,
-                        marginTop: 20,
+                        marginTop: 2,
                       }}>
                       <View
                         style={{
@@ -870,10 +904,10 @@ const Shop = (props) => {
                           }}>
                           <View
                             style={{
-                              marginTop: 30,
-                              borderRadius: 25,
-                              width: 200,
-                              height: 45,
+                              marginTop: 20,
+                              borderRadius: 50,
+                              width: 150,
+                              height: 34,
                               backgroundColor: '#ffcc00',
                               alignItems: 'center',
                               justifyContent: 'center',
@@ -886,7 +920,7 @@ const Shop = (props) => {
                                 color: 'white',
 
                               }}>
-                              Apply
+                              {t('Apply')}
                             </Text>
                           </View>
                         </TouchableOpacity>
@@ -895,11 +929,12 @@ const Shop = (props) => {
                   </View>
                 </View>
               </View>
+
             </Modal>
           ) : null}
 
 
-          {CartAddedPopUp ? (
+          {/* {CartAddedPopUp ? (
             <Modal
               animationType="fade"
               transparent={true}
@@ -1167,13 +1202,15 @@ const Shop = (props) => {
                 </View>
               </View>
             </Modal>
-          ) : null}
+          ) : null} */}
         </ScrollView>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
-    </SafeAreaView>
+        (<CustomLoader showLoader={isLoading} />
+          // <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
+          //   <ActivityIndicator size="large" color="#ffcc00" />
+          // </View>
+        )}
+    </SafeAreaView >
   );
 };
 

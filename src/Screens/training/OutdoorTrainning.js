@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ActivityIndicator } from 'react-native'
-import LinearGradient from 'react-native-linear-gradient';
-import { ScrollView } from 'react-native-gesture-handler';
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ScrollView,RefreshControl} from 'react-native'
+ 
 import { BackgroundImage } from 'react-native-elements/dist/config';
 import { RadioButton } from 'react-native-paper';
 import styles from '../../Routes/style'
@@ -9,6 +8,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
+import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
+
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
@@ -17,77 +19,111 @@ const OutdoorTrainning = (props) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [TrainingSUBCatgry, setTrainingSUBCatgry] = useState([]);
+  const [checkplanid, setCheckPlanId] = useState(props?.route?.params?.TrainingData);
+  const [planstatus, setPlanstatus] = useState(JSON.stringify(props?.route?.params?.categoryId?.plan_id));
+  const [hometrainingid, setHomeTrainingid] = useState(props?.route?.params?.TrainingID);
+  const [tokenuser, SetTokenUser] = useState("");
+  const { t } = useTranslation();
 
-  useEffect(() => {
+  const [refreshing, setrefreshing] = useState(false)
+  const onRefresh = () => {
+    setrefreshing(true)
     workoutSubCategoryAPI();
+    setrefreshing(false)
+  }
+  useEffect(() => {
+    // console.log("categoryId_item..plan_id.............:", props?.route?.params?.categoryId?.plan_id);
 
-    //   const checklogin = async () => {
-    //     let Usertoken = await AsyncStorage.getItem("authToken");
-    //     console.log("token.......", Usertoken);
-    //     if (Usertoken == null) {
-    //         props.navigation.navigate('LoginMain', {
-    //             screen: 'LoginSignUp',
-    //           });
-    //         console.log("...............................");
+    // console.log("TrainingID_item.from home..............:", props?.route?.params?.TrainingID);
+    // const TrainingID = props?.route?.params?.TrainingID?.id
+    // console.log("Trainingdata_From trainingscreen:", props?.route?.params?.TrainingData);
 
-    //     }
-    //     else {
+    workoutSubCategoryAPI();
+    // console.log("Traingplanstatus...:", props?.route?.params?.TrainingData);
 
-    //         console.log("??????????????error");
-    //     }
-    // };
-    // checklogin();
+    const checklogin = async () => {
+      let Usertoken = await AsyncStorage.getItem("authToken");
+      SetTokenUser(Usertoken);
+    };
+    checklogin();
 
-    // getusertoken();
-  }, [props]);
+  }, []);
 
   const gotoOutdoorCycle = (item) => {
+     
+    if (checkplanid?.plan_status == "Active" || checkplanid?.plan_id >= 2) {
+      if (tokenuser != null) {
+        // console.log("ACTIVE plan::::::");
+        props.navigation.navigate("SubCategorylist2", {
+          Tainingcat_id: checkplanid != undefined ? checkplanid?.id : hometrainingid?.id,
+          Trainingsubcat_data: item
+        })
+      }
+      else if (tokenuser == null) {
+        Alert.alert('', t('Please_login_first'))
 
-    props.navigation.navigate("Training", {
-      Tainingcat_id: categoryId ? categoryId : TrainingID,
-      Trainingsubcat_data: item
-    })
+      }
+
+    }
+    else if (checkplanid?.plan_status == "Inactive" || checkplanid?.plan_id == 1) {
+      // console.log("ACTIVE plan::::::");
+      props.navigation.navigate("SubCategorylist2", {
+        Tainingcat_id: checkplanid != undefined ? checkplanid?.id : hometrainingid?.id,
+        Trainingsubcat_data: item
+      })
+
+
+
+    }
+    else if (checkplanid?.plan_status == null) {
+      props.navigation.navigate("SubCategorylist2", {
+        Tainingcat_id: checkplanid != undefined ? checkplanid?.id : hometrainingid?.id,
+        Trainingsubcat_data: item
+      })
+    }
+
   }
 
-  const gotoSubsciption = () => {
-    props.navigation.navigate("SubscriptionPlan")
-  }
+  // const gotoSubsciption = () => {
+  //   props.navigation.navigate("SubscriptionPlan")
+  // }
 
 
-  console.log("categoryId_item...............:", props?.route?.params?.categoryId?.id);
-  const categoryId = props?.route?.params?.categoryId?.id
-  console.log("TrainingID_item...............:", props?.route?.params?.TrainingID?.id);
-  const TrainingID = props?.route?.params?.TrainingID?.id
+
 
 
   const workoutSubCategoryAPI = async () => {
     const usertkn = await AsyncStorage.getItem("authToken");
+    
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.TRAINING_SUB_CATERORY}`, { "category_id": categoryId ? categoryId : TrainingID }, { headers: { "Authorization": ` ${usertkn}` } });
-      console.log(":::::::::workoutSubCategoryAPI_Response>>>", response.data.message);
-      console.log("workoutSubCategoryAPI_data::::::", response.data.data);
+      const response = await axios.post(`${API.TRAINING_SUB_CATERORY}`, { "category_id": checkplanid != undefined ? checkplanid?.id : hometrainingid?.id },
+        { headers: { "Authorization": ` ${usertkn}` } }
+      );
+      // console.log(":::::::::workoutSubCategoryAPI_Response>>>", response?.data?.message);
+      // console.log("workoutSubCategoryAPI_data::::::", response.data.data);
       // alert("Get Sub-category data successfully");
-      if (response.data.status == '1') {
-        setTrainingSUBCatgry(response.data.data)
-        setIsLoading(false);
-      } else if (response.data.status == '0'){
-        Alert.alert("Workout sub categoru have no data at status 0")
+      if (response?.data?.status == '1') {
+        setTrainingSUBCatgry(response?.data?.data)
+
       }
-    
+      // else {
+
+      //   Alert.alert('Training Not Accessible', 'Login First !')
+      // }
+
 
     }
     catch (error) {
-      console.log("......error.........", error.response.data.message);
-      setIsLoading(false);
-
-    }
+      Alert.alert("", t('Check_internet_connection'))
+      // console.log("..workoutSubCategoryAPI..Catch..error.........", error.response?.data?.message);
+    } setIsLoading(false);
   };
   return (
     <SafeAreaView style={{
       flex: 1,
       width: WIDTH,
-      height: HEIGHT, flexGrow: 1, backgroundColor: 'black'
+      height: HEIGHT, flexGrow: 1, backgroundColor: '#000000'
     }} >
       <Headers
         Backicon={{
@@ -155,63 +191,78 @@ const OutdoorTrainning = (props) => {
         </View>
       </View> */}
           {
-            TrainingSUBCatgry.length != 0 ?
-              (<ScrollView>
+            TrainingSUBCatgry?.length > 0 ?
+              (<ScrollView
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                } 
+              >
+                <View style={{ marginTop: 20, justifyContent: "flex-start", alignItems: "flex-start", width: WIDTH * 0.45, height: 36, marginLeft: 20 }}>
+                  <Text style={{ textAlign: 'left', fontSize: 17, color: '#ffffff', fontWeight: "500" }}>
 
-                <Text style={{ marginLeft: 25, marginTop: 20, textAlign: 'left', fontSize: 14, color: '#ffffff', }}>Sub Category Name</Text>
+                    {t('Sub_Categories')}
+                  </Text>
+                </View>
+
                 <View style={{
                   backgroundColor: 'black', width: "100%", marginBottom: 30, justifyContent: "center",
                 }}>
                   <FlatList
                     numColumns={2}
-                    style={{ margin: 6 }}
                     columnWrapperStyle={{
                       flex: 1,
-                      // justifyContent: "center"
+                      justifyContent: "space-between"
                     }}
+                    keyExtractor={(item, index) => String(index)}
                     data={TrainingSUBCatgry}
-                    renderItem={({ item }) => (
-                      <TouchableOpacity onPress={() => { gotoOutdoorCycle(item) }}>
-                        <View
-                          style={{
-                            marginTop: 10,
-                            backgroundColor: 'gray',
-                            height: 160,
-                            width: WIDTH * 0.45,
-                            borderRadius: 25,
-                            marginBottom: 20,
-                            marginHorizontal: 6,
-                            justifyContent: "flex-start",
-                            alignItems: 'center',
-                          }}>
+                    renderItem={({ item, index }) => {
+                      return (
+                        <TouchableOpacity onPress={() => { gotoOutdoorCycle(item) }}>
                           <View
                             style={{
-                              width: WIDTH * 0.45, height: 160, borderRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
+                              marginTop: 6,
+                              backgroundColor: 'lightgray',
+                              height: 160,
+                              width: WIDTH * 0.45,
+                              borderRadius: 20,
+                              marginBottom: 6,
+                              marginHorizontal: 10,
+                              justifyContent: "flex-start",
+                              alignItems: 'center',
                             }}>
-                            <Image
-                              source={{ uri: item.image }}
-                              resizeMode="contain"
+                            <View
                               style={{
-                                width: "100%",
-                                height: "100%",
-                                borderRadius: 20,
-                                // borderTopRightRadius: 20,
-                                alignSelf: 'center',
-                              }}
-                            />
-                            <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
-                              <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.subcat_name.slice(0, 13) + '...'}</Text>
+                                width: WIDTH * 0.45, height: 160, borderRadius: 20, justifyContent: "flex-start", alignItems: "flex-start"
+                              }}>
+                              <Image
+                                source={{ uri: item?.image != "" ? item?.image : 'https://dev.pop-fiit.com/images/logo.png' }}
+                                resizeMode="contain"
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  borderRadius: 20,
+                                  // borderTopRightRadius: 20,
+                                  alignSelf: 'center',
+                                  backgroundColor: "black"
+                                }}
+                              />
+                              <View style={{ width: 125, backgroundColor: '#c9bca0', height: 25, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: "center", position: "absolute", zIndex: 1, borderTopLeftRadius: 20 }}>
+                                <Text style={{ textAlign: 'center', fontSize: 11, color: 'black', fontWeight: "bold" }}>{item?.subcat_name?.lenght >= 18 ? item?.subcat_name.slice(0, 18) + '...' : item?.subcat_name.slice(0, 18)}</Text>
+
+                              </View>
 
                             </View>
-
                           </View>
-                        </View>
-                      </TouchableOpacity>
-                    )}
+                        </TouchableOpacity>
+                      )
+                    }}
                   />
 
 
-{/* 
+                  {/* 
                   <View style={{ marginBottom: 20, marginTop: 30, marginHorizontal: 10, backgroundColor: 'white', height: 40, borderRadius: 10, justifyContent: 'center', flex: 1 }}>
 
 
@@ -224,16 +275,35 @@ const OutdoorTrainning = (props) => {
                         <Text style={{ marginRight: 15, textAlign: 'right', fontSize: 12, color: 'black', }}>$ 99</Text>
                       </View>
                     </View>
-                  </View> */}
+                  </View> || planstatus != "Active"*/}
 
 
-                  <View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row', height: 45, marginHorizontal: 20, marginTop: 20, flex: 1, }}>
-                    <TouchableOpacity onPress={() => { gotoSubsciption() }}>
-                      <View style={{ alignItems: 'center', width: 300, justifyContent: 'center', backgroundColor: '#ffcc00', borderRadius: 35, flex: 1 }}>
-                        <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Upgrade to Plan 1 Subscription</Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
+                  {/* {
+                    (checkplanid?.plan_id.includes('1') != undefined ? checkplanid?.plan_id.includes('1') : undefined) >= 2  || (hometrainingid?.plan_id != undefined ? hometrainingid?.plan_id : undefined) >= 2 ?
+                      <>
+
+                        {(hometrainingid?.user_plan_status != undefined ? hometrainingid?.user_plan_status != "Active" : undefined )  || (checkplanid?.user_plan_status  != undefined ? checkplanid?.user_plan_status != "Active" : undefined)  ?
+                          (<View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 20, flex: 1, }}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                gotoSubsciption()
+                                console.log('hhhhh', (hometrainingid?.user_plan_status != undefined ? hometrainingid?.user_plan_status : undefined ) != "Active" || (checkplanid?.user_plan_status  != undefined ? checkplanid?.user_plan_status : undefined) != "Active");
+                              }}>
+                              <View style={{ alignItems: 'center', width: 160, justifyContent: 'center', backgroundColor: '#ffcc00', borderRadius: 50, flex: 1 }}>
+                                <Text style={{ textAlign: 'center', fontSize: 14, color: 'white', fontWeight: "400" }}>Subscribe Now</Text>
+                              </View>
+                            </TouchableOpacity>
+                          </View>)
+                          :
+                          null
+
+                        }
+
+
+                      </>
+                      :
+                      null
+                  } */}
 
                 </View>
               </ScrollView>)
@@ -248,14 +318,12 @@ const OutdoorTrainning = (props) => {
                     width: 200,
                     height: 120, alignSelf: 'center'
                   }} />
-                <Text style={{ fontSize: 14, fontWeight: "bold" }}>No data found</Text>
+                <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>{t('Oops_No_data_found')}</Text>
               </View>)
           }
         </>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        (<CustomLoader showLoader={isLoading} />)}
     </SafeAreaView>
   );
 }

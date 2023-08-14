@@ -1,19 +1,18 @@
 import 'react-native-gesture-handler';
 import React, { useState } from "react";
-import { ScrollView, View, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, FlatList, Dimensions, Modal, ActivityIndicator } from 'react-native'
+import {
+  ScrollView, View, Text, TouchableOpacity, TextInput, Image, Dimensions, Modal, ActivityIndicator, BackHandler, SafeAreaView, Alert, KeyboardAvoidingView, Linking,
+  Platform,
+} from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useEffect } from 'react';
 import { API } from '../Routes/Urls';
 import axios from 'axios';
-import { resolvePlugin } from '@babel/core';
-
-var WIDTH = Dimensions.get('window').width;
-var HEIGHT = Dimensions.get('window').height;
-
+import { useTranslation } from 'react-i18next';
 
 const CustomDrawerrender = (props) => {
-
+  const { t } = useTranslation();
   const [userprofile, setuserprofile] = useState("");
   const [loginbtn, setloginbtn] = useState("");
 
@@ -26,13 +25,45 @@ const CustomDrawerrender = (props) => {
   const [profiledata, setprofiledata] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [check, setcheck] = useState(false);
-
+  const [emailerrormsg, setemailerrormsg] = useState("");
+  const [emailalert, setEmailAlert] = useState(false);
   useEffect(() => {
-
     if (!check) {
-      getusertoken();
+      const getusertoken = async () => {
+        const usertoken = await AsyncStorage.getItem("authToken");
+        setuserprofile(usertoken);
+        setloginbtn(usertoken);
+        if (usertoken != "") {
+          GetProfile();
+        }
 
+        else {
+          console.log("drawerlogin else part call");
+          // GetProfile();
+        }
+
+      }
+
+      getusertoken()
     }
+    const backAction = () => {
+      Alert.alert(t('Hold_on'), t('Are_you_sure_you_want_back'), [
+        {
+          text: t('Cancel'),
+          onPress: () => null,
+          style: "cancel"
+        },
+        { text: t('Yes'), onPress: () => BackHandler.exitApp() }
+      ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
 
     //  getusertoken();
     // GetProfile();
@@ -44,17 +75,11 @@ const CustomDrawerrender = (props) => {
     // });
     // return unsubscribe;
 
-  }, [props]);
+  }, []);
 
-  const getusertoken = async () => {
-    const usertoken = await AsyncStorage.getItem("authToken");
-    console.log(".....drawer profiletoken get::", usertoken);
-    setuserprofile(usertoken);
-    setloginbtn(usertoken);
-    GetProfile();
-  }
+
   const buttonClickedHandler = () => {
-    props.navigation.goBack();
+    props.navigation.goBack()
   }
 
   const gotologin_signuppage = () => {
@@ -62,166 +87,319 @@ const CustomDrawerrender = (props) => {
   }
 
   const GetProfile = async () => {
-
-    // console.log(".....usertoken.....ProfileIN...", userprofile);
-    // setIsLoading(true)
-    if (userprofile != null) {
-      setIsLoading(true)
-      try {
-        const response = await axios.get(`${API.GET_PROFILE}`, { headers: { "Authorization": ` ${userprofile}` } });
-        // console.log("", response);
-        console.log("ResponseProfile ::::", response.data.status);
-        if (response.data.status == 1) {
-          setprofiledata(response.data.data)
-          // console.log("User_token_not_received+yet!!!>>>", response.data.data.first_name);
-          setIsLoading(false);
-        }else{
-          setIsLoading(false);
-        }
-     
+    const Token = await AsyncStorage.getItem("authToken");
+    setIsLoading(true);
+    try {
+      const response = await axios.get(`${API.GET_PROFILE}`, { headers: { "Authorization": ` ${Token}` } });
+      // console.log("response profile", response);
+      // console.log("ResponseProfile ::::", response.data.status);
+      if (response.data.status === 1) {
+        setprofiledata(response.data.data)
+        // console.log("User_token_not_received+yet!!!>>>", response.data.data.first_name);
+        // setIsLoading(false);
       }
-      catch (error) {
-        console.log("Countryerror:", error.response.data.message);
-        setIsLoading(false)
-      }
+      // else if (response.data.status === 0) {
+      //   Alert.alert('error', 'Something went wrong, Please exit the app and try again');
+      //   setIsLoading(false);
+      // }
 
-    };
+    }
+    catch (error) {
+      // Alert.alert("profile","Internet connection appears to be offline. Please check your internet connection and try again.")
+      // Alert.alert('drawer', 'Something went wrong please exit the app and try again');
+      // console.log("GET User Profile in drawer error:", error.response.data.message);
+
+    }
+    setIsLoading(false)
+
   };
 
+  const Emailvalidaton = (text) => {
+    // console.log(text);
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+    if (reg.test(text) === false) {
+      setemailerrormsg("Email is Not Correct")
+      // console.log("Email is Not Correct");
+      setEmailAlert(true)
+      setUseremail(text)
+      return false;
+    }
+    else {
+      setUseremail(text)
+      setEmailAlert(false)
+      // console.log("Email is Correct");
+    }
+  }
   const GetContactUs = async () => {
 
-    const data = {
-      name: UserName,
-      email: Useremail,
-      message: Typemessage
-    }
-    console.log("........contactus", data);
-    // setIsLoading(true);
-    // setContactUs(true);
+
+    if (UserName && Useremail != null) {
+
+      const data = {
+        name: UserName,
+        email: Useremail,
+        message: Typemessage
+      }
+      // console.log("........contactus", data);
+      // setIsLoading(true);
+      // setContactUs(true);
+      try {
+        const response = await axios.post(`${API.CONTACT_US}`, data)
+        // console.log("response_contactus ::::", response.data);
+        // console.log("contactus-Status ::::", response.data.status);
+        if (response.data.status == '1') {
+          Alert.alert('', t('Your_will_contact_shortly'))
+          // console.log("response_contactus ::::", response.data);
+          setContactUs(false);
+          setIsLoading(false);
+          setUserName("")
+          setUseremail("")
+          setTypemessage("")
+          setcheck(false);
+
+          // props.navigation.navigate("Home");
+        }
+        else if (response.data.status == '0') {
+          setUserName("")
+          setUseremail("")
+          setTypemessage("")
+          setIsLoading(false);
+          setcheck(false);
+          Alert.alert('', t('Error_msg'));
+        }
+        else {
+          setIsLoading(false);
+        }
+
+      } catch (error) {
+        // Alert.alert("",t('Check_internet_connection'))
+        // Alert.alert('', 'Something went wrong please exit the app and try again');
+        // console.log("error_ContactUs:", error.response.data.message);
+        setIsLoading(false);
+        setcheck(false)
+      }
+    } else return Alert.alert('', t('All_the_fields_are_required'));
+  };
+  const DeleteProfile = async () => {
+    console.log("user_ID:", profiledata.id);
+    setIsLoading(true);
     try {
-      const response = await axios.post(`${API.CONTACT_US}`, data)
-      console.log("response_contactus ::::", response.data);
-      if (response.data.status == 1) {
-        setContactUs(false);
-        props.navigation.navigate("Home");
-        setUserName = "";
-        setUseremail = "";
-        setTypemessage = "";
-        setIsLoading(false);
-        setcheck(false)
-      }
-      else {
-        setIsLoading(false);
-        setcheck(false)
-      }
+      const response = await axios.post(`${API.Delete_USER}`, { "user_id": profiledata.id });
+      console.log("deleteaccount:", response.data);
+      AsyncStorage.removeItem('authToken');
+      AsyncStorage.clear();
+      props.navigation.navigate("LoginMain");
+      // Alert.alert('', response.data.message);
 
-    } catch (error) {
-      console.log("error_ContactUs:", error.response.data.message);
-      setIsLoading(false);
-      setcheck(false)
     }
+    catch (error) {
+      //  Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+      console.log("......error.........", error.response.data.message);
+      Alert.alert('', t('Error_msg'));
 
+    }
+    setIsLoading(false);
   };
 
+  const showAlert = () =>
+    Alert.alert(
+      "",
+      t('Are_you_sure_you_want_to_delete_your_Profile'),
+      [
+        {
+          text: t('Cancel'),
+          style: "cancel",
+        },
+        {
+          text: "Ok",
+          onPress: () => { DeleteProfile() }
+
+        },
+      ],
+      {
+        cancelable: true,
+      }
+    );
   return (
-    <ScrollView style={{
-      height: "100%",
-      width: "100%",
+    <SafeAreaView style={{
+      flex: 1,
+      // height: "100%",
+      // width: "100%",
+      flexGrow: 1,
       backgroundColor: '#000000',
     }} >
       {!isLoading ?
-        (
-          <View>
-            <TouchableOpacity onPress={() => { buttonClickedHandler() }}>
-              <View style={{
-                height: 60,
+        (<>
+          <View style={{
+            height: 60, width: "100%", flexDirection: "row", justifyContent
+              : "space-between"
+          }}>
+
+            <TouchableOpacity onPress={() => { buttonClickedHandler() }}
+              style={{
+                height: 50,
                 left: 10,
                 width: "20%",
                 justifyContent: 'center',
-              }}>
-                <Image source={require('../Screens/assets/cancelWhite.png')}
-                  style={{
-                    width: 30,
-                    height: 30,
-                    marginTop: 5, left: 10
-                  }}
-                />
+                marginTop: 10,
 
-              </View>
+              }}>
+              <Image source={require('../Screens/assets/cancelWhite.png')}
+                style={{
+                  width: 30,
+                  height: 30,
+                  left: 10
+                }}
+              />
+
+
             </TouchableOpacity>
 
+            <View style={{ width: 55, height: 34, alignItems: 'flex-end', justifyContent: 'flex-end', right: 10, marginTop: 10, }}>
+              <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 13, color: '#ffcc00', fontWeight: "400" }}>V <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 13, color: '#ffcc00', fontWeight: "400" }}>1.0.6</Text></Text>
+            </View>
+          </View>
+          {
+            userprofile == null ?
+              (<TouchableOpacity onPress={() => gotologin_signuppage()}
+                style={{ borderRadius: 20, backgroundColor: 'white', marginHorizontal: 20, height: 100, flexDirection: 'row', marginTop: 20, marginRight: 27, }}>
+                <View style={{ justifyContent: 'center', width: 100, height: 100 }} >
+                  <Image resizeMode="contain"
+                    source={require('../Screens/assets/AvatarImg.png')}
+                    style={{
+                      width: 70,
+                      height: 70, alignSelf: 'center',
+                    }} />
+                </View>
 
-            {
-              userprofile == null ?
-                (<View style={{ borderRadius: 20, backgroundColor: 'white', marginHorizontal: 20, height: 100, flexDirection: 'row', marginTop: 30 }}>
+                <View style={{ justifyContent: 'center', alignItems: "center", flex: 1, height: 100 }} >
+                  <Text style={{ fontSize: 14, color: 'black', textAlign: 'left', fontWeight: "500" }}>{t('Users_Login')}</Text>
+                </View>
+
+                <View style={{ justifyContent: 'flex-end', flex: 1 / 2, width: 50, borderBottomRightRadius: 20 }}>
+                  <Image source={require('../Screens/assets/arrowWhiteBack.png')}
+                    style={{
+                      width: 40,
+                      height: 30, borderBottomRightRadius: 20, alignSelf: 'flex-end'
+                    }} />
+                </View>
+              </TouchableOpacity>)
+              :
+              (<TouchableOpacity onPress={() => {
+                props.navigation.navigate("MyProfile")
+              }}>
+                <View style={{ borderRadius: 20, backgroundColor: 'white', marginHorizontal: 20, height: 100, flexDirection: 'row', marginTop: 20, marginRight: 27, }}>
                   <View style={{ justifyContent: 'center', width: 100, height: 100 }} >
-                    <Image source={require('../Screens/assets/AvatarImg.png')}
-                      style={{
-                        width: 70,
-                        height: 70, alignSelf: 'center',
-                      }} />
-                  </View>
-
-                  <TouchableOpacity onPress={() => gotologin_signuppage()} style={{ justifyContent: 'center', flex: 1, height: 100, }} >
-                    <Text style={{ fontSize: 14, color: 'black', textAlign: 'left' }}>User's Login</Text>
-                  </TouchableOpacity>
-
-                  <View style={{ justifyContent: 'flex-end', flex: 1 / 2, width: 50, }}>
-                    <Image source={require('../Screens/assets/arrowWhiteBack.png')}
-                      style={{
-                        width: 40,
-                        height: 30, borderBottomRightRadius: 10, alignSelf: 'flex-end'
-                      }} />
-                  </View>
-                </View>)
-                :
-                (<TouchableOpacity onPress={() => {
-                  props.navigation.navigate("MyProfile") ;
-                  // {
-                  //   UserProfile: profiledata
-                  // })
-                }}>
-                  <View style={{ borderRadius: 20, backgroundColor: 'white', marginHorizontal: 20, height: 100, flexDirection: 'row', marginTop: 30 }}>
-                    <View style={{ justifyContent: 'center', width: 100, height: 100 }} >
+                    {profiledata.user_profile != "" ?
                       <Image
-                        source={{ uri: profiledata.user_profile }}
+                        source={{ uri: profiledata?.user_profile != "" ? `${profiledata.user_profile}` : 'https://dev.pop-fiit.com/images/logo.png' }}
                         resizeMode="contain"
                         style={{
                           width: 80,
                           height: 80, alignSelf: 'center', borderRadius: 80 / 2, borderColor: "#383838", borderWidth: 1
                           , backgroundColor: "black"
                         }} />
-                    </View>
-                    <View style={{ justifyContent: 'center', flex: 1.1, height: 100, }} >
-                      <Text style={{ fontSize: 15, color: 'black', textAlign: 'left' }}>{profiledata.first_name + " " + profiledata.last_name}</Text>
-                    </View>
-                    <View style={{ justifyContent: 'flex-end', flex: 1 / 2, width: 50, }}>
-                      <Image source={require('../Screens/assets/arrowWhiteBack.png')}
+                      :
+                      <Image
+                        source={require('../Screens/assets/AvatarImg.png')}
+                        resizeMode="contain"
                         style={{
-                          width: 40,
-                          height: 30, borderBottomRightRadius: 10, alignSelf: 'flex-end'
+                          width: 80,
+                          height: 80, alignSelf: 'center', borderRadius: 80 / 2, borderColor: "#383838",
                         }} />
-                    </View>
+                    }
                   </View>
-                </TouchableOpacity>)
-            }
-
-            <View style={{ marginBottom: 30, marginTop: 20, marginHorizontal: 15, height: 560, backgroundColor: '#000000' }} >
+                  <View style={{ justifyContent: 'center', flex: 1.1, height: 100, }} >
+                    <Text numberOfLines={2} style={{ fontSize: 15, color: 'black', textAlign: 'left' }}>{profiledata.first_name + " " + profiledata.last_name}</Text>
+                  </View>
+                  <View style={{ justifyContent: 'flex-end', flex: 1 / 2, width: 50, borderBottomRightRadius: 20, }}>
+                    <Image source={require('../Screens/assets/arrowWhiteBack.png')}
+                      style={{
+                        width: 40,
+                        height: 30, borderBottomRightRadius: 20, alignSelf: 'flex-end'
+                      }} />
+                  </View>
+                </View>
+              </TouchableOpacity>)
+          }
+          <ScrollView>
+            <View style={{ marginBottom: 20, marginTop: 10, marginHorizontal: 15, height: "95%", backgroundColor: '#000000' }} >
 
               <TouchableOpacity onPress={() => props.navigation.navigate("HomeBottomTab")} >
-                <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
+                <View style={{ marginTop: 15, flexDirection: 'row', height: 30, }}>
                   <View style={{ width: 50, height: 50 }} >
                     <Image source={require('../Screens/assets/menu1.png')}
                       style={{
-                        width: 20,
+                        width: 21,
                         height: 20, marginLeft: 5
                       }} />
                   </View>
-                  <View style={{ height: 50 }} >
-                    <View style={{ width: 50, height: 50, marginLeft: -10 }} >
-                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Home</Text>
+                  <View style={{ height: 50, }} >
+                    <View style={{ height: 50, marginLeft: -10 }} >
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Home')}</Text>
                     </View>
                   </View>
+                </View>
+              </TouchableOpacity>
+              {
+                loginbtn != null ?
+                  (<TouchableOpacity onPress={() => props.navigation.navigate("SubscriptionPlan")} >
+                    <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
+                      <View style={{ width: 50, height: 50 }} >
+                        <Image resizeMode='contain'
+                          source={require('../Screens/assets/subscribeicon.png')}
+                          style={{
+                            width: 22,
+                            height: 22, marginLeft: 5
+                          }} />
+                      </View>
+                      <View style={{ height: 30, width: 100 }} >
+                        <View style={{ width: 110, height: 30, marginLeft: -10 }} >
+                          <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Subscriptions')}</Text>
+                        </View>
+                      </View>
+                    </View>
+                  </TouchableOpacity>)
+                  :
+                  <></>
+
+              }
+              {
+                loginbtn != null ?
+                  (<TouchableOpacity onPress={() => { showAlert() }}>
+                    <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
+                      <View style={{ width: 50, height: 50, marginLeft: 5 }} >
+                        <Image source={require('../Screens/assets/delete_account.png')}
+                          style={{
+                            width: 20,
+                            height: 20,
+                          }} />
+                      </View>
+                      <View style={{ height: 50 }} >
+                        <View style={{ height: 50, marginLeft: -14 }} >
+                          <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Delete_Account')}</Text>
+                        </View>
+                      </View>
+                    </View>
+                  </TouchableOpacity>)
+                  :
+                  (null)
+
+              }
+              <TouchableOpacity onPress={() => props.navigation.navigate("Selector")}>
+                <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
+                  <View style={{ width: 50, height: 50, marginLeft: 5 }} >
+                    <Image source={require('../Screens/assets/Lngchoose.png')}
+                      style={{
+                        width: 22,
+                        height: 22,
+                      }} />
+                  </View>
+
+                  <View style={{ height: 50, marginLeft: -14, }} >
+                    <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Choose_Language')}</Text>
+                  </View>
+
                 </View>
               </TouchableOpacity>
               {
@@ -236,9 +414,9 @@ const CustomDrawerrender = (props) => {
                             height: 20, marginLeft: 5
                           }} />
                       </View>
-                      <View style={{ height: 30, width: 100 }} >
-                        <View style={{ width: 100, height: 30, marginLeft: -10 }} >
-                          <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>My Order</Text>
+                      <View style={{ height: 30, }} >
+                        <View style={{ height: 30, marginLeft: -10 }} >
+                          <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('My_Order')}</Text>
                         </View>
                       </View>
                     </View>
@@ -247,97 +425,139 @@ const CustomDrawerrender = (props) => {
                   (null)
 
               }
-              <TouchableOpacity onPress={() => { props.navigation.navigate("TrainingBottomTab") }}>
+              <TouchableOpacity onPress={() => props.navigation.navigate("Recipecategory")}>
                 <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
-                  <View style={{ width: 50, height: 50 }} >
-                    <Image source={require('../Screens/assets/menu2.png')}
+                  <View style={{ width: 50, height: 50, marginLeft: 4 }} >
+                    <Image resizeMode='contain'
+                      source={require('../Screens/assets/Recipesicon.png')}
                       style={{
-                        width: 20,
-                        height: 20, marginLeft: 5
+                        width: 23,
+                        height: 24,
                       }} />
                   </View>
                   <View style={{ height: 50 }} >
-                    <View style={{ height: 50, marginLeft: -10 }} >
-                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Training</Text>
+                    <View style={{ height: 50, marginLeft: -14 }} >
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Recipes')}</Text>
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => { props.navigation.navigate("TrainingBottomTab") }}>
+                <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
+                  <View style={{ width: 50, height: 50, marginLeft: 5 }} >
+                    <Image source={require('../Screens/assets/menu2.png')}
+                      style={{
+                        width: 20,
+                        height: 20,
+                      }} />
+                  </View>
+                  <View style={{ height: 50 }} >
+                    <View style={{ height: 50, marginLeft: -14 }} >
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Training')}</Text>
                     </View>
                   </View>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => props.navigation.navigate("ShopBottomTab")}>
                 <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
-                  <View style={{ width: 50, height: 50 }} >
+                  <View style={{ width: 50, height: 50, marginLeft: 5 }} >
                     <Image source={require('../Screens/assets/menu3.png')}
                       style={{
                         width: 20,
-                        height: 20, marginLeft: 5
+                        height: 20,
                       }} />
                   </View>
                   <View style={{ height: 50 }} >
-                    <View style={{ height: 50, marginLeft: -10 }} >
-                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Shop</Text>
+                    <View style={{ height: 50, marginLeft: -14 }} >
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Shop')}</Text>
                     </View>
                   </View>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => props.navigation.navigate("BlogBottomTab")}>
                 <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
-                  <View style={{ width: 50, height: 50 }} >
+                  <View style={{ width: 50, height: 50, marginLeft: 5 }} >
                     <Image source={require('../Screens/assets/menu4.png')}
                       style={{
                         width: 22,
-                        height: 20, marginLeft: 5
+                        height: 20,
                       }} />
                   </View>
                   <View style={{ height: 50 }} >
-                    <View style={{ height: 50, marginLeft: -10 }} >
-                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Blogs</Text>
+                    <View style={{ height: 50, marginLeft: -14 }} >
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Blogs')}</Text>
                     </View>
                   </View>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => props.navigation.navigate("TermsAndCondition")}>
+              { Platform.OS === 'ios' ?
+                <TouchableOpacity onPress={() => { Linking.openURL('https://apps.apple.com/redeem?ctx=offercodes&id=6444639543&code=') }}>
                 <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
-                  <View style={{ width: 50, height: 50 }} >
+                  <View style={{ width: 50, height: 50, marginLeft: 2,marginTop:-6 }} >
+                    <Image source={require('../Screens/assets/redeem-code.png')}
+                      style={{
+                        width: 28,
+                        height: 28,
+                      }} />
+                  </View>
+                  <View style={{ height: 50 }} >
+                    <View style={{ height: 50, marginLeft: -10 }} >
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('RedeemCode')}</Text>
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
+              : null
+              }
+
+              <TouchableOpacity onPress={() => { Linking.openURL('https://dev.pop-fiit.com/terms-of-use') }}>
+                <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
+                  <View style={{ width: 50, height: 50, marginLeft: 5 }} >
                     <Image source={require('../Screens/assets/menu5.png')}
                       style={{
-                        width: 22,
-                        height: 22, marginLeft: 5
+                        width: 20,
+                        height: 20,
                       }} />
                   </View>
                   <View style={{ height: 50 }} >
-                    <View style={{ height: 50, marginLeft: -10 }} >
-                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Terms & Condition</Text>
+                    <View style={{ height: 50, marginLeft: -15 }} >
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Terms_of_use')}</Text>
                     </View>
                   </View>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => props.navigation.navigate("CancellationPolicy")}>
+
+              
+              {/* <TouchableOpacity onPress={() => props.navigation.navigate("CancellationPolicy")}>
                 <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
-                  <View style={{ width: 50, height: 50 }} >
+                  <View style={{ width: 50, height: 50, marginLeft: 5, }} >
                     <Image source={require('../Screens/assets/menu6.png')}
                       style={{
-                        marginLeft: 5
-                      }} />
+                        width: 20,
+                        height: 20,
+                      }} resizeMode="contain" />
                   </View>
                   <View style={{ height: 50 }} >
                     <View style={{ height: 50, marginLeft: -10 }} >
-                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Cancellation Return Policy </Text>
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Cancellation & Return Policy </Text>
                     </View>
                   </View>
                 </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => props.navigation.navigate("RefundPolicy")}>
+              </TouchableOpacity> */}
+              <TouchableOpacity onPress={() => { Linking.openURL('https://dev.pop-fiit.com/privacy-policy') }
+                // props.navigation.navigate("RefundPolicy")
+              }>
                 <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
-                  <View style={{ width: 50, height: 50 }} >
+                  <View style={{ width: 50, height: 50, marginLeft: 5 }} >
                     <Image source={require('../Screens/assets/menu7.png')}
                       style={{
-                        width: 20,
-                        height: 20, marginLeft: 5
+                        width: 22,
+                        height: 20,
                       }} />
                   </View>
                   <View style={{ height: 50 }} >
-                    <View style={{ height: 50, marginLeft: -10 }} >
-                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Refund Policy</Text>
+                    <View style={{ height: 50, marginLeft: -14 }} >
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Privacy_Policy')}</Text>
                     </View>
                   </View>
                 </View>
@@ -347,18 +567,18 @@ const CustomDrawerrender = (props) => {
                 setContactUs(true)
                 setcheck(true)
               }}>
-                {/* <TouchableOpacity> */}
+
                 <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
-                  <View style={{ width: 50, height: 50 }} >
+                  <View style={{ width: 50, height: 50, marginLeft: 5 }} >
                     <Image source={require('../Screens/assets/menu8.png')}
                       style={{
                         width: 20,
-                        height: 20, marginLeft: 5
+                        height: 20,
                       }} />
                   </View>
                   <View style={{ height: 50 }} >
-                    <View style={{ height: 50, marginLeft: -10 }} >
-                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Contact Us</Text>
+                    <View style={{ height: 50, marginLeft: -14 }} >
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Contact_Us')}</Text>
                     </View>
                   </View>
                 </View>
@@ -374,7 +594,7 @@ const CustomDrawerrender = (props) => {
                   </View>
                   <View style={{ height: 50 }} >
                     <View style={{ height: 50, marginLeft: -10 }} >
-                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>About Us</Text>
+                      <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('About_Us')}</Text>
                     </View>
                   </View>
                 </View>
@@ -383,21 +603,21 @@ const CustomDrawerrender = (props) => {
               {
                 loginbtn != null ?
                   (<TouchableOpacity onPress={() => {
-                    //  AsyncStorage.removeItem('authToken')
-                    AsyncStorage.clear();
-                    props.navigation.navigate("LoginMain")
+                    AsyncStorage.removeItem('authToken');
+                    // AsyncStorage.clear();
+                    props.navigation.navigate("LoginMain");
                   }}>
-                    <View style={{ marginTop: 80, flexDirection: 'row', height: 30 }}>
-                      <View style={{ width: 25, height: 23, }} >
+                    <View style={{ marginTop: 15, flexDirection: 'row', height: 30 }}>
+                      <View style={{ width: 25, height: 23, marginLeft: 5 }} >
                         <Image source={require('../Screens/assets/logouts.png')}
                           style={{
                             width: 20,
-                            height: 20, marginLeft: 5
+                            height: 20,
                           }} />
                       </View>
                       <View style={{ height: 50 }} >
-                        <View style={{ height: 50, marginLeft: 14 }} >
-                          <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>Logout</Text>
+                        <View style={{ height: 50, marginLeft: 10 }} >
+                          <Text style={{ fontSize: 15, color: 'white', textAlign: 'left' }}>{t('Logout')}</Text>
                         </View>
                       </View>
                     </View>
@@ -407,114 +627,108 @@ const CustomDrawerrender = (props) => {
 
               }
             </View>
+          </ScrollView>
 
-            {ContactUs ? (
-              <Modal
-                animationType="fade"
-                transparent={true}
-                visible={ContactUs}
-                onRequestClose={() => {
-                  setContactUs(false);
-                  setcheck(false)
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={ContactUs}
+            onRequestClose={() => {
+              setContactUs(false);
+              setcheck(false)
+            }}>
+            <KeyboardAvoidingView
+              style={{ flex: 1 }}
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+              <View
+                style={{
+                  flex: 1,
+                  // justifyContent: 'flex-end',
+                  // alignItems: 'center',
+                  backgroundColor: 'rgba(140, 141, 142, 0.7)',
+
                 }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setContactUs(false),
+                      setcheck(false)
+                  }}
+                  style={{ flex: 1 }}
+                />
                 <View
                   style={{
-                    flex: 1,
-                    justifyContent: 'flex-end',
-                    alignItems: 'center',
-                    backgroundColor: 'rgba(140, 141, 142, 0.7)',
+                    backgroundColor: 'white',
+                    borderRadius: 20,
+                    width: "100%",
+                    justifyContent: "flex-end",
 
                   }}>
-                  <ScrollView>
-                    <View
-                      style={{
-                        marginTop: 385,
-                        backgroundColor: 'white',
-                        borderRadius: 20,
-                        //  margin: 10,
-                        // marginHorizontal:0,
-                        // height:"100%",
-                        width: "100%",
-                        alignItems: 'center',
-                        justifyContent: "flex-end",
-                        // alignContent:"flex-end",
-                        alignSelf: "flex-end",
-                        shadowColor: '#000',
-                        shadowOffset: {
-                          width: 0,
-                          height: 2,
-                        },
-                        shadowOpacity: 0.25,
-                        shadowRadius: 4,
-                        elevation: 6,
-                      }}>
 
-                      <View style={{
-                        // marginHorizontal: 15,
-                        borderRadius: 20,
-                        backgroundColor: 'white',
-                        //marginTop: 150,
-                        borderColor: "white",
-                        borderWidth: 1,
-                        height: "100%",
-                        width: "100%",
-                        padding: 10,
-                        alignItems: 'center',
-                        // justifyContent:"center",
-                      }}>
-                        <TouchableOpacity onPress={() => { setContactUs(false) }}
-                          style={{ position: "absolute", width: 30, backgroundColor: 'red', borderRadius: 35, height: 35, right: 10, top: 10 }}>
-                          <Image
-                            source={require('../Screens/assets/cancelWhite.png')}
-                            style={{
-                              width: 35,
-                              height: 35, alignSelf: 'center'
-                            }}
+                  <View style={{
+                    height: 485,
+                    width: "100%",
+                    borderRadius: 20,
 
-                          />
-                        </TouchableOpacity>
-                        <View style={{ marginTop: 15, marginHorizontal: 20, height: 30, flexDirection: "row", justifyContent: "center", alignItems: 'center' }}>
+                    alignItems: 'center',
+                    // backgroundColor: 'pink',
+                    justifyContent: "center",
+                  }}>
+                    {/* <TouchableOpacity onPress={() => { setContactUs(false) }}
+                        style={{ position: "absolute", width: 30, backgroundColor: 'red', borderRadius: 35, height: 35, right: 10, top: 10 }}>
+                        <Image
+                          source={require('../Screens/assets/cancelWhite.png')}
+                          style={{
+                            width: 35,
+                            height: 35, alignSelf: 'center'
+                          }}
+
+                        />
+                      </TouchableOpacity> */}
+                    <View style={{ marginTop: 15, marginHorizontal: 20, height: 30, flexDirection: "row", justifyContent: "center", alignItems: 'center' }}>
 
 
-                          <View style={{ width: 25, height: 25, justifyContent: "center", alignItems: 'center', borderRadius: 40 / 2 }}>
-                            <Image source={require('../Screens/assets/contactUs.png')}
-                              style={{
-                                width: 20,
-                                height: 20, alignSelf: 'center'
-                              }} />
+                      <View style={{ width: 25, height: 25, justifyContent: "center", alignItems: 'center', borderRadius: 40 / 2 }}>
+                        <Image source={require('../Screens/assets/contactUs.png')}
+                          style={{
+                            width: 20,
+                            height: 20, alignSelf: 'center'
+                          }} />
 
-                          </View>
-                          <Text style={{ marginTop: 2, marginLeft: 10, textAlign: 'center', fontSize: 17, color: 'black', }}>Contact Us</Text>
+                      </View>
+                      <View style={{ marginLeft: 10, }}>
+                        <Text style={{ textAlign: 'center', fontSize: 18, color: 'black', fontWeight: "500" }}>{t('Contact_Us')}</Text>
+                      </View>
 
-                        </View>
+
+                    </View>
 
 
 
-                        <View style={{
-                          marginTop: 30, borderRadius: 25, marginHorizontal: 20,
-                          flexDirection: 'row',
-                          height: 45,
-                          shadowColor: '#11032586',
-                          backgroundColor: 'white',
-                          alignItems: 'center',
-                          borderColor: "#D7D7D7",
-                          borderWidth: 1,
-                          // backgroundColor: 'red', 
-                          justifyContent: "center",
-                        }}
-                        >
-                          <TextInput
-                            placeholder="Name"
-                            value={UserName}
-                            onChangeText={(text) => setUserName(text)}
-                            fontWeight='normal'
-                            placeholderTextColor='#D7D7D7'
-                            style={{
-                              width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 15, color: "black",
-                              fontSize: 14
-                            }} />
-                        </View>
-                        {/* <View style={{ height: 50, marginHorizontal: 25, marginTop: 15 }}>
+                    <View style={{
+                      marginTop: 30, borderRadius: 25, marginHorizontal: 20,
+                      flexDirection: 'row',
+                      height: 45,
+                      shadowColor: '#11032586',
+                      // backgroundColor: 'white',
+                      alignItems: 'center',
+                      borderColor: "#D7D7D7",
+                      borderWidth: 1,
+                      // backgroundColor: 'red', 
+                      justifyContent: "center",
+                    }}
+                    >
+                      <TextInput
+                        placeholder={t('Name')}
+                        value={UserName}
+                        onChangeText={(text) => setUserName(text)}
+                        fontWeight='normal'
+                        placeholderTextColor='#D7D7D7'
+                        style={{
+                          width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 15, color: "black",
+                          fontSize: 14, height: "100%"
+                        }} />
+                    </View>
+                    {/* <View style={{ height: 50, marginHorizontal: 25, marginTop: 15 }}>
                         <DropDownPicker
                           items={[
                             { label: 'France', value: 'fr' },
@@ -541,85 +755,101 @@ const CustomDrawerrender = (props) => {
                             // shadowOpacity: 0.2,
                             // elevation: 2,
                           }}
-                        />
+                        /
                       </View> */}
-                        <View style={{
-                          marginTop: 25, borderRadius: 25, marginHorizontal: 20, flexDirection: 'row',
-                          height: 45,
-                          shadowColor: '#11032586',
-                          backgroundColor: 'white',
-                          alignItems: 'center',
-                          borderColor: "#D7D7D7",
-                          borderWidth: 1,
-                          justifyContent: "center", alignItems: 'center'
-                        }}
-                        ><TextInput
-                            placeholder="Please Enter Your Email ID"
-                            value={Useremail}
-                            //editable={!isLoading}
-                            onChangeText={(text) => setUseremail(text)}
-                            keyboardType="email-address"
-                            fontWeight='normal'
-                            placeholderTextColor='#D7D7D7'
-                            style={{
-                              width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 15, color: "black",
-                              fontSize: 14
-                            }} />
+                    <View style={{
+                      marginTop: 25, flexDirection: 'column', height: 65,
+                      justifyContent: "flex-start", alignItems: 'flex-start'
+                    }}>
+                      <View style={{
+                        borderRadius: 25, marginHorizontal: 20, flexDirection: 'row',
+                        height: 45,
+                        shadowColor: '#11032586',
+                        // backgroundColor: 'red',s
+                        alignItems: 'center',
+                        borderColor: "#D7D7D7",
+                        borderWidth: 1,
+                        // justifyContent: "center", 
+                        // alignItems: 'center'
+                      }}
+                      ><TextInput
+                          placeholder={t('Please_Enter_Your_Email_ID')}
+                          value={Useremail}
+                          //editable={!isLoading}
+                          onChangeText={(text) => Emailvalidaton(text)}
+                          keyboardType="email-address"
+                          fontWeight='normal'
+                          autoCorrect={false}
+                          placeholderTextColor='#D7D7D7'
+                          style={{
+                            width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 15, color: "black",
+                            fontSize: 14, height: "100%"
+                          }} />
 
-
-                        </View>
-                        <View style={{
-                          borderRadius: 15,
-                          backgroundColor: 'white',
-                          marginTop: 20,
-                          borderColor: "#D7D7D7",
-                          borderWidth: 1,
-                          height: 140,
-                          width: 300,
-                          justifyContent: "center", alignItems: 'center'
-                        }}>
-                          <TextInput
-                            placeholder="Type Message here"
-                            value={Typemessage}
-                            //editable={!isLoading}
-                            onChangeText={(text) => setTypemessage(text)}
-                            fontWeight='normal'
-                            placeholderTextColor='#D7D7D7'
-                            numberOfLines={10}
-                            multiline={true}
-                            textAlignVertical='top'
-                            style={{
-                              width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 6, color: "black",
-                              fontSize: 14
-                            }} />
-                        </View>
-
-                        <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 50, marginHorizontal: 20, marginTop: 30 }}>
-                          <TouchableOpacity onPress={() => {
-                            GetContactUs()
-
-                          }}>
-                            <View style={{ alignItems: 'center', justifyContent: 'center', width: 140, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
-
-                              <Text style={{ textAlign: 'center', fontSize: 15, color: 'white' }}>Send OTP</Text>
-
-                            </View>
-                          </TouchableOpacity>
-                        </View>
 
                       </View>
-
+                      {
+                        emailalert ?
+                          (<View style={{ justifyContent: "center", marginHorizontal: 30, }}><Text style={{ color: "red", fontSize: 12, }}>{emailerrormsg}</Text></View>)
+                          :
+                          (null)
+                      }
                     </View>
-                  </ScrollView>
+                    <View style={{
+                      borderRadius: 20,
+                      // backgroundColor: 'white',
+                      marginTop: 10,
+                      borderColor: "#D7D7D7",
+                      borderWidth: 1,
+                      height: 160,
+                      width: '85%',
+                      marginHorizontal: 20,
+                      justifyContent: "center",
+                      alignItems: 'center'
+                    }}>
+                      <TextInput
+                        placeholder={t('Type_Message_here')}
+                        value={Typemessage}
+                        //editable={!isLoading}
+                        onChangeText={(text) => setTypemessage(text)}
+                        fontWeight='normal'
+                        placeholderTextColor='#D7D7D7'
+                        numberOfLines={7}
+                        multiline={true}
+                        textAlignVertical='top'
+                        style={{
+                          width: '95%', justifyContent: 'center', alignItems: 'center', paddingLeft: 6, color: "black",
+                          fontSize: 14, height: "100%"
+                        }} />
+                    </View>
+
+                    <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 30 }}>
+                      <TouchableOpacity onPress={() => {
+                        GetContactUs()
+
+                      }}>
+                        <View style={{ alignItems: 'center', justifyContent: 'center', width: 120, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
+
+                          <Text style={{ textAlign: 'center', fontSize: 15, color: 'white' }}>{t('Send')}</Text>
+
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+
+                  </View>
+
                 </View>
-              </Modal>
-            ) : <></>}
-          </View>)
+
+              </View>
+            </KeyboardAvoidingView>
+          </Modal>
+
+        </>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 400 }}>
+        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
           <ActivityIndicator size="large" color="#ffcc00" />
         </View>)}
-    </ScrollView>
+    </SafeAreaView>
   );
 
 }

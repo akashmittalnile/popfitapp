@@ -8,10 +8,9 @@ import {
   TextInput,
   Image,
   Alert,
-  Pressable, SafeAreaView, Dimensions, ActivityIndicator, VirtualizedList
+  Pressable, SafeAreaView, Dimensions, ScrollView, RefreshControl, Platform, Modal, Linking, NativeModules, NativeEventEmitter, Button
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-import { ScrollView } from 'react-native-gesture-handler';
+
 import { BackgroundImage } from 'react-native-elements/dist/config';
 import { RadioButton } from 'react-native-paper';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -21,80 +20,515 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
 import Headers from '../../Routes/Headers';
+import CustomLoader from '../../Routes/CustomLoader';
+import CancelSubscription from './CancelSubscription';
+import { useTranslation } from 'react-i18next';
+import * as IAP from 'react-native-iap';
+// import  RNIap from 'react-native-iap';
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
-const SubscriptionPlan = (props, navigation) => {
-
+const SubscriptionPlan = (props) => {
+  const { t } = useTranslation();
   const [checktoken, setchecktoken] = useState("");
   const [SubscriptionsId, setSubscriptionsId] = useState([]);
+  const [activeplan, setActiveplan] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showCancelSubscription, setShowCancelSubscription] = useState(false);
+  const [subscriptionData, SetSubscriptionData] = useState([]);
+  const [subdetails, setSubdetails] = useState(false);
+  const [iosbuyitem, setIosbuyitem] = useState('');
+
+  // const { RNIapIos } = NativeModules;
+  // const RNIapEmitter = new NativeEventEmitter(RNIapIos);
 
   useEffect(() => {
     GetSubscriptionPlan();
-    checklogin();
-  }, [props, navigation]);
+    Ioscheckplan();
+
+
+  }, []);
+
+  //data : subscription data
+  const items = Platform.select({
+    ios: [
+      'Popfiit_monthly',
+      'Popfiit_yearly',
+    ],
+    android: [''],
+  });
+  //function : imp function
+  const validate = async receipt => {
+    const receiptBody = {
+      'receipt-data': receipt,
+      password: 'f5802c2403f5474a91278e6cca6b65a0',
+    };
+    const result = await IAP.validateReceiptIos(receiptBody, false)
+      .catch(err => {
+        console.log('error in validateReceiptIos', err);
+      })
+      .then(receipt => {
+        console.log('the recipt is==>>', receipt);
+        try {
+          const renewalHistory = receipt.latest_receipt_info;
+          const expiration =
+            renewalHistory[renewalHistory.length - 1].expires_date_ms;
+          let expired = Date.now() > expiration;
+          if (!expired) {
+            console.log('setpurchase(True)');
+          } else {
+            // Alert.alert('Purchase Expired\nyour subscription has expired , please re-subscribe to continue',)
+            console.log('Purchase Expired\nyour subscription has expired , please re-subscribe to continue',);
+
+          }
+        } catch (error) { }
+      });
+  };
+  const Ioscheckplan = async () => {
+    if (Platform.OS === 'ios') {
+      let purchaseUpdatedListener;
+      let purchaseErrorListener;
+
+      IAP.initConnection()
+        .catch(() => {
+          console.error('error connecting to store..');
+        })
+        .then(async () => {
+          console.log('connected to store...');
+          IAP.getSubscriptions({ skus: items })
+            .catch(function (error) {
+              console.error('error finding purchases', error);
+            })
+            .then(function (res) {
+              console.log('got product', res);
+              SetSubscriptionData(res);
+
+            });
+
+        });
+
+      // RNIapEmitter.addListener('iap-promoted-product', async () => {
+      //   // Check if there's a persisted promoted product
+      //   const productId = await IAP.getPromotedProductIOS();
+      //   console.log("123", productId);
+      //   if (productId !== null) { // You may want to validate the product ID against your own SKUs
+      //     try {
+      //       const IAPPROMO = await IAP.buyPromotedProductIOS(); // This will trigger the App Store purchase process
+      //       console.log("123", IAPPROMO);
+      //     } catch (error) {
+      //       console.log(error);
+      //     }
+      //   }
+      // });
+
+      purchaseErrorListener = IAP.purchaseErrorListener(error => {
+        if (error['responseCode'] === '2') {
+        } else {
+          Alert.alert("error", 'There has been an error with your purchase,error code = ' + error['code']);
+        }
+      });
+      purchaseUpdatedListener = IAP.purchaseUpdatedListener(purchase => {
+        try {
+          const receipt = purchase.transactionReceipt;
+          console.log(receipt);
+        } catch (error) {
+          console.log('error', error);
+        }
+      });
+    }
+  }
+
+  const [refreshing, setrefreshing] = useState(false)
+  const onRefresh = () => {
+    setrefreshing(true)
+    GetSubscriptionPlan();
+    setrefreshing(false)
+  }
+
+
+
 
   const checklogin = async (item) => {
     let Usertoken = await AsyncStorage.getItem("authToken");
-    console.log("token.......", Usertoken);
+    // console.log("token.......", Usertoken);
     setchecktoken(Usertoken);
     if (Usertoken == null) {
-      props.navigation.navigate('LoginMain', {
-        screen: 'LoginSignUp',
+      Alert.alert('', t('Please_login_first'))
+      // props.navigation.navigate('LoginMain', {
+      //   screen: 'LoginSignUp',
 
-      });
-      console.log("...............................");
+      // });
+
     }
     else {
-      GetSubscriptionPlan(item.id);
+      // GetSubscriptionPlan(item.id);
+      props.navigation.navigate("PaymentScreen", {
+        SubscriptionPlan: item
+      });
+      // console.log("??????????????error", item.id);
+    }
+  };
 
-      console.log("??????????????error", item.id);
+  const purchasePlan = async (item, offerToken) => {
+    // console.log("purchase item:",item);
+
+    setSubdetails(false);
+    setIsLoading(true)
+    {
+      const index = subscriptionData.findIndex(e => e.title.toUpperCase() == item.title.toUpperCase());
+      console.warn("index", index);
+
+      if (index > -1) {
+        try {
+          var data = await IAP.requestSubscription(
+            { sku: subscriptionData[index].productId }, (offerToken && { subscriptionOffers: [{ sku: subscriptionData[index].productId, offerToken }] }),
+          );
+          console.log('check Ashish data is==>>', data);
+          const receipt = data.transactionReceipt;
+          setIsLoading(false);
+          if (receipt) {
+            buyPlanInIos(item, data.transactionReceipt);
+          } else {
+            console.log('i am here ');
+          }
+        } catch (error) {
+          console.error('error in purchasePlan', error);
+          setIsLoading(false);
+        }
+      } else {
+        Alert.alert("", 'This plan does not exist');
+
+        setIsLoading(false);
+      }
     }
   };
   const GetSubscriptionPlan = async () => {
 
-    let Usertoken1 = await AsyncStorage.getItem("authToken");
-    console.log(".....usertoken..PLAN_IN...", Usertoken1);
+    let usertkn = await AsyncStorage.getItem("authToken");
+    // console.log(".....usertoken..PLAN_IN...", usertkn);
 
     setIsLoading(true)
     try {
-      const response = await axios.get(`${API.SUBSCRIPTION_PLAN}`, { headers: { "Authorization": ` ${Usertoken1}` } });
-      // console.log("", response);
-      console.log("ResponseSUBscribtion_plan ::::", response.data);
+      const response = await axios.get(`${API.SUBSCRIPTION_PLAN}`,
+        { headers: { "Authorization": ` ${usertkn}` } }
+      )
+
+      // console.log("ResponseSUBscribtion_plan ::::", response.data);
       if (response.data.status == 1) {
         setSubscriptionsId(response.data.data)
-        console.log("SUBSCRIPTION_plan_data!!!>>>", response.data.data);
-        setIsLoading(false)
+        setActiveplan(response.data)
+        // console.log("SUBSCRIPTION_plan_data!!!>>>", response.data.data);
 
       }
     }
     catch (error) {
-      console.log("SUBSCRIPTION_error:", error.response.data.message);
-      setIsLoading(false)
+      // Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+      // console.log('error in getAllMemberShipPlan', error);
+
     }
-
+    setIsLoading(false)
   };
 
-
-  const buttonClickedHandler = () => {
-    props.navigation.goBack();
-  };
-  const gotoNotification = () => {
-    props.navigation.navigate('Notifications');
-  };
+  const cancelMemberShip = async (subs_id) => {
 
 
+    let usertkn = await AsyncStorage.getItem("authToken");
+    // console.log("... PLAN_ID...", subs_id);
+
+
+    setIsLoading(true)
+    try {
+      const response = await axios.post(`${API.CANCEL_SUBSCRIPTION}`, { 'subscriptions_id': subs_id },
+        { headers: { "Authorization": ` ${usertkn}` } }
+      );
+
+      // console.log("ResponseSUBscribtion_plan ::::", response.data);
+      if (response.data.status == 1) {
+        props.navigation.goBack();
+        Alert.alert("", t('Subscription_canceled_successfully'))
+        // console.log("SUBSCRIPTION_plan_data!!!>>>", response.data);
+
+      }
+    }
+    catch (error) {
+      // Alert.alert("", "Internet connection appears to be offline. Please check your internet connection and try again.")
+      // console.log('error in cancelMemberShip', error);
+    }
+    setIsLoading(false)
+  }
+  const showAlert = (subs_id) =>
+    Alert.alert(
+      "",
+      t('Are_you_sure_you_want_to_cancel_subscription'),
+      [
+        {
+          text: t('Cancel'),
+          style: "cancel",
+        },
+        {
+          text: "Ok",
+          onPress: () => { cancelMemberShip(subs_id) }
+
+        },
+      ],
+      {
+        cancelable: true,
+      }
+    );
+  const cancelMemberShipIos = () => {
+    setShowCancelSubscription(true);
+  }
   return (
     <SafeAreaView style={{
       flex: 1,
       width: WIDTH,
       height: HEIGHT, flexGrow: 1
     }} >
-      {!isLoading ?
-        (<View >
-          {/* <View style={styles.navigationBarColor}>
+      <Headers
+        Backicon={{
+          visible: true,
+        }}
+        BackicononClick={() => { props.navigation.goBack() }}
+
+        CartIcon={{
+          visible: true,
+        }}
+        CartIconononClick={() => { props.navigation.navigate("CartAdded") }}
+
+        Bellicon={{
+          visible: true,
+
+        }}
+        BelliconononClick={() => { props.navigation.navigate("Notifications") }}
+      />
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
+      >
+        {!isLoading ?
+          (<View>
+            {
+              activeplan?.my_subscriber_status === "Active" ?
+
+                (<>
+                  <View style={{ marginLeft: 10, marginTop: 5, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}  >
+                    <Text style={{ textAlign: 'left', fontSize: 18, color: '#000', fontWeight: "500" }} >{t('My_Plan')}</Text>
+                  </View>
+                  <View style={{
+                    height: 122, width: "94%",
+                    justifyContent: "flex-start",
+                    alignItems: "flex-start",
+                    marginHorizontal: 10, borderRadius: 20, padding: 4, backgroundColor: '#FFCC00'
+                  }}>
+                    <View
+                      style={{
+
+                        marginTop: 8,
+
+                        height: 30,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        position: "absolute",
+                        width: 100,
+                        right: 10,
+
+                      }}>
+
+
+                      <View style={{ flexDirection: "row", width: 60, justifyContent: "center", alignItems: 'center' }}>
+                        <Image source={require('../assets/Ellipsewhite.png')}
+                          style={{
+                            width: 8,
+                            height: 8, borderRadius: 50, marginRight: 8
+                          }} />
+                        <View style={{ justifyContent: "center", alignItems: 'center' }}>
+                          <Text style={{ textAlign: 'left', fontSize: 14, color: 'white', }}>{t('Active')}</Text>
+                        </View>
+
+                      </View>
+
+
+                    </View>
+
+                    <View style={{ flexDirection: "row" }}>
+
+                      <View style={{ justifyContent: 'center', width: 55, height: 55, borderRadius: 55 / 2, backgroundColor: "#ffcc00", marginHorizontal: 10, marginTop: 10 }}>
+                        <Image
+                          source={require('../assets/activeplan.png')}
+                          resizeMode="contain"
+                          style={{
+                            width: 60,
+                            height: 60, alignSelf: 'center',
+                          }} />
+                      </View>
+                      <View style={{
+                        height: 60, width: "40%", flexDirection: 'column', alignItems: "flex-start",
+                        justifyContent: "center", marginTop: 6, marginLeft: 14
+                      }}>
+                        <Text style={{
+                          // backgroundColor:"red",
+                          textAlign: 'left',
+                          fontSize: 20,
+                          color: '#FFFFFF',
+                          fontWeight: "500"
+                        }}>
+                          {activeplan?.my_subscriber?.plan_name}
+                        </Text>
+                        <View style={{
+                          flexDirection: 'row',
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}>
+                          <Text
+                            style={{
+                              // marginLeft: 10,
+                              // marginTop: 10,
+                              textAlign: 'center',
+                              fontSize: 22,
+                              color: '#FFFFFF',
+                              fontWeight: "500"
+                            }}>{activeplan?.currency}
+                            {activeplan?.my_subscriber?.amount}/
+                            <Text style={{
+                              // backgroundColor:"red",
+                              textAlign: 'left',
+                              fontSize: 14,
+                              color: '#FFFFFF',
+
+                              fontWeight: "500"
+                            }}> {activeplan?.my_subscriber?.plan_type}
+                            </Text></Text>
+
+                        </View>
+                      </View>
+
+                    </View>
+
+                    <TouchableOpacity
+                      onPress={() =>
+                        Platform.OS === 'android'
+                          ? showAlert(activeplan?.my_subscriber?.subscr_id)
+                          :
+                          cancelMemberShipIos()
+
+                      }
+                      style={{
+                        marginLeft: 90,
+                        height: 30, width: 100, flexDirection: 'column', alignItems: "center",
+                        justifyContent: "center", marginTop: 10, backgroundColor: "#FED945", borderRadius: 50, borderWidth: 1, borderColor: "#FFFFFF"
+                      }}>
+                      <Text style={{ color: 'white', fontSize: 14, fontWeight: "400", textAlign: "center" }}>{t('Cancel')}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </>)
+                :
+                (<>
+                  <View style={{ marginLeft: 10, marginTop: 5, height: 50, width: WIDTH * 0.9, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}  >
+                    <Text style={{ textAlign: 'left', fontSize: 18, color: '#000', fontWeight: "500" }} >{t('My_Plan')}</Text>
+                  </View>
+                  <View style={{
+                    height: 122, width: "94%",
+                    justifyContent: "flex-start",
+                    alignItems: "flex-start",
+                    marginHorizontal: 10, borderRadius: 20, padding: 4, backgroundColor: '#FFCC00'
+                  }}>
+                    <View
+                      style={{
+
+                        marginTop: 8,
+
+                        height: 30,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        position: "absolute",
+                        width: 100,
+                        right: 10,
+
+                      }}>
+
+
+                      <View style={{ flexDirection: "row", width: 60, justifyContent: "center", alignItems: 'center' }}>
+                        <Image source={require('../assets/Ellipsewhite.png')}
+                          style={{
+                            width: 8,
+                            height: 8, borderRadius: 50, marginRight: 8
+                          }} />
+                        <View style={{ justifyContent: "center", alignItems: 'center' }}>
+                          <Text style={{ textAlign: 'left', fontSize: 14, color: 'white', }}>{t('Active')}</Text>
+                        </View>
+
+                      </View>
+
+
+                    </View>
+
+                    <View style={{ flexDirection: "row" }}>
+
+                      <View style={{ justifyContent: 'center', width: 55, height: 55, borderRadius: 55 / 2, backgroundColor: "#ffcc00", marginHorizontal: 10, marginTop: 10 }}>
+                        <Image
+                          source={require('../assets/activeplan.png')}
+                          resizeMode="contain"
+                          style={{
+                            width: 60,
+                            height: 60, alignSelf: 'center',
+                          }} />
+                      </View>
+                      <View style={{
+                        height: 60, width: "40%", flexDirection: 'column', alignItems: "flex-start",
+                        justifyContent: "center", marginTop: 6, marginLeft: 14
+                      }}>
+                        <Text style={{
+                          // backgroundColor:"red",
+                          textAlign: 'left',
+                          fontSize: 20,
+                          color: '#FFFFFF',
+                          fontWeight: "500"
+                        }}>{t('Free')}
+                        </Text>
+                        <View style={{
+                          flexDirection: 'row',
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}>
+                          <Text
+                            style={{
+                              // marginLeft: 10,
+                              // marginTop: 10,
+                              textAlign: 'center',
+                              fontSize: 22,
+                              color: '#FFFFFF',
+                              fontWeight: "500"
+                            }}>0
+                            <Text style={{
+                              // backgroundColor:"red",
+                              textAlign: 'left',
+                              fontSize: 14,
+                              color: '#FFFFFF',
+
+                              fontWeight: "500"
+                            }}> {activeplan?.my_subscriber?.plan_type}
+                            </Text></Text>
+
+                        </View>
+                      </View>
+
+                    </View>
+
+
+                  </View>
+                </>)
+            }
+            <>
+
+            </>
+            {/* <View style={styles.navigationBarColor}>
             <View style={styles.navigationBarLeftContainer}>
               <TouchableOpacity
                 onPress={() => {
@@ -145,282 +579,540 @@ const SubscriptionPlan = (props, navigation) => {
               </TouchableOpacity>
             </View>
           </View> */}
-          <Headers
-            Backicon={{
-              visible: true,
-            }}
-            BackicononClick={() => { props.navigation.goBack() }}
 
-            CartIcon={{
-              visible: true,
-            }}
-            CartIconononClick={() => { props.navigation.navigate("CartAdded") }}
 
-            Bellicon={{
-              visible: true,
-
-            }}
-            BelliconononClick={() => { props.navigation.navigate("Notifications") }}
-          />
-          <ScrollView style={{}}>
             <View style={{
               paddingBottom: 80, alignItems: "center",
-              justifyContent: "center",
+              justifyContent: "center", marginTop: 15
             }}>
+
               <FlatList
                 data={SubscriptionsId}
                 numColumns={2}
-                renderItem={({ item }) => (
-                  <View
-                    style={{
-                      backgroundColor: '#2147b3',
-                      marginTop: 20,
-                      marginHorizontal: 10,
-                      borderRadius: 20,
-                      width: "45%",
-                      height: 200,
-                      //  paddingBottom:100
-                      // alignItems:"center",
-                      justifyContent: "center",
-
-
-                    }}>
-                    <View style={{
-                      height: 45, borderRadius: 20, flexDirection: 'row', alignItems: "center",
-                      justifyContent: "center", flex: 1, width: "95%",
-                    }}>
-                      <View
-                        style={{
-                          flex: 0.6,
-                          height: 50,
-                          flexDirection: 'row',
-                          borderTopLeftRadius: 20,
-                          justifyContent: "center"
-                        }}>
-                        <Text
+                keyExtractor={(item, index) => String(index)}
+                renderItem={({ item, index }) => {
+                  return (
+                    <>
+                      {index == 0 ? <></>
+                        :
+                        <View
                           style={{
-                            width: 90,
-                            marginLeft: 10,
+
+                            backgroundColor: "#ffcc00",
                             marginTop: 10,
-                            textAlign: 'left',
-                            fontSize: 14,
-                            color: 'white',
+                            marginHorizontal: 5,
+                            borderRadius: 20,
+                            width: WIDTH * 0.60,
+                            height: 210,
+
+
 
                           }}>
-                          {item.name}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          flex: 0.4, height: 60, borderTopRightRadius: 20, alignItems: "center",
-                          justifyContent: "center"
-                        }}>
-                        <BackgroundImage
-                          // resizeMode="contain"
-                          source={require('../assets/dotted.png')}
-                          style={{
-                            borderTopRightRadius: 20,
-                            // flex: 1,
-                            height: 50,
-                            width: 80,
-                            overflow: 'hidden',
+                          <View style={{
+                            height: 30, borderRadius: 20, flexDirection: 'row', alignItems: "center",
+                            justifyContent: "center", flex: 1, width: "100%",
                           }}>
-                          <View
-                            style={{
-                              position: "absolute",
-                              top: 11,
-                              right: 10,
-                              width: 20,
-                              height: 20,
-                              borderColor: 'white',
-                              borderWidth: 5,
-                              borderRadius: 20 / 2,
-                              alignItems: "center",
-                              justifyContent: "center"
-                            }}></View>
-                        </BackgroundImage>
-                      </View>
-                    </View>
+                            <View
+                              style={{
+                                flex: 0.6,
+                                height: 45,
+                                flexDirection: 'row',
+                                borderTopLeftRadius: 20,
+                                justifyContent: "center",
+                                alignItems: "center",
+                              }}>
+                              <Text
+                                style={{
+                                  width: 90,
+                                  // marginLeft: 10,
+                                  // marginTop: 10,
+                                  textAlign: 'center',
+                                  fontSize: 16,
+                                  color: 'white',
+                                  fontWeight: "500"
 
-                    <View style={{
-                      height: 100, width: "100%", flexDirection: 'column', alignItems: "flex-start",
-                      justifyContent: "flex-start", flex: 2
-                    }}>
-                      <View style={{
-                        height: 40, flexDirection: 'row', flex: 1, alignItems: "center",
+                                }}>
+                                {item?.title}
+                              </Text>
+                            </View>
+                            {/* <View
+                      style={{
+                        flex: 0.4, height: 60, borderTopRightRadius: 20, alignItems: "center",
                         justifyContent: "center"
                       }}>
-                        <Text
+                      <BackgroundImage
+                        // resizeMode="contain"
+                        source={require('../assets/dotted.png')}
+                        style={{
+                          borderTopRightRadius: 20,
+                          // flex: 1,
+                          height: 50,
+                          width: 80,
+                          overflow: 'hidden',
+                        }}>
+                        <View
                           style={{
-                            marginLeft: 10,
-                            // marginTop: 10,
-                            textAlign: 'left',
-                            fontSize: 13,
-                            color: 'white',
-                            flex: 0.07
-                          }}>$</Text>
-                        <Text
+                            position: "absolute",
+                            top: 11,
+                            right: 10,
+                            width: 20,
+                            height: 20,
+                            borderColor: 'white',
+                            borderWidth: 5,
+                            borderRadius: 20 / 2,
+                            alignItems: "center",
+                            justifyContent: "center"
+                          }}></View>
+                      </BackgroundImage>
+                    </View> */}
+                          </View>
+                          {/* // plan price */}
+                          <View style={{
+                            height: 30, width: "100%", flexDirection: 'column', alignItems: "center",
+                            justifyContent: "center",
+                          }}>
+                            <View style={{
+                              flexDirection: 'row',
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}>
+                              <Text
+                                style={{
+                                  // marginLeft: 10,
+                                  // marginTop: 10,
+                                  textAlign: 'center',
+                                  fontSize: 20,
+                                  color: 'white',
+
+                                  fontWeight: "500"
+                                }}>{item?.price}{item?.type == "Weekly" ? null : "/"}<Text style={{
+                                  // backgroundColor:"red",
+                                  textAlign: 'left',
+                                  fontSize: 12,
+                                  color: 'white',
+
+                                  fontWeight: "500"
+                                }}> {item?.type == "Weekly" ? null : item?.type}</Text></Text>
+                              {/* <Text
                           style={{
-                            marginLeft: 6,
-                            textAlign: 'left',
+                            // backgroundColor:"red",
+                            marginLeft: 2,
+                            textAlign: 'center',
                             fontSize: 14,
                             color: 'white',
-                            flex: 0.33,
-
+                            flex: 0.3,
+                            fontWeight: "500"
                             // marginTop: 10,
-                          }}>{item.price}</Text>
-                        <Text
-                          style={{
-                            // marginLeft: 2,
-                            // marginTop: 10,
-                            textAlign: 'left',
-                            fontSize: 13,
-                            color: 'white',
-                            flex: 0.5
-                          }}>
-                          {item.type}
-                        </Text>
-                      </View>
-
-                      <View style={{
-                        height: 50, width: "100%", flexDirection: 'column', alignItems: "flex-start",
-                        justifyContent: "flex-start", flex: 1
-                      }}>
-                        <View
-                          style={{
-                            marginHorizontal: 10,
-                            height: 15,
-                            flexDirection: 'row', flex: 0.3
-                          }}>
-                          <View
-                            style={{
-                              backgroundColor: 'white',
-                              borderRadius: 20,
-                              height: 5,
-                              width: 5,
-                            }}></View>
-                          <View style={{ marginLeft: 5, height: 10, alignItems: 'center' }}>
-                            <Text
-                              style={{
-                                marginTop: -4,
-                                textAlign: 'left',
-                                fontSize: 10,
-                                color: 'white',
-
-                              }}>Yearly price: {item.yearly_price}
-                            </Text>
+                          }}>{item.price}/</Text>
+                      <Text */}
+                              {/* style={{
+                          // backgroundColor:"red",
+                          textAlign: 'left',
+                          fontSize: 10,
+                          color: 'white',
+                          flex: 0.5,
+                          fontWeight: "500"
+                        }}>
+                        {item.type}
+                      </Text> */}
+                            </View>
                           </View>
-                        </View>
 
-                        <View
-                          style={{
-                            marginHorizontal: 10,
-                            height: 15,
-                            flexDirection: 'row', flex: 0.3
+                          {/* description */}
+                          <View style={{
+                            width: "100%",
+                            alignItems: "flex-start",
+                            // justifyContent: "center",
+                            paddingVertical: 2, height: 100
                           }}>
-                          <View
-                            style={{
-                              backgroundColor: 'white',
-                              borderRadius: 20,
-                              height: 5,
-                              width: 5,
-                            }}></View>
-                          <View style={{ marginLeft: 5, height: 10, alignItems: 'center' }}>
-                            <Text
+                            <View
                               style={{
-                                marginTop: -4,
-                                textAlign: 'left',
-                                fontSize: 10,
-                                color: 'white',
+                                marginHorizontal: 10,
+                                height: 30,
+                                flexDirection: 'row',
 
+                                // marginBottom: 6,
+                                // backgroundColor: "pink",
+                                justifyContent: "center",
+                                alignItems: "center"
                               }}>
-                              Half yearly price: {item.half_yearly_price}
-                            </Text>
-                          </View>
-                        </View>
+                              <View
+                                style={{
+                                  marginTop: -10,
+                                  // alignItems: "flex-start",
+                                  // justifyContent: "flex-start",
+                                  backgroundColor: 'white',
+                                  borderRadius: 20,
+                                  height: 5,
+                                  width: 5,
+                                }}></View>
+                              <View style={{ marginLeft: 5, alignItems: 'center' }}>
+                                <Text numberOfLines={2}
+                                  style={{
+                                    // 
+                                    textAlign: 'left',
+                                    fontSize: 10,
+                                    color: 'white',
+                                    fontWeight: "500"
 
+                                  }}>{item?.title_1}
+                                </Text>
+                              </View>
+                            </View>
+
+                            <View
+                              style={{
+                                marginHorizontal: 10,
+                                height: 30,
+                                flexDirection: 'row',
+
+                                // marginBottom: 6,
+                                // backgroundColor: "pink",
+                                justifyContent: "center",
+                                alignItems: "center"
+                              }}>
+                              <View
+                                style={{
+                                  marginTop: -10,
+                                  // alignItems: "flex-start",
+                                  // justifyContent: "flex-start",
+                                  backgroundColor: 'white',
+                                  borderRadius: 20,
+                                  height: 5,
+                                  width: 5,
+                                }}></View>
+                              <View style={{ marginLeft: 5, alignItems: 'center' }}>
+                                <Text numberOfLines={2}
+                                  style={{
+                                    // 
+                                    textAlign: 'left',
+                                    fontSize: 10,
+                                    color: 'white',
+                                    fontWeight: "500"
+
+                                  }}>{item?.title_2}
+                                </Text>
+                              </View>
+                            </View>
+
+                            <View
+                              style={{
+                                marginHorizontal: 10,
+                                height: 30,
+                                flexDirection: 'row',
+
+                                // marginBottom: 6,
+                                // backgroundColor: "pink",
+                                justifyContent: "center",
+                                alignItems: "center"
+                              }}>
+                              <View
+                                style={{
+                                  marginTop: -10,
+                                  // alignItems: "flex-start",
+                                  // justifyContent: "flex-start",
+                                  backgroundColor: 'white',
+                                  borderRadius: 20,
+                                  height: 5,
+                                  width: 5,
+                                }}></View>
+                              <View style={{ marginLeft: 5, alignItems: 'center' }}>
+                                <Text numberOfLines={2}
+                                  style={{
+                                    // 
+                                    textAlign: 'left',
+                                    fontSize: 10,
+                                    color: 'white',
+                                    fontWeight: "500"
+
+                                  }}>{item?.title_3}
+                                </Text>
+                              </View>
+                            </View>
+                            {/* <View
+                        style={{
+                          marginHorizontal: 10,
+                          height: 15,
+                          flexDirection: 'row', flex: 0.3, 
+                          marginBottom: 6,
+                          justifyContent:"center",alignItems:"center"
+                        }}>
                         <View
                           style={{
-                            marginHorizontal: 10,
-                            height: 15,
-                            flexDirection: 'row', flex: 0.4
-                          }}>
-                          <View
+                            backgroundColor: 'white',
+                            borderRadius: 20,
+                            height: 5,
+                            width: 5,
+                          }}></View>
+                        <View style={{ marginLeft: 5, height: 10, alignItems: 'center' }}>
+                          <Text
                             style={{
-                              backgroundColor: 'white',
-                              borderRadius: 20,
-                              height: 5,
-                              width: 5,
-                            }}></View>
-                          <View style={{ marginLeft: 5, height: 10, alignItems: 'center' }}>
-                            <Text
-                              style={{
-                                marginTop: -4,
-                                textAlign: 'left',
-                                fontSize: 10,
-                                color: 'white',
+                              // marginTop: -4,
+                              textAlign: 'left',
+                              fontSize: 10,
+                              color: 'white',
+                              fontWeight: "500"
 
-                              }}>
-                              Quarterly price: {item.quarterly_price}
-                            </Text>
-                          </View>
+                            }}>
+                            {item.title_2}
+                          </Text>
                         </View>
                       </View>
-                    </View>
 
-                    <View style={{
-                      flex: 1, flexDirection: 'row', width: "100%", height: 40, alignItems: "flex-start",
-                      justifyContent: "flex-start"
-                    }}>
-                      <View
-                        style={{ flex: 0.4, height: 30, borderTopRightRadius: 20, }}>
-                        <BackgroundImage
-                          source={require('../assets/leftCurve.png')}
-                          style={{ height: 60 }}></BackgroundImage>
-                      </View>
                       <View
                         style={{
-                          flex: 0.2,
-                          justifyContent: 'center',
-                          // flexDirection: 'row',
-                          alignItems: "center",
-                          height: 40,
-                          marginTop: 6,
+                          marginHorizontal: 10,
+                          height: 15,
+                          flexDirection: 'row', flex: 0.4
+                          , justifyContent:"center",alignItems:"center"
                         }}>
-                        <TouchableOpacity onPress={() => { checklogin(item) }}>
-                          <View
+                        <View
+                          style={{
+                            backgroundColor: 'white',
+                            borderRadius: 20,
+                            height: 5,
+                            width: 5,
+                          }}></View>
+                        <View style={{ marginLeft: 5, height: 10, alignItems: 'center' }}>
+                          <Text
                             style={{
-                              // marginLeft: 10,
-                              justifyContent: 'center',
-                              backgroundColor: 'white',
-                              width: 120,
-                              height: 30,
-                              borderRadius: 30 / 2,
+                              // marginTop: -4,
+                              textAlign: 'left',
+                              fontSize: 10,
+                              color: 'white',
+                              fontWeight: "500"
                             }}>
-                            <Text
+                             {item.title_3}
+                          </Text>
+                        </View>
+                      </View> */}
+                          </View>
+
+                          <View style={{
+                            flex: 1, flexDirection: 'row', width: "100%", alignItems: "flex-start",
+                            justifyContent: "flex-start", height: 50,
+                          }}>
+                            <View
+                              style={{ flex: 0.4, height: 40, borderBottomLeftRadius: 20, }}>
+                              <BackgroundImage
+                                source={require('../assets/leftCurve.png')}
+                                style={{ height: 90, alignItems: "center", justifyContent: 'center', }}></BackgroundImage>
+                            </View>
+                            <View
                               style={{
-                                textAlign: 'center',
-                                fontSize: 10,
-                                color: '#c79d3a',
+                                flex: 0.2,
+                                justifyContent: 'center',
+                                // flexDirection: 'row',
+                                alignItems: "center",
+                                height: 30,
+                                // marginTop: 6,
 
                               }}>
-                              Subscribe Now
-                            </Text>
-                          </View>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </View>
+                              {item?.title === "Free" ?
+                                (<TouchableOpacity
+                                  onPress={() => props.navigation.goBack()}
+                                  style={{ borderRadius: 50, }}>
+                                  <View
+                                    style={{
+                                      // marginLeft: 10,
+                                      justifyContent: 'center',
+                                      backgroundColor: 'white',
+                                      width: 120,
+                                      height: 30,
+                                      borderRadius: 50,
+                                    }}>
+                                    <Text
+                                      style={{
+                                        textAlign: 'center',
+                                        fontSize: 12,
+                                        color: '#c79d3a',
+                                        fontWeight: "500"
 
-                )}
+                                      }}>
+                                      {t('Free')}
+                                    </Text>
+                                  </View>
+                                </TouchableOpacity>)
+                                :
+                                (<TouchableOpacity onPress={() => {
+                                  Platform.OS === 'android' ? checklogin(item) :
+                                    setSubdetails(true),
+                                    setIosbuyitem(item)
+                                }}
+                                  style={{ borderRadius: 50, }}>
+                                  <View
+                                    style={{
+                                      // marginLeft: 10,
+                                      justifyContent: 'center',
+                                      backgroundColor: 'white',
+                                      width: 140,
+                                      height: 30,
+                                      borderRadius: 50,
+                                    }}>
+                                    <Text
+                                      style={{
+                                        textAlign: 'center',
+                                        fontSize: 12,
+                                        color: '#c79d3a',
+                                        fontWeight: "500"
+
+                                      }}>
+                                      {t('Subscribe_Now')}
+                                    </Text>
+                                  </View>
+                                </TouchableOpacity>)
+
+                              }
+
+                            </View>
+                          </View>
+                        </View>}
+                    </>
+
+
+                  )
+                }
+                }
               />
             </View>
-          </ScrollView>
-        </View>)
-        :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+            <CancelSubscription
+              visible={showCancelSubscription}
+              setVisibility={setShowCancelSubscription}
+            />
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={subdetails}
+              onRequestClose={() => {
+                setSubdetails(false);
+              }}>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                  backgroundColor: 'rgba(140, 141, 142, 0.7)'
+
+                }}>
+
+                <View
+                  style={{
+                    width: "100%",
+                    height: HEIGHT * 0.99,
+                    // backgroundColor: 'red',
+                    // backgroundColor: '#FFFFFF',
+                    borderRadius: 20,
+                    justifyContent: "flex-end",
+                    alignItems: "center",
+                  }}>
+
+                  <View style={{
+                    backgroundColor: '#FFFFFF',
+                    height: 640,
+
+                    width: WIDTH * 0.98,
+
+                    marginHorizontal: 10,
+                    borderRadius: 20,
+                    //marginBottom: 10,
+                    alignItems: 'center',
+                    flexDirection: 'column'
+                  }}>
+                    <TouchableOpacity onPress={() => { setSubdetails(false) }}
+                      style={{ position: "absolute", width: 30, backgroundColor: 'red', borderRadius: 35, height: 35, right: 10, top: 10 }}>
+                      <Image
+                        source={require('../assets/cancelWhite.png')}
+                        style={{
+                          width: 35,
+                          height: 35, alignSelf: 'center'
+                        }}
+
+                      />
+                    </TouchableOpacity>
+                    <View style={{ marginTop: 15, marginHorizontal: 20, height: 30, flexDirection: "row", justifyContent: "center", alignItems: 'center' }}>
+                      <Text style={{ marginTop: 2, textAlign: 'center', fontSize: 19, color: '#000000', fontWeight: '500' }}>{t('Subscription_Details')}</Text>
+
+                    </View>
+                    <View
+                      style={{
+                        borderBottomWidth: 0.5,
+                        marginVertical: 10,
+                        borderColor: "gray",
+                        width: "90%",
+                      }}
+                    />
+                    <View style={{ height: 485, width: "100%", alignItems: 'flex-start', justifyContent: "flex-start", padding: 18 }}>
+
+                      {/* <Text style={{ color: '#77869E', textAlign: "left", fontSize: 17, fontWeight: "400", marginBottom: 20 }}>PaymentScreen</Text> */}
+                      <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6, }}>
+                        • PopFiit {iosbuyitem.title} {t('Subscription_Plans')}</Text>
+                      <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6, }}>
+                        • {t('Price_of_the_plan')} {iosbuyitem.price + "/" + iosbuyitem.title}  </Text>
+                      <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6, }}>
+                        • {t('Duration')} {iosbuyitem.type}  </Text>
+                      <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6, }}>
+                        • {t('Payment_iTunes_Account_confirmation_purchase')}</Text>
+
+
+                      <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6 }}> • {t('Subscription_automatically_current_period')}</Text>
+
+                      <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6 }}>• {t('Account_will_charged')}</Text>
+
+                      <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6 }}>• {t('Subscriptions_Settings_after_purchase')}</Text>
+
+                      <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6 }}>• {t('Any_unused_portion_free_trial_period_applicable')}
+                      </Text>
+                      <Text style={{ color: 'black', textAlign: "left", fontSize: 14, fontWeight: "400", marginBottom: 6 }}>• {t('Also_look_our_Privacy_Policy_here')} </Text>
+                      <TouchableOpacity onPress={() => {
+                        Linking.openURL('https://dev.pop-fiit.com/privacy-policy')
+                      }}>
+                        <Text style={{ color: '#ffcc00', textAlign: "left", fontSize: 14, fontWeight: "bold", }}> https://dev.pop-fiit.com/privacy-policy
+                        </Text>
+                      </TouchableOpacity>
+
+
+                    </View>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 30, width: "85%", marginHorizontal: 20, }} >
+                      <TouchableOpacity onPress={() => {
+                        Linking.openURL('https://dev.pop-fiit.com/privacy-policy')
+                      }}>
+                        <Text style={{ color: '#ffcc00', textAlign: "left", fontSize: 14, fontWeight: "bold", marginBottom: 10 }} >{t('Privacy_Policy')}</Text>
+                      </TouchableOpacity>
+                      {/* <View
+                        style={{
+                          height: 20,
+                          width: 0.5,
+                          backgroundColor: '#909090',
+                          // borderBottomWidth: 0.5,
+                          // marginVertical: 10,
+                          // borderColor: "red",
+                          // width: "20%",
+                        }}
+                      /> */}
+                      <TouchableOpacity onPress={() => {
+                        Linking.openURL('https://dev.pop-fiit.com/terms-of-use')
+                      }}>
+                        <Text style={{ color: '#ffcc00', textAlign: "left", fontSize: 14, fontWeight: "bold", marginBottom: 10 }} >{t('Terms_of_use')}</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <View style={{ justifyContent: "center", alignItems: "center", flexDirection: 'row', height: 34, marginHorizontal: 20, }}>
+                      <TouchableOpacity
+                        onPress={() => { purchasePlan(iosbuyitem) }} >
+                        <View style={{ justifyContent: 'center', width: 110, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
+                          <Text style={{ color: 'white', textAlign: "center", fontSize: 12, fontWeight: "400" }}>{t('Continue')}</Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+
+              </View>
+
+            </Modal>
+          </View>)
+          :
+          (<CustomLoader showLoader={isLoading} />)}
+      </ScrollView>
     </SafeAreaView>
   );
 }

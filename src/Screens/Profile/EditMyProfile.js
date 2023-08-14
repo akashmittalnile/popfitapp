@@ -13,9 +13,12 @@ import ImagePicker from 'react-native-image-crop-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API } from '../../Routes/Urls';
 import axios from 'axios';
+import CustomLoader from '../../Routes/CustomLoader';
+import { useTranslation } from 'react-i18next';
 
 const EditMyProfile = (props) => {
 
+  const { t } = useTranslation();
   const [userprofile, setUserprofile] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [firstname, setFirstname] = useState("");
@@ -34,6 +37,7 @@ const EditMyProfile = (props) => {
   };
 
   const openLibrary = async () => {
+    console.log("slectphoto:");
     try {
       let value = await ImagePicker.openPicker({
         width: 1080,
@@ -56,9 +60,9 @@ const EditMyProfile = (props) => {
   }, []);
 
   const Setuserdetails = (userprofile) => {
-    console.log('====================================');
-    console.log(userprofile?.first_name, userprofile?.last_name, userprofile?.phone, userprofile?.email);
-    console.log('====================================');
+    // console.log('====================================');
+    // console.log(userprofile?.first_name, userprofile?.last_name, userprofile?.phone, userprofile?.email);
+    // console.log('====================================');
     setFirstname(userprofile?.first_name),
       setLastname(userprofile?.last_name),
       setMobileno(userprofile?.phone),
@@ -75,17 +79,15 @@ const EditMyProfile = (props) => {
       if (response.data.status == 1) {
         setUserprofile(response.data.data);
         Setuserdetails(response.data.data);
-        setIsLoading(false);
-        // console.log("User_ordersdetails>>>", response.data.orders);
-      } else {
-        Alert.alert("something went wrong user Profile!")
-        setIsLoading(false);
+
+
       }
     }
     catch (error) {
-      console.log("GetUserProfile _Catch_error:", error.response.data.message);
-      setIsLoading(false)
-    }
+      Alert.alert("", t('Check_internet_connection'))
+      // console.log("GetUserProfile _Catch_error:", error.response.data.message);
+
+    } setIsLoading(false);
   };
 
   const GetProfile = async () => {
@@ -98,8 +100,8 @@ const EditMyProfile = (props) => {
     formdata.append("last_name", lastname);
     formdata.append("phone", mobileno);
     formdata.append("email", email);
-     
-if (profileImage != '') {
+
+    if (profileImage != '') {
       const imageName = profileImage.path.slice(
         profileImage.path.lastIndexOf('/'),
         profileImage.path.length,
@@ -111,21 +113,22 @@ if (profileImage != '') {
         uri: profileImage.path,
       });
     }
+    // console.log("upload image", formdata);
     try {
-      const response = await axios.post(`${API.PROFILE_UPDATE}`, formdata, { headers: { "Authorization": ` ${usertkn}`, 'Content-Type': 'multipart/form-data'} });
-      console.log("ResponseProfile_UpdateStatus ::::", response.data);
+      const response = await axios.post(`${API.PROFILE_UPDATE}`, formdata, { headers: { "Authorization": ` ${usertkn}`, 'Content-Type': 'multipart/form-data' } });
+      // console.log("ResponseProfile_UpdateStatus ::::", response.data);
       // console.log("Profile_Update ::::", response.data.message);
       if (response.data.status == 1) {
         setEditMyProfilePopUp(true);
         setIsLoading(false);
       }
       else {
-        console.log("Profile_Update_else ::::", response.data.message);
+        // console.log("Profile_Update_else ::::", response.data.message);
         setIsLoading(false);
       }
-}
+    }
     catch (error) {
-      Alert.alert("something went wrong user Update Profile catch!")
+      Alert.alert("", t('Check_internet_connection'))
       // console.log("Profile_Update _error:", error.response.data.message);
       setIsLoading(false);
     }
@@ -155,7 +158,7 @@ if (profileImage != '') {
         BelliconononClick={() => { props.navigation.navigate("Notifications") }}
       />
       {!isLoading ?
-        (<ScrollView >
+        (<ScrollView>
 
           <View style={{
             marginHorizontal: 15,
@@ -166,7 +169,7 @@ if (profileImage != '') {
             borderWidth: 1,
             height: 300
           }}>
-            <Text style={{ marginLeft: 25, marginTop: 20, textAlign: 'left', fontSize: 15, color: 'black', }}>Profile Name</Text>
+            <Text style={{ marginLeft: 25, marginTop: 20, textAlign: 'left', fontSize: 15, color: 'black', }}>{t('Profile_Name')}</Text>
 
             <View style={{ flexDirection: 'row', borderRadius: 25, height: 50, marginHorizontal: 23, marginTop: 15 }}>
               <View style={{
@@ -271,6 +274,7 @@ if (profileImage != '') {
                 onChangeText={(text) => setMobileno(text)}
                 fontWeight='normal'
                 keyboardType='number-pad'
+                maxLength={10}
                 placeholderTextColor='#D7D7D7'
                 style={{ width: '70%', justifyContent: 'center', alignItems: 'center', paddingLeft: 15, color: "black", fontSize: 11 }} />
 
@@ -304,7 +308,7 @@ if (profileImage != '') {
               </View>
 
               <TextInput
-                placeholder="Enter Email"
+                placeholder="Email"
                 autoCorrect={false}
                 value={email}
                 onChangeText={(text) => setEmail(text)}
@@ -314,7 +318,7 @@ if (profileImage != '') {
 
 
             </View>
-            <TouchableOpacity onPress={() => openLibrary()}>
+            <TouchableOpacity onPress={() => { openLibrary() }}>
               <View style={{
                 marginTop: 20, borderRadius: 25, marginRight: 120, marginLeft: 20, flexDirection: 'row',
                 height: 40,
@@ -328,9 +332,9 @@ if (profileImage != '') {
               }}
               >
 
-                <View style={{ flex: 1 }}>
-                  <TextInput placeholder="   Change Profile Photo"
-
+                <View style={{ flex: 1, paddingLeft: 10 }}>
+                  <TextInput placeholder={t('Change_Profile_Photo')}
+                    style={{ fontSize: 12, color: "black" }}
                     fontWeight='normal'
                     placeholderTextColor='black'
                     editable={false} selectTextOnFocus={false}
@@ -357,16 +361,16 @@ if (profileImage != '') {
           </View>
 
 
-          <View style={{ marginBottom: 20, flexDirection: 'row', height: 50, marginTop: 40, justifyContent: 'center' }}>
+          <View style={{ marginBottom: 20, flexDirection: 'row', height: 34, marginTop: 40, justifyContent: 'center' }}>
             <TouchableOpacity onPress={() => { buttonClickedHandler() }}>
-              <View style={{ justifyContent: 'center', width: 150, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
-                <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Cancel</Text>
+              <View style={{ justifyContent: 'center', width: 110, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
+                <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', }}>{t('Cancel')}</Text>
               </View>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => { GetProfile() }}>
-              <View style={{ justifyContent: 'center', width: 150, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35, marginLeft: 10 }}>
-                <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Save</Text>
+              <View style={{ justifyContent: 'center', width: 110, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50, marginLeft: 10 }}>
+                <Text style={{ textAlign: 'center', fontSize: 16, color: 'white', }}>{t('Save')}</Text>
 
               </View>
             </TouchableOpacity>
@@ -389,30 +393,22 @@ if (profileImage != '') {
                 }}>
                 <View
                   style={{
-                    margin: 10,
+                    margin: 2,
                     backgroundColor: 'white',
                     borderRadius: 20,
-                    //paddingTop: 40,
-
+                    width: '98%',
                     alignItems: 'center',
-                    shadowColor: '#000',
-                    shadowOffset: {
-                      width: 0,
-                      height: 2,
-                    },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 4,
-                    elevation: 5,
+                    // shadowColor: '#000',
+                    // shadowOpacity: 0.25,
+                    // shadowRadius: 4,
+                    // elevation: 6,
                   }}>
 
                   <View style={{
-                    backgroundColor: 'white',
                     height: 320,
-                    //marginHorizontal: 10,
-
+                    width: '100%',
                     marginHorizontal: 30,
                     borderRadius: 10,
-
                     alignItems: 'center',
                     flexDirection: 'column'
                   }}>
@@ -420,15 +416,17 @@ if (profileImage != '') {
                       <Image source={require('../assets/congrats.png')}
                         style={{ alignSelf: 'center', width: '100%', height: '100%', borderRadius: 15 }} />
                     </View>
-                    <Text style={{ marginTop: 25, marginHorizontal: 80, textAlign: 'center', fontSize: 15, color: 'black', }}>Profile Details Update
-                      Successfully</Text>
+                    <View style={{ marginTop: 25, width: "50%" }}>
+                      <Text style={{ textAlign: 'center', fontSize: 15, color: 'black', }}>{t('Profile_Details_Update_Successfully')}</Text>
+                    </View>
+
                     <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 50, marginHorizontal: 20, marginTop: 30 }}>
 
 
                       <TouchableOpacity onPress={buttonClickedHandler}>
-                        <View style={{ alignItems: 'center', justifyContent: 'center', width: 140, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
+                        <View style={{ alignItems: 'center', justifyContent: 'center', width: 110, height: 34, backgroundColor: '#ffcc00', borderRadius: 50 }}>
 
-                          <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>Close</Text>
+                          <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', fontWeight: "400" }}>{t('Close')}</Text>
 
                         </View>
                       </TouchableOpacity>
@@ -441,9 +439,11 @@ if (profileImage != '') {
           ) : null}
         </ScrollView>)
         :
-        (<View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
-          <ActivityIndicator size="large" color="#ffcc00" />
-        </View>)}
+        (<CustomLoader showLoader={isLoading} />
+          // <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
+          //   <ActivityIndicator size="large" color="#ffcc00" />
+          // </View>
+        )}
     </SafeAreaView>
   );
 }
