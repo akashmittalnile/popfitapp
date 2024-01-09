@@ -1,32 +1,48 @@
-import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, Button, ActivityIndicator, TextInput, Image, Alert, SafeAreaView, Modal } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler';
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  FlatList,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Button,
+  ActivityIndicator,
+  TextInput,
+  Image,
+  Alert,
+  SafeAreaView,
+  Modal,
+} from 'react-native';
+import {ScrollView} from 'react-native-gesture-handler';
 import Headers from '../../Routes/Headers';
-import { CardField, useStripe } from '@stripe/stripe-react-native';
+import {CardField, useStripe} from '@stripe/stripe-react-native';
 import axios from 'axios';
-import { API } from '../../Routes/Urls';
+import {API} from '../../Routes/Urls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { async } from 'regenerator-runtime';
+import {async} from 'regenerator-runtime';
 import CustomLoader from '../../Routes/CustomLoader';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 
 export default function PaymentScreen(props) {
-
   const [OrderPlacedPopUp, setOrderPlacedPopUp] = useState(false);
   const [planPlacedPopUp, setPlanPlacedPopUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [username, setName] = useState('');
-  const [carddata, setcardata] = useState("");
+  const [carddata, setcardata] = useState('');
   const [transid, setTransid] = useState('');
-  const { confirmPayment, loading, createToken } = useStripe();
+  const {confirmPayment, loading, createToken} = useStripe();
   const [adddrs, setAdddrs] = useState(props?.route?.params?.SetAddrs);
   const [amout, setAmout] = useState(props?.route?.params?.SubscriptionPlan);
-  const [orderprice, setOrderprice] = useState(props?.route?.params?.Totalprice);
+  const [orderprice, setOrderprice] = useState(
+    props?.route?.params?.Totalprice,
+  );
   const [textline, settextline] = useState(props?.route?.params?.Instruction);
-  const [ordernames, setOdernames] = useState(props?.route?.params?.Orderlistname);
-  const[Couponids,setCouponids]=useState( props?.route?.params?.Coupomid);
+  const [ordernames, setOdernames] = useState(
+    props?.route?.params?.Orderlistname,
+  );
+  const [Couponids, setCouponids] = useState(props?.route?.params?.Coupomid);
 
-  const { t } = useTranslation();
+  const {t} = useTranslation();
   // const fetchPaymentIntentClientSecret = async () => {
   //   // console.log("user name::", username);
   //   const response = await fetch(`${API_URL}/create-payment-intent`, {
@@ -54,31 +70,38 @@ export default function PaymentScreen(props) {
   //   // }
   // };
 
-
-
   const handlePayPress = async () => {
     // setIsLoading(true);
     console.log('card', carddata);
-    await createToken({ carddata, type: 'Card' })
+    await createToken({carddata, type: 'Card'})
       .then((res, error) => {
         // setIsLoading(false);
-        console.log('res====>', res.token);
-        // setStripeToken(res.token.id);
-        gotostipepayment(res.token.id);
-
-
+        // console.log('res====>', res);
+        if (res?.error?.declineCode == null) {
+          Alert.alert('', res?.error?.message);
+         } else if (res?.token != '') {
+          gotostipepayment(res.token.id);
+        } else if (res?.token == undefined) {
+          Alert.alert('', 'Please Enter Valid Card details!');
+        } else if (res?.error?.declineCode == null) {
+          Alert.alert('', res?.error?.message);
+        } else {
+          gotostipepayment(res.token.id);
+          // Alert.alert('', 'Please Enter Valid Card details!');
+          // setStripeToken(res.token.id);
+          // gotostipepayment(res.token.id);
+        }
       })
-      .catch((e) => {
+      .catch(e => {
         // setIsLoading(false)
-        Alert.alert("Please Enter Valid Card details!", e);
+        // console.log('res==error==>', e);
+        Alert.alert("",'Please Enter Valid Card details!');
         // setAlertVisibility(true);
         // setAlert_msg('Please Enter Valid Card details!')
-      }
-      )
+      });
   };
 
   useEffect(() => {
-
     // const checklogin = async () => {
     //   let Usertoken = await AsyncStorage.getItem("authToken");
     //   console.log("token.......", Usertoken);
@@ -97,43 +120,50 @@ export default function PaymentScreen(props) {
     //     console.log("??????????????error",);
     //   }
     // };
-    console.log('Apply coupon id::', props?.route?.params?.Coupomid)
+    console.log('Apply coupon id::', props?.route?.params?.Coupomid);
     // console.log('Plan data status::', props?.route?.params?.SubscriptionPlan)
-    console.log("Order_Amount:", props?.route?.params?.Totalprice);
-    console.log("ADDRESS seleted::", props?.route?.params?.SetAddrs);
-    console.log("order_item_name:", props?.route?.params?.Orderlistname);
+    console.log('Order_Amount:', props?.route?.params?.Totalprice);
+    console.log('ADDRESS seleted::', props?.route?.params?.SetAddrs);
+    console.log('order_item_name:', props?.route?.params?.Orderlistname);
     // const Totalprice = props?.route?.params?.Totalprice
     // const unsubscribe = props.navigation.addListener('focus', () => {
 
     // });
     // return unsubscribe;
     // checklogin()
-
   }, []);
 
   const planpaymentdone = () => {
-    console.log("subs...training plan:::");
+    console.log('subs...training plan:::');
     setOrderPlacedPopUp(false);
     // setIsLoading(false);
-    props.navigation.navigate("TrainingDetail")
+    props.navigation.navigate('TrainingDetail');
+  };
 
-  }
-
-
-  const gotostipepayment = async (id) => {
-    console.log("Data Get from Subscription Plans::", amout);
+  const gotostipepayment = async id => {
+    console.log('Data Get from Subscription Plans::', amout);
     // const PlanId = await AsyncStorage.getItem("Planid");
-    const Token = await AsyncStorage.getItem("authToken");
-    console.log("selected plain price:", amout?.price_id, id, amout?.price ,orderprice);
+    const Token = await AsyncStorage.getItem('authToken');
+    console.log(
+      'selected plain price:',
+      amout?.price_id,
+      id,
+      amout?.price,
+      orderprice,
+    );
 
-    const plan_amount = amout  != undefined ? amout?.price : orderprice.substring(1, 14);
+    const plan_amount =
+      amout != undefined ? amout?.price : orderprice.substring(1, 14);
     const plan_id = amout != undefined ? amout?.price_id : null;
     console.log('====================================');
-    console.log(plan_amount ,id ,amout?.price);
+    console.log(plan_amount, id, amout?.price);
     console.log('====================================');
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.STRIPE_PAYMENT}`, { 'method_id': id, 'plan_amount':  plan_amount, 'plan_id': plan_id }, { headers: { "Authorization": ` ${Token}` } }
+      const response = await axios.post(
+        `${API.STRIPE_PAYMENT}`,
+        {method_id: id, plan_amount: plan_amount, plan_id: plan_id},
+        {headers: {Authorization: ` ${Token}`}},
 
         // {
         //   headers: {
@@ -141,30 +171,25 @@ export default function PaymentScreen(props) {
         //     "Content-Type": "application/json",
         //     "Authorization": ` ${Token}`
         //   }}
+      );
 
-      )
-
-      console.log("Response.Stripe:", response.data);
+      console.log('Response.Stripe:', response.data);
 
       if (response.data.status == 1) {
         // console.log("Response.Stripe:", response.data.tran_id);
         if (amout == null) {
-          setTransid(response.data.tran_id)
+          setTransid(response.data.tran_id);
 
           setOrderPlacedPopUp(true);
-
         } else if (amout != null) {
-          setTransid(response.data.tran_id)
+          setTransid(response.data.tran_id);
 
           setPlanPlacedPopUp(true);
-        }
-        else {
-           console.log("Response.Stripe:", response.data)
+        } else {
+          console.log('Response.Stripe:', response.data);
           setIsLoading(false);
-          Alert.alert('121', t('Error_msg'))
+          Alert.alert('121', t('Error_msg'));
         }
-
-
 
         // Alert.alert("Payment Successfull", '',
         //   [
@@ -176,93 +201,120 @@ export default function PaymentScreen(props) {
         //     { text: "OK", onPress: () => props.navigation.navigate("Home") }
         //   ]
         // )
-      }  
-       
-    }
-    catch (error) {
-      console.log("payment error:", error.response.data);
-      Alert.alert("", t('Error_msg'))
+      }
+    } catch (error) {
+      console.log('payment error:', error.response.data);
+      Alert.alert('', t('Error_msg'));
       // Alert.alert('','Something went wrong please exit the app and try again')
     }
     setIsLoading(false);
   };
 
   const OrderPlacedAfterpaymentdone = async () => {
-    console.log("array to string",ordernames.toString());
-    console.log("after_payment::::", adddrs, transid, textline, ordernames,orderprice,Couponids);
-    const Token = await AsyncStorage.getItem("authToken");
+    console.log('array to string', ordernames.toString());
+    console.log(
+      'after_payment::::',
+      adddrs,
+      transid,
+      textline,
+      ordernames,
+      orderprice,
+      Couponids,
+    );
+    const Token = await AsyncStorage.getItem('authToken');
 
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.ORDER_PLACED}`, { 'shipping_address': adddrs, 'transaction_id': transid, 'amount': amout != undefined ? amout.price : orderprice, 'delivery_inst': textline != null ? textline : null, 'order_item': ordernames ,'coupon_id':1}, {
-        headers: { "Authorization": ` ${Token}`,'coupon_id':Couponids }
-      })
-      console.log("Orderplaced_response:", response.data);
+      const response = await axios.post(
+        `${API.ORDER_PLACED}`,
+        {
+          shipping_address: adddrs,
+          transaction_id: transid,
+          amount: amout != undefined ? amout.price : orderprice,
+          delivery_inst: textline != null ? textline : null,
+          order_item: ordernames,
+          coupon_id: 1,
+        },
+        {
+          headers: {Authorization: ` ${Token}`, coupon_id: Couponids},
+        },
+      );
+      console.log('Orderplaced_response:', response.data);
       setOrderPlacedPopUp(false);
       setPlanPlacedPopUp(false);
       if (response.data.status == 1) {
-        console.log("status1:", response.data.message);
+        console.log('status1:', response.data.message);
         setPlanPlacedPopUp(false);
-        props.navigation.navigate("MyOrder");
-      }
-      else if (planPlacedPopUp == "true") {
+        props.navigation.navigate('MyOrder');
+      } else if (planPlacedPopUp == 'true') {
         setOrderPlacedPopUp(false);
         setIsLoading(false);
-        props.navigation.navigate("TrainingDetail")
+        props.navigation.navigate('TrainingDetail');
       }
       // else {
       //   Alert.alert('status == 1', 'something went wrong!!!!')
       // }
-
       else if (response.data.status == 0) {
-
         Alert.alert('', response.data.message);
-        console.log("status0:", response.data.message);
+        console.log('status0:', response.data.message);
       }
     } catch (error) {
-      console.log("error in save order-catch:", error.response.data);
+      console.log('error in save order-catch:', error.response.data);
       setOrderPlacedPopUp(false);
       setPlanPlacedPopUp(false);
       // Alert.alert("error", "Internet connection appears to be offline. Please check your internet connection and try again.")
       Alert.alert('', t('Error_msg'));
-
     }
     setIsLoading(false);
-  }
+  };
 
   return (
-    <SafeAreaView style={{
-      flex: 1,
-      flexGrow: 1, backgroundColor: 'white'
-    }} >
-
+    <SafeAreaView
+      style={{
+        flex: 1,
+        flexGrow: 1,
+        backgroundColor: 'white',
+      }}>
       <Headers
         Backicon={{
           visible: true,
         }}
-        BackicononClick={() => { props.navigation.goBack() }}
-
+        BackicononClick={() => {
+          props.navigation.goBack();
+        }}
         CartIcon={{
           visible: true,
         }}
-        CartIconononClick={() => { props.navigation.navigate("CartAdded") }}
-
+        CartIconononClick={() => {
+          props.navigation.navigate('CartAdded');
+        }}
         Bellicon={{
           visible: true,
-
         }}
-        BelliconononClick={() => { props.navigation.navigate("Notifications") }}
+        BelliconononClick={() => {
+          props.navigation.navigate('Notifications');
+        }}
       />
-      {!isLoading ?
-        (<ScrollView style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 16 }}>
+      {!isLoading ? (
+        <ScrollView
+          style={{flex: 1, backgroundColor: 'white', paddingHorizontal: 16}}>
           <>
-            <View style={{
-              // marginLeft: 15,
-              marginTop: 20,
-              justifyContent: "center",
-              alignContent: "flex-start"
-            }}>
-              <Text style={{ textAlign: 'left', fontSize: 18, color: '#000000', fontWeight: "500" }}>{t('Pay_byCard')}</Text>
+            <View
+              style={{
+                // marginLeft: 15,
+                marginTop: 20,
+                justifyContent: 'center',
+                alignContent: 'flex-start',
+              }}>
+              <Text
+                style={{
+                  textAlign: 'left',
+                  fontSize: 18,
+                  color: '#000000',
+                  fontWeight: '500',
+                }}>
+                {t('Pay_byCard')}
+              </Text>
             </View>
             {/* <TextInput
             autoCapitalize='none'
@@ -279,7 +331,7 @@ export default function PaymentScreen(props) {
                 number: '4242 4242 4242 4242',
               }}
               cardStyle={{
-                placeholderColor: "gray",
+                placeholderColor: 'gray',
                 backgroundColor: '#F4F4F4',
                 textColor: '#000000',
                 fontSize: 14,
@@ -293,85 +345,103 @@ export default function PaymentScreen(props) {
                 marginVertical: 30,
                 // marginHorizontal: 10
               }}
-              onCardChange={(cardDetails) => {
+              onCardChange={cardDetails => {
                 setcardata(cardDetails),
                   console.log('cardDetails:', JSON.stringify(cardDetails));
               }}
-              onFocus={(focusedField) => {
+              onFocus={focusedField => {
                 console.log('focusField:', focusedField);
               }}
             />
-            <View style={{ justifyContent: "center", marginBottom: 30, flexDirection: 'row', height: 34, marginHorizontal: 20, marginTop: 20 }}>
-              <TouchableOpacity disabled={loading} onPress={
-                () => {
+            <View
+              style={{
+                justifyContent: 'center',
+                marginBottom: 30,
+                flexDirection: 'row',
+                height: 34,
+                marginHorizontal: 20,
+                marginTop: 20,
+              }}>
+              <TouchableOpacity
+                disabled={loading}
+                onPress={() => {
                   if (carddata == '') {
-                    Alert.alert('Please Enter card Details!')
-                    return
+                    Alert.alert('Please Enter card Details!');
+                    return;
                   }
-                  handlePayPress()
-                }
-              }>
-                <View style={{ justifyContent: 'center', width: 120, flex: 1, backgroundColor: '#ffcc00', borderRadius: 50 }}>
-                  <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>{t('Pay')}</Text>
+                  handlePayPress();
+                }}>
+                <View
+                  style={{
+                    justifyContent: 'center',
+                    width: 120,
+                    flex: 1,
+                    backgroundColor: '#ffcc00',
+                    borderRadius: 50,
+                  }}>
+                  <Text
+                    style={{textAlign: 'center', fontSize: 15, color: 'white'}}>
+                    {t('Pay')}
+                  </Text>
                 </View>
               </TouchableOpacity>
-
             </View>
           </>
 
-          {OrderPlacedPopUp ?
-            (<Modal
+          {OrderPlacedPopUp ? (
+            <Modal
               animationType="fade"
               transparent={true}
               visible={OrderPlacedPopUp}
               onRequestClose={() => {
                 setOrderPlacedPopUp(false);
-              }}
-            >
-
-              <View style={{
-                flex: 1,
-                justifyContent: 'flex-end',
-                alignItems: 'center',
-                backgroundColor: 'rgba(140, 141, 142, 0.7)',
               }}>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                  backgroundColor: 'rgba(140, 141, 142, 0.7)',
+                }}>
                 <TouchableOpacity
                   onPress={() => setOrderPlacedPopUp(false)}
-                  style={{ flex: 1 }}
+                  style={{flex: 1}}
                 />
-                <View style={{
-                  // margin: 10,
-                  backgroundColor: "white",
-                  borderRadius: 20,
-                  width: "100%",
-                  // padding: 15,
-                  alignItems: "center",
-                  shadowColor: "#000",
-                  shadowOffset: {
-                    width: 0,
-                    height: 2
-                  },
-                  shadowOpacity: 0.25,
-                  shadowRadius: 4,
-                  elevation: 5
-                }}>
-
-                  <View style={{
-                    // backgroundColor: 'white',
-                    height: 250,
-                    marginHorizontal: 10,
-                    // marginTop: 10,
-                    width: "98%",
-                    borderRadius: 10,
-                    // marginBottom: 20,
+                <View
+                  style={{
+                    // margin: 10,
+                    backgroundColor: 'white',
+                    borderRadius: 20,
+                    width: '100%',
+                    // padding: 15,
                     alignItems: 'center',
-                    flexDirection: 'column',
-
+                    shadowColor: '#000',
+                    shadowOffset: {
+                      width: 0,
+                      height: 2,
+                    },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 4,
+                    elevation: 5,
                   }}>
-
-                    <View style={{
-                      justifyContent: "center", alignItems: 'center', flexDirection: 'row'
+                  <View
+                    style={{
+                      // backgroundColor: 'white',
+                      height: 250,
+                      marginHorizontal: 10,
+                      // marginTop: 10,
+                      width: '98%',
+                      borderRadius: 10,
+                      // marginBottom: 20,
+                      alignItems: 'center',
+                      flexDirection: 'column',
                     }}>
+                    <View
+                      style={{
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                      }}>
                       {/* <View style={{
                         marginTop: -40, width: 90, height: 90, borderRadius: 90 / 2, backgroundColor: '#fceeb5'
                       }}>
@@ -385,90 +455,132 @@ export default function PaymentScreen(props) {
                           resizeMode="contain" />
 
                       </View> */}
-                      <View style={{
-                        width: 60, height: 60, marginTop: 20
-                      }}>
-                        <Image source={require('../assets/yellowcheck.png')}
+                      <View
+                        style={{
+                          width: 60,
+                          height: 60,
+                          marginTop: 20,
+                        }}>
+                        <Image
+                          source={require('../assets/yellowcheck.png')}
                           style={{
                             width: 60,
-                            height: 60, alignSelf: 'center'
-                          }} />
-
+                            height: 60,
+                            alignSelf: 'center',
+                          }}
+                        />
                       </View>
                     </View>
 
-                    <Text style={{ marginTop: 15, marginLeft: 10, textAlign: 'center', fontSize: 18, color: 'black', fontWeight: "500" }}>{t('order_placed_title')}</Text>
-                    <Text style={{ marginHorizontal: 20, marginTop: 10, textAlign: 'left', fontSize: 12, color: 'black', fontWeight: "400" }}>{t('order_placed_msg')}
+                    <Text
+                      style={{
+                        marginTop: 15,
+                        marginLeft: 10,
+                        textAlign: 'center',
+                        fontSize: 18,
+                        color: 'black',
+                        fontWeight: '500',
+                      }}>
+                      {t('order_placed_title')}
                     </Text>
-                    <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 30, marginTop: 30 }}>
-                      <TouchableOpacity onPress={() => OrderPlacedAfterpaymentdone()}>
-                        <View style={{ alignItems: 'center', justifyContent: 'center', width: 170, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
-
-                          <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>{t('View_Orders')}</Text>
-
+                    <Text
+                      style={{
+                        marginHorizontal: 20,
+                        marginTop: 10,
+                        textAlign: 'left',
+                        fontSize: 12,
+                        color: 'black',
+                        fontWeight: '400',
+                      }}>
+                      {t('order_placed_msg')}
+                    </Text>
+                    <View
+                      style={{
+                        marginLeft: 30,
+                        marginBottom: 20,
+                        flexDirection: 'row',
+                        height: 34,
+                        marginHorizontal: 30,
+                        marginTop: 30,
+                      }}>
+                      <TouchableOpacity
+                        onPress={() => OrderPlacedAfterpaymentdone()}>
+                        <View
+                          style={{
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: 170,
+                            flex: 1,
+                            backgroundColor: '#ffcc00',
+                            borderRadius: 35,
+                          }}>
+                          <Text
+                            style={{
+                              textAlign: 'center',
+                              fontSize: 15,
+                              color: 'white',
+                            }}>
+                            {t('View_Orders')}
+                          </Text>
                         </View>
                       </TouchableOpacity>
                     </View>
-
-
-
                   </View>
-
                 </View>
               </View>
-            </Modal>)
-            :
-            null
-          }
+            </Modal>
+          ) : null}
 
-          {planPlacedPopUp ?
-            (<Modal
+          {planPlacedPopUp ? (
+            <Modal
               animationType="fade"
               transparent={true}
               visible={planPlacedPopUp}
               onRequestClose={() => {
                 setPlanPlacedPopUp(false);
-              }}
-            >
-              <View style={{
-                flex: 1,
-                justifyContent: 'flex-end',
-                alignItems: 'center',
-                backgroundColor: 'rgba(140, 141, 142, 0.7)',
               }}>
-                <View style={{
-                  // margin: 10,
-                  backgroundColor: "white",
-                  borderRadius: 20,
-                  width: "100%",
-                  // padding: 15,
-                  alignItems: "center",
-                  shadowColor: "#000",
-                  shadowOffset: {
-                    width: 0,
-                    height: 2
-                  },
-                  shadowOpacity: 0.25,
-                  shadowRadius: 4,
-                  elevation: 5
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                  backgroundColor: 'rgba(140, 141, 142, 0.7)',
                 }}>
-
-                  <View style={{
-                    // backgroundColor: 'white',
-                    height: 250,
-                    marginHorizontal: 10,
-                    // marginTop: 10,
-                    width: "98%",
-                    borderRadius: 10,
-                    // marginBottom: 20,
+                <View
+                  style={{
+                    // margin: 10,
+                    backgroundColor: 'white',
+                    borderRadius: 20,
+                    width: '100%',
+                    // padding: 15,
                     alignItems: 'center',
-                    flexDirection: 'column',
-
+                    shadowColor: '#000',
+                    shadowOffset: {
+                      width: 0,
+                      height: 2,
+                    },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 4,
+                    elevation: 5,
                   }}>
-
-                    <View style={{
-                      justifyContent: "center", alignItems: 'center', flexDirection: 'row'
+                  <View
+                    style={{
+                      // backgroundColor: 'white',
+                      height: 250,
+                      marginHorizontal: 10,
+                      // marginTop: 10,
+                      width: '98%',
+                      borderRadius: 10,
+                      // marginBottom: 20,
+                      alignItems: 'center',
+                      flexDirection: 'column',
                     }}>
+                    <View
+                      style={{
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                      }}>
                       {/* <View style={{
                         marginTop: -40, width: 90, height: 90, borderRadius: 90 / 2, backgroundColor: '#fceeb5'
                       }}>
@@ -482,47 +594,87 @@ export default function PaymentScreen(props) {
                           resizeMode="contain" />
 
                       </View> */}
-                      <View style={{
-                        width: 60, height: 60, marginTop: 20
-                      }}>
-                        <Image source={require('../assets/yellowcheck.png')}
+                      <View
+                        style={{
+                          width: 60,
+                          height: 60,
+                          marginTop: 20,
+                        }}>
+                        <Image
+                          source={require('../assets/yellowcheck.png')}
                           style={{
                             width: 60,
-                            height: 60, alignSelf: 'center'
-                          }} />
-
+                            height: 60,
+                            alignSelf: 'center',
+                          }}
+                        />
                       </View>
                     </View>
 
-                    <Text style={{ marginTop: 15, marginLeft: 10, textAlign: 'center', fontSize: 18, color: 'black', fontWeight: "500" }}>{t('Subscription_purchased_title')}</Text>
-                    <Text style={{ marginHorizontal: 20, marginTop: 10, textAlign: 'left', fontSize: 12, color: 'black', fontWeight: "400" }}>{t('Subscription_msg')}
+                    <Text
+                      style={{
+                        marginTop: 15,
+                        marginLeft: 10,
+                        textAlign: 'center',
+                        fontSize: 18,
+                        color: 'black',
+                        fontWeight: '500',
+                      }}>
+                      {t('Subscription_purchased_title')}
                     </Text>
-                    <View style={{ marginLeft: 30, marginBottom: 20, flexDirection: 'row', height: 34, marginHorizontal: 30, marginTop: 30 }}>
-                      <TouchableOpacity onPress={() => { planpaymentdone() }}>
-                        <View style={{ alignItems: 'center', justifyContent: 'center', width: 170, flex: 1, backgroundColor: '#ffcc00', borderRadius: 35 }}>
-
-                          <Text style={{ textAlign: 'center', fontSize: 15, color: 'white', }}>{t('View_Trainings')}</Text>
-
+                    <Text
+                      style={{
+                        marginHorizontal: 20,
+                        marginTop: 10,
+                        textAlign: 'left',
+                        fontSize: 12,
+                        color: 'black',
+                        fontWeight: '400',
+                      }}>
+                      {t('Subscription_msg')}
+                    </Text>
+                    <View
+                      style={{
+                        marginLeft: 30,
+                        marginBottom: 20,
+                        flexDirection: 'row',
+                        height: 34,
+                        marginHorizontal: 30,
+                        marginTop: 30,
+                      }}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          planpaymentdone();
+                        }}>
+                        <View
+                          style={{
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: 170,
+                            flex: 1,
+                            backgroundColor: '#ffcc00',
+                            borderRadius: 35,
+                          }}>
+                          <Text
+                            style={{
+                              textAlign: 'center',
+                              fontSize: 15,
+                              color: 'white',
+                            }}>
+                            {t('View_Trainings')}
+                          </Text>
                         </View>
                       </TouchableOpacity>
                     </View>
-
-
-
                   </View>
-
                 </View>
               </View>
-            </Modal>)
-            :
-            null
-          }
-        </ScrollView>)
-        :
-
-        (<CustomLoader showLoader={isLoading} />)}
+            </Modal>
+          ) : null}
+        </ScrollView>
+      ) : (
+        <CustomLoader showLoader={isLoading} />
+      )}
     </SafeAreaView>
   );
 }
-
-

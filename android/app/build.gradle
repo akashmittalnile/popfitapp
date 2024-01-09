@@ -162,8 +162,8 @@ android {
         applicationId "com.popfit"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 8
-        versionName "1.6"
+        versionCode 9
+        versionName "1.7"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
         vectorDrawables.useSupportLibrary = true
         if (isNewArchitectureEnabled()) {

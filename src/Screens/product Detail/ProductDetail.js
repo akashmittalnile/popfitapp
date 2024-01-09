@@ -1,52 +1,61 @@
-import React, { useState, useEffect } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, Modal, ScrollView, RefreshControl } from 'react-native'
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  FlatList,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  TextInput,
+  Image,
+  Alert,
+  Pressable,
+  SafeAreaView,
+  Dimensions,
+  Modal,
+  ScrollView,
+  RefreshControl,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 // import { ScrollView } from 'react-native-gesture-handler';
-import { BackgroundImage } from 'react-native-elements/dist/config';
-import { RadioButton } from 'react-native-paper';
+import {BackgroundImage} from 'react-native-elements/dist/config';
+import {RadioButton} from 'react-native-paper';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Headers from '../../Routes/Headers';
-import styles from '../../Routes/style'
-import { API } from '../../Routes/Urls';
+import styles from '../../Routes/style';
+import {API} from '../../Routes/Urls';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { async } from 'regenerator-runtime';
+import {async} from 'regenerator-runtime';
 import CustomLoader from '../../Routes/CustomLoader';
-import { useTranslation } from 'react-i18next';
-
+import {useTranslation} from 'react-i18next';
+import {ImageSlider, ImageCarousel} from 'react-native-image-slider-banner';
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
-
-
-const ProductDetail = (props) => {
-
-  const { t } = useTranslation();
+const ProductDetail = props => {
+  const {t} = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [productdata, setproductdata] = useState([]);
   const [useraddress, setuseraddress] = useState([]);
   const [isdiscount, setDiscount] = useState('');
-  const [Productitems, setProductitems] = useState("");
-
+  const [Productitems, setProductitems] = useState('');
+  const [allImg, setAllImg] = useState([{img: ''}]);
   const [ImageBaseUrl, setImageBaseUrl] = useState('');
   const [countnums, setCountnum] = useState(1);
-  const [usertoken, setUsertoken] = useState("");
+  const [usertoken, setUsertoken] = useState('');
 
-  const [currenysymbol, SetCurrenysymbol] = useState('')
+  const [currenysymbol, SetCurrenysymbol] = useState('');
 
-
-  const [refreshing, setrefreshing] = useState(false)
+  const [refreshing, setrefreshing] = useState(false);
   const onRefresh = () => {
-    setrefreshing(true)
+    setrefreshing(true);
     StoresProductDetails();
-    setrefreshing(false)
-  }
+    setrefreshing(false);
+  };
   // const gotoShippingDetail = () => {
   //   // setCartAddedPopUp(false);
   //   props.navigation.navigate("ShippingDetail");
   // }
-
-
 
   // const Productincrease = () => {
   //   console.log(".before.", countnums);
@@ -65,21 +74,30 @@ const ProductDetail = (props) => {
   //   }
   // };
 
-
-  console.log("Store_item...............:", props?.route?.params?.ITEM?.id);
-  const ITEM = props?.route?.params?.ITEM?.id
+  console.log('Store_item...............:', props?.route?.params?.ITEM?.id);
+  const ITEM = props?.route?.params?.ITEM?.id;
   // console.log("ClothITEM_item...............:", props?.route?.params?.CLOTHITEM?.id);
-  const CLOTHITEM = props?.route?.params?.CLOTHITEM?.id
+  const CLOTHITEM = props?.route?.params?.CLOTHITEM?.id;
   // console.log("FitnessItem.........:",props?.route?.params?.FitnessItem?.id);
-  const FitnessItem = props?.route?.params?.FitnessItem?.id
+  const FitnessItem = props?.route?.params?.FitnessItem?.id;
   // console.log("MENSITEM.........:",props?.route?.params?.MENSITEM?.id);
-  const MENSITEM = props?.route?.params?.MENSITEM?.id
+  const MENSITEM = props?.route?.params?.MENSITEM?.id;
   // console.log("Cart item view.........:", props?.route?.params?.Cartaddedview?.product_id);
   let Cartaddedview = props?.route?.params?.Cartaddedview?.product_id;
   // console.log("Shipping item view.........:", props?.route?.params?.Isshippingview?.product_id);
   let Isshippingview = props?.route?.params?.Isshippingview?.id;
 
-  let productids = ITEM ? ITEM : CLOTHITEM ? CLOTHITEM : FitnessItem ? FitnessItem : MENSITEM ? MENSITEM : Cartaddedview ? Cartaddedview : Isshippingview;
+  let productids = ITEM
+    ? ITEM
+    : CLOTHITEM
+    ? CLOTHITEM
+    : FitnessItem
+    ? FitnessItem
+    : MENSITEM
+    ? MENSITEM
+    : Cartaddedview
+    ? Cartaddedview
+    : Isshippingview;
 
   useEffect(() => {
     UserToken();
@@ -90,8 +108,6 @@ const ProductDetail = (props) => {
 
     // });
     // return unsubscribe;
-
-
   }, [props]);
 
   const StoresProductDetails = async () => {
@@ -100,22 +116,37 @@ const ProductDetail = (props) => {
     // const productitem = ITEM;
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.STORE_PRODUCT_DETAIL}`, { "product_id": productids });
-      console.log(":::::::::Shop_product_Response>>>", response.data.data);
+      const response = await axios.post(`${API.STORE_PRODUCT_DETAIL}`, {
+        product_id: productids,
+      });
+      console.log(':::::::::Shop_product_Response>>>', response.data.data);
       // console.log("status _SHOP:", response.data.status);
-      SetCurrenysymbol(response.data.currency)
+      SetCurrenysymbol(response.data.currency);
       setProductitems(response.data.data);
       setImageBaseUrl(response.data.product_url);
-      discountPercentage(response.data.data.reg_price, response.data.data.price)
-    }
-    catch (error) {
-      Alert.alert("", t('Check_internet_connection'))
+      discountPercentage(
+        response.data.data.reg_price,
+        response.data.data.price,
+      );
+      var allimgs = [];
+
+      for (let i = 1; i <= response.data.data.image.length; i++) {
+        allimgs.push({
+          img: `${
+            response.data.product_url +
+            response.data.data.image[i - 1]
+          }`,
+        });
+      }
+      console.log('the allimgs==>>', allimgs);
+      setAllImg(allimgs);
+    } catch (error) {
+      Alert.alert('', t('Check_internet_connection'));
       // console.log("......StoresProductDetails_error.........", error.response.data.message);
     }
     setIsLoading(false);
   };
   const GetShippingProducts = async () => {
-
     // console.log(".....usertoken.....GetShippingProducts...", producttoken);
 
     setIsLoading(true);
@@ -126,47 +157,41 @@ const ProductDetail = (props) => {
       setproductdata(response.data.data);
       setuseraddress(response.data.address_lists);
       // console.log("User_token_not_received+yet!!!>>>", response.data.message);
-
-
-    }
-    catch (error) {
-      Alert.alert("", t('Check_internet_connection'))
+    } catch (error) {
+      Alert.alert('', t('Check_internet_connection'));
       // console.log("ShippingProductserror:::", error.response.data.message);
-
     }
-    setIsLoading(false)
+    setIsLoading(false);
   };
   const UserToken = async () => {
-    const usertkn = await AsyncStorage.getItem("authToken");
+    const usertkn = await AsyncStorage.getItem('authToken');
     // console.log("TOKEN:", usertkn);
-    setUsertoken(usertkn)
-  }
+    setUsertoken(usertkn);
+  };
   const ProductADDcart = async () => {
-    const usertkn = await AsyncStorage.getItem("authToken");
-
+    const usertkn = await AsyncStorage.getItem('authToken');
 
     // console.log("ADD_productin_QNTY cart.....", countnums);
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.PRODUCT_DETAILS_ADD_ITEM}`, { "qty": countnums, "product_id": productids }, {
-        'headers': { "Authorization": ` ${usertkn}` }
-      });
+      const response = await axios.post(
+        `${API.PRODUCT_DETAILS_ADD_ITEM}`,
+        {qty: countnums, product_id: productids},
+        {
+          headers: {Authorization: ` ${usertkn}`},
+        },
+      );
       // console.log(":::::::::ProductADD_Response>>>", response.data.message);
       // console.log("status _ProductADD:", response.data.status);
       if (response.data.status == 1) {
-        props.navigation.navigate("CartAdded")
+        props.navigation.navigate('CartAdded');
         // GetShippingProducts();
         // Alert.alert("Added to cart")
-
+      } else {
+        Alert.alert('', t('Error_msg'));
       }
-      else {
-        Alert.alert('', t('Error_msg'))
-
-      }
-
-    }
-    catch (error) {
-      Alert.alert("", t('Check_internet_connection'))
+    } catch (error) {
+      Alert.alert('', t('Check_internet_connection'));
       // console.log("......error ProductADD.........", error.response.data.message);
     }
     setIsLoading(false);
@@ -195,62 +220,115 @@ const ProductDetail = (props) => {
   // };
   // Discount = Marked Price - Selling price
   // Discount Percentage = (Discount / Marked Price) * 100
-   
 
   function discountPercentage(M, S) {
-    console.log("S,M", S, M);
+    console.log('S,M', S, M);
     let fraction = S / M;
     let discount_fraction = 1 - fraction;
     let percentage = discount_fraction * 100;
-    setDiscount(percentage)
-    return percentage.toFixed(2) + "%";
-}
+    setDiscount(percentage);
+    return percentage.toFixed(2) + '%';
+  }
 
   return (
-    <SafeAreaView style={{
-      flex: 1,
-      width: WIDTH,
-      height: HEIGHT, flexGrow: 1, backgroundColor: '#ffffff',
-    }} >
+    <SafeAreaView
+      style={{
+        flex: 1,
+        width: WIDTH,
+        height: HEIGHT,
+        flexGrow: 1,
+        backgroundColor: '#ffffff',
+      }}>
       <Headers
         Backicon={{
           visible: true,
         }}
-        BackicononClick={() => { props.navigation.goBack() }}
-
+        BackicononClick={() => {
+          props.navigation.goBack();
+        }}
         CartIcon={{
           visible: true,
         }}
-        CartIconononClick={() => { props.navigation.navigate("CartAdded") }}
-
+        CartIconononClick={() => {
+          props.navigation.navigate('CartAdded');
+        }}
         Bellicon={{
           visible: true,
-
         }}
-        BelliconononClick={() => { props.navigation.navigate("Notifications") }}
+        BelliconononClick={() => {
+          props.navigation.navigate('Notifications');
+        }}
       />
-      {!isLoading ?
-        (
-          <View style={{
+      {!isLoading ? (
+        <View
+          style={{
             flex: 1,
             // width: WIDTH,
-            // height: HEIGHT, 
+            // height: HEIGHT,
             flexGrow: 1,
 
             backgroundColor: 'transparent',
           }}>
-
-            <ScrollView
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={onRefresh}
-                />
-              }
-            >
-              <View style={{ paddingBottom: 44 }}>
-                {/* productitem _image */}
-                <View style={{
+          <ScrollView
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }>
+            <View style={{paddingBottom: 44}}>
+              {/* productitem _image */}
+              <View
+                style={{
+                  height: (HEIGHT * 35) / 100,
+                  width: '100%',
+                  marginTop: 15,
+                }}>
+                <View
+                  style={{
+                    overflow: 'hidden',
+                    width: '95%',
+                    alignSelf: 'center',
+                    zIndex: -999,
+                    borderRadius: 20,
+                    shadowColor: '#000',
+                    shadowOffset: {width: 0, height: 3},
+                    shadowRadius: 6,
+                    shadowOpacity: 0.2,
+                    elevation: 1,
+                  }}>
+                  {allImg?.length > 0 ? (
+                    <ImageSlider
+                      //  localImg={true}
+                      data={allImg}
+                      // onClick={(item, index) => {alert('hello'+index)}}
+                      // autoPlay={true}
+                      // onItemChanged={(item) => console.log("item", item)}
+                      activeIndicatorStyle={{backgroundColor: '#ffcc00'}}
+                      indicatorContainerStyle={{top: -5}}
+                      caroselImageStyle={{
+                        resizeMode: 'stretch',
+                        height: 400,
+                        borderRadius: 20,
+                      }}
+                      closeIconColor="#fff"
+                      headerStyle={{
+                        padding: 0,
+                        backgroundColor: 'rgba(0,0,0, 0.6)',
+                      }}
+                      showHeader
+                      // preview={true}
+                    />
+                  ) : (
+                    <>
+                      <Image
+                        style={{height: (HEIGHT * 35) / 100, width: '100%'}}
+                        source={{
+                          uri: `${'https://kinengo-dev.s3.us-west-1.amazonaws.com/images/camera-icon.jpg'}`,
+                        }}
+                      />
+                    </>
+                  )}
+                </View>
+              </View>
+              {/* <View style={{
                   width: "95%",
                   height: 200,
                   marginTop: 10,
@@ -267,20 +345,7 @@ const ProductDetail = (props) => {
                   borderRadius: 20,
                   justifyContent: "center", alignItems: 'center',
                 }}>
-                  {/* <View style={{
-                        marginHorizontal: 0, height: 30, alignItems: 'flex-end',backgroundColor: 'yellow',
-                    }}>
-                        <View style={{
-                            width: 35, height: 35, marginTop: 10, marginRight: 10
-                        }}>
-                            <TouchableOpacity>
-                                <View style={{ backgroundColor: '#ffcc00', width: 35, height: 35, justifyContent: "center", alignItems: 'center', borderRadius: 20 / 2 }}>
-                                    <Image source={require('../assets/delete.png')}
-                                    />
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    </View> */}
+                   
                   <View style={{
                     width: "100%",
                     height: 200, justifyContent: "center", alignItems: 'center',
@@ -299,9 +364,66 @@ const ProductDetail = (props) => {
 
                   </View>
 
+                </View> */}
+              <View
+                style={{
+                  height: (HEIGHT * 10) / 100,
+                  width: '100%',
+                  marginTop: 15,
+                }}>
+                <View
+                  style={{
+                    height: 100,
+                    justifyContent: 'space-around',
+                    zIndex: -999,
+                    borderRadius: 20,
+                    marginLeft: 10,
+                  }}>
+                  {allImg?.length > 0 ? (
+                    <ImageSlider
+                      //  localImg={true}
+                      data={allImg}
+                      // onClick={(item, index) => {alert('hello'+index)}}
+                      // autoPlay={true}
+                      // onItemChanged={(item) => console.log("item", item)}
+                      showIndicator={false}
+                      // activeIndicatorStyle={{backgroundColor: 'transparent'}}
+                      // indicatorContainerStyle={{top: -5}}
+                      caroselImageStyle={{
+                        resizeMode: 'stretch',
+                        height: 100,
+                        width: 110,
+                        marginRight: 20,
+                        borderRadius: 20,
+                        borderColor: '#ffcc00',
+                        borderWidth: 1,
+                        backgroundColor: '#F7F7F7',
+                      }}
+                      previewImageContainerStyle={{
+                        backgroundColor: 'rgba(0,0,0, 0.6)',
+                        paddingHorizontal: 20,
+                      }}
+                      // closeIconColor="transparent"
+                      // headerStyle={{
+                      //   padding: 0,
+                      //   backgroundColor: 'rgba(0,0,0, 0.6)',
+                      // }}
+                      // showHeader
+                      preview={true}
+                    />
+                  ) : (
+                    <>
+                      <Image
+                        style={{height: 400, width: '100%'}}
+                        source={{
+                          uri: `${'https://kinengo-dev.s3.us-west-1.amazonaws.com/images/camera-icon.jpg'}`,
+                        }}
+                      />
+                    </>
+                  )}
                 </View>
-
-                <FlatList
+              </View>
+              {/* <FlatList
                   horizontal
                   // style={{padding:5}}
                   keyExtractor={(item, index) => String(index)}
@@ -349,31 +471,136 @@ const ProductDetail = (props) => {
 
                     </View>
                   }
-                />
+                /> */}
 
-                <Text style={{ marginLeft: 20, marginTop: 20, textAlign: 'left', fontSize: 18, color: '#000000', fontWeight: "500" }}>{Productitems?.name?.slice(0, 40)}</Text>
+              <Text
+                style={{
+                  marginLeft: 20,
+                  marginTop: 20,
+                  textAlign: 'left',
+                  fontSize: 18,
+                  color: '#000000',
+                  fontWeight: '500',
+                }}>
+                {Productitems?.name?.slice(0, 40)}
+              </Text>
 
-                <View style={{ marginTop: 20, flex: 1, flexDirection: 'row', width: "95%", height: 50, justifyContent: "center", alignItems: "center" }}>
-
-                  <View style={{ flex: 1, marginLeft: 20, height: 30, width: 100, justifyContent: "center", alignItems: "flex-start" }}>
-                    <View style={{height:32,width:"auto",backgroundColor:'#FF0000',justifyContent:'center',paddingHorizontal:7,borderRadius:5,}}
-                    ><Text numberOfLines={1} style={{ textAlign: 'left', fontSize: 14, color: '#ffff', fontWeight: "400",  }}>{t('Deal')}</Text></View>
-                  
-                    <Text style={{ textAlign: 'left', fontSize: 18, color: '#FF0000', fontWeight: "500",lineHeight:30 }}>-{Number(isdiscount).toFixed(0)}% <Text style={{ textAlign: 'left', fontSize: 18, color: '#000000', fontWeight: "500" }}>{currenysymbol}{Productitems?.price}</Text></Text>
-                    <Text style={{ textAlign: 'left', fontSize: 14, color: '#77869E', fontWeight: "500" }}>M.R.P.: <Text style={{ textAlign: 'left', fontSize: 14, color: '#77869E', fontWeight: "500", textDecorationLine: 'line-through', textDecorationStyle: 'solid' }}>{currenysymbol}{Productitems?.reg_price}</Text></Text>
+              <View
+                style={{
+                  marginTop: 20,
+                  flex: 1,
+                  flexDirection: 'row',
+                  width: '95%',
+                  height: 50,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={{
+                    flex: 1,
+                    marginLeft: 20,
+                    height: 30,
+                    width: 100,
+                    justifyContent: 'center',
+                    alignItems: 'flex-start',
+                  }}>
+                  <View
+                    style={{
+                      height: 32,
+                      width: 'auto',
+                      backgroundColor: '#FF0000',
+                      justifyContent: 'center',
+                      paddingHorizontal: 7,
+                      borderRadius: 5,
+                    }}>
+                    <Text
+                      numberOfLines={1}
+                      style={{
+                        textAlign: 'left',
+                        fontSize: 14,
+                        color: '#ffff',
+                        fontWeight: '400',
+                      }}>
+                      {t('Deal')}
+                    </Text>
                   </View>
 
+                  <Text
+                    style={{
+                      textAlign: 'left',
+                      fontSize: 18,
+                      color: '#FF0000',
+                      fontWeight: '500',
+                      lineHeight: 30,
+                    }}>
+                    -{Number(isdiscount).toFixed(0)}%{' '}
+                    <Text
+                      style={{
+                        textAlign: 'left',
+                        fontSize: 18,
+                        color: '#000000',
+                        fontWeight: '500',
+                      }}>
+                      {currenysymbol}
+                      {Productitems?.price}
+                    </Text>
+                  </Text>
+                  <Text
+                    style={{
+                      textAlign: 'left',
+                      fontSize: 14,
+                      color: '#77869E',
+                      fontWeight: '500',
+                    }}>
+                    M.R.P.:{' '}
+                    <Text
+                      style={{
+                        textAlign: 'left',
+                        fontSize: 14,
+                        color: '#77869E',
+                        fontWeight: '500',
+                        textDecorationLine: 'line-through',
+                        textDecorationStyle: 'solid',
+                      }}>
+                      {currenysymbol}
+                      {Productitems?.reg_price}
+                    </Text>
+                  </Text>
                 </View>
+              </View>
 
-                <View style={{ justifyContent: "flex-start", alignItems: "flex-start", width: "90%", marginLeft: 20, height: "auto", marginBottom: 20, marginTop: 20, }}>
-                  <Text style={{ textAlign: 'left', fontSize: 15, color: '#000000', fontWeight: "500" }}>{t('Product_Details')}</Text>
-                  <Text style={{ marginTop: 8, textAlign: 'left', fontSize: 14, color: '#000000', }}>{Productitems?.description}</Text>
-                </View>
+              <View
+                style={{
+                  justifyContent: 'flex-start',
+                  alignItems: 'flex-start',
+                  width: '90%',
+                  marginLeft: 20,
+                  height: 'auto',
+                  marginBottom: 20,
+                  marginTop: 20,
+                }}>
+                <Text
+                  style={{
+                    textAlign: 'left',
+                    fontSize: 15,
+                    color: '#000000',
+                    fontWeight: '500',
+                  }}>
+                  {t('Product_Details')}
+                </Text>
+                <Text
+                  style={{
+                    marginTop: 8,
+                    textAlign: 'left',
+                    fontSize: 14,
+                    color: '#000000',
+                  }}>
+                  {Productitems?.description}
+                </Text>
+              </View>
 
-
-
-                {/* product view in modal  */}
-                {/* {CartAddedPopUp ? (
+              {/* product view in modal  */}
+              {/* {CartAddedPopUp ? (
                 <Modal
                   animationType="fade"
                   transparent={true}
@@ -645,48 +872,79 @@ const ProductDetail = (props) => {
                   </View>
                 </Modal>
               ) : null} */}
-              </View>
-            </ScrollView>
-            {/* bottom Buttons   */}
-            <View style={{ marginBottom: 10, flexDirection: 'row', justifyContent: "center", alignItems: "center", height: 36, width: "100%", position: "absolute", bottom: 0, }}>
-
-              <TouchableOpacity onPress={() => { props.navigation.navigate("Home") }}
-                style={{ justifyContent: 'center', backgroundColor: '#ffcc00', borderRadius: 50, alignItems: "center", height: 34, width: 170 }}>
-
-
-                <Text style={{ textAlign: 'center', fontSize: 13, color: 'white', }}>{t('Continue_Shopping')}</Text>
-
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={() => {
-                if (usertoken == null) {
-                  Alert.alert('', t('Please_login_first'))
-                } else if (usertoken != null) {
-                  ProductADDcart()
-                }
-
+            </View>
+          </ScrollView>
+          {/* bottom Buttons   */}
+          <View
+            style={{
+              marginBottom: 10,
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: 36,
+              width: '100%',
+              position: 'absolute',
+              bottom: 0,
+            }}>
+            <TouchableOpacity
+              onPress={() => {
+                props.navigation.navigate('Home');
               }}
-                style={{ justifyContent: 'center', height: 34, backgroundColor: '#ffcc00', borderRadius: 50, marginLeft: 10, width: 130 }}>
-                <Text style={{ textAlign: 'center', fontSize: 13, color: 'white', fontWeight: "500" }}>{t('Add_To_Cart')}</Text>
-                {/* {
+              style={{
+                justifyContent: 'center',
+                backgroundColor: '#ffcc00',
+                borderRadius: 50,
+                alignItems: 'center',
+                height: 34,
+                width: 170,
+              }}>
+              <Text style={{textAlign: 'center', fontSize: 13, color: 'white'}}>
+                {t('Continue_Shopping')}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                if (usertoken == null) {
+                  Alert.alert('', t('Please_login_first'));
+                } else if (usertoken != null) {
+                  ProductADDcart();
+                }
+              }}
+              style={{
+                justifyContent: 'center',
+                height: 34,
+                backgroundColor: '#ffcc00',
+                borderRadius: 50,
+                marginLeft: 10,
+                width: 130,
+              }}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: 13,
+                  color: 'white',
+                  fontWeight: '500',
+                }}>
+                {t('Add_To_Cart')}
+              </Text>
+              {/* {
 Cartaddedview && Isshippingview == "" ?
 (<Text style={{ textAlign: 'center', fontSize: 16, color: 'white', fontWeight: "500" }}>Add To Cart</Text>)
 :
 (<Text style={{ textAlign: 'center', fontSize: 16, color: 'white', fontWeight: "500" }}>Go To Cart</Text>)
 } */}
-
-
-              </TouchableOpacity>
-            </View>
-          </View>)
-        :
-        (<CustomLoader showLoader={isLoading} />
-          // <View style={{ flex: 1, flexGrow: 1, justifyContent: "center", alignItems: "center" }}>
-          //   <ActivityIndicator size="large" color="#ffcc00" />
-          // </View>
-        )}
+            </TouchableOpacity>
+          </View>
+        </View>
+      ) : (
+        <CustomLoader showLoader={isLoading} />
+        // <View style={{ flex: 1, flexGrow: 1, justifyContent: "center", alignItems: "center" }}>
+        //   <ActivityIndicator size="large" color="#ffcc00" />
+        // </View>
+      )}
     </SafeAreaView>
-  )
-}
+  );
+};
 
 export default ProductDetail;

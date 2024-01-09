@@ -256,7 +256,7 @@ const CustomDrawerrender = (props) => {
             </TouchableOpacity>
 
             <View style={{ width: 55, height: 34, alignItems: 'flex-end', justifyContent: 'flex-end', right: 10, marginTop: 10, }}>
-              <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 13, color: '#ffcc00', fontWeight: "400" }}>V <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 13, color: '#ffcc00', fontWeight: "400" }}>1.0.6</Text></Text>
+              <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 13, color: '#ffcc00', fontWeight: "400" }}>V <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 13, color: '#ffcc00', fontWeight: "400" }}>1.0.7</Text></Text>
             </View>
           </View>
           {

@@ -1,13 +1,29 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, TextInput, Image, Alert, Pressable, SafeAreaView, Dimensions, ScrollView, Modal, RefreshControl } from 'react-native'
+import React, {useState, useEffect, useRef} from 'react';
+import {
+  View,
+  FlatList,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  TextInput,
+  Image,
+  Alert,
+  Pressable,
+  SafeAreaView,
+  Dimensions,
+  ScrollView,
+  Modal,
+  RefreshControl,
+} from 'react-native';
 
 import Headers from '../../Routes/Headers';
-import { API } from '../../Routes/Urls';
+import {API} from '../../Routes/Urls';
 import axios from 'axios';
-import { WebView } from 'react-native-webview';
+import {WebView} from 'react-native-webview';
 import Share from 'react-native-share';
-import { Pages } from 'react-native-pages';
+import {Pages} from 'react-native-pages';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {ImageSlider, ImageCarousel} from 'react-native-image-slider-banner';
 // import LinearGradient from 'react-native-linear-gradient';
 
 // import { useTrackPlayerProgress} from 'react-native-track-player/lib/hooks';
@@ -20,33 +36,32 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // } from 'react-native-track-player';
 import CustomLoader from '../../Routes/CustomLoader';
 //svg
-import VideoPlayer from 'react-native-video-player'
+import VideoPlayer from 'react-native-video-player';
 // import { createThumbnail } from "react-native-create-thumbnail";
-import { VideoModel } from '../../Routes/VideoModel';
-import { useTranslation } from 'react-i18next';
+import {VideoModel} from '../../Routes/VideoModel';
+import {useTranslation} from 'react-i18next';
 import {AudioPlayer} from 'react-native-simple-audio-player';
-
 
 var WIDTH = Dimensions.get('window').width;
 var HEIGHT = Dimensions.get('window').height;
 
-const Training = (props) => {
+const Training = props => {
+  const {t} = useTranslation();
 
-  const { t } = useTranslation();
-
-  const [trainingBlog_list, setTrainingBlog_list] = useState("");
+  const [trainingBlog_list, setTrainingBlog_list] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [imagebaseurl, setImagebaseurl] = useState("");
+  const [imagebaseurl, setImagebaseurl] = useState('');
   const [youtubelinks, setyoutubelinks] = useState([]);
+  const [allImg, setAllImg] = useState([{img: ''}]);
   // const [audiobaseurl, setAudiobaseurl] = useState("");
-  const [reload, setReload] = useState(false)
+  const [reload, setReload] = useState(false);
   const [audio, setAudio] = useState([]);
   const [videobaseurl, setVideobaseurl] = useState([]);
   const songSlider = useRef(null);
   // const playBackState = usePlaybackState();
   // const progress = useProgress();
 
-  const [showModal, setShowModal] = useState({ isVisible: false, data: null });
+  const [showModal, setShowModal] = useState({isVisible: false, data: null});
   // console.log("showModalvideo", showModal);
   // const [showVideoModal, setShowVideoModal] = useState(false)
   // const [selectedVideo, setSelectedVideo] = useState({})
@@ -66,13 +81,12 @@ const Training = (props) => {
   // url: 'https://dev.pop-fiit.com/upload/training_audio/20230117_1673935024_26761.mp3',
   // },
 
-
-  const [refreshing, setrefreshing] = useState(false)
+  const [refreshing, setrefreshing] = useState(false);
   const onRefresh = () => {
-    setrefreshing(true)
-    WorkoutSubCategorytraininglist()
-    setrefreshing(false)
-  }
+    setrefreshing(true);
+    WorkoutSubCategorytraininglist();
+    setrefreshing(false);
+  };
 
   // const { position, duration } = useProgress(250);
   // const [flag, setFlag] = useState(false);
@@ -130,7 +144,6 @@ const Training = (props) => {
   //   }
   // };
 
-
   // const playAudio = async () => {
   //   setFlag(true)
   //   await TrackPlayer.play()
@@ -171,40 +184,59 @@ const Training = (props) => {
   //   })
   // }
   const gotoVideolist = () => {
-    props.navigation.navigate("Videolist", {
-      Id: props?.route?.params?.Tainingcat_item})
-  }
-  
+    props.navigation.navigate('Videolist', {
+      Id: props?.route?.params?.Tainingcat_item,
+    });
+  };
+
   // console.log("Tainingcat_id_item...............:", props?.route?.params?.Tainingcat_id);
   // const Tainingcat_id = props?.route?.params?.Tainingcat_id
   // console.log("Trainingsubcat_Data...............:", props?.route?.params?.Trainingsubcat_data?.id);
   // const Trainingsubcat_data = props?.route?.params?.Trainingsubcat_data?.id
 
-
-   console.log("Tainingcat_idssssssssssssss..........:", props?.route?.params?.Tainingcat_item);
+  console.log(
+    'Tainingcat_idssssssssssssss..........:',
+    props?.route?.params?.Tainingcat_item,
+  );
   const Tainingcat_item = props?.route?.params?.Tainingcat_item;
 
   const WorkoutSubCategorytraininglist = async () => {
-
-    const usertkn = await AsyncStorage.getItem("authToken");
+    const usertkn = await AsyncStorage.getItem('authToken');
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API.TRAINING_LIST_GET_DETAILS}`, { "id": Tainingcat_item},
-        { headers: { "Authorization": ` ${usertkn}` } }
+      const response = await axios.post(
+        `${API.TRAINING_LIST_GET_DETAILS}`,
+        {id: Tainingcat_item},
+        {headers: {Authorization: ` ${usertkn}`}},
       );
-   
+
       // console.log("AUDIO_url::", response.data.blog_list[0].training_audio[0].url);
       // console.log("Video_url::", response.data.blog_list);
 
       if (response?.data?.status == '1') {
-        console.log("TrainingCategoryListAPI_Response>>>", response.data.blog_list);
+        console.log(
+          'TrainingCategoryListAPI_Response>>>',
+          response.data,
+        );
         setTrainingBlog_list(response?.data?.blog_list);
         setImagebaseurl(response?.data?.training_image);
+        var allimgs = [];
+
+      for (let i = 1; i <= response.data.blog_list.training_image.length; i++) {
+        allimgs.push({
+          img: `${
+            response?.data?.training_image +
+            response.data.blog_list.training_image[i - 1]
+          }`,
+        });
+      }
+      console.log('the allimgs==>>', allimgs);
+      setAllImg(allimgs);
         // setAudiobaseurl(response?.data.training_audio);
         setVideobaseurl(response?.data.blog_list?.training_video);
-       
+
         setAudio(response?.data?.blog_list?.training_audio);
-        setReload(!reload)
+        setReload(!reload);
         // const musicData = {
         //   id: 1,
         //   url: `${response.data.blog_list[0].training_audio[0].audies}`,
@@ -212,136 +244,155 @@ const Training = (props) => {
         //   artist: 'popfiit',
         // }
         // console.log('addAudio(musicData)', musicData);
-        setyoutubelinks(response?.data?.blog_list[0].youtube_link)
-
-      }
-      else {
+        setyoutubelinks(response?.data?.blog_list[0].youtube_link);
+      } else {
         // console.log(".WorkoutSubCategorytraininglist.....error.........", error.response.data.message);
-
         // Alert.alert('Technical Issue', '')
       }
-
-
-
-    }
-    catch (error) {
+    } catch (error) {
       // Alert.alert("","Internet connection appears to be offline. Please check your internet connection and try again.")
       // console.log(".WorkoutSubCategorytraininglist.....error.........", error );
     }
     setIsLoading(false);
   };
 
- 
+  //   const GetworkoutCategoryAPI = async (id) => {
+  //     const usertkn = await AsyncStorage.getItem("authToken");
+  //     setIsLoading(true);
+  //     try {
 
-//   const GetworkoutCategoryAPI = async (id) => {
-//     const usertkn = await AsyncStorage.getItem("authToken");
-//     setIsLoading(true);
-//     try {
+  //         const response = await axios.get(`${API.TRAINING_LIST_GET_DETAILS + id}`,
+  //             { headers: { "Authorization": ` ${usertkn}` } }
+  //         );
+  //         // console.log("::::GetworkoutCategoryAPI_Response>>>::", response.data);
 
-//         const response = await axios.get(`${API.TRAINING_LIST_GET_DETAILS + id}`,
-//             { headers: { "Authorization": ` ${usertkn}` } }
-//         );
-//         // console.log("::::GetworkoutCategoryAPI_Response>>>::", response.data);
-        
-//         setImagebaseurl(response.data.training_image);
-//         // setAudiobaseurl(response?.data.training_audio);
-//         setVideobaseurl(response.data.blog_list[0].training_video);
-//         setTrainingBlog_list(response.data.blog_list);
-//         setAudio(response.data.blog_list[0].training_audio);
-//         setReload(!reload)
+  //         setImagebaseurl(response.data.training_image);
+  //         // setAudiobaseurl(response?.data.training_audio);
+  //         setVideobaseurl(response.data.blog_list[0].training_video);
+  //         setTrainingBlog_list(response.data.blog_list);
+  //         setAudio(response.data.blog_list[0].training_audio);
+  //         setReload(!reload)
 
-//     }
-//     catch (error) {
-//         // console.log(".....TrainingDetails.error.........", error.response.data.message);
-//         Alert.alert("", t('Check_internet_connection'))
+  //     }
+  //     catch (error) {
+  //         // console.log(".....TrainingDetails.error.........", error.response.data.message);
+  //         Alert.alert("", t('Check_internet_connection'))
 
-//     }
-//     setIsLoading(false);
-// };
+  //     }
+  //     setIsLoading(false);
+  // };
   const toggleModal = state => {
     setShowModal({
       isVisible: state.isVisible,
       data: state.data,
     });
   };
-  // const generateThumb = async () => {
-  //   // setLoading(true)
-  //   const thumbs = []
-  //   try {
-  //     for (let i = 0; i < videoDetails?.length; i++) {
-  //       const resp = await createThumbnail({
-  //         url: videoDetails[0].url,
-  //         timeStamp: 10000,
-  //         // cacheName: `http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4`
-  //       })
-  //       thumbs.push(resp.path)
-  //     }
-  //     // const resp = await createThumbnail({
-  //     //   url: videoDetails?.url,
-  //     //   timeStamp: 10000,
-  //     //   // cacheName: `http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4`
-  //     // })
-  //     const videoDetailsCopy = [...videoDetails]
-  //     const updatedVideoDetails = videoDetailsCopy.map((el, index) => {
-  //       return { ...el, thumbnail: thumbs[index] }
-  //     })
-  //     setVideoDetails([...updatedVideoDetails])
-  //     // setVideoDetails({...videoDetails, thumbnail: resp.path})
-  //   } catch (error) {
-  //     console.log('thumbnail creating error', error);
-  //   }
-  //   // setLoading(false)
-  // }
+
   return (
-    <SafeAreaView style={{
-      flex: 1,
-      width: WIDTH,
-      height: HEIGHT, flexGrow: 1,
-    }} >
+    <SafeAreaView
+      style={{
+        flex: 1,
+        width: WIDTH,
+        height: HEIGHT,
+        flexGrow: 1,
+      }}>
       <Headers
         Backicon={{
           visible: true,
         }}
-        BackicononClick={() => { props.navigation.goBack() }}
-
+        BackicononClick={() => {
+          props.navigation.goBack();
+        }}
         CartIcon={{
           visible: true,
         }}
-        CartIconononClick={() => { props.navigation.navigate("CartAdded") }}
-
+        CartIconononClick={() => {
+          props.navigation.navigate('CartAdded');
+        }}
         Bellicon={{
           visible: true,
-
         }}
-        BelliconononClick={() => { props.navigation.navigate("Notifications") }}
+        BelliconononClick={() => {
+          props.navigation.navigate('Notifications');
+        }}
       />
-      {!isLoading ?
-        (<>
-        {
-          console.log(".................",trainingBlog_list)
-        }
+      {!isLoading ? (
+        <>
+          {console.log('.................', trainingBlog_list)}
           <ScrollView
-                refreshControl={
-                  <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={onRefresh}
-                  />
-                }
-              >
-                <View style={{ justifyContent: "flex-start", flex: 1, alignItems: "flex-start" }}>
-                  <View style={{
-                    marginBottom: 5,
-                    // backgroundColor: '#f7f7f7',
-                    backgroundColor: 'gray',
-                    height: 190,
-                    width: WIDTH * 0.96,
-                    marginTop: 15,
-                    borderRadius: 20,
-                    marginHorizontal: 8,
-                    flex: 1,
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }>
+            <View
+              style={{
+                justifyContent: 'flex-start',
+                flex: 1,
+                alignItems: 'flex-start',
+              }}>
+              <View
+                style={{
+                  marginBottom: 5,
+                  // backgroundColor: '#f7f7f7',
+                  // backgroundColor: 'gray',
+                  height: (HEIGHT * 29) / 100,
+                  width: WIDTH * 0.96,
+                  marginTop: 15,
+                  borderRadius: 20,
+                  marginHorizontal: 8,
+                  flex: 1,
+                }}>
+                <View
+                  style={{
+                    height: (HEIGHT * 29) / 100, width: WIDTH * 0.96, borderRadius: 20
                   }}>
-
-                    <Pages indicatorColor='#ffcc00'>
+                  <View
+                    style={{
+                      overflow: 'hidden',
+                      width: '95%',
+                      alignSelf: 'center',
+                      zIndex: -999,
+                      borderRadius: 20,
+                      // shadowColor: '#000',
+                      // shadowOffset: {width: 0, height: 3},
+                      // shadowRadius: 6,
+                      // shadowOpacity: 0.2,
+                      // elevation: 1,
+                    }}>
+                    {allImg?.length > 0 ? (
+                      <ImageSlider
+                        //  localImg={true}
+                        data={allImg}
+                        // onClick={(item, index) => {alert('hello'+index)}}
+                        // autoPlay={true}
+                        // onItemChanged={(item) => console.log("item", item)}
+                        activeIndicatorStyle={{backgroundColor: '#ffcc00'}}
+                        indicatorContainerStyle={{top: -5}}
+                        caroselImageStyle={{
+                          resizeMode: 'stretch',
+                          height: 400,
+                          borderRadius: 20,
+                        }}
+                        closeIconColor="#fff"
+                        headerStyle={{
+                          padding: 0,
+                          backgroundColor: 'rgba(0,0,0, 0.6)',
+                        }}
+                        showHeader
+                        // preview={true}
+                      />
+                    ) : (
+                      <>
+                        <Image
+                          style={{height: (HEIGHT * 29) / 100, width: '100%'}}
+                          source={{
+                            uri: `${'https://kinengo-dev.s3.us-west-1.amazonaws.com/images/camera-icon.jpg'}`,
+                          }}
+                        />
+                      </>
+                    )}
+                  </View>
+                </View>
+                {/* <Pages indicatorColor='#ffcc00'>
                       {
                         trainingBlog_list?.training_image?.map((itm, index) => {
                          
@@ -362,119 +413,190 @@ const Training = (props) => {
                               />
                             </View>)
                         })}
-                    </Pages>
+                    </Pages> */}
+              </View>
+              <View
+                style={{
+                  marginLeft: 15,
+                  height: 50,
+                  width: WIDTH * 0.92,
+                  justifyContent: 'center',
+                  alignItems: 'flex-start',
+                  padding: 6,
+                }}
+                numberOfLines={1}>
+                <Text
+                  style={{
+                    textAlign: 'left',
+                    fontSize: 17,
+                    color: '#000',
+                    fontWeight: '500',
+                  }}>
+                  {trainingBlog_list?.training_title}
+                </Text>
+              </View>
 
-                  </View>
-                  <View style={{ marginLeft: 15, height: 50, width: WIDTH * 0.92, justifyContent: 'center', alignItems: "flex-start", padding: 6 }} numberOfLines={1}>
-                    <Text style={{ textAlign: 'left', fontSize: 17, color: '#000', fontWeight: "500" }} >{trainingBlog_list?.training_title}</Text>
-                  </View>
+              <View
+                style={{
+                  marginHorizontal: 20,
+                  marginTop: 1,
+                  height: 'auto',
+                  width: WIDTH * 0.92,
+                  justifyContent: 'center',
+                  alignItems: 'flex-start',
+                  padding: 6,
+                }}>
+                <Text style={{textAlign: 'left', fontSize: 12, color: '#000'}}>
+                  {trainingBlog_list?.image_description}
+                </Text>
+              </View>
 
-                  <View style={{ marginHorizontal: 20, marginTop: 1, height: "auto", width: WIDTH * 0.92, justifyContent: 'center', alignItems: "flex-start", padding: 6 }}>
-                    <Text style={{ textAlign: 'left', fontSize: 12, color: '#000' }}>{trainingBlog_list?.image_description}</Text>
-                  </View>
-
-                  <FlatList
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    // ref={ref}
-                    data={youtubelinks}
-                    keyExtractor={(item, index) => String(index)}
-                    renderItem={({ item, index }) => {
-                      // console.log("1st flastlist video:", item)
-                      return (
-
-                        <>
-                          <View style={{
-                            height: 170,
-                            overflow: "hidden",
-                            width: WIDTH * 0.7,
-                            borderRadius: 20,
-                            marginHorizontal: 10,
-                            marginTop: 10,
-                            justifyContent: 'center',
-
-
-                          }}>
-                            <WebView
-                              source={{
-                                uri: `${item}`
-                              }}
-                            />
-
-
-                          </View>
-                        </>
-                      )
-                    }}
-                  />
-                  {/* Training video */}
-                  {videobaseurl.length > 0 ?
-                    <View style={{ marginTop: 30, height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
-                      <View style={{ flex: 0.8 }}>
-                        <Text style={{ marginLeft: 20, fontSize: 17, color: 'black', fontWeight: "500" }}>{t('Training_Videos')}</Text>
-                      </View>
-                      <View style={{ flex: 0.25, right: 10, }}>
-                        <TouchableOpacity onPress={() => {
-                          gotoVideolist()
+              <FlatList
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                // ref={ref}
+                data={youtubelinks}
+                keyExtractor={(item, index) => String(index)}
+                renderItem={({item, index}) => {
+                  // console.log("1st flastlist video:", item)
+                  return (
+                    <>
+                      <View
+                        style={{
+                          height: 170,
+                          overflow: 'hidden',
+                          width: WIDTH * 0.7,
+                          borderRadius: 20,
+                          marginHorizontal: 10,
+                          marginTop: 10,
+                          justifyContent: 'center',
                         }}>
-                          <View style={{ borderRadius: 50, height: 30, backgroundColor: '#ffcc00', alignItems: 'center', justifyContent: 'center', }}>
-                            <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 12, color: 'white', fontWeight: "500" }}>{t('View_All')}</Text>
-                          </View>
-                        </TouchableOpacity>
+                        <WebView
+                          source={{
+                            uri: `${item}`,
+                          }}
+                        />
                       </View>
+                    </>
+                  );
+                }}
+              />
+              {/* Training video */}
+              {videobaseurl.length > 0 ? (
+                <View
+                  style={{
+                    marginTop: 30,
+                    height: 45,
+                    flexDirection: 'row',
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}>
+                  <View style={{flex: 0.8}}>
+                    <Text
+                      style={{
+                        marginLeft: 20,
+                        fontSize: 17,
+                        color: 'black',
+                        fontWeight: '500',
+                      }}>
+                      {t('Training_Videos')}
+                    </Text>
+                  </View>
+                  <View style={{flex: 0.25, right: 10}}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        gotoVideolist();
+                      }}>
+                      <View
+                        style={{
+                          borderRadius: 50,
+                          height: 30,
+                          backgroundColor: '#ffcc00',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            alignSelf: 'center',
+                            textAlign: 'center',
+                            fontSize: 12,
+                            color: 'white',
+                            fontWeight: '500',
+                          }}>
+                          {t('View_All')}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ) : null}
 
-                    </View>
-                    :
-                    null
-                  }
+              {/* //flastlist  for videos */}
 
-                  {/* //flastlist  for videos */}
+              {showModal.isVisible ? (
+                <VideoModel
+                  isVisible={showModal.isVisible}
+                  toggleModal={toggleModal}
+                  videoDetail={showModal.data}
+                  {...props}
+                />
+              ) : null}
 
-                  {showModal.isVisible ? (
-                    <VideoModel
-                      isVisible={showModal.isVisible}
-                      toggleModal={toggleModal}
-                      videoDetail={showModal.data}
-                      {...props}
-                    />
-                  ) : null}
-
-                  <View style={{ width: WIDTH * 0.99, alignSelf: 'flex-start', marginTop: 10, marginBottom: 0, height: 200 }}>
-                    <FlatList
-                      // ref={songSlider}
-                      data={videobaseurl}
-                      showsHorizontalScrollIndicator={false}
-                      horizontal
-                      keyExtractor={(item, index) => String(index)}
-                      renderItem={({ item }) => {
-                        // console.log("FlastlistVideo:", item)
-                        return (
-                          <View style={styles.VideoThumbWrapper}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                setShowModal({
-                                  isVisible: true,
-                                  data: item,
-                                });
-                              }}>
-                              <View style={styles.PlayIconContainer}>
-                                <View style={styles.PlayIconWrapper}>
-                                  {/* <PlayIcon width={28} height={28} /> */}
-                                  <View style={{ width: 55, height: 55, borderRadius: 55 / 2, alignItems: 'center', justifyContent: 'center' }}>
-                                    <Image source={require('../assets/play-button-yellow.png')} style={{ width: 30, height: 30 }} />
-                                  </View>
-                                </View>
-
+              <View
+                style={{
+                  width: WIDTH * 0.99,
+                  alignSelf: 'flex-start',
+                  marginTop: 10,
+                  marginBottom: 0,
+                  height: 200,
+                }}>
+                <FlatList
+                  // ref={songSlider}
+                  data={videobaseurl}
+                  showsHorizontalScrollIndicator={false}
+                  horizontal
+                  keyExtractor={(item, index) => String(index)}
+                  renderItem={({item}) => {
+                    // console.log("FlastlistVideo:", item)
+                    return (
+                      <View style={styles.VideoThumbWrapper}>
+                        <TouchableOpacity
+                          onPress={() => {
+                            setShowModal({
+                              isVisible: true,
+                              data: item,
+                            });
+                          }}>
+                          <View style={styles.PlayIconContainer}>
+                            <View style={styles.PlayIconWrapper}>
+                              {/* <PlayIcon width={28} height={28} /> */}
+                              <View
+                                style={{
+                                  width: 55,
+                                  height: 55,
+                                  borderRadius: 55 / 2,
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}>
+                                <Image
+                                  source={require('../assets/play-button-yellow.png')}
+                                  style={{width: 30, height: 30}}
+                                />
                               </View>
-                              <Image
-                                style={styles.BackGroundImage}
-                                // theme={theme}
-                                source={{ uri: 'https://dev.pop-fiit.com/images/logo.png' }}
-                                // source={{ uri: item?.thumbnail }}
-                                resizeMode={'stretch'}
-                              />
-                            </TouchableOpacity>
-                            {/* <LinearGradient
+                            </View>
+                          </View>
+                          <Image
+                            style={styles.BackGroundImage}
+                            // theme={theme}
+                            source={{
+                              uri: 'https://dev.pop-fiit.com/images/logo.png',
+                            }}
+                            // source={{ uri: item?.thumbnail }}
+                            resizeMode={'stretch'}
+                          />
+                        </TouchableOpacity>
+                        {/* <LinearGradient
                             colors={['#000', 'transparent']}
                             style={{
                               height: 40, width: WIDTH - 80, borderRadius: 15, paddingHorizontal: 15,
@@ -484,28 +606,40 @@ const Training = (props) => {
                             end={{ x: 0.2, y: 0.4 }}
                           > */}
 
-                            {/* <View style={{ width: '100%', height: 40, justifyContent: "center", alignItems: "center", paddingHorizontal: 15, }}>
+                        {/* <View style={{ width: '100%', height: 40, justifyContent: "center", alignItems: "center", paddingHorizontal: 15, }}>
                             <Text style={{ color: 'black', fontSize: 13, }}> Play Title</Text>
                           </View> */}
 
-
-
-                            {/* </LinearGradient> */}
-                          </View>
-                        )
-                      }
-                      }
-
-                    />
-                  </View>
-
-                  {/* Training Audio */}
-                  {audio.length > 0 ?
-                    <View style={{ marginTop: 1, height: 45, flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
-                      <View style={{ flex: 0.8 }}>
-                        <Text style={{ marginLeft: 20, fontSize: 17, color: 'black', fontWeight: "500" }}>Training Audio</Text>
+                        {/* </LinearGradient> */}
                       </View>
-                      {/* <View style={{ flex: 0.25, right: 10, }}>
+                    );
+                  }}
+                />
+              </View>
+
+              {/* Training Audio */}
+              {audio.length > 0 ? (
+                <View
+                  style={{
+                    marginTop: 1,
+                    height: 45,
+                    flexDirection: 'row',
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}>
+                  <View style={{flex: 0.8}}>
+                    <Text
+                      style={{
+                        marginLeft: 20,
+                        fontSize: 17,
+                        color: 'black',
+                        fontWeight: '500',
+                      }}>
+                      Training Audio
+                    </Text>
+                  </View>
+                  {/* <View style={{ flex: 0.25, right: 10, }}>
                       <TouchableOpacity onPress={() => {
                         gotoAudiolist()
                       }}>
@@ -514,45 +648,40 @@ const Training = (props) => {
                         </View>
                       </TouchableOpacity>
                     </View> */}
-
-                    </View>
-                    : null
-                  }
-                  {/* //flastlist  for AUDIO */}
-                  <FlatList
-                    horizontal={true}
-                    ref={songSlider}
-                    data={audio}
-                    showsHorizontalScrollIndicator={false}
-                    keyExtractor={(item, index) => String(index)}
-                    renderItem={({ item, index }) => {
-                      // console.log("audioFlatlist", item);
-                      return (
-                        <>
-                          <View
-                            style={{
-                              flex: 1,
-                              width: WIDTH * 0.93,
-                              marginVertical: 10,
-                              paddingVertical: 10,
-                              marginHorizontal: 10,
-                              borderRadius: 15,
-                              backgroundColor: '#313131',
-                              justifyContent: 'center',
-                              alignSelf:"center",
-                              shadowColor:'#000',
-                              shadowOffset: {width: 0,height: 3},
-                              shadowRadius: 1,
-                              shadowOpacity: 0.03,
-                              elevation: 4,
-                            }}>
-                            <AudioPlayer
-                              url={item.url}
-                              
-                            />
-                          </View>
-                          {/* <View style={{ position: "absolute", top: 20, left: 70, overflow: 'hidden', zIndex: 999 }}><Text style={{ color: 'black', fontSize: 14, fontWeight: "400" }}>{item.title}</Text></View> */}
-                          {/* <View style={styles.audioPlayerView}>
+                </View>
+              ) : null}
+              {/* //flastlist  for AUDIO */}
+              <FlatList
+                horizontal={true}
+                ref={songSlider}
+                data={audio}
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={(item, index) => String(index)}
+                renderItem={({item, index}) => {
+                  // console.log("audioFlatlist", item);
+                  return (
+                    <>
+                      <View
+                        style={{
+                          flex: 1,
+                          width: WIDTH * 0.93,
+                          marginVertical: 10,
+                          paddingVertical: 10,
+                          marginHorizontal: 10,
+                          borderRadius: 15,
+                          backgroundColor: '#313131',
+                          justifyContent: 'center',
+                          alignSelf: 'center',
+                          shadowColor: '#000',
+                          shadowOffset: {width: 0, height: 3},
+                          shadowRadius: 1,
+                          shadowOpacity: 0.03,
+                          elevation: 4,
+                        }}>
+                        <AudioPlayer url={item.url} />
+                      </View>
+                      {/* <View style={{ position: "absolute", top: 20, left: 70, overflow: 'hidden', zIndex: 999 }}><Text style={{ color: 'black', fontSize: 14, fontWeight: "400" }}>{item.title}</Text></View> */}
+                      {/* <View style={styles.audioPlayerView}>
 
                             {
                               flag
@@ -618,19 +747,16 @@ const Training = (props) => {
                             />
                           </TouchableOpacity>
                           </View> */}
-                        </>
-                      )
-                    }}
-                  />
+                    </>
+                  );
+                }}
+              />
+            </View>
 
-                </View>
+            <View style={{height: 50}} />
+          </ScrollView>
 
-                <View style={{ height: 50 }} />
-
-              </ScrollView>
-
-              
-              {/* (<View style={{
+          {/* (<View style={{
                 justifyContent: "center", alignItems: "center", backgroundColor: "white", flex: 1,
               }}>
                 <Image
@@ -642,17 +768,13 @@ const Training = (props) => {
                   }} />
                 <Text style={{ fontSize: 14, fontWeight: "500", color: 'black' }}>{t('Oops_No_data_found')}</Text>
               </View>) */}
-          
-
-
-
-        </>)
-        :
-        (<CustomLoader showLoader={isLoading} />)}
-    </SafeAreaView >
-
+        </>
+      ) : (
+        <CustomLoader showLoader={isLoading} />
+      )}
+    </SafeAreaView>
   );
-}
+};
 const styles = StyleSheet.create({
   VideoThumbWrapper: {
     position: 'relative',
@@ -664,8 +786,8 @@ const styles = StyleSheet.create({
     height: 190,
     marginRight: 10,
     borderRadius: 15,
-    shadowColor:'#000',
-    shadowOffset: {width: 0,height: 3},
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 3},
     shadowRadius: 1,
     shadowOpacity: 0.03,
     elevation: 4,
@@ -685,57 +807,57 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   BackGroundImage: {
-    backgroundColor: "black",
+    backgroundColor: 'black',
     width: '100%',
     height: 190,
     justifyContent: 'center',
-    borderRadius: 15
+    borderRadius: 15,
   },
   audioPlayerView: {
     width: WIDTH * 0.75,
     height: 70,
     marginHorizontal: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "white",
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
     padding: 10,
     paddingVertical: 20,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#E0E0E0",
-    justifyContent: "space-between",
+    borderColor: '#E0E0E0',
+    justifyContent: 'space-between',
     marginVertical: 10,
   },
   audioTimeDurationView: {
-    width: "50%",
+    width: '50%',
     // height:30,
-    justifyContent: "center",
-    backgroundColor: "#FFCC00",
+    justifyContent: 'center',
+    backgroundColor: '#FFCC00',
     // marginRight:15
   },
   audioProgressView: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   audioActiveProgress: {
     height: 5,
     borderTopLeftRadius: 10,
     borderBottomLeftRadius: 10,
-    backgroundColor: "#f7d54a",
+    backgroundColor: '#f7d54a',
   },
   audioInAtiveProgress: {
     height: 5,
     borderTopRightRadius: 10,
     borderBottomRightRadius: 10,
-    backgroundColor: "#E0E0E0",
+    backgroundColor: '#E0E0E0',
   },
   audioActiveDotView: {
     height: 15,
     width: 15,
-    position: "absolute",
+    position: 'absolute',
     borderRadius: 100,
-    backgroundColor: "#FFCC00",
+    backgroundColor: '#FFCC00',
   },
 });
 export default React.memo(Training);
